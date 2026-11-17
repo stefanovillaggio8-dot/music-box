@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "entries": {
+    "audio/songs/track-4.mp3": {
+      "method": "mp3-frame-count-prefix-identical-pcm-v1",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+      "sourceBytes": 3045085,
+      "duration": 126.877,
+      "insertAt": 44,
+      "prefixBase64": "//uwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AABL5AC55IwADBQgLDRASFRcaHB8hJCYpKy4wMzY4Oz1AQkVHSkxPUVRXWlxfYWRmaWtucXN2eHt9gIKFh4qMj5GUlpmcnqGjpqisrrGztri7vcDCxcfKzM/R1NfZ3N7h4+bo6+3w8vX3+vwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "wrappedSha256": "5604703c43b769569e80aafa05dc4b6634dba4333ba184126decd2e0f1ec5504",
+      "wrappedBytes": 3045711,
+      "pcmIdentity": {
+        "44100": {
+          "sha256": "df8e66e96d50a4467478baf172e50ad7852ecd202c4a596496ba6b5d1fb1761b",
+          "bytes": 44762112
+        },
+        "48000": {
+          "sha256": "85793530b0b2d2f848be378f0c36d9421b60060bca040d7bb7c5c58a6c2de1e5",
+          "bytes": 48720672
+        }
+      },
+      "browserVerified": true,
+      "nativePcmIdentity": {
+        "method": "actual-native-metadata-identical-pcm-v1",
+        "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+        "wrappedSha256": "5604703c43b769569e80aafa05dc4b6634dba4333ba184126decd2e0f1ec5504",
+        "rates": {
+          "44100": {
+            "frames": 5595264,
+            "channels": 2,
+            "maximumSampleDifference": 0,
+            "browsers": [
+              "chromium",
+              "webkit"
+            ]
+          },
+          "48000": {
+            "frames": 6090083,
+            "channels": 2,
+            "maximumSampleDifference": 0,
+            "browsers": [
+              "chromium",
+              "webkit"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "proofReceipts": [
+    {
+      "browser": "chromium",
+      "sha256": "fbdc41d817f1dd297d6bd3c90530c2989ee7831a19f7dfc5cb45874e11bdbbbb"
+    },
+    {
+      "browser": "webkit",
+      "sha256": "cbda05afd15c88eddd29614fbe9123b9163f74e92f9a84a6b7117bfc917d3b34"
+    }
+  ]
+}

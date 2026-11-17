@@ -1,0 +1,34 @@
+[
+  {
+    "type": "existing",
+    "opens": 1,
+    "closes": 1,
+    "aborts": 0,
+    "rejected": false,
+    "passed": true
+  },
+  {
+    "type": "absent",
+    "opens": 0,
+    "closes": 0,
+    "aborts": 0,
+    "rejected": false,
+    "passed": true
+  },
+  {
+    "type": "creation-race",
+    "opens": 1,
+    "closes": 1,
+    "aborts": 1,
+    "rejected": false,
+    "passed": true
+  },
+  {
+    "type": "wrong-profile",
+    "opens": 0,
+    "closes": 0,
+    "aborts": 0,
+    "rejected": true,
+    "passed": true
+  }
+]

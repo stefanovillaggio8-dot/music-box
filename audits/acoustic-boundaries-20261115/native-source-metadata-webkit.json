@@ -1,0 +1,2195 @@
+{
+  "browser": "webkit",
+  "physicalIPhone": false,
+  "results": [
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "raw",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.600863475,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.369695305,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.601064534,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.36930263,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "routed-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.600966612,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.369274389,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "routed-raw",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.601112746,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.369551887,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.601084479,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 0.601428488,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "eager-raw",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.600842855,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 0.601510482,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "unmuted-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.601157581,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.371002478,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "context-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.609424417,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368117301,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.602919038,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.370553229,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "context-eager-raw",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.602282557,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368227456,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "context-eager-load-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.602812967,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368285132,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "fresh-seek-context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 2.599282667,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 126.876708333,
+            "positionBefore": 0.002855038
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368419932,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "fresh-playing-context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 2.599175691,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "playing",
+            "duration": 126.876708333,
+            "positionBefore": 0.002117933
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.369374622,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "fresh-new-context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.602346902,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.369270684,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "fresh-new-retire-context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 2.59931892,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 126.876708333,
+            "positionBefore": 0.0023416
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368232236,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "fresh-new-load-context-eager-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876708333,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 2.599315535,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 126.876708333,
+            "positionBefore": 0.002456966
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876708333,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.368484276,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "whole",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.60113205,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.370862919,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "intercept",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876708333,
+        "at": 0.600935676,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.370293951,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "blob",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.878541666,
+        "at": 0.601087572,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 0,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876708333,
+        "at": 111.358080094,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "prefix-range",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 126.876734693,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.876734693,
+        "at": 0.600922091,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876734693,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876734693,
+        "at": 111.416368184,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "mode": "prefix-blob",
+      "expectedDuration": 126.877,
+      "metadata": {
+        "duration": 0,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 126.904625,
+        "at": 0.601132435,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 126.876734693,
+          "readyState": 4
+        },
+        "requestedPosition": 110.877,
+        "duration": 126.876734693,
+        "at": 111.388052931,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 126.87673469387755,
+      "decodedFrames": 5595264,
+      "decodedPcmSha256": [
+        "14c8104c8f115b405b0011223ee1fa14c1079c67fdd78e9cf2c7713a7fdb3b9c",
+        "64a198b12bc070748c00951fa6a7758fdf5e19ba086e44a5740a003e3bc8a3c2"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "raw",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601048926,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.998801372,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.600997851,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.995200454,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "routed-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.60103458,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 189.003010157,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "routed-raw",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.600987063,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.996702229,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.600926561,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.953131269,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "eager-raw",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.602985987,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.952796324,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "unmuted-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601006041,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.953221983,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "context-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.609221966,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.991798757,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601127329,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.954945104,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "context-eager-raw",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601078283,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.950940709,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "context-eager-load-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601045969,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.94928132,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "fresh-seek-context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 2.598143883,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 204.576,
+            "positionBefore": 0.001166813
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.952165201,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "fresh-playing-context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 2.598086199,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "playing",
+            "duration": 204.576,
+            "positionBefore": 0.00101826
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.954495286,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "fresh-new-context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 2.598035984,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 204.576,
+            "positionBefore": 0.000890231
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.954702151,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "fresh-new-retire-context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 2.598234533,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 204.576,
+            "positionBefore": 0.001034961
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.951857924,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "fresh-new-load-context-eager-range",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 2.598368465,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": [
+          {
+            "event": "durationchange",
+            "duration": 204.576,
+            "positionBefore": 0.000952918
+          }
+        ]
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.950479936,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "whole",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "error": 4
+      },
+      "afterPlayback": {
+        "duration": null,
+        "at": 0,
+        "ended": false,
+        "paused": true,
+        "playError": "NotSupportedError: The operation is not supported.",
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 189.00326397,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "intercept",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.601033097,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "error": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": null,
+        "at": 0,
+        "ended": false,
+        "paused": true,
+        "playError": "NotSupportedError: The operation is not supported."
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "mode": "blob",
+      "expectedDuration": 204.545,
+      "metadata": {
+        "duration": 204.576,
+        "readyState": 4
+      },
+      "afterPlayback": {
+        "duration": 204.576,
+        "at": 0.600981863,
+        "ended": false,
+        "paused": false,
+        "playError": null,
+        "freshWrites": []
+      },
+      "repeatedPlayback": {
+        "metadata": {
+          "duration": 204.576,
+          "readyState": 4
+        },
+        "requestedPosition": 188.545,
+        "duration": 204.576,
+        "at": 188.941216667,
+        "ended": false,
+        "paused": false,
+        "playError": null
+      },
+      "decodedDuration": 204.57598639455782,
+      "decodedFrames": 9021801,
+      "decodedPcmSha256": [
+        "65503244ab80730e606cb9add05778913a0c0eef462346e02eccf44c8a637705",
+        "b9a631e053d0b8004823db4570b6b8b43195cd71cc4f9d8b768c5708b95ee9dc"
+      ],
+      "decodeError": null
+    }
+  ],
+  "requests": [
+    {
+      "mode": "range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=3044957-"
+    },
+    {
+      "mode": "range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=2076672-"
+    },
+    {
+      "mode": "range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=3044957-"
+    },
+    {
+      "mode": "routed-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=2244608-"
+    },
+    {
+      "mode": "routed-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=3044957-"
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=2314240-"
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=3044957-"
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": "bytes=2334720-"
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "blob",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "blob",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "prefix-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "prefix-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "prefix-range",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "prefix-blob",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "prefix-blob",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "range": null
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3784704-"
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3325952-"
+    },
+    {
+      "mode": "range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "routed-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2195456-"
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2060288-"
+    },
+    {
+      "mode": "eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2269184-"
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3801088-"
+    },
+    {
+      "mode": "unmuted-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3596288-"
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3743744-"
+    },
+    {
+      "mode": "context-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=3534848-"
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2768896-"
+    },
+    {
+      "mode": "context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2113536-"
+    },
+    {
+      "mode": "context-eager-load-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4206592-"
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-seek-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-playing-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2150400-"
+    },
+    {
+      "mode": "fresh-new-retire-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=2015232-"
+    },
+    {
+      "mode": "fresh-new-load-context-eager-range",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "whole",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "whole",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "intercept",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": "bytes=4910316-"
+    },
+    {
+      "mode": "intercept",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "blob",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    },
+    {
+      "mode": "blob",
+      "sha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+      "range": null
+    }
+  ]
+}

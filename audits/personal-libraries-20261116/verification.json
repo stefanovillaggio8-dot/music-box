@@ -1,0 +1,429 @@
+{
+  "snapshotOnly": false,
+  "productCommit": "72907e26018a92022d7d23431b21c175bc1a936b",
+  "fullSuite": {
+    "passed": 709,
+    "failed": 0,
+    "run": 43828767089
+  },
+  "djSuite": {
+    "passed": 646,
+    "failed": 0,
+    "run": 43828758745
+  },
+  "localUnitSuite": {
+    "passed": 707,
+    "failed": 0,
+    "runBeforePlatformExtension": true,
+    "browserExecutedLocally": false
+  },
+  "pythonSelected": {
+    "passed": 15,
+    "failed": 0
+  },
+  "fullPairAudit": {
+    "pairs": 1381800,
+    "freshlyExecuted": true,
+    "fileSha256": "a0d23335491b8a6fbbee65b20a7b5b2c1b3c5d7ca00d27b65e485bf93747e8b5"
+  },
+  "workflows": [
+    {
+      "conclusion": "success",
+      "databaseId": 43828767089,
+      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
+      "name": "iPhone DJ WebKit foreground smoke",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828767089"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43828763137,
+      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828763137"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43828758742,
+      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828758742"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43828758745,
+      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
+      "name": "DJ Mix regression tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828758745"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43828759004,
+      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828759004"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826953722,
+      "headSha": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826953722"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826949310,
+      "headSha": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826949310"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826946765,
+      "headSha": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826946765"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826946703,
+      "headSha": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63",
+      "name": "DJ Mix regression tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826946703"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826693742,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Verifica integrita Music Box",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826693742"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826690278,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Desktop DJ Chromium playback smoke",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826690278"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826686717,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "iPhone DJ WebKit foreground smoke",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826686717"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826354508,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826354508"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826350784,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Music Box title display and original metadata regression",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350784"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826350799,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Volume precision tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350799"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826350840,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350840"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826350770,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "DJ Mix regression tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350770"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43826350837,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Music Box DJ independent raw-audio audit",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350837"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43826350778,
+      "headSha": "8ada9fc32787a47baf2e68673047fc82d08fa858",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43826350778"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43824370512,
+      "headSha": "bb6aabbb6ded95b92eef53e822a0ba4e3b5c3fc7",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43824370512"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43824369938,
+      "headSha": "bb6aabbb6ded95b92eef53e822a0ba4e3b5c3fc7",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43824369938"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43823299289,
+      "headSha": "418a0722db32b5f78f87c08f734a1c5b384e7248",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43823299289"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43822374644,
+      "headSha": "956cce249b934b9c93de2be939d6cf2c328c2526",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43822374644"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43822374837,
+      "headSha": "956cce249b934b9c93de2be939d6cf2c328c2526",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43822374837"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43821417955,
+      "headSha": "228daf1c943db78de12c012239a0cbdcfe4a433c",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43821417955"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43821413419,
+      "headSha": "228daf1c943db78de12c012239a0cbdcfe4a433c",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43821413419"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43821414038,
+      "headSha": "228daf1c943db78de12c012239a0cbdcfe4a433c",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43821414038"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43820361047,
+      "headSha": "dad92cd5c0ea27e812269e7aa3687df4b3cf8ce0",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43820361047"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43820361048,
+      "headSha": "dad92cd5c0ea27e812269e7aa3687df4b3cf8ce0",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43820361048"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43819474439,
+      "headSha": "217fec37cfebce6556af273b57597b4505450497",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43819474439"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43819470852,
+      "headSha": "217fec37cfebce6556af273b57597b4505450497",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43819470852"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43819471190,
+      "headSha": "217fec37cfebce6556af273b57597b4505450497",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43819471190"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43804573770,
+      "headSha": "448adeafadb648bda9ea830cd32641864d099797",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43804573770"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43804124756,
+      "headSha": "7fb4cee1ed63a7e8c441ec566d4ab1d35839944d",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43804124756"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 43804121612,
+      "headSha": "7fb4cee1ed63a7e8c441ec566d4ab1d35839944d",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43804121612"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43804121239,
+      "headSha": "7fb4cee1ed63a7e8c441ec566d4ab1d35839944d",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43804121239"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803779783,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Verifica integrita Music Box",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803779783"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803776471,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Desktop DJ Chromium playback smoke",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803776471"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803773477,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "iPhone DJ WebKit foreground smoke",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803773477"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803594486,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803594486"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803591703,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Volume precision tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803591703"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803591675,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803591675"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803591684,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "DJ Mix regression tests",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803591684"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803591666,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Music Box DJ independent raw-audio audit",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803591666"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43803591387,
+      "headSha": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43803591387"
+    }
+  ],
+  "physicalIPhoneVerified": false,
+  "musicalHumanListeningCompleted": false,
+  "allWorkflowsPassing": false,
+  "knownFailure": "Previous no-recovery Linux controls and the earlier UA-only predicate failed; normal native matrices now pass. Physical iPhone and human musical quality remain unverified.",
+  "nativeMetadataUnit": {
+    "passed": 10,
+    "failed": 0
+  },
+  "normalLinuxMatrix": {
+    "run": 43826949310,
+    "jobsPassed": 7,
+    "jobsFailed": 0,
+    "readerTrialsPerBrowserProfile": 3,
+    "headerFixtureOverride": false,
+    "forcedClockFault": false,
+    "appliedMetadataRepresentationsInThoseTrials": 0
+  },
+  "normalCompleteLinux": {
+    "run": 43828763137,
+    "jobsPassed": 7,
+    "jobsFailed": 0
+  },
+  "normalCompleteMacOS": {
+    "run": 43826953722,
+    "jobsPassed": 7,
+    "jobsFailed": 0,
+    "runtimeEquivalentToProduct": true,
+    "testedCommit": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63"
+  },
+  "separateFaultInjection": {
+    "run": 43828759004,
+    "jobsPassed": 4,
+    "jobsFailed": 0,
+    "automaticInMemoryRecoveries": 2,
+    "countedAsNormalPlayback": false
+  },
+  "allRequiredChecksForValidatedProductPassing": true,
+  "allHistoricalControlsPassing": false
+}

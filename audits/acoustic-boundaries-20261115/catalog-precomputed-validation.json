@@ -1,0 +1,62 @@
+[
+  {
+    "id": "b-track-7",
+    "audioSha256": "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4",
+    "sourceBytes": 3488518,
+    "immediateObservedWordsBefore": 0,
+    "immediateObservedWordsAfter": 107,
+    "restoredPhrases": 18,
+    "phoneInferenceCalls": 0,
+    "phoneAudioDecodes": 0,
+    "proofBytes": 15507,
+    "manualWordTruthAvailable": false
+  },
+  {
+    "id": "b-track-46",
+    "audioSha256": "5cee93c2b21c2da7ba9af6ea1e20b6ff1839e5cb63236b87a4b3fc0955069bb5",
+    "sourceBytes": 5184667,
+    "immediateObservedWordsBefore": 0,
+    "immediateObservedWordsAfter": 9,
+    "restoredPhrases": 1,
+    "phoneInferenceCalls": 0,
+    "phoneAudioDecodes": 0,
+    "proofBytes": 10863,
+    "manualWordTruthAvailable": false
+  },
+  {
+    "id": "b-track-47",
+    "audioSha256": "0cd862f3ebf2907d0ed6ac15a2f9728c6fdd08a2edb2cf402e8f5f851fee15c8",
+    "sourceBytes": 2050066,
+    "immediateObservedWordsBefore": 0,
+    "immediateObservedWordsAfter": 67,
+    "restoredPhrases": 11,
+    "phoneInferenceCalls": 0,
+    "phoneAudioDecodes": 0,
+    "proofBytes": 7725,
+    "manualWordTruthAvailable": false
+  },
+  {
+    "id": "b-track-51",
+    "audioSha256": "03ef9dec1e014d24e2ce693f626930ffe3c16b81ea06e998d2dbdf8d734eab50",
+    "sourceBytes": 5481452,
+    "immediateObservedWordsBefore": 0,
+    "immediateObservedWordsAfter": 31,
+    "restoredPhrases": 5,
+    "phoneInferenceCalls": 0,
+    "phoneAudioDecodes": 0,
+    "proofBytes": 7720,
+    "manualWordTruthAvailable": false
+  },
+  {
+    "id": "b-track-53",
+    "audioSha256": "57a27f7e1412ddae404c492ed4ec20f372bdb4f379f4dc48e8867678b20d1aea",
+    "sourceBytes": 4821188,
+    "immediateObservedWordsBefore": 0,
+    "immediateObservedWordsAfter": 0,
+    "restoredPhrases": 0,
+    "phoneInferenceCalls": 0,
+    "phoneAudioDecodes": 0,
+    "proofBytes": 1558,
+    "manualWordTruthAvailable": false
+  }
+]

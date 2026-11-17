@@ -1,0 +1,19 @@
+{
+  "codeCommit": "851cb422f406416d3685c7ab844e21a691801882",
+  "baselineCommit": "a6dcabb02970a23f6b8398227d5ab7caaa911bd1",
+  "sha256": {
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+    "mix-intelligente.js": "d8ac42b1ee1bdeecdc087933ce6595ad375325420ad8aad57c83a0abf814bf50",
+    "audio-composite-core.mjs": "5544f6c9a6c2bcb4eb60873dd45ed1b4736b456848a89e74379e54678e5155cb",
+    "audio-composite-mix.js": "136629ee4f8cdc51fe539aa21649370a3d0d0adf1cecf970bc62f48b5b90b860",
+    "dj-deep-analysis.json": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
+    "audio-lyrics-align.js": "374a1c6647c0ca807512097bce96d58f9dab97a151ce3cb7a220e01cb3699e8a",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "tools/benchmark-karaoke-acoustic.mjs": "446cdafb2bdbd3e9edbab25e0fc2cbd8435218fcfe03128832d85c75de6f0a9f",
+    "tools/benchmark-karaoke-context-replay.cjs": "6722a9b8e0fb392dd1488924812bd48d6481025075a2e322c6ee1d75bee7e4f4",
+    "tools/karaoke-reference-lines.cjs": "7b76f2e86d1eec84b346fc44503e34c1c7b1117bb5b1164e375fe838a707db85",
+    "tools/build-preserved-tail-plans.cjs": "ef867a66799e07504ce8a411faf6ffab2eb587cd014347eaf807644152727663",
+    "tools/build-composite-assets.py": "77d6d042ef68ba5714cfc336c6ba1e0b1ad7239be7220957f288aae2e5669217",
+    "tools/dj-rendered-rhythm.py": "9229531747282c369bb098cdf35f4f204e959838f067ab6c3287a05dabd24e7d"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "indexEntriesChecked": 1176,
+  "prefixCounts": {
+    "app": 6,
+    "audio": 1163,
+    "mobile": 7
+  },
+  "sourceTrees": {
+    "audio": "73f8f7ea2008c0b9310e67a3e7296eb442677fc9",
+    "app": "6fe352295eab07dd64347ddca1bd2c51b75e12a0",
+    "mobile": "e3f575b3c5428f9f3a0a74d9b53865519b9be8a8"
+  },
+  "mismatches": [],
+  "unverifiedOrigins": [],
+  "note": "Git object identities against fetched repository trees, not a fresh full decoding of every original."
+}

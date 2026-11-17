@@ -428,7 +428,7 @@ test("short iPhone fade allowed only in a verified digital-silent tail",()=>{
  assert.equal(policy({...a,duration:177},b,180),null);
 });
 test("iPhone can actually start short verified silent fade",()=>{
- assert.ok(source.includes("iphoneSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration)"));
+ assert.ok(source.includes("iphoneSilentTailBridge(a,b,dur)"));
  assert.ok(source.includes("possibleSilentBridge=silentBridge||mobileSilentBridge"));
  assert.ok(source.includes("p.mobileSilentBridge?.36:1.25"));
  assert.ok(source.includes("plan.mobileSilentBridge?.25:1.25"));

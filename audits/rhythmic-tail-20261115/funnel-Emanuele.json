@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 620,
+  "profileFunnel": {
+    "Emanuele": {
+      "pairs": 383772,
+      "meterOrTempo": 155032,
+      "noCoherentInitialBars": 91887,
+      "incomingVocalOrLyric": 16319,
+      "localHarmony": 2839,
+      "noCoherentEndingBars": 117606,
+      "independentBeatFit": 71,
+      "rhythmicTailCandidates": 11,
+      "completeCandidates": 7
+    }
+  },
+  "pairConditions": {
+    "Emanuele": {
+      "bpm": 147509,
+      "voice": 16319,
+      "harmony": 2839,
+      "meterAndSpan": 2908,
+      "observedDownbeat": 1154,
+      "duration": 2506,
+      "independentBeatFit": 71,
+      "rhythmicTailCandidates": 11,
+      "affineDownbeatFit": 955,
+      "completeCandidates": 7
+    }
+  },
+  "windowExclusions": {
+    "Emanuele": {
+      "bpm": 2359579,
+      "barSpan": 2757549,
+      "observedDownbeat": 37948,
+      "affineDownbeatFit": 56103,
+      "voice": 741239,
+      "overlapDuration": 660959,
+      "harmony": 113363,
+      "meter": 50839,
+      "observedPulseAgreement": 1710,
+      "downbeatTiming": 28,
+      "observedPulseCount": 39,
+      "contourOrPulseSupport": 32
+    }
+  },
+  "windows": 2357,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Emanuele",
+    "tracks": 620,
+    "unavailableMembers": 1,
+    "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+  }
+}

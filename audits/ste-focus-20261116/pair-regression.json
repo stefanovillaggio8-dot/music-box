@@ -1,0 +1,14 @@
+{
+  "baseline": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
+  "purpose": "Full-catalog regression only; improvement statistics are personal-library scoped",
+  "analyzedPairs": 1381800,
+  "errors": [],
+  "all12ExistingFullPairsPreservedWithSameAssetAndGeometry": true,
+  "existingPartialPairsPreserved": true,
+  "newDistinctPartialPairs": [
+    "audio/songs/track-166.mp3|audio/songs/track-181.mp3"
+  ],
+  "rawAuditSha256": "ca35d01a377a51e7c9e8fa1b9cece8f9667336452cc4820d6862f86841dd0aa2",
+  "engineSha256": "28bcdd314e9a13ce2ca5cd3b18abff829bdbd34ae3d94bfb2600582e1783f08e",
+  "indexSha256": "2a6ed1d43f3d46a889fae1ac38e5fd40603c01f72ede9e5823fd1ef52959ad53"
+}

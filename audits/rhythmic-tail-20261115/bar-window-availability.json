@@ -1,0 +1,22 @@
+{
+  "Ste": {
+    "tracks": 227,
+    "withEndingBarWindows": 96,
+    "withInitialBarWindows": 143
+  },
+  "Diego": {
+    "tracks": 212,
+    "withEndingBarWindows": 121,
+    "withInitialBarWindows": 141
+  },
+  "Emanuele": {
+    "tracks": 620,
+    "withEndingBarWindows": 430,
+    "withInitialBarWindows": 406
+  },
+  "Gym": {
+    "tracks": 24,
+    "withEndingBarWindows": 11,
+    "withInitialBarWindows": 21
+  }
+}

@@ -1,0 +1,72 @@
+✔ actual Diego shuffle preserves a fresh certified follower without calling its current natural change a beatmatch (476.6253ms)
+✔ reservation cannot survive a predecessor removed from the latest fresh pool (538.51ms)
+✔ reservation respects manual and user-reordered queues (846.3507ms)
+✔ new local lyrics veto a future partner whose acoustic handoff no longer passes (360.6006ms)
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '3.2', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '3.4', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: groove reale affine, passaggio prudente { outgoing: 1, incoming: 3, fade: null, checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: groove reale affine, passaggio prudente { outgoing: 1, incoming: 3, fade: null, checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '4.3', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: beat verificato in libreria { outgoing: 1, incoming: 3, fade: '3.2', checked: 2, available: 2 }
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 2 brani affini, 2 ritmi compatibili, 2 ordini ritmici su 2 analizzati. brano in coda gia simile per BPM, groove e note
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 2 brani affini, 2 ritmi compatibili, 2 ordini ritmici su 3 analizzati. brano in coda gia simile per BPM, groove e note
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '4.2', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: note e groove affini { outgoing: 1, incoming: 3, fade: null, checked: 2, available: 2 }
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 1 brani affini, 1 ritmi compatibili, 1 ordini ritmici su 2 analizzati. brano in coda gia simile per BPM, groove e note
+[Music Box DJ] Scelta automatica: note e groove affini { outgoing: 1, incoming: 3, fade: null, checked: 2, available: 2 }
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 1 brani affini, 1 ritmi compatibili, 1 ordini ritmici su 2 analizzati. brano in coda gia simile per BPM, groove e note
+[Music Box DJ] Scelta automatica: note e groove affini { outgoing: 1, incoming: 3, fade: null, checked: 2, available: 2 }
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 0 brani affini, 0 ritmi compatibili, 0 ordini ritmici su 2 analizzati. nessuna sovrapposizione o sequenza affidabile nei brani analizzati · filtro: nessun BPM compatibile col brano in uscita
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 0 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 0 brani affini, 1 ritmi compatibili, 1 ordini ritmici su 2 analizzati. nessuna sovrapposizione o sequenza affidabile nei brani analizzati · filtro: groove vicino, ma note e frasi non compatibili
+[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile { outgoing: 1, incoming: 3, fade: '1.6', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile { outgoing: 1, incoming: 3, fade: '1.6', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '5.0', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: beat verificato in libreria { outgoing: 1, incoming: 3, fade: '3.0', checked: 1, available: 2 }
+[Music Box DJ] Scelta automatica: beat verificato in libreria { outgoing: 1, incoming: 3, fade: '3.1', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: beat verificato in libreria { outgoing: 1, incoming: 3, fade: '6.0', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: note e groove affini { outgoing: 1, incoming: 3, fade: '6.0', checked: 2, available: 2 }
+[Music Box DJ] Scelta automatica: rilascio quieto verificato { outgoing: 1, incoming: 3, fade: '4.0', checked: 3, available: 3 }
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 2 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 3 brani affini, 3 ritmi compatibili, 3 ordini ritmici su 3 analizzati. brano in coda compatibile con una sfumatura quieta
+[Music Box DJ] Ricerca beat in libreria: 0 beat verificati, 0 ingressi ritmici cauti, 2 sfumature, 0 attacchi sul colpo finale, 0 raccordi su finale concluso, 0 raccordi neutri filtrati, 2 brani affini, 2 ritmi compatibili, 2 ordini ritmici su 2 analizzati. brano in coda compatibile con una sfumatura quieta
+✔ Spotify-style safe soft fades prefer matching key, notes and BPM over a longer unrelated fade (33.7716ms)
+✔ incompatible chords cannot blend merely because the outro is quiet (36.4422ms)
+✔ rhythm-only shuffle can pick a better successor but never certify a beat overlap (26.4164ms)
+✔ protected musical endings may reorder automatic shuffle but remain uncut (1.5792ms)
+✔ a manually curated queue never gets rhythm-order automatic overrides (7.8749ms)
+✔ safe soft musical ranking does not change manually ordered queues (55.2655ms)
+✔ selects a certified musical fade instead of a random next song when beat matches are absent (11.0935ms)
+✔ verified beat always outranks soft fallback regardless of its fade length (1.8291ms)
+✔ never select a soft fade if a late vocal overlaps the proposed join (5.5009ms)
+✔ reject quiet next intros and uncertified audio tails (2.7178ms)
+✔ do not reorder a manually managed queue (0.8131ms)
+✔ honest diagnostics preserve near-rhythm counts without labelling a fade as beat (1.5894ms)
+✔ a final instrumental beat bridge requires a genuinely complete vocal scan (9.5945ms)
+✔ voice completion rearms a previously locked shuffle search exactly when safe (1.5084ms)
+✔ late full-audio index invalidates stale DJ picks and resets exhausted retries (5.0027ms)
+✔ if no overlap can be certified, sequence only strongly matched tempo, drums and key (35.9612ms)
+✔ a near-rhythm match never claims to be a beat overlap (11.0186ms)
+✔ vocal-verified short beat join accepts strong drums and compatible key without inventing an unscanned voice (0.9196ms)
+✔ a measured rhythm and chord-boundary match can be queued without a certain Camelot label (0.6982ms)
+✔ a large BPM mismatch is not allowed to masquerade as a verified DJ bridge (8.3654ms)
+✔ when no certified beat/soft/strict harmonic match exists, choose a measured rhythm-only sequence (7.553ms)
+✔ a weak boundary or uncertain BPM must not manufacture an audio beat mix (1.7716ms)
+✔ shuffle analysis yields between chunks on iPhone and rechecks playback generation (0.3976ms)
+✔ rhythm-only resemblance is diagnostic, not a DJ mix (21.1998ms)
+✔ real audible DJ transitions outrank similarity-only queue candidates (0.3682ms)
+✔ measured final postlude chooses audible next song, not faint random intro (5.023ms)
+✔ unmeasured flat transients cannot be advertised as a final-impact beatmix (2.6437ms)
+✔ auto shuffle searches safe neutral fade across new songs even if none has a beat cue (18.2315ms)
+✔ Smart Mix skips identical MP3 blobs across app/mobile libraries (16.4704ms)
+✔ two different MP3 blobs remain separately eligible even with near-identical BPM (0.79ms)
+✔ a certified internal PCM entry survives a weak file intro and enters the complete beat tier (43.0833ms)
+✔ partial structural rhythms remain a separate shuffle tier and never become full beat candidates (9.9652ms)
+✔ a safe same-tier successor can prepare a verified fresh continuation without claiming a current beat (16.4282ms)
+✔ future certification cannot escape scope, skip an incoming verse or change a manual queue (14.9774ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3838.0307

@@ -60,7 +60,8 @@ function build(index,lyrics,karaoke){
     lastLyricAt:Math.min(duration,Math.round((rawLast+6)*1000)/1000),
     firstLrcAt:Math.round(rawFirst*1000)/1000,
     lastLrcAt:Math.round(rawLast*1000)/1000,
-    lineCount:lines.length,provenance:"existing-synced-lrc-not-vocal-model"};
+    lineCount:lines.length,starts:lines.map(row=>row.t).filter(t=>t<=duration+.1),
+    provenance:"existing-synced-lrc-not-vocal-model"};
    if(entries[sha]){stats.duplicates++;continue;}
    entries[sha]=item;stats.mapped++;
   }

@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 227,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 51292,
+      "meterOrTempo": 12180,
+      "noCoherentInitialBars": 8034,
+      "incomingVocalOrLyric": 1163,
+      "localHarmony": 305,
+      "noCoherentEndingBars": 29598,
+      "independentBeatFit": 12
+    }
+  },
+  "pairConditions": {
+    "Ste": {
+      "bpm": 10825,
+      "meterAndSpan": 967,
+      "voice": 1163,
+      "harmony": 305,
+      "duration": 193,
+      "observedDownbeat": 57,
+      "affineDownbeatFit": 138,
+      "independentBeatFit": 12
+    }
+  },
+  "windowExclusions": {
+    "Ste": {
+      "bpm": 151358,
+      "barSpan": 171638,
+      "meter": 14688,
+      "voice": 45138,
+      "overlapDuration": 44290,
+      "affineDownbeatFit": 4328,
+      "harmony": 10619,
+      "observedDownbeat": 1340,
+      "observedPulseAgreement": 291
+    }
+  },
+  "plans": [],
+  "windows": 291,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Ste",
+    "tracks": 227,
+    "unavailableMembers": 0,
+    "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+  }
+}

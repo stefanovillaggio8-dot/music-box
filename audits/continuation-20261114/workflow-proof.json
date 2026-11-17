@@ -1,0 +1,106 @@
+[
+  {
+    "conclusion": "success",
+    "databaseId": 43638019443,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638019443",
+    "workflowName": "Music Box - exhaustive Mixa pair audit"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638016833,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638016833",
+    "workflowName": "Immersive Mode Chromium layout and controls"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638014134,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638014134",
+    "workflowName": "Desktop DJ Chromium playback smoke"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638010886,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638010886",
+    "workflowName": "iPhone DJ WebKit foreground smoke"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638008118,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638008118",
+    "workflowName": "Volume precision tests"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638008135,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638008135",
+    "workflowName": "Karaoke and DJ regression checks"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638008176,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638008176",
+    "workflowName": "DJ Mix regression tests"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638008160,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638008160",
+    "workflowName": "Music Box DJ independent raw-audio audit"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43638008133,
+    "headSha": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43638008133",
+    "workflowName": "Common PCM mix Chromium and WebKit playback"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43631815741,
+    "headSha": "9335e22c2b09b7261b97395ac96c11767fd979a8",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43631815741",
+    "workflowName": "Music Box title display and original metadata regression"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43560889412,
+    "headSha": "365318dca6adaee94a2600b10475eb73c1c271d8",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43560889412",
+    "workflowName": "Internal musical windows and common PCM rendering"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43533181201,
+    "headSha": "564489a713a417c3cb0a19d4c409272236b232ca",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533181201",
+    "workflowName": "Full transition PCM feature extraction"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 43533177128,
+    "headSha": "564489a713a417c3cb0a19d4c409272236b232ca",
+    "status": "completed",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533177128",
+    "workflowName": "Music Box - Audit indipendente audio reale DJ"
+  }
+]

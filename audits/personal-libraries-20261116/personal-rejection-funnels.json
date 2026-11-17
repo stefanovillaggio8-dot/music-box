@@ -1,0 +1,270 @@
+{
+  "Ste": {
+    "profileFunnel": {
+      "before": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12180,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1163,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "after": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12180,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1163,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      }
+    },
+    "pairConditions": {
+      "before": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "voice": 1163,
+          "harmony": 305,
+          "duration": 193,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "after": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "voice": 1163,
+          "harmony": 305,
+          "duration": 193,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      }
+    },
+    "windowExclusions": {
+      "before": {
+        "Ste": {
+          "bpm": 151358,
+          "barSpan": 171638,
+          "meter": 14688,
+          "voice": 45138,
+          "overlapDuration": 44290,
+          "affineDownbeatFit": 4328,
+          "harmony": 10619,
+          "observedDownbeat": 1340,
+          "observedPulseAgreement": 143
+        }
+      },
+      "after": {
+        "Ste": {
+          "bpm": 151358,
+          "barSpan": 171638,
+          "meter": 14688,
+          "voice": 45138,
+          "overlapDuration": 44290,
+          "affineDownbeatFit": 4328,
+          "harmony": 10619,
+          "observedDownbeat": 1340,
+          "observedPulseAgreement": 143
+        }
+      }
+    }
+  },
+  "Diego": {
+    "profileFunnel": {
+      "before": {
+        "Diego": {
+          "pairs": 44732,
+          "noCoherentEndingBars": 19201,
+          "meterOrTempo": 15312,
+          "noCoherentInitialBars": 8555,
+          "localHarmony": 207,
+          "incomingVocalOrLyric": 1454,
+          "completeCandidates": 2,
+          "independentBeatFit": 1
+        }
+      },
+      "after": {
+        "Diego": {
+          "pairs": 44732,
+          "noCoherentEndingBars": 19201,
+          "meterOrTempo": 15312,
+          "noCoherentInitialBars": 8555,
+          "localHarmony": 207,
+          "incomingVocalOrLyric": 1454,
+          "completeCandidates": 2,
+          "independentBeatFit": 1
+        }
+      }
+    },
+    "pairConditions": {
+      "before": {
+        "Diego": {
+          "bpm": 14011,
+          "harmony": 207,
+          "voice": 1454,
+          "meterAndSpan": 849,
+          "observedDownbeat": 91,
+          "duration": 255,
+          "affineDownbeatFit": 106,
+          "completeCandidates": 2,
+          "independentBeatFit": 1
+        }
+      },
+      "after": {
+        "Diego": {
+          "bpm": 14011,
+          "harmony": 207,
+          "voice": 1454,
+          "meterAndSpan": 849,
+          "observedDownbeat": 91,
+          "duration": 255,
+          "affineDownbeatFit": 106,
+          "completeCandidates": 2,
+          "independentBeatFit": 1
+        }
+      }
+    },
+    "windowExclusions": {
+      "before": {
+        "Diego": {
+          "bpm": 202183,
+          "barSpan": 218363,
+          "harmony": 5658,
+          "affineDownbeatFit": 3489,
+          "overlapDuration": 42995,
+          "voice": 47430,
+          "meter": 14225,
+          "observedDownbeat": 1742,
+          "downbeatTiming": 3,
+          "observedPulseAgreement": 57,
+          "contourOrPulseSupport": 6
+        }
+      },
+      "after": {
+        "Diego": {
+          "bpm": 202183,
+          "barSpan": 218363,
+          "harmony": 5658,
+          "affineDownbeatFit": 3489,
+          "overlapDuration": 42995,
+          "voice": 47430,
+          "meter": 14225,
+          "observedDownbeat": 1742,
+          "downbeatTiming": 3,
+          "observedPulseAgreement": 57,
+          "contourOrPulseSupport": 6
+        }
+      }
+    }
+  },
+  "Emanuele": {
+    "profileFunnel": {
+      "before": {
+        "Emanuele": {
+          "pairs": 383772,
+          "meterOrTempo": 155032,
+          "noCoherentInitialBars": 91887,
+          "incomingVocalOrLyric": 16319,
+          "localHarmony": 2839,
+          "noCoherentEndingBars": 117606,
+          "independentBeatFit": 71,
+          "rhythmicTailCandidates": 11,
+          "completeCandidates": 7
+        }
+      },
+      "after": {
+        "Emanuele": {
+          "pairs": 383772,
+          "meterOrTempo": 155032,
+          "noCoherentInitialBars": 91887,
+          "incomingVocalOrLyric": 16319,
+          "localHarmony": 2839,
+          "noCoherentEndingBars": 117606,
+          "independentBeatFit": 71,
+          "rhythmicTailCandidates": 11,
+          "completeCandidates": 7
+        }
+      }
+    },
+    "pairConditions": {
+      "before": {
+        "Emanuele": {
+          "bpm": 147509,
+          "voice": 16319,
+          "harmony": 2839,
+          "meterAndSpan": 2908,
+          "observedDownbeat": 1154,
+          "duration": 2506,
+          "independentBeatFit": 71,
+          "rhythmicTailCandidates": 11,
+          "affineDownbeatFit": 955,
+          "completeCandidates": 7
+        }
+      },
+      "after": {
+        "Emanuele": {
+          "bpm": 147509,
+          "voice": 16319,
+          "harmony": 2839,
+          "meterAndSpan": 2908,
+          "observedDownbeat": 1154,
+          "duration": 2506,
+          "independentBeatFit": 71,
+          "rhythmicTailCandidates": 11,
+          "affineDownbeatFit": 955,
+          "completeCandidates": 7
+        }
+      }
+    },
+    "windowExclusions": {
+      "before": {
+        "Emanuele": {
+          "bpm": 2359579,
+          "barSpan": 2757549,
+          "observedDownbeat": 37948,
+          "affineDownbeatFit": 56103,
+          "voice": 741239,
+          "overlapDuration": 660959,
+          "harmony": 113363,
+          "meter": 50839,
+          "observedPulseAgreement": 1710,
+          "downbeatTiming": 28,
+          "observedPulseCount": 39,
+          "contourOrPulseSupport": 32
+        }
+      },
+      "after": {
+        "Emanuele": {
+          "bpm": 2359579,
+          "barSpan": 2757549,
+          "observedDownbeat": 37948,
+          "affineDownbeatFit": 56103,
+          "voice": 741239,
+          "overlapDuration": 660959,
+          "harmony": 113363,
+          "meter": 50839,
+          "observedPulseAgreement": 1710,
+          "downbeatTiming": 28,
+          "observedPulseCount": 39,
+          "contourOrPulseSupport": 32
+        }
+      }
+    }
+  }
+}

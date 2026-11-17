@@ -1,0 +1,29 @@
+{
+  "codeCommit": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+  "localFull": {
+    "pass": 642,
+    "fail": 0
+  },
+  "remoteWebKitFull": {
+    "pass": 642,
+    "fail": 0,
+    "run": 43638010886
+  },
+  "remoteDJ": {
+    "pass": 579,
+    "fail": 0,
+    "run": 43638008176
+  },
+  "pythonStructure": {
+    "pass": 8,
+    "fail": 0
+  },
+  "commonAndStorageBrowsersRun": 43638008133,
+  "physicalIPhone": false,
+  "historicalStorageFixtureFailures": [
+    43632635122,
+    43633426867
+  ],
+  "fixtureDiagnosis": "Linux ephemeral WebKit failed during initial Blob seeding, before inventory; isolated persistent profile passed both engines without removing preservation assertions.",
+  "deliberateCandidateRejectionsAreNotPlayerRegressions": true
+}

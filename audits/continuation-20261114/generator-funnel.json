@@ -1,0 +1,31 @@
+{
+  "Diego": {
+    "pairs": 47294,
+    "noCoherentEndingBars": 20177,
+    "meterOrTempo": 16237,
+    "noCoherentInitialBars": 9205,
+    "localHarmony": 159,
+    "incomingVocalOrLyric": 1513,
+    "completeCandidates": 2,
+    "independentBeatFit": 1
+  },
+  "Ste": {
+    "pairs": 75292,
+    "noCoherentEndingBars": 43257,
+    "noCoherentInitialBars": 10615,
+    "meterOrTempo": 19598,
+    "localHarmony": 364,
+    "incomingVocalOrLyric": 1443,
+    "independentBeatFit": 15
+  },
+  "Emanuele": {
+    "pairs": 383772,
+    "meterOrTempo": 155499,
+    "noCoherentInitialBars": 91887,
+    "incomingVocalOrLyric": 16547,
+    "localHarmony": 2168,
+    "noCoherentEndingBars": 117606,
+    "independentBeatFit": 60,
+    "completeCandidates": 5
+  }
+}

@@ -1,0 +1,4097 @@
+{
+  "threshold": 0.0001,
+  "measuredStereoRates": [
+    44100,
+    48000
+  ],
+  "maximumDecodedPrefixSeconds": 4,
+  "notSemanticSilenceAnnotations": true,
+  "tracks": [
+    {
+      "key": "audio/songs/track-2.mp3",
+      "sourceSha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9",
+      "sourceSha256": "f1831629fc52e22c71e4fa71b96b350bed4aa792c83302ba2aa7c5927240fa4a",
+      "rates": {
+        "44100": {
+          "through": 0.1019501133786848,
+          "frames": 4496,
+          "maximumPeak": 9.532527474220842e-05
+        },
+        "48000": {
+          "through": 0.1019375,
+          "frames": 4893,
+          "maximumPeak": 9.416254033567384e-05
+        }
+      },
+      "through": 0.1019375
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+      "rates": {
+        "44100": {
+          "through": 0.3815646258503401,
+          "frames": 16827,
+          "maximumPeak": 9.578656317899004e-05
+        },
+        "48000": {
+          "through": 0.3815625,
+          "frames": 18315,
+          "maximumPeak": 9.566565131535754e-05
+        }
+      },
+      "through": 0.3815625
+    },
+    {
+      "key": "audio/songs/track-6.mp3",
+      "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "sourceSha256": "90de8a4e750d712b4fa5d404301a8255ba56ac85a1f285deb9eb855138398112",
+      "rates": {
+        "44100": {
+          "through": 0.06179138321995465,
+          "frames": 2725,
+          "maximumPeak": 8.173156675184146e-05
+        },
+        "48000": {
+          "through": 0.06179166666666667,
+          "frames": 2966,
+          "maximumPeak": 7.547832501586527e-05
+        }
+      },
+      "through": 0.06179138321995465
+    },
+    {
+      "key": "audio/songs/track-7.mp3",
+      "sourceSha": "30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+      "sourceSha256": "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4",
+      "rates": {
+        "44100": {
+          "through": 0.05759637188208617,
+          "frames": 2540,
+          "maximumPeak": 4.853918289882131e-05
+        },
+        "48000": {
+          "through": 0.057604166666666665,
+          "frames": 2765,
+          "maximumPeak": 7.625619764439762e-05
+        }
+      },
+      "through": 0.05759637188208617
+    },
+    {
+      "key": "audio/songs/track-8.mp3",
+      "sourceSha": "f3984ac6fc22355cb6ac09cb1917719e050ab4d4",
+      "sourceSha256": "423e125780e79ba478cf786115fd4f13963effe34c7bfc972a2db240dcfed556",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-9.mp3",
+      "sourceSha": "48f947b6aa3b103ce9def6537ee2d3b3f8d087ff",
+      "sourceSha256": "e3198d757200608396e47ce700b5eea8287a0c0ee01968c48cb17a4387da7684",
+      "rates": {
+        "44100": {
+          "through": 0.42696145124716556,
+          "frames": 18829,
+          "maximumPeak": 9.277943172492087e-05
+        },
+        "48000": {
+          "through": 0.42695833333333333,
+          "frames": 20494,
+          "maximumPeak": 9.188702824758366e-05
+        }
+      },
+      "through": 0.42695833333333333
+    },
+    {
+      "key": "audio/songs/track-10.mp3",
+      "sourceSha": "a5c78e75709551513f6e27b78a1ba75dce459cd0",
+      "sourceSha256": "0156dd2561ca63b33592f796cc761a1131d660aabbec101514f5084fbceb08c5",
+      "rates": {
+        "44100": {
+          "through": 0.06133786848072562,
+          "frames": 2705,
+          "maximumPeak": 4.269634519005194e-05
+        },
+        "48000": {
+          "through": 0.06133333333333333,
+          "frames": 2944,
+          "maximumPeak": 2.6026860723504797e-05
+        }
+      },
+      "through": 0.06133333333333333
+    },
+    {
+      "key": "audio/songs/track-11.mp3",
+      "sourceSha": "09aaa5809875ee187fe388bfcefbbc3f6e0f305b",
+      "sourceSha256": "2f4f9c6a6df5659065d755955fbf440260a37730c5d8632e4652bec2ea35a8e5",
+      "rates": {
+        "44100": {
+          "through": 0.09913832199546485,
+          "frames": 4372,
+          "maximumPeak": 9.1632449766621e-05
+        },
+        "48000": {
+          "through": 0.09914583333333334,
+          "frames": 4759,
+          "maximumPeak": 9.83489298960194e-05
+        }
+      },
+      "through": 0.09913832199546485
+    },
+    {
+      "key": "audio/songs/track-12.mp3",
+      "sourceSha": "0f2e4911a3e5adb663494476613de632c8fc03f3",
+      "sourceSha256": "842c96c3250e2c9b17bb7a1aa7a930ebf02c725181a04e7c2430aee371ab1fe6",
+      "rates": {
+        "44100": {
+          "through": 0.17761904761904762,
+          "frames": 7833,
+          "maximumPeak": 9.495443373452872e-05
+        },
+        "48000": {
+          "through": 0.17760416666666667,
+          "frames": 8525,
+          "maximumPeak": 9.783404675545171e-05
+        }
+      },
+      "through": 0.17760416666666667
+    },
+    {
+      "key": "audio/songs/track-13.mp3",
+      "sourceSha": "ab0890d6c9a63fb2697f904884e33eab37983f67",
+      "sourceSha256": "9956733180f19d97787c83b5d1ee192f1f5b2b5daee8538f2aab78e1bb937ff1",
+      "rates": {
+        "44100": {
+          "through": 0.11199546485260771,
+          "frames": 4939,
+          "maximumPeak": 9.893505193758756e-05
+        },
+        "48000": {
+          "through": 0.112,
+          "frames": 5376,
+          "maximumPeak": 9.883225720841438e-05
+        }
+      },
+      "through": 0.11199546485260771
+    },
+    {
+      "key": "audio/songs/track-14.mp3",
+      "sourceSha": "d973e5270bc934423305e360946041e7064ff5a2",
+      "sourceSha256": "70506edf2e26b0bc9f6062d65a1abfdfc4f58078e849dfaaa392f1411324d529",
+      "rates": {
+        "44100": {
+          "through": 0.1848299319727891,
+          "frames": 8151,
+          "maximumPeak": 9.377727838000283e-05
+        },
+        "48000": {
+          "through": 0.18483333333333332,
+          "frames": 8872,
+          "maximumPeak": 9.816561941988766e-05
+        }
+      },
+      "through": 0.1848299319727891
+    },
+    {
+      "key": "audio/songs/track-15.mp3",
+      "sourceSha": "bad95e72e4c1236e146ad5675913d057471e69be",
+      "sourceSha256": "a2e2006d4dccbff4d3186c43a02b7135a783face6a4b95b0c94e70111006ba08",
+      "rates": {
+        "44100": {
+          "through": 0.799546485260771,
+          "frames": 35260,
+          "maximumPeak": 8.453713962808251e-05
+        },
+        "48000": {
+          "through": 0.7995625,
+          "frames": 38379,
+          "maximumPeak": 9.775178477866575e-05
+        }
+      },
+      "through": 0.799546485260771
+    },
+    {
+      "key": "audio/songs/track-16.mp3",
+      "sourceSha": "1f92bca4ab5b502e319c100bc44096efa28dfba7",
+      "sourceSha256": "c81e4450f5a84c8cf574dab56967355fdcf6b3b840a30b3e2f4046d2d600d78e",
+      "rates": {
+        "44100": {
+          "through": 0.1816780045351474,
+          "frames": 8012,
+          "maximumPeak": 9.664836397860199e-05
+        },
+        "48000": {
+          "through": 0.1816875,
+          "frames": 8721,
+          "maximumPeak": 9.753092308528721e-05
+        }
+      },
+      "through": 0.1816780045351474
+    },
+    {
+      "key": "audio/songs/track-17.mp3",
+      "sourceSha": "7dbf8fd1f1a950dd9a885dae13c9446dec60e51b",
+      "sourceSha256": "21c2ad5c8ec266dc1fe7d2ad80f0db19dd58943378d56b8b9d621f674afcc846",
+      "rates": {
+        "44100": {
+          "through": 0.03575963718820862,
+          "frames": 1577,
+          "maximumPeak": 9.247177513316274e-05
+        },
+        "48000": {
+          "through": 0.03575,
+          "frames": 1716,
+          "maximumPeak": 8.415872434852645e-05
+        }
+      },
+      "through": 0.03575
+    },
+    {
+      "key": "audio/songs/track-18.mp3",
+      "sourceSha": "427dcfda67c44bb05335627ebf1ca805f6fefc44",
+      "sourceSha256": "d60433e9c5f7274e8353af1722caf7ec10295ce984adaf7453d63e0e4279b6df",
+      "rates": {
+        "44100": {
+          "through": 0.4005442176870748,
+          "frames": 17664,
+          "maximumPeak": 9.299005614593625e-05
+        },
+        "48000": {
+          "through": 0.4005416666666667,
+          "frames": 19226,
+          "maximumPeak": 9.763357957126573e-05
+        }
+      },
+      "through": 0.4005416666666667
+    },
+    {
+      "key": "audio/songs/track-19.mp3",
+      "sourceSha": "18f06e2b118d9843d22a45d88333d1ca30fd55d0",
+      "sourceSha256": "47e3fa0f575885baaf7288fa80a312f879e275e9fae632540e2fd4de52c7c53f",
+      "rates": {
+        "44100": {
+          "through": 0.27120181405895694,
+          "frames": 11960,
+          "maximumPeak": 9.456849511479959e-05
+        },
+        "48000": {
+          "through": 0.2711875,
+          "frames": 13017,
+          "maximumPeak": 8.014717604964972e-05
+        }
+      },
+      "through": 0.2711875
+    },
+    {
+      "key": "audio/songs/track-20.mp3",
+      "sourceSha": "63544f845f747320713dbac66b5209ce7c3a9c0d",
+      "sourceSha256": "28c55d6c64e154ac7319e30fadd24853c73582e27a050846a50ed6e4dcaa7415",
+      "rates": {
+        "44100": {
+          "through": 0.09789115646258503,
+          "frames": 4317,
+          "maximumPeak": 8.608250209363177e-05
+        },
+        "48000": {
+          "through": 0.09789583333333333,
+          "frames": 4699,
+          "maximumPeak": 8.908129530027509e-05
+        }
+      },
+      "through": 0.09789115646258503
+    },
+    {
+      "key": "audio/songs/track-23.mp3",
+      "sourceSha": "36031f3f1b17a0fbd88e6de9d709be3af3008e11",
+      "sourceSha256": "ddffe35d6c8f4300032906a083f13fe8e5c8c20bff655ef06223719727361d69",
+      "rates": {
+        "44100": {
+          "through": 0.23573696145124717,
+          "frames": 10396,
+          "maximumPeak": 8.63744062371552e-05
+        },
+        "48000": {
+          "through": 0.23572916666666666,
+          "frames": 11315,
+          "maximumPeak": 8.619366417406127e-05
+        }
+      },
+      "through": 0.23572916666666666
+    },
+    {
+      "key": "audio/songs/track-25.mp3",
+      "sourceSha": "f0eb4b853b9cba90fd5188e0d9ca4dfb2483e8fb",
+      "sourceSha256": "09f42759cd7dedde94e67529162d904b82eaf7a41c52d9be95026f4286ed1c12",
+      "rates": {
+        "44100": {
+          "through": 0.32904761904761903,
+          "frames": 14511,
+          "maximumPeak": 8.43192683532834e-05
+        },
+        "48000": {
+          "through": 0.3290416666666667,
+          "frames": 15794,
+          "maximumPeak": 7.845058280508965e-05
+        }
+      },
+      "through": 0.3290416666666667
+    },
+    {
+      "key": "audio/songs/track-26.mp3",
+      "sourceSha": "f0ec0a6049f8d0688f23030ef7c00907c39a44b2",
+      "sourceSha256": "75580e396adb3e7d128591e3c9a671ecf0a30802a1490642240553c429b36010",
+      "rates": {
+        "44100": {
+          "through": 0.05219954648526077,
+          "frames": 2302,
+          "maximumPeak": 9.020396100822836e-05
+        },
+        "48000": {
+          "through": 0.052208333333333336,
+          "frames": 2506,
+          "maximumPeak": 9.031625813804567e-05
+        }
+      },
+      "through": 0.05219954648526077
+    },
+    {
+      "key": "audio/songs/track-27.mp3",
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "sourceSha256": "7dac34fcdfe362bd9a3e3d93dcb9459e9397e21ff2df2749520ede9cb55d09c9",
+      "rates": {
+        "44100": {
+          "through": 0.13494331065759638,
+          "frames": 5951,
+          "maximumPeak": 8.945928129833192e-05
+        },
+        "48000": {
+          "through": 0.1353125,
+          "frames": 6495,
+          "maximumPeak": 9.521533502265811e-05
+        }
+      },
+      "through": 0.13494331065759638
+    },
+    {
+      "key": "audio/songs/track-28.mp3",
+      "sourceSha": "55be1d4bfd041ec5187bbb3c5e74d99cd51d730c",
+      "sourceSha256": "37f1bbef96c6dd6b21f2fe386b406b175fe6d86a950a5b521d095766e42f0275",
+      "rates": {
+        "44100": {
+          "through": 0.05063492063492064,
+          "frames": 2233,
+          "maximumPeak": 7.796206773491576e-05
+        },
+        "48000": {
+          "through": 0.050645833333333334,
+          "frames": 2431,
+          "maximumPeak": 7.473187724826857e-05
+        }
+      },
+      "through": 0.05063492063492064
+    },
+    {
+      "key": "audio/songs/track-29.mp3",
+      "sourceSha": "a1d867c940efda354c4a8da7b5a6a35ab44c49bd",
+      "sourceSha256": "36a91d17cbec2ad7a7d7d878dae3843dfe8d498750b947d1d7f343c31a27333f",
+      "rates": {
+        "44100": {
+          "through": 0.049954648526077096,
+          "frames": 2203,
+          "maximumPeak": 8.276650623884052e-05
+        },
+        "48000": {
+          "through": 0.049958333333333334,
+          "frames": 2398,
+          "maximumPeak": 7.589286542497575e-05
+        }
+      },
+      "through": 0.049954648526077096
+    },
+    {
+      "key": "audio/songs/track-30.mp3",
+      "sourceSha": "1ebd28bcab8b1339e4c3238ce2fb793ea3fe8ed8",
+      "sourceSha256": "989fe6bec23a43560fe0ee5b2f21da9ad6762f986fa964683e322565bcdf4807",
+      "rates": {
+        "44100": {
+          "through": 0.04346938775510204,
+          "frames": 1917,
+          "maximumPeak": 9.401364513905719e-05
+        },
+        "48000": {
+          "through": 0.0439375,
+          "frames": 2109,
+          "maximumPeak": 8.707931556273252e-05
+        }
+      },
+      "through": 0.04346938775510204
+    },
+    {
+      "key": "audio/songs/track-31.mp3",
+      "sourceSha": "af103ae2e1e683c802194b27f198f499a5e38b42",
+      "sourceSha256": "da64bfdb830b195bd63368b2b792a3795b77f6c4e62ec805dae0b2f5c97dfaae",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-32.mp3",
+      "sourceSha": "e7c118559ab013f11fad1e4df57682bc19a28f6a",
+      "sourceSha256": "612354928d633267c6bbe405733446f1c18f1603553d34d410941a2832108dde",
+      "rates": {
+        "44100": {
+          "through": 0.05759637188208617,
+          "frames": 2540,
+          "maximumPeak": 9.622103243600577e-05
+        },
+        "48000": {
+          "through": 0.0543125,
+          "frames": 2607,
+          "maximumPeak": 9.721920650918037e-05
+        }
+      },
+      "through": 0.0543125
+    },
+    {
+      "key": "audio/songs/track-33.mp3",
+      "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "sourceSha256": "effa07b9ea68d0c870b5dd90fce4aac35da225cb453ba5e17bf36ee2126a2803",
+      "rates": {
+        "44100": {
+          "through": 0.05759637188208617,
+          "frames": 2540,
+          "maximumPeak": 9.622103243600577e-05
+        },
+        "48000": {
+          "through": 0.0543125,
+          "frames": 2607,
+          "maximumPeak": 9.721920650918037e-05
+        }
+      },
+      "through": 0.0543125
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "sourceSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "sourceSha256": "da7b51325b2c4ca2bc02133c7b3dba1c227494a32858abc3d0d971125831fb94",
+      "rates": {
+        "44100": {
+          "through": 0.05002267573696145,
+          "frames": 2206,
+          "maximumPeak": 8.389685535803437e-05
+        },
+        "48000": {
+          "through": 0.050020833333333334,
+          "frames": 2401,
+          "maximumPeak": 8.388105925405398e-05
+        }
+      },
+      "through": 0.050020833333333334
+    },
+    {
+      "key": "audio/songs/track-35.mp3",
+      "sourceSha": "9f3676d0031d50b30306b7fc5c6ffbecc8f559c8",
+      "sourceSha256": "880b93a9193171da01a2b5895f8bafa8b655e15e1465e6a15725424747cf1fb3",
+      "rates": {
+        "44100": {
+          "through": 0.5739909297052154,
+          "frames": 25313,
+          "maximumPeak": 9.803739521885291e-05
+        },
+        "48000": {
+          "through": 0.5736875,
+          "frames": 27537,
+          "maximumPeak": 9.294002666138113e-05
+        }
+      },
+      "through": 0.5736875
+    },
+    {
+      "key": "audio/songs/track-36.mp3",
+      "sourceSha": "454c682a80ed563e829bbac92e2b2ba1ff045548",
+      "sourceSha256": "dd7647e21a0d31ef43add5414895e903a99b89aba2062dffda7dfd568d07a4b1",
+      "rates": {
+        "44100": {
+          "through": 0.003038548752834467,
+          "frames": 134,
+          "maximumPeak": 9.751753532327712e-05
+        },
+        "48000": {
+          "through": 0.0030416666666666665,
+          "frames": 146,
+          "maximumPeak": 9.385248267790303e-05
+        }
+      },
+      "through": 0.003038548752834467
+    },
+    {
+      "key": "audio/songs/track-37.mp3",
+      "sourceSha": "b9d32bc7cf9368f409408e628f23e55d058ba28c",
+      "sourceSha256": "50c4e0399bb03d679b150e459e77c6a4aa80d7356901cbe294df8be4e6633f8e",
+      "rates": {
+        "44100": {
+          "through": 0.06621315192743764,
+          "frames": 2920,
+          "maximumPeak": 9.492298704572022e-05
+        },
+        "48000": {
+          "through": 0.06620833333333333,
+          "frames": 3178,
+          "maximumPeak": 9.530220995657146e-05
+        }
+      },
+      "through": 0.06620833333333333
+    },
+    {
+      "key": "audio/songs/track-38.mp3",
+      "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+      "sourceSha256": "746955fd371e9f31fe0c361c6dc6b73452d584de12c6986f0ebd776e1b26e8e4",
+      "rates": {
+        "44100": {
+          "through": 0.0463718820861678,
+          "frames": 2045,
+          "maximumPeak": 6.75441260682419e-05
+        },
+        "48000": {
+          "through": 0.046375,
+          "frames": 2226,
+          "maximumPeak": 9.465112088946626e-05
+        }
+      },
+      "through": 0.0463718820861678
+    },
+    {
+      "key": "audio/songs/track-39.mp3",
+      "sourceSha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd",
+      "sourceSha256": "a250e9b4e13188844aa6d4ead35ef1b52bfdc7e199538c2e85277c945e448fa4",
+      "rates": {
+        "44100": {
+          "through": 0.13120181405895692,
+          "frames": 5786,
+          "maximumPeak": 9.311260510003194e-05
+        },
+        "48000": {
+          "through": 0.1311875,
+          "frames": 6297,
+          "maximumPeak": 9.208276605932042e-05
+        }
+      },
+      "through": 0.1311875
+    },
+    {
+      "key": "audio/songs/track-40.mp3",
+      "sourceSha": "0f1ac7429eba1ab2df58bd9ccad8ae7d5429d362",
+      "sourceSha256": "484c73396771f7770633f00cc1be234756fece0c9219c4526ce90e5ecc5265c0",
+      "rates": {
+        "44100": {
+          "through": 0.06931972789115647,
+          "frames": 3057,
+          "maximumPeak": 9.251159644918516e-05
+        },
+        "48000": {
+          "through": 0.0694375,
+          "frames": 3333,
+          "maximumPeak": 9.270251030102372e-05
+        }
+      },
+      "through": 0.06931972789115647
+    },
+    {
+      "key": "audio/songs/track-41.mp3",
+      "sourceSha": "e87337b7bc6224ba2c5dc74c62ac350455d9d824",
+      "sourceSha256": "9c302cdf642876c7d382f2626ad35cbdc7b004e1010fb071fa6be06db44c51a3",
+      "rates": {
+        "44100": {
+          "through": 0.1439455782312925,
+          "frames": 6348,
+          "maximumPeak": 7.769546209601685e-05
+        },
+        "48000": {
+          "through": 0.14395833333333333,
+          "frames": 6910,
+          "maximumPeak": 8.166379120666534e-05
+        }
+      },
+      "through": 0.1439455782312925
+    },
+    {
+      "key": "audio/songs/track-43.mp3",
+      "sourceSha": "4a9ae533e508406d9500ade6caeaf9666413af63",
+      "sourceSha256": "71a07d6321e73d23e556709834bfd297009d0129079cf02834fc880bdf0d47d9",
+      "rates": {
+        "44100": {
+          "through": 0.34417233560090704,
+          "frames": 15178,
+          "maximumPeak": 9.959669841919094e-05
+        },
+        "48000": {
+          "through": 0.33139583333333333,
+          "frames": 15907,
+          "maximumPeak": 8.61916778376326e-05
+        }
+      },
+      "through": 0.33139583333333333
+    },
+    {
+      "key": "audio/songs/track-44.mp3",
+      "sourceSha": "94bd665af855fa8252bfe3439979e22775bc0dc2",
+      "sourceSha256": "5a39ea50180c7d2776c4010461e72dd06732efeb112657e13bc52411266bb72a",
+      "rates": {
+        "44100": {
+          "through": 0.3080952380952381,
+          "frames": 13587,
+          "maximumPeak": 9.952021355275065e-05
+        },
+        "48000": {
+          "through": 0.30504166666666666,
+          "frames": 14642,
+          "maximumPeak": 9.020961442729458e-05
+        }
+      },
+      "through": 0.30504166666666666
+    },
+    {
+      "key": "audio/songs/track-46.mp3",
+      "sourceSha": "e5a94fd8d85b4c3da386d83fe13b194d0067f61a",
+      "sourceSha256": "5cee93c2b21c2da7ba9af6ea1e20b6ff1839e5cb63236b87a4b3fc0955069bb5",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-47.mp3",
+      "sourceSha": "9525b94a365fa71221d8eae69f4d1fe744fea74f",
+      "sourceSha256": "0cd862f3ebf2907d0ed6ac15a2f9728c6fdd08a2edb2cf402e8f5f851fee15c8",
+      "rates": {
+        "44100": {
+          "through": 0.062448979591836734,
+          "frames": 2754,
+          "maximumPeak": 8.142361184582114e-05
+        },
+        "48000": {
+          "through": 0.06245833333333333,
+          "frames": 2998,
+          "maximumPeak": 8.959000842878595e-05
+        }
+      },
+      "through": 0.062448979591836734
+    },
+    {
+      "key": "audio/songs/track-48.mp3",
+      "sourceSha": "a77162334802ca64537543dc517a9c369495a187",
+      "sourceSha256": "09a2c57f1971d2f6f664a4841b44f951a6400ddcc0a90546451c404e0152a774",
+      "rates": {
+        "44100": {
+          "through": 0.09485260770975057,
+          "frames": 4183,
+          "maximumPeak": 8.240315946750343e-05
+        },
+        "48000": {
+          "through": 0.09485416666666667,
+          "frames": 4553,
+          "maximumPeak": 7.134670886443928e-05
+        }
+      },
+      "through": 0.09485260770975057
+    },
+    {
+      "key": "audio/songs/track-49.mp3",
+      "sourceSha": "db545d9e16290dc62f08773eb90dd9e23b073257",
+      "sourceSha256": "3b918655c50293d68844866045f97d5c37f06156bf297245f6eb9dc8a9683cd8",
+      "rates": {
+        "44100": {
+          "through": 0.1321768707482993,
+          "frames": 5829,
+          "maximumPeak": 8.773809531703591e-05
+        },
+        "48000": {
+          "through": 0.13216666666666665,
+          "frames": 6344,
+          "maximumPeak": 7.948659913381562e-05
+        }
+      },
+      "through": 0.13216666666666665
+    },
+    {
+      "key": "audio/songs/track-50.mp3",
+      "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+      "sourceSha256": "7d2aed4b128d3e26c9e7e8db63b01af2a494b0c065523dd450a23446d676b73e",
+      "rates": {
+        "44100": {
+          "through": 0.026485260770975058,
+          "frames": 1168,
+          "maximumPeak": 9.631954890210181e-05
+        },
+        "48000": {
+          "through": 0.026479166666666668,
+          "frames": 1271,
+          "maximumPeak": 9.844769374467432e-05
+        }
+      },
+      "through": 0.026479166666666668
+    },
+    {
+      "key": "audio/songs/track-69.mp3",
+      "sourceSha": "fe400c4a1cd59f8856e602594951825d82ee544a",
+      "sourceSha256": "11ebf40425ad36ee2efb910445c93b779720b0328def7dc9a85ebfca1740653d",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-76.mp3",
+      "sourceSha": "3c5b4d691de357ded16372651e5c64de4f4b3b62",
+      "sourceSha256": "e3ab169a3b943c757963f62950dfc70b70af5326a493685a4f5f5997b5063b44",
+      "rates": {
+        "44100": {
+          "through": 0.021315192743764172,
+          "frames": 940,
+          "maximumPeak": 9.257174679078162e-05
+        },
+        "48000": {
+          "through": 0.021333333333333333,
+          "frames": 1024,
+          "maximumPeak": 9.930803207680583e-05
+        }
+      },
+      "through": 0.021315192743764172
+    },
+    {
+      "key": "audio/songs/track-72.mp3",
+      "sourceSha": "5e9c8850891b2e4679bd829432b403c9c10b3d25",
+      "sourceSha256": "5db3063c287df497dea64d4bd687ccd4a94fb020f0ddc3fa602bf118e52545cf",
+      "rates": {
+        "44100": {
+          "through": 0.09852607709750567,
+          "frames": 4345,
+          "maximumPeak": 9.286810382036492e-05
+        },
+        "48000": {
+          "through": 0.09852083333333334,
+          "frames": 4729,
+          "maximumPeak": 9.14329502847977e-05
+        }
+      },
+      "through": 0.09852083333333334
+    },
+    {
+      "key": "audio/songs/track-68.mp3",
+      "sourceSha": "d0c6a9e298860aa3d07403bc17ff86d90dd0344a",
+      "sourceSha256": "9d1723bd2714d1009079576a32380259adabd25d13e0ff8fc648eb1dcb74dc4d",
+      "rates": {
+        "44100": {
+          "through": 0.05759637188208617,
+          "frames": 2540,
+          "maximumPeak": 6.786211451981217e-05
+        },
+        "48000": {
+          "through": 0.057604166666666665,
+          "frames": 2765,
+          "maximumPeak": 6.415831012418494e-05
+        }
+      },
+      "through": 0.05759637188208617
+    },
+    {
+      "key": "audio/songs/track-67.mp3",
+      "sourceSha": "0ad3c969b1e7131638eadefb9382549310f4b754",
+      "sourceSha256": "3bd427358c9c0bab24f5e20de944507c970345cb4b5081f04bd2b573a8e3b6a9",
+      "rates": {
+        "44100": {
+          "through": 0.08158730158730158,
+          "frames": 3598,
+          "maximumPeak": 9.98046452878043e-05
+        },
+        "48000": {
+          "through": 0.08158333333333333,
+          "frames": 3916,
+          "maximumPeak": 9.924849291564897e-05
+        }
+      },
+      "through": 0.08158333333333333
+    },
+    {
+      "key": "audio/songs/track-73.mp3",
+      "sourceSha": "0daa38c2180ea190499be935a4fe73196e1137dc",
+      "sourceSha256": "8bc615e9dd91d37d24ce0146065ae3863f493489020bb5c511f888e221599205",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-74.mp3",
+      "sourceSha": "042ee1ed88c72616f7c074a92210037322b810e1",
+      "sourceSha256": "e40883c96082b805aa07b8e4473faeccda2837a6e14a1d0aec490a8b4d09a653",
+      "rates": {
+        "44100": {
+          "through": 0.04006802721088435,
+          "frames": 1767,
+          "maximumPeak": 8.673076808918267e-05
+        },
+        "48000": {
+          "through": 0.04008333333333333,
+          "frames": 1924,
+          "maximumPeak": 9.950466483132914e-05
+        }
+      },
+      "through": 0.04006802721088435
+    },
+    {
+      "key": "audio/songs/track-75.mp3",
+      "sourceSha": "dc891d30e83c58c9ed6e4f91489d1fd59f83dcf3",
+      "sourceSha256": "15d071acef32fc0410dba18e8d21124248bfaccb93aeb69e2da39a7c77962e60",
+      "rates": {
+        "44100": {
+          "through": 0.18419501133786848,
+          "frames": 8123,
+          "maximumPeak": 9.615314047550783e-05
+        },
+        "48000": {
+          "through": 0.1841875,
+          "frames": 8841,
+          "maximumPeak": 9.331359615316615e-05
+        }
+      },
+      "through": 0.1841875
+    },
+    {
+      "key": "audio/songs/track-77.mp3",
+      "sourceSha": "2dce22797c624f1875a46b24accc35caec0d0c88",
+      "sourceSha256": "5c28b64b6817686ab73a465437e7aca771aab723ee5751b6608857369882eff0",
+      "rates": {
+        "44100": {
+          "through": 0.00013605442176870748,
+          "frames": 6,
+          "maximumPeak": 6.958140147617087e-05
+        },
+        "48000": {
+          "through": 0.000125,
+          "frames": 6,
+          "maximumPeak": 7.929624553071335e-05
+        }
+      },
+      "through": 0.000125
+    },
+    {
+      "key": "audio/songs/track-78.mp3",
+      "sourceSha": "81d7edc3bc8b0918be83a20372493414f9941bac",
+      "sourceSha256": "db4063c3f433283536fc15b90f509f4eaec9325902621da4209a93250855eac4",
+      "rates": {
+        "44100": {
+          "through": 0.07172335600907029,
+          "frames": 3163,
+          "maximumPeak": 9.564709034748375e-05
+        },
+        "48000": {
+          "through": 0.07172916666666666,
+          "frames": 3443,
+          "maximumPeak": 9.802546992432326e-05
+        }
+      },
+      "through": 0.07172335600907029
+    },
+    {
+      "key": "audio/songs/track-79.mp3",
+      "sourceSha": "873b4620fa414409628681c56875867cb8086444",
+      "sourceSha256": "63054aceff5e235ec0cc68519d7cd0f37c0efee818f573804eab751cc340932f",
+      "rates": {
+        "44100": {
+          "through": 0.008344671201814058,
+          "frames": 368,
+          "maximumPeak": 9.26759748836048e-05
+        },
+        "48000": {
+          "through": 0.008354166666666666,
+          "frames": 401,
+          "maximumPeak": 9.956693247659132e-05
+        }
+      },
+      "through": 0.008344671201814058
+    },
+    {
+      "key": "audio/songs/track-80.mp3",
+      "sourceSha": "fe9da6716c5f88d2bdc7a7919014d67ccf690758",
+      "sourceSha256": "c22e25c56078c60e5cbd87d0440ee028be416ce8278a7ada92043a9805bb361a",
+      "rates": {
+        "44100": {
+          "through": 0.3663718820861678,
+          "frames": 16157,
+          "maximumPeak": 9.741327085066587e-05
+        },
+        "48000": {
+          "through": 0.36635416666666665,
+          "frames": 17585,
+          "maximumPeak": 9.191551362164319e-05
+        }
+      },
+      "through": 0.36635416666666665
+    },
+    {
+      "key": "audio/songs/track-81.mp3",
+      "sourceSha": "c31430fb29d623598aeece149ed747042ac2308e",
+      "sourceSha256": "dd947e9ca11facea795db3a22684e8a67f76c7ea65183ddc1e5d2cf5d1fc363e",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-87.mp3",
+      "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "sourceSha256": "e2e0a4e4b0f002e3d7fab96ee15801b1dedc7b6eb18aef610b82e2cdd6b1c179",
+      "rates": {
+        "44100": {
+          "through": 0.04934240362811791,
+          "frames": 2176,
+          "maximumPeak": 7.192748307716101e-05
+        },
+        "48000": {
+          "through": 0.04933333333333333,
+          "frames": 2368,
+          "maximumPeak": 7.385163917206228e-05
+        }
+      },
+      "through": 0.04933333333333333
+    },
+    {
+      "key": "audio/songs/track-88.mp3",
+      "sourceSha": "bd0e813d2024a0b0ce46606491986aa4affb54d0",
+      "sourceSha256": "8070fc6a281a88aecd30082943dfdf24c3281a66385b719eb16fbe22080055fd",
+      "rates": {
+        "44100": {
+          "through": 0.2152154195011338,
+          "frames": 9491,
+          "maximumPeak": 7.660853589186445e-05
+        },
+        "48000": {
+          "through": 0.2151875,
+          "frames": 10329,
+          "maximumPeak": 7.777506107231602e-05
+        }
+      },
+      "through": 0.2151875
+    },
+    {
+      "key": "audio/songs/track-89.mp3",
+      "sourceSha": "a9b53cb83ca8141042567776d7f633730c865290",
+      "sourceSha256": "bd868bed47f66be3cf3a627055169f8be7f6b10b2ae1b7eebad96a29a0ab7e09",
+      "rates": {
+        "44100": {
+          "through": 0.012653061224489797,
+          "frames": 558,
+          "maximumPeak": 9.449168283026665e-05
+        },
+        "48000": {
+          "through": 0.012916666666666667,
+          "frames": 620,
+          "maximumPeak": 9.175671584671363e-05
+        }
+      },
+      "through": 0.012653061224489797
+    },
+    {
+      "key": "audio/songs/track-90.mp3",
+      "sourceSha": "e2423a49024a300a6ae5ca82c6b2ea2c97319730",
+      "sourceSha256": "fcffe46110df9f20f3e0eef76a58d9073029209571d970fafaaa4d8b7cc20a4c",
+      "rates": {
+        "44100": {
+          "through": 0.08902494331065759,
+          "frames": 3926,
+          "maximumPeak": 9.812907956074923e-05
+        },
+        "48000": {
+          "through": 0.08904166666666667,
+          "frames": 4274,
+          "maximumPeak": 9.88810570561327e-05
+        }
+      },
+      "through": 0.08902494331065759
+    },
+    {
+      "key": "audio/songs/track-92.mp3",
+      "sourceSha": "774d31faaaf43a77655956026089030faacd21ff",
+      "sourceSha256": "fc807d9f018fb99f66007f26123c41e470c807e24516f1f639fa23aab5e69a7a",
+      "rates": {
+        "44100": {
+          "through": 0.11839002267573696,
+          "frames": 5221,
+          "maximumPeak": 4.7243342123692855e-05
+        },
+        "48000": {
+          "through": 0.11875,
+          "frames": 5700,
+          "maximumPeak": 9.187232353724539e-05
+        }
+      },
+      "through": 0.11839002267573696
+    },
+    {
+      "key": "audio/songs/track-93.mp3",
+      "sourceSha": "e543e0b58e9cd3324db0333d18d24a5c7f8c9ccb",
+      "sourceSha256": "f93a143800003f42ac6d62116aa13c38525f8c14c4d60a9609c3691cf619c834",
+      "rates": {
+        "44100": {
+          "through": 0.8225850340136054,
+          "frames": 36276,
+          "maximumPeak": 9.271452290704474e-05
+        },
+        "48000": {
+          "through": 0.8225833333333333,
+          "frames": 39484,
+          "maximumPeak": 9.278854122385383e-05
+        }
+      },
+      "through": 0.8225833333333333
+    },
+    {
+      "key": "audio/songs/track-94.mp3",
+      "sourceSha": "01581b55bdd403284e5604f84a8adaea3f66e133",
+      "sourceSha256": "31a6f88bb5f6383f3f43e557dbd97ed404e051a00fef525fa8abc5fbea98cf96",
+      "rates": {
+        "44100": {
+          "through": 0.23195011337868482,
+          "frames": 10229,
+          "maximumPeak": 9.601701458450407e-05
+        },
+        "48000": {
+          "through": 0.23195833333333332,
+          "frames": 11134,
+          "maximumPeak": 9.441859583603218e-05
+        }
+      },
+      "through": 0.23195011337868482
+    },
+    {
+      "key": "audio/songs/track-95.mp3",
+      "sourceSha": "659bebdacaa4a6ea6a0ab5a280537f96200f5d06",
+      "sourceSha256": "77fbd64791817703b6e46495534a9c4e19d2918c161b91a5a24e2aa4242f122b",
+      "rates": {
+        "44100": {
+          "through": 0.02659863945578231,
+          "frames": 1173,
+          "maximumPeak": 9.721875539980829e-05
+        },
+        "48000": {
+          "through": 0.023916666666666666,
+          "frames": 1148,
+          "maximumPeak": 8.156442345352843e-05
+        }
+      },
+      "through": 0.023916666666666666
+    },
+    {
+      "key": "audio/songs/track-96.mp3",
+      "sourceSha": "00738c793a8901d673e9a96d783d8aabf973c8ec",
+      "sourceSha256": "8935f992e5a8b9de676e2fa47a3cacc47db42ec6e313a794bfed0a385b7d493a",
+      "rates": {
+        "44100": {
+          "through": 0.45684807256235827,
+          "frames": 20147,
+          "maximumPeak": 9.694926120573655e-05
+        },
+        "48000": {
+          "through": 0.46939583333333335,
+          "frames": 22531,
+          "maximumPeak": 9.71284753177315e-05
+        }
+      },
+      "through": 0.45684807256235827
+    },
+    {
+      "key": "audio/songs/track-97.mp3",
+      "sourceSha": "27297febddf9ef8c318048c2a7d5ec103f2ac1d3",
+      "sourceSha256": "dad91bfbbbd0f00b51595fb258f71498bd512f3da03796b6542daa402076d853",
+      "rates": {
+        "44100": {
+          "through": 0.2419047619047619,
+          "frames": 10668,
+          "maximumPeak": 9.579101606504992e-05
+        },
+        "48000": {
+          "through": 0.24189583333333334,
+          "frames": 11611,
+          "maximumPeak": 9.449132630834356e-05
+        }
+      },
+      "through": 0.24189583333333334
+    },
+    {
+      "key": "audio/songs/track-98.mp3",
+      "sourceSha": "2981cc92d82aa279f8dc87a5988cb39d514f7387",
+      "sourceSha256": "e6d29e4cc6a43ecfadd40f069f0a5f7a071c475a28c24482acc68a4f390fca99",
+      "rates": {
+        "44100": {
+          "through": 0.00022675736961451248,
+          "frames": 10,
+          "maximumPeak": 9.911142115015537e-05
+        },
+        "48000": {
+          "through": 0.00022916666666666666,
+          "frames": 11,
+          "maximumPeak": 9.268626308767125e-05
+        }
+      },
+      "through": 0.00022675736961451248
+    },
+    {
+      "key": "audio/songs/track-99.mp3",
+      "sourceSha": "7d796c1aa6550e878c96a6a0cbf119090b74ae0d",
+      "sourceSha256": "5eb9640958595b0c860f181f27994f65ba9b0dd19a840e21644aace8954815e4",
+      "rates": {
+        "44100": {
+          "through": 0.4890249433106576,
+          "frames": 21566,
+          "maximumPeak": 9.511558164376765e-05
+        },
+        "48000": {
+          "through": 0.48902083333333335,
+          "frames": 23473,
+          "maximumPeak": 9.129037061939016e-05
+        }
+      },
+      "through": 0.48902083333333335
+    },
+    {
+      "key": "audio/songs/track-100.mp3",
+      "sourceSha": "f06b5e2eead5f9dcf950d025e618bdce9b58581a",
+      "sourceSha256": "d86067b587de0a2c394619352c9a4bd1ceaa58ea21caeb763ed17d399d1d0ad9",
+      "rates": {
+        "44100": {
+          "through": 0.101859410430839,
+          "frames": 4492,
+          "maximumPeak": 9.344860154669732e-05
+        },
+        "48000": {
+          "through": 0.10185416666666666,
+          "frames": 4889,
+          "maximumPeak": 9.348698949906975e-05
+        }
+      },
+      "through": 0.10185416666666666
+    },
+    {
+      "key": "audio/songs/track-101.mp3",
+      "sourceSha": "039eaae8af9e28898e17530ad9a3dec8ef1cef96",
+      "sourceSha256": "e66767a55b7f3d82bd6917d01d2f353f289a5fe51689ff487f4937e8ad4b020d",
+      "rates": {
+        "44100": {
+          "through": 0.187437641723356,
+          "frames": 8266,
+          "maximumPeak": 7.662648567929864e-05
+        },
+        "48000": {
+          "through": 0.1874375,
+          "frames": 8997,
+          "maximumPeak": 7.521473889937624e-05
+        }
+      },
+      "through": 0.1874375
+    },
+    {
+      "key": "audio/songs/track-102.mp3",
+      "sourceSha": "a4e6c247fc00611bdba2ba286f1849da72e31c46",
+      "sourceSha256": "c29980266cc32e35d8b4de55e493db49cb288995a6d75d74d73bb30e9cc1d42a",
+      "rates": {
+        "44100": {
+          "through": 0.12839002267573696,
+          "frames": 5662,
+          "maximumPeak": 9.441524161957204e-05
+        },
+        "48000": {
+          "through": 0.12839583333333332,
+          "frames": 6163,
+          "maximumPeak": 9.607992978999391e-05
+        }
+      },
+      "through": 0.12839002267573696
+    },
+    {
+      "key": "audio/songs/track-103.mp3",
+      "sourceSha": "525e5f2928f7e80cd654a054cbc0b89ef7df3527",
+      "sourceSha256": "3502bae4fa54904d06219a7d3d917119f19cb9250262c346bd22c29a6cd60dd2",
+      "rates": {
+        "44100": {
+          "through": 0.18784580498866213,
+          "frames": 8284,
+          "maximumPeak": 9.387495083501562e-05
+        },
+        "48000": {
+          "through": 0.18783333333333332,
+          "frames": 9016,
+          "maximumPeak": 9.838765254244208e-05
+        }
+      },
+      "through": 0.18783333333333332
+    },
+    {
+      "key": "audio/songs/track-105.mp3",
+      "sourceSha": "9feb6c91df6ebb93bc7aeed556c2baccc0fc5244",
+      "sourceSha256": "955b3f1de74c1d067694ca9750f358e968612617d7378c4cd7429e8542270173",
+      "rates": {
+        "44100": {
+          "through": 0.023356009070294784,
+          "frames": 1030,
+          "maximumPeak": 8.708251698408276e-05
+        },
+        "48000": {
+          "through": 0.023354166666666665,
+          "frames": 1121,
+          "maximumPeak": 8.707700180821121e-05
+        }
+      },
+      "through": 0.023354166666666665
+    },
+    {
+      "key": "audio/songs/track-106.mp3",
+      "sourceSha": "68cddd939e84f2fde178c92c3100ab045853a8da",
+      "sourceSha256": "5cf25a6d4c2b6b8bf5b195b238638459bdf676db852185374f55737bf44ecf90",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-107.mp3",
+      "sourceSha": "6fc08d93b90c56383d489c7f6a9c6bde16c7c535",
+      "sourceSha256": "c5e2699059c0d2a015d2d18fb740636362422e59ca67c5f1479da2dc3622b3a5",
+      "rates": {
+        "44100": {
+          "through": 0.0011337868480725624,
+          "frames": 50,
+          "maximumPeak": 8.961894491221756e-05
+        },
+        "48000": {
+          "through": 0.001125,
+          "frames": 54,
+          "maximumPeak": 9.060530283022672e-05
+        }
+      },
+      "through": 0.001125
+    },
+    {
+      "key": "audio/songs/track-108.mp3",
+      "sourceSha": "11ccf0c644f24b457ec6e022368d4eeb1851e18d",
+      "sourceSha256": "b38045b780138fd2ec123cbb2c92e68e9f36b139722e23d5a5f54fad86773f19",
+      "rates": {
+        "44100": {
+          "through": 0.0015419501133786847,
+          "frames": 68,
+          "maximumPeak": 9.855834650807083e-05
+        },
+        "48000": {
+          "through": 0.0015416666666666667,
+          "frames": 74,
+          "maximumPeak": 9.866761683952063e-05
+        }
+      },
+      "through": 0.0015416666666666667
+    },
+    {
+      "key": "audio/songs/track-109.mp3",
+      "sourceSha": "64d4155408dec3a5df31f2668275b0606277ad5b",
+      "sourceSha256": "5866808940ad4422e8d6c24b095d23b65e01bc856f48adad40d859ea6d0aae09",
+      "rates": {
+        "44100": {
+          "through": 0.09287981859410431,
+          "frames": 4096,
+          "maximumPeak": 9.776016668183729e-05
+        },
+        "48000": {
+          "through": 0.09270833333333334,
+          "frames": 4450,
+          "maximumPeak": 7.861760968808085e-05
+        }
+      },
+      "through": 0.09270833333333334
+    },
+    {
+      "key": "audio/songs/track-110.mp3",
+      "sourceSha": "69106c9c7955d53b35b219698aaa9ae41219461a",
+      "sourceSha256": "7961fd7e987ccda0d1f0681f1010af0fa5aa92c38eada25b264915ee35aaffee",
+      "rates": {
+        "44100": {
+          "through": 0.514172335600907,
+          "frames": 22675,
+          "maximumPeak": 6.30892172921449e-05
+        },
+        "48000": {
+          "through": 0.5141875,
+          "frames": 24681,
+          "maximumPeak": 9.071252134162933e-05
+        }
+      },
+      "through": 0.514172335600907
+    },
+    {
+      "key": "audio/songs/track-111.mp3",
+      "sourceSha": "383cbc70b1f4bd0950ddfa7af55cab6818b1041c",
+      "sourceSha256": "8d840be5f55e161c9d582cb66b0ba70f070df5e06280e1005781875b3077f60e",
+      "rates": {
+        "44100": {
+          "through": 0.09950113378684808,
+          "frames": 4388,
+          "maximumPeak": 9.091681567952037e-05
+        },
+        "48000": {
+          "through": 0.0995,
+          "frames": 4776,
+          "maximumPeak": 9.026136831380427e-05
+        }
+      },
+      "through": 0.0995
+    },
+    {
+      "key": "audio/songs/track-112.mp3",
+      "sourceSha": "d066e73519b3f3742204ba1042781a16ee78a87b",
+      "sourceSha256": "f05f4e4da0c1f34ba100612b50f493f1cec838589b24269d3e81d95ae65fa438",
+      "rates": {
+        "44100": {
+          "through": 0.043786848072562355,
+          "frames": 1931,
+          "maximumPeak": 8.552794315619394e-05
+        },
+        "48000": {
+          "through": 0.043791666666666666,
+          "frames": 2102,
+          "maximumPeak": 8.300556510221213e-05
+        }
+      },
+      "through": 0.043786848072562355
+    },
+    {
+      "key": "audio/songs/track-113.mp3",
+      "sourceSha": "549785208dbf3d49d122f0232d8f2f2deda8cd4b",
+      "sourceSha256": "da623d1c17d1c5ffd93c34d007569aad57b429a9102c164e7dd6cb9d72d2b672",
+      "rates": {
+        "44100": {
+          "through": 0.014512471655328799,
+          "frames": 640,
+          "maximumPeak": 6.831037171650678e-05
+        },
+        "48000": {
+          "through": 0.014520833333333334,
+          "frames": 697,
+          "maximumPeak": 7.866913074394688e-05
+        }
+      },
+      "through": 0.014512471655328799
+    },
+    {
+      "key": "audio/songs/track-114.mp3",
+      "sourceSha": "e4d7f703890727df1aace2dfec3071a3a845c874",
+      "sourceSha256": "b4767656dc331b2af2f51eb78ff592b3e5781e85f199d142a90c609230573e1f",
+      "rates": {
+        "44100": {
+          "through": 0.00036281179138321996,
+          "frames": 16,
+          "maximumPeak": 8.820879156701267e-05
+        },
+        "48000": {
+          "through": 0.000625,
+          "frames": 30,
+          "maximumPeak": 9.840250277193263e-05
+        }
+      },
+      "through": 0.00036281179138321996
+    },
+    {
+      "key": "audio/songs/track-115.mp3",
+      "sourceSha": "9941e9b42640088f7be9039b9802ebd243bbbcdc",
+      "sourceSha256": "819c080124eb1a5d4da383bc26b208d6060575fa1e0e6245ad67ecca9afda6a5",
+      "rates": {
+        "44100": {
+          "through": 0.43700680272108844,
+          "frames": 19272,
+          "maximumPeak": 9.701203816803172e-05
+        },
+        "48000": {
+          "through": 0.43683333333333335,
+          "frames": 20968,
+          "maximumPeak": 9.167358803097159e-05
+        }
+      },
+      "through": 0.43683333333333335
+    },
+    {
+      "key": "audio/songs/track-116.mp3",
+      "sourceSha": "f8667c1d65807b96bcb9ebaa8d3b306a1880cd3a",
+      "sourceSha256": "aa7ec1d136ca66a4cc563e9c35d4cc209abf7e4b002dca326d1b759b6aa09bd6",
+      "rates": {
+        "44100": {
+          "through": 0.17662131519274377,
+          "frames": 7789,
+          "maximumPeak": 9.173680155072361e-05
+        },
+        "48000": {
+          "through": 0.176625,
+          "frames": 8478,
+          "maximumPeak": 9.826170571614057e-05
+        }
+      },
+      "through": 0.17662131519274377
+    },
+    {
+      "key": "audio/songs/track-117.mp3",
+      "sourceSha": "b7b41d092ddcc54330870f07406a0c7e575778d7",
+      "sourceSha256": "2ae7b82857f474d54ec731e8430f41e31c78c891b5c111474b54f63ceba8b2cb",
+      "rates": {
+        "44100": {
+          "through": 0.022811791383219954,
+          "frames": 1006,
+          "maximumPeak": 9.797041275305673e-05
+        },
+        "48000": {
+          "through": 0.0228125,
+          "frames": 1095,
+          "maximumPeak": 9.501650492893532e-05
+        }
+      },
+      "through": 0.022811791383219954
+    },
+    {
+      "key": "audio/songs/track-118.mp3",
+      "sourceSha": "2b4099d9a3845371b70fb9955f87900cb81f1e1a",
+      "sourceSha256": "a75feae7e74bbc6c69a18db62194a75d5b3a00ab0a153d98777528132817d8ee",
+      "rates": {
+        "44100": {
+          "through": 6.802721088435374e-05,
+          "frames": 3,
+          "maximumPeak": 8.517000242136419e-05
+        },
+        "48000": {
+          "through": 6.25e-05,
+          "frames": 3,
+          "maximumPeak": 9.021357982419431e-05
+        }
+      },
+      "through": 6.25e-05
+    },
+    {
+      "key": "audio/songs/track-119.mp3",
+      "sourceSha": "5816d073422ce12b48f78d93b4c4086bfdbb06b2",
+      "sourceSha256": "9eeb6b8476edb62a259f0f08f1c915116323d0170f2d92cc2f10d205d5c3a57f",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-120.mp3",
+      "sourceSha": "e9732c7a292fdb1ee66b0e37d71394a4db45f568",
+      "sourceSha256": "499dea775514dcc04d4e59903c6263fd795b60fa507378b59618ee1866635113",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-121.mp3",
+      "sourceSha": "7f1ced96c96161ac127c98de47de1d14e5a8fd17",
+      "sourceSha256": "11e081bf5d45902537142d461deb2e91b2aafc1377eba23dd5fc0abd6bddeb32",
+      "rates": {
+        "44100": {
+          "through": 0.19877551020408163,
+          "frames": 8766,
+          "maximumPeak": 9.994598076445982e-05
+        },
+        "48000": {
+          "through": 0.19877083333333334,
+          "frames": 9541,
+          "maximumPeak": 9.584852523403242e-05
+        }
+      },
+      "through": 0.19877083333333334
+    },
+    {
+      "key": "audio/songs/track-122.mp3",
+      "sourceSha": "ab7ceb5ddef38148aaa59aca414649b72410a7af",
+      "sourceSha256": "8e2db4db16cc1c7f8fbb45e97427e0ad5dab813c8d238a7d77820d5d59e453a7",
+      "rates": {
+        "44100": {
+          "through": 0.15700680272108844,
+          "frames": 6924,
+          "maximumPeak": 9.796711674425751e-05
+        },
+        "48000": {
+          "through": 0.157,
+          "frames": 7536,
+          "maximumPeak": 9.511440293863416e-05
+        }
+      },
+      "through": 0.157
+    },
+    {
+      "key": "audio/songs/track-123.mp3",
+      "sourceSha": "a704b907ba8b18fd9f44f9b6b4789072c2ef6096",
+      "sourceSha256": "4dfb4b407e0aebd04972f09b90b3213ad15acec3117b4100a082bc7c1f24f535",
+      "rates": {
+        "44100": {
+          "through": 0.250702947845805,
+          "frames": 11056,
+          "maximumPeak": 9.702902752906084e-05
+        },
+        "48000": {
+          "through": 0.2507083333333333,
+          "frames": 12034,
+          "maximumPeak": 9.85122169367969e-05
+        }
+      },
+      "through": 0.250702947845805
+    },
+    {
+      "key": "audio/songs/track-124.mp3",
+      "sourceSha": "7caf658056f0279b0d89281f43f747b7dee6f6c5",
+      "sourceSha256": "06897f24ee3403252dd32e62367fd73a1563a3444dc69f99cc78a71880b1dde8",
+      "rates": {
+        "44100": {
+          "through": 0.1790249433106576,
+          "frames": 7895,
+          "maximumPeak": 9.977197623811662e-05
+        },
+        "48000": {
+          "through": 0.179,
+          "frames": 8592,
+          "maximumPeak": 9.890905494103208e-05
+        }
+      },
+      "through": 0.179
+    },
+    {
+      "key": "audio/songs/track-125.mp3",
+      "sourceSha": "61151a4227780561af82172f43427905c6765997",
+      "sourceSha256": "38f456914c39a2fe78abefa1ba47281f1eac0825cf27535498fd18c3fc01f99b",
+      "rates": {
+        "44100": {
+          "through": 0.1497732426303855,
+          "frames": 6605,
+          "maximumPeak": 8.578241249779239e-05
+        },
+        "48000": {
+          "through": 0.14977083333333333,
+          "frames": 7189,
+          "maximumPeak": 7.989814184838906e-05
+        }
+      },
+      "through": 0.14977083333333333
+    },
+    {
+      "key": "audio/songs/track-126.mp3",
+      "sourceSha": "963a6b05ba92f3672811f38851d82329ae90efb3",
+      "sourceSha256": "7d2876b99a156448a8848a87bc981e5ac855b85488b1d49a3e317ffe64b336c8",
+      "rates": {
+        "44100": {
+          "through": 0.08326530612244898,
+          "frames": 3672,
+          "maximumPeak": 8.310616249218583e-05
+        },
+        "48000": {
+          "through": 0.08327083333333334,
+          "frames": 3997,
+          "maximumPeak": 9.494945697952062e-05
+        }
+      },
+      "through": 0.08326530612244898
+    },
+    {
+      "key": "audio/songs/track-127.mp3",
+      "sourceSha": "f2d3efc94c74d4bd971b01d8b8887e1a11594349",
+      "sourceSha256": "025809b8ffb27e02a7db96a6883a43813d89a2a24f07a0e8b62dba86f72a125b",
+      "rates": {
+        "44100": {
+          "through": 0.16707482993197278,
+          "frames": 7368,
+          "maximumPeak": 9.964402124751359e-05
+        },
+        "48000": {
+          "through": 0.16708333333333333,
+          "frames": 8020,
+          "maximumPeak": 9.911147208185866e-05
+        }
+      },
+      "through": 0.16707482993197278
+    },
+    {
+      "key": "audio/songs/track-128.mp3",
+      "sourceSha": "aa4f5f22088752922794c0545ce7514146cf8e52",
+      "sourceSha256": "c3cd6f1b472fccfbbad14e1eec0a8aa8d6ead30abc07fea969eac63dd6d3928b",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-129.mp3",
+      "sourceSha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+      "sourceSha256": "4668af8092271da64cd8f773e6957cfcd36332ba2c3e101b0fb65afb411c7f32",
+      "rates": {
+        "44100": {
+          "through": 0.48560090702947845,
+          "frames": 21415,
+          "maximumPeak": 8.738079486647621e-05
+        },
+        "48000": {
+          "through": 0.485625,
+          "frames": 23310,
+          "maximumPeak": 9.998519817600027e-05
+        }
+      },
+      "through": 0.48560090702947845
+    },
+    {
+      "key": "audio/songs/track-130.mp3",
+      "sourceSha": "d70187ce34cf6a1c239b0025ab74d4a05c271d17",
+      "sourceSha256": "78d4c02332c813c9079dd671561f1ba6594b354379c882bd2662277315455cd3",
+      "rates": {
+        "44100": {
+          "through": 0.1346938775510204,
+          "frames": 5940,
+          "maximumPeak": 9.940113523043692e-05
+        },
+        "48000": {
+          "through": 0.10995833333333334,
+          "frames": 5278,
+          "maximumPeak": 9.443181625101715e-05
+        }
+      },
+      "through": 0.10995833333333334
+    },
+    {
+      "key": "audio/songs/track-131.mp3",
+      "sourceSha": "8b0b005308fb6846e6b5bc396dfc456295bfe479",
+      "sourceSha256": "3a367a8fc0ff6c1db8da573c60bd962559764b51218dac8184cab58c0ebb5bb6",
+      "rates": {
+        "44100": {
+          "through": 0.28904761904761905,
+          "frames": 12747,
+          "maximumPeak": 8.616806007921696e-05
+        },
+        "48000": {
+          "through": 0.28904166666666664,
+          "frames": 13874,
+          "maximumPeak": 7.495454337913543e-05
+        }
+      },
+      "through": 0.28904166666666664
+    },
+    {
+      "key": "audio/songs/track-133.mp3",
+      "sourceSha": "07f26eeef656df67b773512112c9800c44fc1afa",
+      "sourceSha256": "8b32b75bb92ea66a27ddca7a788b3cb4673bb6318e60fe6fb3a8d1fb15ed58b1",
+      "rates": {
+        "44100": {
+          "through": 0.04857142857142857,
+          "frames": 2142,
+          "maximumPeak": 8.638059807708487e-05
+        },
+        "48000": {
+          "through": 0.0485625,
+          "frames": 2331,
+          "maximumPeak": 8.083533612079918e-05
+        }
+      },
+      "through": 0.0485625
+    },
+    {
+      "key": "audio/songs/track-134.mp3",
+      "sourceSha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+      "sourceSha256": "2b09edefeab5409a23c6b96b2ed7a6a91385d5a570ab0e7d0fffe85f10761641",
+      "rates": {
+        "44100": {
+          "through": 0.13054421768707483,
+          "frames": 5757,
+          "maximumPeak": 9.391260391566902e-05
+        },
+        "48000": {
+          "through": 0.13039583333333332,
+          "frames": 6259,
+          "maximumPeak": 7.547969289589673e-05
+        }
+      },
+      "through": 0.13039583333333332
+    },
+    {
+      "key": "audio/songs/track-135.mp3",
+      "sourceSha": "a074b2be7650c7f28df0d1fc592a900d4f5bc1ba",
+      "sourceSha256": "e64994c440625b47b5550178cd10176c002f3ad5b6626f97f43282862089d4ee",
+      "rates": {
+        "44100": {
+          "through": 0.015056689342403628,
+          "frames": 664,
+          "maximumPeak": 8.147547487169504e-05
+        },
+        "48000": {
+          "through": 0.0151875,
+          "frames": 729,
+          "maximumPeak": 9.752795449458063e-05
+        }
+      },
+      "through": 0.015056689342403628
+    },
+    {
+      "key": "audio/songs/track-136.mp3",
+      "sourceSha": "6de9bd5f4edcd83e40a4df9d233abafda177125f",
+      "sourceSha256": "ee022ead473f51164d00ab2012e08839cdd8186c8920ab6e46a4409090ae22e2",
+      "rates": {
+        "44100": {
+          "through": 1.2066439909297053,
+          "frames": 53213,
+          "maximumPeak": 9.360619151266292e-05
+        },
+        "48000": {
+          "through": 1.189625,
+          "frames": 57102,
+          "maximumPeak": 9.35656571527943e-05
+        }
+      },
+      "through": 1.189625
+    },
+    {
+      "key": "audio/songs/track-138.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "sourceSha256": "0b8f18300deb94c7034149e3742014e7318edd466fb8ddde84ba8ce67bc7291c",
+      "rates": {
+        "44100": {
+          "through": 0.04653061224489796,
+          "frames": 2052,
+          "maximumPeak": 8.948997856350616e-05
+        },
+        "48000": {
+          "through": 0.04654166666666667,
+          "frames": 2234,
+          "maximumPeak": 9.96090384433046e-05
+        }
+      },
+      "through": 0.04653061224489796
+    },
+    {
+      "key": "audio/songs/track-139.mp3",
+      "sourceSha": "f64795c0f406aa7d0ee4cb3ccaeda252f2b49370",
+      "sourceSha256": "b2f2bf0237d7d8ffadb308bd0b66a56f08387edb3181f9c90686f4548795d8bf",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-140.mp3",
+      "sourceSha": "d4a0e079d6fc38bfcc2b58191f4a3ed342f00969",
+      "sourceSha256": "05017896ea550a98981c0e498317923b05d36e88b8a8c21aefa6b464c684a4dd",
+      "rates": {
+        "44100": {
+          "through": 0.3770521541950113,
+          "frames": 16628,
+          "maximumPeak": 9.240816143574193e-05
+        },
+        "48000": {
+          "through": 0.37704166666666666,
+          "frames": 18098,
+          "maximumPeak": 8.879932283889502e-05
+        }
+      },
+      "through": 0.37704166666666666
+    },
+    {
+      "key": "audio/songs/track-143.mp3",
+      "sourceSha": "66310180747c213adc257e4c7bc803482a370222",
+      "sourceSha256": "b33e0d4d6ca4f49a137128bff41d208b214f47ba991f16cd7554d482fa0c7e95",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-144.mp3",
+      "sourceSha": "0ac132d2c306dc32bdcec7cf14625037d4bbe8a8",
+      "sourceSha256": "d11674aaeed778013e63e3568fb02b21ef581376fbf6ebf180485aea70dd362c",
+      "rates": {
+        "44100": {
+          "through": 0.16453514739229025,
+          "frames": 7256,
+          "maximumPeak": 9.629354462958872e-05
+        },
+        "48000": {
+          "through": 0.16454166666666667,
+          "frames": 7898,
+          "maximumPeak": 9.815324301598594e-05
+        }
+      },
+      "through": 0.16453514739229025
+    },
+    {
+      "key": "audio/songs/track-146.mp3",
+      "sourceSha": "74ea0669645e1c2b026b44eed6ef2b5ffca266d7",
+      "sourceSha256": "9b772de0413084c91e8bb11128d93e5e23df8aacef0b91746c1f8a7f1a77aea5",
+      "rates": {
+        "44100": {
+          "through": 0.07108843537414966,
+          "frames": 3135,
+          "maximumPeak": 9.674961620476097e-05
+        },
+        "48000": {
+          "through": 0.07108333333333333,
+          "frames": 3412,
+          "maximumPeak": 9.700044029159471e-05
+        }
+      },
+      "through": 0.07108333333333333
+    },
+    {
+      "key": "audio/songs/track-147.mp3",
+      "sourceSha": "67675871b80e06d8beea33796467f4dbe5661daf",
+      "sourceSha256": "ab64f1ab4e719bb310fa745955c7340a122161c9b488675e27dd81fb848b8235",
+      "rates": {
+        "44100": {
+          "through": 0.7705215419501134,
+          "frames": 33980,
+          "maximumPeak": 9.072677494259551e-05
+        },
+        "48000": {
+          "through": 0.7705208333333333,
+          "frames": 36985,
+          "maximumPeak": 9.109042002819479e-05
+        }
+      },
+      "through": 0.7705208333333333
+    },
+    {
+      "key": "audio/songs/track-148.mp3",
+      "sourceSha": "24ce93501e0e464f482ca36fe71d02a97b052662",
+      "sourceSha256": "db9cd163d25b0f51762c2137a387b3cf3fa9334a4bceefd8841480da40e07d85",
+      "rates": {
+        "44100": {
+          "through": 0.4456689342403628,
+          "frames": 19654,
+          "maximumPeak": 9.80501645244658e-05
+        },
+        "48000": {
+          "through": 0.44566666666666666,
+          "frames": 21392,
+          "maximumPeak": 8.81495579960756e-05
+        }
+      },
+      "through": 0.44566666666666666
+    },
+    {
+      "key": "audio/songs/track-149.mp3",
+      "sourceSha": "bd319d2d3817ab7ad37e5c4d487960856e50bd69",
+      "sourceSha256": "d0fdc39cf68e6cbe3174b609099cb45b93f59789b28a3a9a6704b3e9b14355eb",
+      "rates": {
+        "44100": {
+          "through": 0.004693877551020408,
+          "frames": 207,
+          "maximumPeak": 9.575615695212036e-05
+        },
+        "48000": {
+          "through": 0.0047083333333333335,
+          "frames": 226,
+          "maximumPeak": 9.966937795979902e-05
+        }
+      },
+      "through": 0.004693877551020408
+    },
+    {
+      "key": "audio/songs/track-150.mp3",
+      "sourceSha": "598f3ae12e70e7454d8ff86bb426a1554ca08b58",
+      "sourceSha256": "0f102c89bf87e708f7ce046612f3d6739f499a78cfe8f1bfaccbdab50065a0ea",
+      "rates": {
+        "44100": {
+          "through": 0.0763718820861678,
+          "frames": 3368,
+          "maximumPeak": 9.973999112844467e-05
+        },
+        "48000": {
+          "through": 0.07635416666666667,
+          "frames": 3665,
+          "maximumPeak": 9.632343426346779e-05
+        }
+      },
+      "through": 0.07635416666666667
+    },
+    {
+      "key": "audio/songs/track-152.mp3",
+      "sourceSha": "80db2cee7fab7aae44e4cc3c716cc577fff468f5",
+      "sourceSha256": "503e315eaf38807ca2af12b108b8fb0c9dceeaffd1967dbdefa2b23e47e63ae7",
+      "rates": {
+        "44100": {
+          "through": 0.7339909297052154,
+          "frames": 32369,
+          "maximumPeak": 9.7648699011188e-05
+        },
+        "48000": {
+          "through": 0.7339791666666666,
+          "frames": 35231,
+          "maximumPeak": 9.654731547925621e-05
+        }
+      },
+      "through": 0.7339791666666666
+    },
+    {
+      "key": "audio/songs/track-153.mp3",
+      "sourceSha": "9d35c5365fc24bf1149fef1cf6fb5bcbff45c238",
+      "sourceSha256": "333d38182f0f1eef851a0154cb3cc88e563389a79915e48908ff788dbda29474",
+      "rates": {
+        "44100": {
+          "through": 0.07759637188208617,
+          "frames": 3422,
+          "maximumPeak": 9.398246766068041e-05
+        },
+        "48000": {
+          "through": 0.0654375,
+          "frames": 3141,
+          "maximumPeak": 7.996202475624159e-05
+        }
+      },
+      "through": 0.0654375
+    },
+    {
+      "key": "audio/songs/track-154.mp3",
+      "sourceSha": "4dadf780ad379a9eeb1eff4f3ddf64e77b21089d",
+      "sourceSha256": "359da78e89b991487e38a77541d55e782aa79fdaf314d4905e61f7b8d2c50744",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-155.mp3",
+      "sourceSha": "858a6a691a0b46d23f83b6ca2f9145c9d30b0e31",
+      "sourceSha256": "1e6c78cdabbb37a95b40496dad1db29924c75ec9f6f238ca93f9c538292e494c",
+      "rates": {
+        "44100": {
+          "through": 0.12299319727891156,
+          "frames": 5424,
+          "maximumPeak": 9.225346730090678e-05
+        },
+        "48000": {
+          "through": 0.12214583333333333,
+          "frames": 5863,
+          "maximumPeak": 8.498271927237511e-05
+        }
+      },
+      "through": 0.12214583333333333
+    },
+    {
+      "key": "audio/songs/track-157.mp3",
+      "sourceSha": "bdb8917e4b0ccbb0c7003fca6be4d976d967985f",
+      "sourceSha256": "ca83dd4b4daff8f88b73c69f101a5fa619e570ca7a731a1a6c07028a70530f08",
+      "rates": {
+        "44100": {
+          "through": 0.0810657596371882,
+          "frames": 3575,
+          "maximumPeak": 9.259115904569626e-05
+        },
+        "48000": {
+          "through": 0.0810625,
+          "frames": 3891,
+          "maximumPeak": 9.210295684169978e-05
+        }
+      },
+      "through": 0.0810625
+    },
+    {
+      "key": "audio/songs/track-158.mp3",
+      "sourceSha": "4efbf50b9df82a550ca8eef3dc91e94b6ceca15f",
+      "sourceSha256": "796c64acb3c7d77dd6db6c9bfd74b34637297f932089855a55bfd4ba10067da2",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-159.mp3",
+      "sourceSha": "2ae54af9a0b2bc9604bfc48f667a21eef958b263",
+      "sourceSha256": "8ae54a240f393f55030c139feabe34faf468f5c722a0dacb2acbe9d947f59f8b",
+      "rates": {
+        "44100": {
+          "through": 1.6303174603174604,
+          "frames": 71897,
+          "maximumPeak": 9.770937322173268e-05
+        },
+        "48000": {
+          "through": 1.6303333333333334,
+          "frames": 78256,
+          "maximumPeak": 9.744060662342235e-05
+        }
+      },
+      "through": 1.6303174603174604
+    },
+    {
+      "key": "audio/songs/track-160.mp3",
+      "sourceSha": "9e4386e29e2571d578fbcc3a6c7c85b0a22f53b8",
+      "sourceSha256": "30173780edb8265d5e286b16902a404750cd9f0da5a040d3e8a931e9d40242fc",
+      "rates": {
+        "44100": {
+          "through": 0.23852607709750567,
+          "frames": 10519,
+          "maximumPeak": 9.510591917205602e-05
+        },
+        "48000": {
+          "through": 0.23852083333333332,
+          "frames": 11449,
+          "maximumPeak": 8.988173067336902e-05
+        }
+      },
+      "through": 0.23852083333333332
+    },
+    {
+      "key": "audio/songs/track-161.mp3",
+      "sourceSha": "183752a506f1d5f82d398c0e9ade666411bdb7dc",
+      "sourceSha256": "9b4a8aa237206bc3a5bf4b4b089ea834167fb692d943a4b64ad61c0e4935ff82",
+      "rates": {
+        "44100": {
+          "through": 1.6154195011337869,
+          "frames": 71240,
+          "maximumPeak": 9.602009959053248e-05
+        },
+        "48000": {
+          "through": 1.6154166666666667,
+          "frames": 77540,
+          "maximumPeak": 9.615386807126924e-05
+        }
+      },
+      "through": 1.6154166666666667
+    },
+    {
+      "key": "audio/songs/track-163.mp3",
+      "sourceSha": "b056f6b7df00c03b02b7b940ad2eefd360b2488b",
+      "sourceSha256": "b6f127734fe92ed11ed06d48a785247cf2da101496b8c2f36c570266bb6dd06b",
+      "rates": {
+        "44100": {
+          "through": 0.7264852607709751,
+          "frames": 32038,
+          "maximumPeak": 9.821131243370473e-05
+        },
+        "48000": {
+          "through": 0.7264791666666667,
+          "frames": 34871,
+          "maximumPeak": 8.848959987517446e-05
+        }
+      },
+      "through": 0.7264791666666667
+    },
+    {
+      "key": "audio/songs/track-164.mp3",
+      "sourceSha": "9183c3e1b318ef543594e9720becfe5ce9966687",
+      "sourceSha256": "636f03094de6fc2b2b22386b1f17c7191745c82b3835f80386c3d9e92bb6a3a3",
+      "rates": {
+        "44100": {
+          "through": 0.17943310657596373,
+          "frames": 7913,
+          "maximumPeak": 9.67831292655319e-05
+        },
+        "48000": {
+          "through": 0.11377083333333333,
+          "frames": 5461,
+          "maximumPeak": 7.61980190873146e-05
+        }
+      },
+      "through": 0.11377083333333333
+    },
+    {
+      "key": "audio/songs/track-165.mp3",
+      "sourceSha": "dc7b0e063f5a7b1fa115b163089ccd1ff254b60a",
+      "sourceSha256": "4beba5fd495389e556d089789383b2e1711d0758c5790f80e66d6f3ce7895566",
+      "rates": {
+        "44100": {
+          "through": 0.05294784580498866,
+          "frames": 2335,
+          "maximumPeak": 9.976861474569887e-05
+        },
+        "48000": {
+          "through": 0.05377083333333333,
+          "frames": 2581,
+          "maximumPeak": 9.919308649841696e-05
+        }
+      },
+      "through": 0.05294784580498866
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "sourceSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+      "sourceSha256": "d47972e1401b5681e6b62e77a9fdb4881341f8011b413a7a0ea373fb81b3c124",
+      "rates": {
+        "44100": {
+          "through": 0.405578231292517,
+          "frames": 17886,
+          "maximumPeak": 9.869084897218272e-05
+        },
+        "48000": {
+          "through": 0.40558333333333335,
+          "frames": 19468,
+          "maximumPeak": 9.194610174745321e-05
+        }
+      },
+      "through": 0.405578231292517
+    },
+    {
+      "key": "audio/songs/track-168.mp3",
+      "sourceSha": "06bf09ec29123b2220eef11e470aabde9394f588",
+      "sourceSha256": "6e755069c6904e724e43fbc3e95031e34ab88502093591d839c257881923e6ae",
+      "rates": {
+        "44100": {
+          "through": 0.3022675736961451,
+          "frames": 13330,
+          "maximumPeak": 9.592040441930294e-05
+        },
+        "48000": {
+          "through": 0.3022708333333333,
+          "frames": 14509,
+          "maximumPeak": 9.85258593573235e-05
+        }
+      },
+      "through": 0.3022675736961451
+    },
+    {
+      "key": "audio/songs/track-169.mp3",
+      "sourceSha": "c587042538abaf2c58dee2a3f7019d00ab91c8f8",
+      "sourceSha256": "a591779f95931b1fe0652c2fa20747b2f26bf7d3a4175b84778d94f2c4948a91",
+      "rates": {
+        "44100": {
+          "through": 0.05791383219954648,
+          "frames": 2554,
+          "maximumPeak": 9.735740604810417e-05
+        },
+        "48000": {
+          "through": 0.057916666666666665,
+          "frames": 2780,
+          "maximumPeak": 9.850889910012484e-05
+        }
+      },
+      "through": 0.05791383219954648
+    },
+    {
+      "key": "audio/songs/track-170.mp3",
+      "sourceSha": "7e8f71f33455fc210aadee76b9730a7103deafc5",
+      "sourceSha256": "555125ac10f7d0763a9bc70042b120984b8a1ff382fb61ff41972e0963abd85a",
+      "rates": {
+        "44100": {
+          "through": 0.15426303854875284,
+          "frames": 6803,
+          "maximumPeak": 9.833327203523368e-05
+        },
+        "48000": {
+          "through": 0.15425,
+          "frames": 7404,
+          "maximumPeak": 9.380348637932912e-05
+        }
+      },
+      "through": 0.15425
+    },
+    {
+      "key": "audio/songs/track-171.mp3",
+      "sourceSha": "8d39b302c946d5fb6d12f02dd89de1b879f6fdb2",
+      "sourceSha256": "db57bb95713438c0e1ba8562bdf3e9a1bb51a7543f3989097656bbc9455d1773",
+      "rates": {
+        "44100": {
+          "through": 0.4999546485260771,
+          "frames": 22048,
+          "maximumPeak": 9.720832895254716e-05
+        },
+        "48000": {
+          "through": 0.4999375,
+          "frames": 23997,
+          "maximumPeak": 9.374659566674381e-05
+        }
+      },
+      "through": 0.4999375
+    },
+    {
+      "key": "audio/songs/track-173.mp3",
+      "sourceSha": "4f6dc1141f79918ac03b735bf31f3ff792852604",
+      "sourceSha256": "250682bf22362bf014f07087687c14b5ed18dfd89df3b2c00aa735bbecee690e",
+      "rates": {
+        "44100": {
+          "through": 0.024081632653061225,
+          "frames": 1062,
+          "maximumPeak": 9.222752851201221e-05
+        },
+        "48000": {
+          "through": 0.024083333333333335,
+          "frames": 1156,
+          "maximumPeak": 9.188532567350194e-05
+        }
+      },
+      "through": 0.024081632653061225
+    },
+    {
+      "key": "audio/songs/track-174.mp3",
+      "sourceSha": "50f35b77c856e68bf17a2a47d11017db783f36f1",
+      "sourceSha256": "79fd1f537bc19e08c54ba1ef054de7703874b51ff02ae0f09aa6ca41f21c1691",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-175.mp3",
+      "sourceSha": "420aab813efc6b8c173cf6be162110278dc824ae",
+      "sourceSha256": "183e5b43aef78844dd40ea19c50a9c97183e279dda97d9cfeab0413383e1b56b",
+      "rates": {
+        "44100": {
+          "through": 1.023219954648526,
+          "frames": 45124,
+          "maximumPeak": 7.682158320676535e-05
+        },
+        "48000": {
+          "through": 1.0232291666666666,
+          "frames": 49115,
+          "maximumPeak": 8.04433657322079e-05
+        }
+      },
+      "through": 1.023219954648526
+    },
+    {
+      "key": "audio/songs/track-176.mp3",
+      "sourceSha": "9cf80bf014c8d1430d18192d67004297de9100e8",
+      "sourceSha256": "ee402167bc42ca41726e162029c45360b520d035e8e8d61ae0accde1418ff0dc",
+      "rates": {
+        "44100": {
+          "through": 0.2085034013605442,
+          "frames": 9195,
+          "maximumPeak": 7.518771599279717e-05
+        },
+        "48000": {
+          "through": 0.20858333333333334,
+          "frames": 10012,
+          "maximumPeak": 8.947792230173945e-05
+        }
+      },
+      "through": 0.2085034013605442
+    },
+    {
+      "key": "audio/songs/track-178.mp3",
+      "sourceSha": "a679947156c37ff7e7c832982c155ea9b1d6c53c",
+      "sourceSha256": "a9a8e7792d0793aa7d2be430b6fb811253810fc4ed2f53c6ed6748801ad20914",
+      "rates": {
+        "44100": {
+          "through": 0.5541043083900227,
+          "frames": 24436,
+          "maximumPeak": 7.893746078480035e-05
+        },
+        "48000": {
+          "through": 0.5541041666666666,
+          "frames": 26597,
+          "maximumPeak": 7.567474676761776e-05
+        }
+      },
+      "through": 0.5541041666666666
+    },
+    {
+      "key": "audio/songs/track-179.mp3",
+      "sourceSha": "a7999daeac0fc48e4da0aacc6195061baeaafe5c",
+      "sourceSha256": "653c9118e7924aa10bd4c4cf65a7c46ecd23de77d6597bc478d46c394e754eb2",
+      "rates": {
+        "44100": {
+          "through": 0.15764172335600907,
+          "frames": 6952,
+          "maximumPeak": 6.607368413824588e-05
+        },
+        "48000": {
+          "through": 0.15825,
+          "frames": 7596,
+          "maximumPeak": 9.804920409806073e-05
+        }
+      },
+      "through": 0.15764172335600907
+    },
+    {
+      "key": "audio/songs/track-180.mp3",
+      "sourceSha": "20b356b0b284676c863cbff2d4e322767782a617",
+      "sourceSha256": "3dfab1e1344fd29a75598b269e639fa74708e03da1aada615d0e5dc514fefb04",
+      "rates": {
+        "44100": {
+          "through": 0.20081632653061224,
+          "frames": 8856,
+          "maximumPeak": 9.733645856613293e-05
+        },
+        "48000": {
+          "through": 0.19985416666666667,
+          "frames": 9593,
+          "maximumPeak": 9.721025708131492e-05
+        }
+      },
+      "through": 0.19985416666666667
+    },
+    {
+      "key": "audio/songs/track-181.mp3",
+      "sourceSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "sourceSha256": "d8ce5eefee103befe7ed5afc8672c44cce4c306167766a2908192f166cb41d7f",
+      "rates": {
+        "44100": {
+          "through": 0.01834467120181406,
+          "frames": 809,
+          "maximumPeak": 8.864909614203498e-05
+        },
+        "48000": {
+          "through": 0.018375,
+          "frames": 882,
+          "maximumPeak": 8.698657620698214e-05
+        }
+      },
+      "through": 0.01834467120181406
+    },
+    {
+      "key": "audio/songs/track-182.mp3",
+      "sourceSha": "703269232a1338e4b9efa4afee36cd2fec849afe",
+      "sourceSha256": "217d968d83695e527ca9604f4d85cca527bc588e9c21c3ee2697bad79db3546d",
+      "rates": {
+        "44100": {
+          "through": 1.0269614512471654,
+          "frames": 45289,
+          "maximumPeak": 8.254104614024982e-05
+        },
+        "48000": {
+          "through": 1.0269791666666668,
+          "frames": 49295,
+          "maximumPeak": 9.973697160603479e-05
+        }
+      },
+      "through": 1.0269614512471654
+    },
+    {
+      "key": "audio/songs/track-184.mp3",
+      "sourceSha": "07816c432cf4192e67516ad002c5c63e4131bc05",
+      "sourceSha256": "21ed089aca7696dc9340af88cacf0187891c264efbf672e04d37ee82e9dbf862",
+      "rates": {
+        "44100": {
+          "through": 0.27136054421768707,
+          "frames": 11967,
+          "maximumPeak": 9.295677591580898e-05
+        },
+        "48000": {
+          "through": 0.271375,
+          "frames": 13026,
+          "maximumPeak": 9.946495265467092e-05
+        }
+      },
+      "through": 0.27136054421768707
+    },
+    {
+      "key": "audio/songs/track-185.mp3",
+      "sourceSha": "bd00d01c06cd712b0618984e7027aadde26c460a",
+      "sourceSha256": "80f6323ce4c92cebd4aa38023ff6b10617a041e058655a75d0a679ca395d6c74",
+      "rates": {
+        "44100": {
+          "through": 0.2289795918367347,
+          "frames": 10098,
+          "maximumPeak": 9.23000043258071e-05
+        },
+        "48000": {
+          "through": 0.22897916666666668,
+          "frames": 10991,
+          "maximumPeak": 9.144024807028472e-05
+        }
+      },
+      "through": 0.22897916666666668
+    },
+    {
+      "key": "audio/songs/track-187.mp3",
+      "sourceSha": "d1c31f87e34e89bc1c52140e1f343856459938a1",
+      "sourceSha256": "eb61d1e6a2660875b94efa6dddc34267f5216bb80260ec718e116715fd756f8d",
+      "rates": {
+        "44100": {
+          "through": 6.802721088435374e-05,
+          "frames": 3,
+          "maximumPeak": 9.867762855719775e-05
+        },
+        "48000": {
+          "through": 8.333333333333333e-05,
+          "frames": 4,
+          "maximumPeak": 9.965251956600696e-05
+        }
+      },
+      "through": 6.802721088435374e-05
+    },
+    {
+      "key": "audio/songs/track-188.mp3",
+      "sourceSha": "7c88d30be99ed7ea55f8832fecb715f2982879b1",
+      "sourceSha256": "bd885804f1f2eab51ae7b261482d7991c680ca25b072a29c1e9c9bdf9a741972",
+      "rates": {
+        "44100": {
+          "through": 0.1601360544217687,
+          "frames": 7062,
+          "maximumPeak": 8.93094766070135e-05
+        },
+        "48000": {
+          "through": 0.160125,
+          "frames": 7686,
+          "maximumPeak": 8.818086644168943e-05
+        }
+      },
+      "through": 0.160125
+    },
+    {
+      "key": "audio/songs/track-189.mp3",
+      "sourceSha": "600fa2ec9b1b3ce23f600e499af0d1e96e5a11f0",
+      "sourceSha256": "b452af917d08c55550f503b7b1ee35fbb04f5675c9851297dae82157d0fe8fb9",
+      "rates": {
+        "44100": {
+          "through": 0.33215419501133786,
+          "frames": 14648,
+          "maximumPeak": 9.155764564638957e-05
+        },
+        "48000": {
+          "through": 0.33216666666666667,
+          "frames": 15944,
+          "maximumPeak": 9.758373926160857e-05
+        }
+      },
+      "through": 0.33215419501133786
+    },
+    {
+      "key": "audio/songs/track-190.mp3",
+      "sourceSha": "7b699ba2b9c4c15e61fffc72252d6086796ddcda",
+      "sourceSha256": "700e3eb26347e7b21ec7190c1108998e07a903752310ae36aed541fc8e362e6b",
+      "rates": {
+        "44100": {
+          "through": 6.802721088435374e-05,
+          "frames": 3,
+          "maximumPeak": 9.478430729359388e-05
+        },
+        "48000": {
+          "through": 6.25e-05,
+          "frames": 3,
+          "maximumPeak": 9.333585330750793e-05
+        }
+      },
+      "through": 6.25e-05
+    },
+    {
+      "key": "audio/songs/track-191.mp3",
+      "sourceSha": "41654580c5b9f3d1ab5615e8ea3249a36fddd846",
+      "sourceSha256": "916b74cb7ecfb528a750e488635e54243bf95021773b79c9c68fad9fc5f7cfb0",
+      "rates": {
+        "44100": {
+          "through": 0.7446485260770975,
+          "frames": 32839,
+          "maximumPeak": 9.547355875838548e-05
+        },
+        "48000": {
+          "through": 0.7446458333333333,
+          "frames": 35743,
+          "maximumPeak": 9.663170931162313e-05
+        }
+      },
+      "through": 0.7446458333333333
+    },
+    {
+      "key": "audio/songs/track-192.mp3",
+      "sourceSha": "eaa804e20c9a1e3134c514b18344062416de52a8",
+      "sourceSha256": "3fc1a0c89d17742e0398454132476f8cf5c860daee8c6f55cf4f50704afa5dc4",
+      "rates": {
+        "44100": {
+          "through": 0.19886621315192743,
+          "frames": 8770,
+          "maximumPeak": 7.282950537046418e-05
+        },
+        "48000": {
+          "through": 0.198875,
+          "frames": 9546,
+          "maximumPeak": 7.867375097703189e-05
+        }
+      },
+      "through": 0.19886621315192743
+    },
+    {
+      "key": "audio/songs/track-193.mp3",
+      "sourceSha": "d1600f4fee84e9f04aac8d63913e4e21385005e0",
+      "sourceSha256": "ea3b42c208fd183cab9f25c0ee541d5ead9b460ad8c9f28e8cef3e7ec157f25b",
+      "rates": {
+        "44100": {
+          "through": 0.6312244897959184,
+          "frames": 27837,
+          "maximumPeak": 9.477157436776906e-05
+        },
+        "48000": {
+          "through": 0.6312083333333334,
+          "frames": 30298,
+          "maximumPeak": 9.398512338520959e-05
+        }
+      },
+      "through": 0.6312083333333334
+    },
+    {
+      "key": "audio/songs/track-194.mp3",
+      "sourceSha": "e7fd57c44877d0aa34c22393fb5a61013c92abf3",
+      "sourceSha256": "b14c1e949363f8d2bcc0e0b865368ce3284f77d82949cdd44a58e9e05686d53b",
+      "rates": {
+        "44100": {
+          "through": 0.33258503401360545,
+          "frames": 14667,
+          "maximumPeak": 8.938380051404238e-05
+        },
+        "48000": {
+          "through": 0.33258333333333334,
+          "frames": 15964,
+          "maximumPeak": 9.055230475496501e-05
+        }
+      },
+      "through": 0.33258333333333334
+    },
+    {
+      "key": "audio/songs/track-195.mp3",
+      "sourceSha": "8c73ceae7033d74ca0f2e33134989a6d4c5f5669",
+      "sourceSha256": "99a950121543e2f2b9642b2f0bc974c7088139d5ce00850576bc2e42c1ff546c",
+      "rates": {
+        "44100": {
+          "through": 0.0019047619047619048,
+          "frames": 84,
+          "maximumPeak": 8.96444107638672e-05
+        },
+        "48000": {
+          "through": 0.001875,
+          "frames": 90,
+          "maximumPeak": 9.824042354011908e-05
+        }
+      },
+      "through": 0.001875
+    },
+    {
+      "key": "audio/songs/track-196.mp3",
+      "sourceSha": "116560350f54ad970489622d28c4af63a892dc16",
+      "sourceSha256": "e370ac993a82d3793d2a3ee0f6456776a1af820ebebf249296afddc3048da32f",
+      "rates": {
+        "44100": {
+          "through": 0.5100907029478458,
+          "frames": 22495,
+          "maximumPeak": 9.592141577741131e-05
+        },
+        "48000": {
+          "through": 0.24729166666666666,
+          "frames": 11870,
+          "maximumPeak": 8.36175458971411e-05
+        }
+      },
+      "through": 0.24729166666666666
+    },
+    {
+      "key": "audio/songs/track-198.mp3",
+      "sourceSha": "098e3b83bfb24984601c910a0159be513d169e0c",
+      "sourceSha256": "2cf7e1cb84c0c6241ea378887adf314774c532eaee5e762a88670bd1dfdf3ddd",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-200.mp3",
+      "sourceSha": "4eb1f584ba88f1e24c63b2925e856b0abb20a9db",
+      "sourceSha256": "09ccbbb96ed9e6cf2b91bb1f2209712aa8fc9ef9c91c4e8929b52fe82798472e",
+      "rates": {
+        "44100": {
+          "through": 0.19480725623582767,
+          "frames": 8591,
+          "maximumPeak": 8.672360854689032e-05
+        },
+        "48000": {
+          "through": 0.1948125,
+          "frames": 9351,
+          "maximumPeak": 9.360338299302384e-05
+        }
+      },
+      "through": 0.19480725623582767
+    },
+    {
+      "key": "audio/songs/track-201.mp3",
+      "sourceSha": "368714d7e3316215dfecde56bfb12513efb47046",
+      "sourceSha256": "c35646394cd361c0b222d291c52c840d9aaa9444668f88e65ee2fa985bc1add4",
+      "rates": {
+        "44100": {
+          "through": 0.00510204081632653,
+          "frames": 225,
+          "maximumPeak": 8.937299571698532e-05
+        },
+        "48000": {
+          "through": 0.0032291666666666666,
+          "frames": 155,
+          "maximumPeak": 9.544799831928685e-05
+        }
+      },
+      "through": 0.0032291666666666666
+    },
+    {
+      "key": "audio/songs/track-203.mp3",
+      "sourceSha": "1a13220803ad51d7523a21da7beae950670e016c",
+      "sourceSha256": "2db382707a2fdc33f59ebfb429f58d4ba9b8d94ca55bc009aaa281bdc5d6d453",
+      "rates": {
+        "44100": {
+          "through": 0.1664625850340136,
+          "frames": 7341,
+          "maximumPeak": 8.163531310856342e-05
+        },
+        "48000": {
+          "through": 0.16645833333333335,
+          "frames": 7990,
+          "maximumPeak": 7.949034625198692e-05
+        }
+      },
+      "through": 0.16645833333333335
+    },
+    {
+      "key": "audio/songs/track-205.mp3",
+      "sourceSha": "611c879b4c80ba12a1a415f2225a8cea89cf1416",
+      "sourceSha256": "27ea2e3c647369415705125510815c798e31e690428822dcdc5b9f8c7dfafaa4",
+      "rates": {
+        "44100": {
+          "through": 0.05063492063492064,
+          "frames": 2233,
+          "maximumPeak": 7.796206773491576e-05
+        },
+        "48000": {
+          "through": 0.050645833333333334,
+          "frames": 2431,
+          "maximumPeak": 7.473187724826857e-05
+        }
+      },
+      "through": 0.05063492063492064
+    },
+    {
+      "key": "audio/songs/track-206.mp3",
+      "sourceSha": "592f4db9c95c76cc002683f347fa0ab675eb00b4",
+      "sourceSha256": "025faf726cf8fa3b58af3933efe2a69bf35bb6698686a6076803e0c4a55fa5f9",
+      "rates": {
+        "44100": {
+          "through": 0.12163265306122449,
+          "frames": 5364,
+          "maximumPeak": 8.701501064933836e-05
+        },
+        "48000": {
+          "through": 0.121625,
+          "frames": 5838,
+          "maximumPeak": 8.113366493489593e-05
+        }
+      },
+      "through": 0.121625
+    },
+    {
+      "key": "audio/songs/track-207.mp3",
+      "sourceSha": "d747047edd58b7725f595a9676241a5d5c624864",
+      "sourceSha256": "4b783dee1ff7a8f5ce51e33e124cdae5e6cb2ea05d3717fb395736650edb0bd8",
+      "rates": {
+        "44100": {
+          "through": 0.09206349206349207,
+          "frames": 4060,
+          "maximumPeak": 7.486807589884847e-05
+        },
+        "48000": {
+          "through": 0.0920625,
+          "frames": 4419,
+          "maximumPeak": 7.75672378949821e-05
+        }
+      },
+      "through": 0.0920625
+    },
+    {
+      "key": "audio/songs/track-208.mp3",
+      "sourceSha": "6564028b080714ee4518cc905c72b1c92e5f9d4a",
+      "sourceSha256": "4a33eacca15a6d308da21e36037d7e59464cc35918e87e43b0d54d2736923827",
+      "rates": {
+        "44100": {
+          "through": 0.19512471655328797,
+          "frames": 8605,
+          "maximumPeak": 9.2988797405269e-05
+        },
+        "48000": {
+          "through": 0.195125,
+          "frames": 9366,
+          "maximumPeak": 9.711133316159248e-05
+        }
+      },
+      "through": 0.19512471655328797
+    },
+    {
+      "key": "audio/songs/track-209.mp3",
+      "sourceSha": "c56a93a1aec44b17db556fe57de10a8d0c22d99b",
+      "sourceSha256": "6ad53d57e998528e1b4184c0355475d1623ea34dc407222d200e8d8b3fe9e97d",
+      "rates": {
+        "44100": {
+          "through": 0.1909297052154195,
+          "frames": 8420,
+          "maximumPeak": 8.932920172810555e-05
+        },
+        "48000": {
+          "through": 0.19216666666666668,
+          "frames": 9224,
+          "maximumPeak": 9.841250721365213e-05
+        }
+      },
+      "through": 0.1909297052154195
+    },
+    {
+      "key": "audio/songs/track-210.mp3",
+      "sourceSha": "e832097a514113e7328912b824fb257365fc9fdb",
+      "sourceSha256": "037672832ec5100107ba09902ccd046a131bd791ee11a3bbd6cdb3496622e575",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-211.mp3",
+      "sourceSha": "98b4cb7260908cdfb9692852785b2a358a87fdb8",
+      "sourceSha256": "b0d772864441784f8d9823ee268c76c3eaeb8c77a2594317d4936a0b7427f5a5",
+      "rates": {
+        "44100": {
+          "through": 0.12156462585034014,
+          "frames": 5361,
+          "maximumPeak": 9.314298222307116e-05
+        },
+        "48000": {
+          "through": 0.1215625,
+          "frames": 5835,
+          "maximumPeak": 9.529568342259154e-05
+        }
+      },
+      "through": 0.1215625
+    },
+    {
+      "key": "audio/songs/track-212.mp3",
+      "sourceSha": "4fd12270f7cc3acf69ac3b64a8bdcc9c19cef4e6",
+      "sourceSha256": "24f19ef29b969b9fd0d3013a374c1bac6626f9129a12c3bf7a3d3efe3d437f6e",
+      "rates": {
+        "44100": {
+          "through": 0.020430839002267574,
+          "frames": 901,
+          "maximumPeak": 9.869746281765401e-05
+        },
+        "48000": {
+          "through": 0.020416666666666666,
+          "frames": 980,
+          "maximumPeak": 9.544174099573866e-05
+        }
+      },
+      "through": 0.020416666666666666
+    },
+    {
+      "key": "audio/songs/track-213.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "sourceSha256": "427a4c2968cf0a2f1fb1abfac9d38a971675f4d282aa28aa8af18e03746ab7df",
+      "rates": {
+        "44100": {
+          "through": 0.21104308390022675,
+          "frames": 9307,
+          "maximumPeak": 9.281337406719103e-05
+        },
+        "48000": {
+          "through": 0.21104166666666666,
+          "frames": 10130,
+          "maximumPeak": 9.371920896228403e-05
+        }
+      },
+      "through": 0.21104166666666666
+    },
+    {
+      "key": "audio/songs/track-215.mp3",
+      "sourceSha": "7d7b064ba371e9cf775525b1a6110b03ae2cd92f",
+      "sourceSha256": "f0bbeba612e85f1ab0bde77c787f84d2e0d7e145fd64446b739ff2b13946a4c0",
+      "rates": {
+        "44100": {
+          "through": 4.0,
+          "frames": 176400,
+          "maximumPeak": 0.0
+        },
+        "48000": {
+          "through": 4.0,
+          "frames": 192000,
+          "maximumPeak": 0.0
+        }
+      },
+      "through": 4.0
+    },
+    {
+      "key": "audio/songs/track-216.mp3",
+      "sourceSha": "ca0d866033663d484d9a455984c34d5a00a43b06",
+      "sourceSha256": "663b63ed7f27ae81de7d324ae34edc0a327e1e724cfc3e400067bb946501063e",
+      "rates": {
+        "44100": {
+          "through": 0.00015873015873015873,
+          "frames": 7,
+          "maximumPeak": 7.114103209460154e-05
+        },
+        "48000": {
+          "through": 0.00016666666666666666,
+          "frames": 8,
+          "maximumPeak": 9.618685726309195e-05
+        }
+      },
+      "through": 0.00015873015873015873
+    },
+    {
+      "key": "audio/songs/track-217.mp3",
+      "sourceSha": "7bc2eca365b6b44a6eec418572ac8ef9445a29a7",
+      "sourceSha256": "b415648527874dc0f57755a2014f4e7133c52bf561d62fdb3c9ada47d5526a83",
+      "rates": {
+        "44100": {
+          "through": 0.11240362811791384,
+          "frames": 4957,
+          "maximumPeak": 8.585771865909919e-05
+        },
+        "48000": {
+          "through": 0.11241666666666666,
+          "frames": 5396,
+          "maximumPeak": 8.438646182185039e-05
+        }
+      },
+      "through": 0.11240362811791384
+    },
+    {
+      "key": "audio/songs/track-218.mp3",
+      "sourceSha": "9efed4dc03aad75a9e2635a3bd0636c20e7b0cbe",
+      "sourceSha256": "5b59f09a21b86e47a5ccfc87ff19c2c969e0b56386e04d0a84163ba8caac0ecb",
+      "rates": {
+        "44100": {
+          "through": 0.15480725623582767,
+          "frames": 6827,
+          "maximumPeak": 8.044276182772592e-05
+        },
+        "48000": {
+          "through": 0.1548125,
+          "frames": 7431,
+          "maximumPeak": 8.1443547969684e-05
+        }
+      },
+      "through": 0.15480725623582767
+    },
+    {
+      "key": "audio/songs/track-220.mp3",
+      "sourceSha": "6ec33e57dd42e95328ce241d35f23e3a80029373",
+      "sourceSha256": "5b988d2aef31b4a4abdd81576d808257434459081b85dda98c3e2f33d3db8c17",
+      "rates": {
+        "44100": {
+          "through": 0.15276643990929706,
+          "frames": 6737,
+          "maximumPeak": 7.001696940278634e-05
+        },
+        "48000": {
+          "through": 0.153375,
+          "frames": 7362,
+          "maximumPeak": 9.653350571170449e-05
+        }
+      },
+      "through": 0.15276643990929706
+    },
+    {
+      "key": "audio/songs/track-221.mp3",
+      "sourceSha": "aff42b6f760df3ec68e0c8d26d33b8ec1939920e",
+      "sourceSha256": "7cf6e4e11edf46459ae31782489ba509e994ab9410092fc16efaa18b689d3531",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-222.mp3",
+      "sourceSha": "d3d8636a264aa43285d61b8145b4b0082d9abbae",
+      "sourceSha256": "03e4d783ca67e2b3dc1c0e163be7994f26e6da4d27e3e3146731ce37b029e2a2",
+      "rates": {
+        "44100": {
+          "through": 0.018934240362811793,
+          "frames": 835,
+          "maximumPeak": 8.827717829262838e-05
+        },
+        "48000": {
+          "through": 0.0189375,
+          "frames": 909,
+          "maximumPeak": 9.166498784907162e-05
+        }
+      },
+      "through": 0.018934240362811793
+    },
+    {
+      "key": "audio/songs/track-224.mp3",
+      "sourceSha": "0006e5080d6188b383439a94e29390f541d9c97d",
+      "sourceSha256": "1abb881975a8bd498747ce8cb01b6f7b7b9859262bc9b89d011c0ecce4456d62",
+      "rates": {
+        "44100": {
+          "through": 0.049954648526077096,
+          "frames": 2203,
+          "maximumPeak": 8.276650623884052e-05
+        },
+        "48000": {
+          "through": 0.049958333333333334,
+          "frames": 2398,
+          "maximumPeak": 7.589286542497575e-05
+        }
+      },
+      "through": 0.049954648526077096
+    },
+    {
+      "key": "audio/songs/track-225.mp3",
+      "sourceSha": "bc33df7f05b37476d30d5de532e0fee3723aafa2",
+      "sourceSha256": "ad49846c45f8f814cb20382807edc45fd56339dd945d2ae7d83544c221b48b50",
+      "rates": {
+        "44100": {
+          "through": 0.0025170068027210884,
+          "frames": 111,
+          "maximumPeak": 9.547050285618752e-05
+        },
+        "48000": {
+          "through": 0.0025,
+          "frames": 120,
+          "maximumPeak": 8.542822615709156e-05
+        }
+      },
+      "through": 0.0025
+    },
+    {
+      "key": "audio/songs/track-226.mp3",
+      "sourceSha": "1fb9c99f6a26ab31983a46f6458933cf91d169f8",
+      "sourceSha256": "afbf0ac28d6b1101df0cae8898661e6fc7f5023783907d03c40ca55ef0eada3d",
+      "rates": {
+        "44100": {
+          "through": 0.5026757369614513,
+          "frames": 22168,
+          "maximumPeak": 8.300720219267532e-05
+        },
+        "48000": {
+          "through": 0.5026666666666667,
+          "frames": 24128,
+          "maximumPeak": 6.781354022677988e-05
+        }
+      },
+      "through": 0.5026666666666667
+    },
+    {
+      "key": "audio/songs/track-227.mp3",
+      "sourceSha": "c897a89a4542ca3bfb05849a25e492d00143fe0d",
+      "sourceSha256": "f5ac561f5059ddeda5e51186b2af0521fe0ad0fed3c380629a8d96e581654ef0",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-228.mp3",
+      "sourceSha": "40ba477eeaca5931d7d76cb7837086b80736e1eb",
+      "sourceSha256": "8c2365efa896d3c48d06997146ede4004326cd3199c3a00c51d3d04e5dffb50d",
+      "rates": {
+        "44100": {
+          "through": 2.048639455782313,
+          "frames": 90345,
+          "maximumPeak": 9.191167919198051e-05
+        },
+        "48000": {
+          "through": 2.0518541666666668,
+          "frames": 98489,
+          "maximumPeak": 9.841581777436659e-05
+        }
+      },
+      "through": 2.048639455782313
+    },
+    {
+      "key": "audio/songs/track-229.mp3",
+      "sourceSha": "e2b27dd98fa0e3c5aad761557ba3e1d502559198",
+      "sourceSha256": "a22c19ecd97055ef4568a84d75cfcb451572500d3dcdf35f23466bc2b7b229ff",
+      "rates": {
+        "44100": {
+          "through": 1.7575963718820862,
+          "frames": 77510,
+          "maximumPeak": 9.61795449256897e-05
+        },
+        "48000": {
+          "through": 1.7582916666666666,
+          "frames": 84398,
+          "maximumPeak": 9.82789060799405e-05
+        }
+      },
+      "through": 1.7575963718820862
+    },
+    {
+      "key": "audio/songs/track-230.mp3",
+      "sourceSha": "7e6260d035867e5091b3841133e2adae071f9a26",
+      "sourceSha256": "2cfa0a60e41cf4c85d030b5b3e1ea49882094f4bd07998b86724f3410a131997",
+      "rates": {
+        "44100": {
+          "through": 0.08904761904761904,
+          "frames": 3927,
+          "maximumPeak": 9.416506509296596e-05
+        },
+        "48000": {
+          "through": 0.0890625,
+          "frames": 4275,
+          "maximumPeak": 9.568697714712471e-05
+        }
+      },
+      "through": 0.08904761904761904
+    },
+    {
+      "key": "audio/songs/track-232.mp3",
+      "sourceSha": "475647f9762553fee6c1c0bdf3e8721d53c88d11",
+      "sourceSha256": "4f671994a41e14f92b0d18a71b8c4f9513c79a3fb501e182c1734b0d19d42e3e",
+      "rates": {
+        "44100": {
+          "through": 0.04705215419501134,
+          "frames": 2075,
+          "maximumPeak": 7.407303928630427e-05
+        },
+        "48000": {
+          "through": 0.04704166666666667,
+          "frames": 2258,
+          "maximumPeak": 6.210109131643549e-05
+        }
+      },
+      "through": 0.04704166666666667
+    },
+    {
+      "key": "audio/songs/track-233.mp3",
+      "sourceSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+      "sourceSha256": "73c774a11bc1550f77b3ef7efcab42c74167fc217589f5405c6b52899b2cca91",
+      "rates": {
+        "44100": {
+          "through": 0.10281179138321996,
+          "frames": 4534,
+          "maximumPeak": 8.03396396804601e-05
+        },
+        "48000": {
+          "through": 0.1028125,
+          "frames": 4935,
+          "maximumPeak": 8.820955554256216e-05
+        }
+      },
+      "through": 0.10281179138321996
+    },
+    {
+      "key": "audio/songs/track-234.mp3",
+      "sourceSha": "58cb6a699dfdd4dbab0678dcc266651a0afeb563",
+      "sourceSha256": "ece4af4fbde39a19af33ac8a227cd1cead3c13a802613776231189540e455386",
+      "rates": {
+        "44100": {
+          "through": 0.04775510204081632,
+          "frames": 2106,
+          "maximumPeak": 8.712949056643993e-05
+        },
+        "48000": {
+          "through": 0.04775,
+          "frames": 2292,
+          "maximumPeak": 9.427792974747717e-05
+        }
+      },
+      "through": 0.04775
+    },
+    {
+      "key": "audio/songs/track-236.mp3",
+      "sourceSha": "ffe3298a77618ab08818ba4195c6145407379928",
+      "sourceSha256": "4474847c95f9aac91eb50613f3eba955a96699b453b39ccab11e9ae52d7f34f5",
+      "rates": {
+        "44100": {
+          "through": 0.04791383219954649,
+          "frames": 2113,
+          "maximumPeak": 8.083743159659207e-05
+        },
+        "48000": {
+          "through": 0.04791666666666667,
+          "frames": 2300,
+          "maximumPeak": 7.85839365562424e-05
+        }
+      },
+      "through": 0.04791383219954649
+    },
+    {
+      "key": "audio/songs/track-237.mp3",
+      "sourceSha": "8910a1a0db1f325c344bea5c37e4fbcfb789648e",
+      "sourceSha256": "438b13e2a652caaff141f0fda6c2976529358d949c2a7c71d9998c8c6f0b74c2",
+      "rates": {
+        "44100": {
+          "through": 0.015011337868480726,
+          "frames": 662,
+          "maximumPeak": 9.205441165249795e-05
+        },
+        "48000": {
+          "through": 0.024479166666666666,
+          "frames": 1175,
+          "maximumPeak": 9.705359116196632e-05
+        }
+      },
+      "through": 0.015011337868480726
+    },
+    {
+      "key": "audio/songs/track-239.mp3",
+      "sourceSha": "27f89ce447b15bab428c8b83c78dd140e2b547e9",
+      "sourceSha256": "3a10ffbd773bc78a5a6c5d87e044590a6ec70de74bf134a1cf618049dbaeb757",
+      "rates": {
+        "44100": {
+          "through": 0.07829931972789116,
+          "frames": 3453,
+          "maximumPeak": 7.526013359893113e-05
+        },
+        "48000": {
+          "through": 0.07829166666666666,
+          "frames": 3758,
+          "maximumPeak": 7.311100489459932e-05
+        }
+      },
+      "through": 0.07829166666666666
+    },
+    {
+      "key": "audio/songs/track-240.mp3",
+      "sourceSha": "8689a0909a0567321de68b767f81177af035bc74",
+      "sourceSha256": "e0efccca735cd9ee26bc68ea3528edd03e3b28fa65ad4ff6420a740de0959ad6",
+      "rates": {
+        "44100": {
+          "through": 0.1627437641723356,
+          "frames": 7177,
+          "maximumPeak": 9.863435116130859e-05
+        },
+        "48000": {
+          "through": 0.16275,
+          "frames": 7812,
+          "maximumPeak": 9.264081018045545e-05
+        }
+      },
+      "through": 0.1627437641723356
+    },
+    {
+      "key": "audio/songs/track-241.mp3",
+      "sourceSha": "2a730e964bc282c434596689d1203d1f2b0bc0b8",
+      "sourceSha256": "c2ce918ec33fb723ce64a498b53f0daaaeaa639f23e769e10fb7bb0381195ed2",
+      "rates": {
+        "44100": {
+          "through": 0.03036281179138322,
+          "frames": 1339,
+          "maximumPeak": 9.759959357324988e-05
+        },
+        "48000": {
+          "through": 0.030375,
+          "frames": 1458,
+          "maximumPeak": 9.597154712537304e-05
+        }
+      },
+      "through": 0.03036281179138322
+    },
+    {
+      "key": "audio/songs/track-242.mp3",
+      "sourceSha": "432b65cc91f06b13dba010548b097d9d3c1bbdd1",
+      "sourceSha256": "91d3aabc37bdf9d89ac2bae9a9498cde4a6fd3bfdba92c52f3173d3128a82ce1",
+      "rates": {
+        "44100": {
+          "through": 0.5301587301587302,
+          "frames": 23380,
+          "maximumPeak": 6.186412065289915e-05
+        },
+        "48000": {
+          "through": 0.5301458333333333,
+          "frames": 25447,
+          "maximumPeak": 3.6229146644473076e-05
+        }
+      },
+      "through": 0.5301458333333333
+    },
+    {
+      "key": "audio/songs/track-243.mp3",
+      "sourceSha": "87ac5dbf8c3e5150d9fa3bef000fa0d2573e11c9",
+      "sourceSha256": "2f8e705b6ce7fdbd1eb2c6cb13c40f36b8b2fe6dae5d048608e15dd5909a7ada",
+      "rates": {
+        "44100": {
+          "through": 1.045328798185941,
+          "frames": 46099,
+          "maximumPeak": 7.874052244005725e-05
+        },
+        "48000": {
+          "through": 1.0453333333333332,
+          "frames": 50176,
+          "maximumPeak": 8.743325452087447e-05
+        }
+      },
+      "through": 1.045328798185941
+    },
+    {
+      "key": "audio/songs/track-244.mp3",
+      "sourceSha": "631104000b091ef6d439cfd6ad3b308b7fab9779",
+      "sourceSha256": "3961db7c23bb968de729961c87819868b92728adbe3e4207cc282e33b5292d72",
+      "rates": {
+        "44100": {
+          "through": 0.015351473922902495,
+          "frames": 677,
+          "maximumPeak": 9.099869930651039e-05
+        },
+        "48000": {
+          "through": 0.015375,
+          "frames": 738,
+          "maximumPeak": 9.126328950515017e-05
+        }
+      },
+      "through": 0.015351473922902495
+    },
+    {
+      "key": "audio/songs/track-246.mp3",
+      "sourceSha": "437a0596b790f2574ca8f0366f22109f89369cab",
+      "sourceSha256": "36a8d34e7ac683cd54b38c6ed471ca46840b5d27617db2fb3ce196ef9bc0abd9",
+      "rates": {
+        "44100": {
+          "through": 0.4384126984126984,
+          "frames": 19334,
+          "maximumPeak": 9.459171997150406e-05
+        },
+        "48000": {
+          "through": 0.4383958333333333,
+          "frames": 21043,
+          "maximumPeak": 9.250912989955395e-05
+        }
+      },
+      "through": 0.4383958333333333
+    },
+    {
+      "key": "audio/songs/track-248.mp3",
+      "sourceSha": "137fa324f0dd0280d2396e8dd1c1de1b27efd678",
+      "sourceSha256": "cd4aea2545b29e1b2eebff938954cecc266bf60012c294a6f0b9ee868ccd1a02",
+      "rates": {
+        "44100": {
+          "through": 0.05893424036281179,
+          "frames": 2599,
+          "maximumPeak": 7.693375664530322e-05
+        },
+        "48000": {
+          "through": 0.058895833333333335,
+          "frames": 2827,
+          "maximumPeak": 9.337703522760421e-05
+        }
+      },
+      "through": 0.058895833333333335
+    },
+    {
+      "key": "audio/songs/track-245.mp3",
+      "sourceSha": "1097b90206a5061375da4fd5a4bafb5a661dcba3",
+      "sourceSha256": "2a44ca083d73e405fdf6cf808f76639a518cbee34a41e20d9faae08ba72f13dc",
+      "rates": {
+        "44100": {
+          "through": 0.048117913832199544,
+          "frames": 2122,
+          "maximumPeak": 8.062643610173836e-05
+        },
+        "48000": {
+          "through": 0.048125,
+          "frames": 2310,
+          "maximumPeak": 9.499981388216838e-05
+        }
+      },
+      "through": 0.048117913832199544
+    },
+    {
+      "key": "audio/songs/track-249.mp3",
+      "sourceSha": "f9b16ae7a24abf21114587ecf2ab20b8e745b372",
+      "sourceSha256": "9464e266e86000aa26b37542ff8e734eddc0fe9bf9d035ecc8c2dff7e4d96c57",
+      "rates": {
+        "44100": {
+          "through": 0.29505668934240364,
+          "frames": 13012,
+          "maximumPeak": 9.237360791303217e-05
+        },
+        "48000": {
+          "through": 0.2950625,
+          "frames": 14163,
+          "maximumPeak": 9.344152931589633e-05
+        }
+      },
+      "through": 0.29505668934240364
+    },
+    {
+      "key": "audio/songs/track-250.mp3",
+      "sourceSha": "593654e25364824133f6a2c7e7d8b557b49d9c22",
+      "sourceSha256": "6e10790a4118110bdca69c7751a13cf64e005abde6ed03a7864e89351b6b6ce2",
+      "rates": {
+        "44100": {
+          "through": 0.46242630385487526,
+          "frames": 20393,
+          "maximumPeak": 9.262670937459916e-05
+        },
+        "48000": {
+          "through": 0.46241666666666664,
+          "frames": 22196,
+          "maximumPeak": 8.193012035917491e-05
+        }
+      },
+      "through": 0.46241666666666664
+    },
+    {
+      "key": "audio/songs/track-304.mp3",
+      "sourceSha": "bdca769009cb08fc40d872888190e5058f38d61e",
+      "sourceSha256": "1ef2089876e15b2fda07deda375ee8000485f753c587d44c761995dbe372972c",
+      "rates": {
+        "44100": {
+          "through": 0.5688888888888889,
+          "frames": 25088,
+          "maximumPeak": 8.783875819062814e-05
+        },
+        "48000": {
+          "through": 0.5688541666666667,
+          "frames": 27305,
+          "maximumPeak": 9.238570055458695e-05
+        }
+      },
+      "through": 0.5688541666666667
+    },
+    {
+      "key": "audio/songs/track-315.mp3",
+      "sourceSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+      "sourceSha256": "d37fac03461db8c1db7190c2ae36120a4ef45f871e534ac9acec370e8834d80f",
+      "rates": {
+        "44100": {
+          "through": 0.11383219954648525,
+          "frames": 5020,
+          "maximumPeak": 9.938490984495729e-05
+        },
+        "48000": {
+          "through": 0.11383333333333333,
+          "frames": 5464,
+          "maximumPeak": 9.872518421616405e-05
+        }
+      },
+      "through": 0.11383219954648525
+    },
+    {
+      "key": "audio/songs/track-349.mp3",
+      "sourceSha": "754443ff0e103b86e9c0d2ba6ec7c10bb3b43433",
+      "sourceSha256": "01604054555d296edaf1a5dd1f6f76a7e4b7d055ae5777ccc663bba37ad2ff6c",
+      "rates": {
+        "44100": {
+          "through": 0.09927437641723356,
+          "frames": 4378,
+          "maximumPeak": 8.289531979244202e-05
+        },
+        "48000": {
+          "through": 0.09929166666666667,
+          "frames": 4766,
+          "maximumPeak": 9.611564746592194e-05
+        }
+      },
+      "through": 0.09927437641723356
+    },
+    {
+      "key": "audio/songs/track-390.mp3",
+      "sourceSha": "668c403f398bc64621a1cf8ca45aba2d5fec2104",
+      "sourceSha256": "8505a68b822187f0f0e72113a4d7588195226fd4650edf39f2094a0e59052b8d",
+      "rates": {
+        "44100": {
+          "through": 1.0608163265306123,
+          "frames": 46782,
+          "maximumPeak": 9.230914292857051e-05
+        },
+        "48000": {
+          "through": 1.0608125,
+          "frames": 50919,
+          "maximumPeak": 8.979736594483256e-05
+        }
+      },
+      "through": 1.0608125
+    },
+    {
+      "key": "audio/songs/track-406.mp3",
+      "sourceSha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+      "sourceSha256": "4668af8092271da64cd8f773e6957cfcd36332ba2c3e101b0fb65afb411c7f32",
+      "rates": {
+        "44100": {
+          "through": 0.48560090702947845,
+          "frames": 21415,
+          "maximumPeak": 8.738079486647621e-05
+        },
+        "48000": {
+          "through": 0.485625,
+          "frames": 23310,
+          "maximumPeak": 9.998519817600027e-05
+        }
+      },
+      "through": 0.48560090702947845
+    },
+    {
+      "key": "audio/songs/track-440.mp3",
+      "sourceSha": "4ac389a3512e0dfdc3536b9b9d17f5b5905354da",
+      "sourceSha256": "f3bb8d22bb712a33fad6b36b28e50d2c0c6ff47d1b8f9a266ab0148647d35c66",
+      "rates": {
+        "44100": {
+          "through": 0.09619047619047619,
+          "frames": 4242,
+          "maximumPeak": 9.58949385676533e-05
+        },
+        "48000": {
+          "through": 0.0961875,
+          "frames": 4617,
+          "maximumPeak": 9.69518005149439e-05
+        }
+      },
+      "through": 0.0961875
+    },
+    {
+      "key": "audio/songs/track-457.mp3",
+      "sourceSha": "3a724535d003e3ecf1cc78169b56b216305076da",
+      "sourceSha256": "dc12a884e487362efd3754c62672af623ea758a0fbdb34c787bb78c1fd937e5a",
+      "rates": {
+        "44100": {
+          "through": 0.09342403628117914,
+          "frames": 4120,
+          "maximumPeak": 8.447000436717644e-05
+        },
+        "48000": {
+          "through": 0.09341666666666666,
+          "frames": 4484,
+          "maximumPeak": 8.39985441416502e-05
+        }
+      },
+      "through": 0.09341666666666666
+    },
+    {
+      "key": "audio/songs/track-466.mp3",
+      "sourceSha": "7dbc8322cf5372ae4c72af2ba50fe4599a3c88c5",
+      "sourceSha256": "549868d7537d6e0e1238e775b4f586b6257b04679ff2939443de530a69abb3f3",
+      "rates": {
+        "44100": {
+          "through": 0.4072108843537415,
+          "frames": 17958,
+          "maximumPeak": 8.308257383760065e-05
+        },
+        "48000": {
+          "through": 0.40720833333333334,
+          "frames": 19546,
+          "maximumPeak": 8.13283259049058e-05
+        }
+      },
+      "through": 0.40720833333333334
+    },
+    {
+      "key": "audio/songs/track-483.mp3",
+      "sourceSha": "1101310dacae5b0f621dfa462b5d62d68e39bf53",
+      "sourceSha256": "79ef8b16ceecac0530d93ac52d29c07e6ef6498b45d36392cb9f6e7837d0e8c6",
+      "rates": {
+        "44100": {
+          "through": 0.20528344671201815,
+          "frames": 9053,
+          "maximumPeak": 9.809511539060622e-05
+        },
+        "48000": {
+          "through": 0.20529166666666668,
+          "frames": 9854,
+          "maximumPeak": 9.581568883731961e-05
+        }
+      },
+      "through": 0.20528344671201815
+    },
+    {
+      "key": "audio/songs/track-485.mp3",
+      "sourceSha": "7dbf8fd1f1a950dd9a885dae13c9446dec60e51b",
+      "sourceSha256": "21c2ad5c8ec266dc1fe7d2ad80f0db19dd58943378d56b8b9d621f674afcc846",
+      "rates": {
+        "44100": {
+          "through": 0.03575963718820862,
+          "frames": 1577,
+          "maximumPeak": 9.247177513316274e-05
+        },
+        "48000": {
+          "through": 0.03575,
+          "frames": 1716,
+          "maximumPeak": 8.415872434852645e-05
+        }
+      },
+      "through": 0.03575
+    },
+    {
+      "key": "audio/songs/track-488.mp3",
+      "sourceSha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+      "sourceSha256": "2b09edefeab5409a23c6b96b2ed7a6a91385d5a570ab0e7d0fffe85f10761641",
+      "rates": {
+        "44100": {
+          "through": 0.13054421768707483,
+          "frames": 5757,
+          "maximumPeak": 9.391260391566902e-05
+        },
+        "48000": {
+          "through": 0.13039583333333332,
+          "frames": 6259,
+          "maximumPeak": 7.547969289589673e-05
+        }
+      },
+      "through": 0.13039583333333332
+    },
+    {
+      "key": "audio/songs/track-504.mp3",
+      "sourceSha": "9d35c5365fc24bf1149fef1cf6fb5bcbff45c238",
+      "sourceSha256": "333d38182f0f1eef851a0154cb3cc88e563389a79915e48908ff788dbda29474",
+      "rates": {
+        "44100": {
+          "through": 0.07759637188208617,
+          "frames": 3422,
+          "maximumPeak": 9.398246766068041e-05
+        },
+        "48000": {
+          "through": 0.0654375,
+          "frames": 3141,
+          "maximumPeak": 7.996202475624159e-05
+        }
+      },
+      "through": 0.0654375
+    },
+    {
+      "key": "audio/songs/track-509.mp3",
+      "sourceSha": "0041799f5894fe9e7cf6f0e660e461d638182fc5",
+      "sourceSha256": "3e263102fd6e439b423eb8b47f686a91d95ba87539337b5016595d1173e6e50c",
+      "rates": {
+        "44100": {
+          "through": 0.05471655328798186,
+          "frames": 2413,
+          "maximumPeak": 9.501211025053635e-05
+        },
+        "48000": {
+          "through": 0.056354166666666664,
+          "frames": 2705,
+          "maximumPeak": 9.647310798754916e-05
+        }
+      },
+      "through": 0.05471655328798186
+    },
+    {
+      "key": "audio/songs/track-513.mp3",
+      "sourceSha": "1e1a1581be091f8f42f030866ddd022a595be5e8",
+      "sourceSha256": "7c7c04fdaf5da5af7d502c0989850dd920b99f11cc2d7914842c40d9d89d55b1",
+      "rates": {
+        "44100": {
+          "through": 0.1191156462585034,
+          "frames": 5253,
+          "maximumPeak": 8.985724707599729e-05
+        },
+        "48000": {
+          "through": 0.11910416666666666,
+          "frames": 5717,
+          "maximumPeak": 8.92601310624741e-05
+        }
+      },
+      "through": 0.11910416666666666
+    },
+    {
+      "key": "audio/songs/track-514.mp3",
+      "sourceSha": "2998a64453b8dcc1addf74d218ea25742c86987d",
+      "sourceSha256": "28a8b0d171ea09a7b2a0ff2c0103e5d1728d620afeeaae0c743a51eafb42b9ad",
+      "rates": {
+        "44100": {
+          "through": 0.28634920634920635,
+          "frames": 12628,
+          "maximumPeak": 8.697665180079639e-05
+        },
+        "48000": {
+          "through": 0.2863541666666667,
+          "frames": 13745,
+          "maximumPeak": 9.604635124560446e-05
+        }
+      },
+      "through": 0.28634920634920635
+    },
+    {
+      "key": "audio/songs/track-515.mp3",
+      "sourceSha": "91eee5c99e2284cd5d63f56072a4864b73c9daab",
+      "sourceSha256": "abdb01259aa42c9349188cf36643458e6cffc7c1178676a06ddc306954b5b1d6",
+      "rates": {
+        "44100": {
+          "through": 0.23058956916099774,
+          "frames": 10169,
+          "maximumPeak": 9.286854037782177e-05
+        },
+        "48000": {
+          "through": 0.23058333333333333,
+          "frames": 11068,
+          "maximumPeak": 8.700065518496558e-05
+        }
+      },
+      "through": 0.23058333333333333
+    },
+    {
+      "key": "audio/songs/track-516.mp3",
+      "sourceSha": "f134034e8838c67914cea0fc051e9794c9d29c59",
+      "sourceSha256": "d61c1b1605761ac68861dd102c0486b793deb597e150db06b07c4833ee1861c4",
+      "rates": {
+        "44100": {
+          "through": 0.48054421768707484,
+          "frames": 21192,
+          "maximumPeak": 8.455363422399387e-05
+        },
+        "48000": {
+          "through": 0.48154166666666665,
+          "frames": 23114,
+          "maximumPeak": 9.946257341653109e-05
+        }
+      },
+      "through": 0.48054421768707484
+    },
+    {
+      "key": "audio/songs/track-518.mp3",
+      "sourceSha": "798d8352d262648e9859cc3694763c1122c4f224",
+      "sourceSha256": "5883e309b8bfe90eab95d48369fc0d1f12bf0bfadb60f1091c9cc0acd14114bc",
+      "rates": {
+        "44100": {
+          "through": 0.33843537414965985,
+          "frames": 14925,
+          "maximumPeak": 9.998714085668325e-05
+        },
+        "48000": {
+          "through": 0.3384375,
+          "frames": 16245,
+          "maximumPeak": 9.981454786611721e-05
+        }
+      },
+      "through": 0.33843537414965985
+    },
+    {
+      "key": "audio/songs/track-478.mp3",
+      "sourceSha": "03ade830fa5a0e3f812d8084993b4ef94a6936dd",
+      "sourceSha256": "2ef6a99cdb3004a0cbf91de336300527b05e58a17674256a2d725efe8e965a22",
+      "rates": {
+        "44100": {
+          "through": 0.1953061224489796,
+          "frames": 8613,
+          "maximumPeak": 7.67928286222741e-05
+        },
+        "48000": {
+          "through": 0.1953125,
+          "frames": 9375,
+          "maximumPeak": 8.688172965776175e-05
+        }
+      },
+      "through": 0.1953061224489796
+    },
+    {
+      "key": "audio/songs/track-520.mp3",
+      "sourceSha": "2ac65079ee65659ebc92e5d5986a3ea3f37873da",
+      "sourceSha256": "24ce99b8bf140647596eec0e971ed1a00ac04fb165e85503a0a80e0ed2fc3a4f",
+      "rates": {
+        "44100": {
+          "through": 0.11841269841269841,
+          "frames": 5222,
+          "maximumPeak": 8.56895640026778e-05
+        },
+        "48000": {
+          "through": 0.11841666666666667,
+          "frames": 5684,
+          "maximumPeak": 8.582489681430161e-05
+        }
+      },
+      "through": 0.11841269841269841
+    },
+    {
+      "key": "audio/songs/track-309.mp3",
+      "sourceSha": "0ae677c54055bc089720c66fd4b85b3aa074e7ef",
+      "sourceSha256": "932e16cc876f104ddd6e86fd24623f8dd8aafdb99989611fcdeb69868883bdd4",
+      "rates": {
+        "44100": {
+          "through": 0.07662131519274376,
+          "frames": 3379,
+          "maximumPeak": 5.279135802993551e-05
+        },
+        "48000": {
+          "through": 0.076625,
+          "frames": 3678,
+          "maximumPeak": 5.448005686048418e-05
+        }
+      },
+      "through": 0.07662131519274376
+    },
+    {
+      "key": "audio/songs/track-574.mp3",
+      "sourceSha": "6cdb6f5169f2b3245c5344894189ba914f613418",
+      "sourceSha256": "194bd360b1955d1402c27f56422ed02868bbbde5fbfbaa7f0317f87c3e1929d3",
+      "rates": {
+        "44100": {
+          "through": 0.8632199546485261,
+          "frames": 38068,
+          "maximumPeak": 9.341337863588706e-05
+        },
+        "48000": {
+          "through": 0.8636458333333333,
+          "frames": 41455,
+          "maximumPeak": 9.945009514922276e-05
+        }
+      },
+      "through": 0.8632199546485261
+    },
+    {
+      "key": "audio/songs/track-627.mp3",
+      "sourceSha": "dbfaaffa82fe088e6a740165fc9acdfd071eea19",
+      "sourceSha256": "1a61d53a85ab1f3d9b948c09ac78d32af49e905108eb98cfcb0cc5d0ecd15aef",
+      "rates": {
+        "44100": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        },
+        "48000": {
+          "through": 0.0,
+          "frames": 0,
+          "maximumPeak": 0
+        }
+      },
+      "through": 0.0
+    },
+    {
+      "key": "audio/songs/track-658.mp3",
+      "sourceSha": "25478deb4b95bdceaf9f3c2ede1a598e1bec3c94",
+      "sourceSha256": "4dd9bbfe968308d87fef802b8c3f9e785d195285a0d8ce4140a95620e8312993",
+      "rates": {
+        "44100": {
+          "through": 1.23562358276644,
+          "frames": 54491,
+          "maximumPeak": 9.547748777549714e-05
+        },
+        "48000": {
+          "through": 1.235625,
+          "frames": 59310,
+          "maximumPeak": 9.079178562387824e-05
+        }
+      },
+      "through": 1.23562358276644
+    },
+    {
+      "key": "audio/songs/track-1197.mp3",
+      "sourceSha": "a95dbd2f9a220b575676c0265ab4c7e8bbc9a221",
+      "sourceSha256": "bf81315766f0e6f42f2ab3bd190a31d5108453f446879be6d400f11b0384aa0b",
+      "rates": {
+        "44100": {
+          "through": 0.3497732426303855,
+          "frames": 15425,
+          "maximumPeak": 5.4235977586358786e-05
+        },
+        "48000": {
+          "through": 0.3501458333333333,
+          "frames": 16807,
+          "maximumPeak": 9.757933003129438e-05
+        }
+      },
+      "through": 0.3497732426303855
+    },
+    {
+      "key": "audio/songs/track-664.mp3",
+      "sourceSha": "6100ddace519a0681baf5df4f6561e04a0416d89",
+      "sourceSha256": "cbefed1c1e74c14f7a5acc32abd53bd50b9772b3709338cea57bb4f4b3d79b3b",
+      "rates": {
+        "44100": {
+          "through": 0.8117687074829932,
+          "frames": 35799,
+          "maximumPeak": 9.685216355137527e-05
+        },
+        "48000": {
+          "through": 0.8112083333333333,
+          "frames": 38938,
+          "maximumPeak": 9.957027941709384e-05
+        }
+      },
+      "through": 0.8112083333333333
+    },
+    {
+      "key": "audio/songs/track-670.mp3",
+      "sourceSha": "45ad3fc1c5832d38832ebb1856cfb0fe3fa29f7d",
+      "sourceSha256": "272ed9f54a208284961d57b95e2f1c5e9f86daaf429905127bd415b8ab4145b1",
+      "rates": {
+        "44100": {
+          "through": 0.048752834467120185,
+          "frames": 2150,
+          "maximumPeak": 9.614562441129237e-05
+        },
+        "48000": {
+          "through": 0.04875,
+          "frames": 2340,
+          "maximumPeak": 8.985839667730033e-05
+        }
+      },
+      "through": 0.04875
+    },
+    {
+      "key": "audio/songs/track-705.mp3",
+      "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+      "sourceSha256": "d1430491332a160650d565e7a5f836f3ed62337c74f968e966a73a7820e746c9",
+      "rates": {
+        "44100": {
+          "through": 0.10258503401360544,
+          "frames": 4524,
+          "maximumPeak": 6.412134098354727e-05
+        },
+        "48000": {
+          "through": 0.10258333333333333,
+          "frames": 4924,
+          "maximumPeak": 6.826718163210899e-05
+        }
+      },
+      "through": 0.10258333333333333
+    },
+    {
+      "key": "audio/songs/track-724.mp3",
+      "sourceSha": "6c36649af8180f8a76b95de9a7349c966f1c21f4",
+      "sourceSha256": "bf5bc3f3d9b475e1a12003364d37550b513b13bc332c7a3de7973baedf54a2a6",
+      "rates": {
+        "44100": {
+          "through": 0.022879818594104307,
+          "frames": 1009,
+          "maximumPeak": 8.354931196663529e-05
+        },
+        "48000": {
+          "through": 0.022875,
+          "frames": 1098,
+          "maximumPeak": 9.692277672002092e-05
+        }
+      },
+      "through": 0.022875
+    },
+    {
+      "key": "audio/songs/track-855.mp3",
+      "sourceSha": "840888ad1240fc96294778f1e0cb23618926e021",
+      "sourceSha256": "e8caa4def66f366b65d110581abef52d53528861229d89cf5a3bea1b3686194e",
+      "rates": {
+        "44100": {
+          "through": 0.47959183673469385,
+          "frames": 21150,
+          "maximumPeak": 8.483024430461228e-05
+        },
+        "48000": {
+          "through": 0.47960416666666666,
+          "frames": 23021,
+          "maximumPeak": 8.500309922965243e-05
+        }
+      },
+      "through": 0.47959183673469385
+    },
+    {
+      "key": "audio/songs/track-954.mp3",
+      "sourceSha": "c0a0a865af55172630f20a477f2acd06d82e11af",
+      "sourceSha256": "da2f9a9f66669a1e685cdb5bc6891f89b97d634958cf4a44ca6ea9d1d39d9690",
+      "rates": {
+        "44100": {
+          "through": 0.40512471655328797,
+          "frames": 17866,
+          "maximumPeak": 9.767381561687216e-05
+        },
+        "48000": {
+          "through": 0.405125,
+          "frames": 19446,
+          "maximumPeak": 9.98781542875804e-05
+        }
+      },
+      "through": 0.40512471655328797
+    },
+    {
+      "key": "audio/songs/track-963.mp3",
+      "sourceSha": "be6982659be9be3ff5fbca15d6adecb5618465d5",
+      "sourceSha256": "a857e0c60d1b6e559c55fda4fb187bcac57fc9598a86527a80288db2c253ac0c",
+      "rates": {
+        "44100": {
+          "through": 0.04619047619047619,
+          "frames": 2037,
+          "maximumPeak": 8.297730528283864e-05
+        },
+        "48000": {
+          "through": 0.04622916666666667,
+          "frames": 2219,
+          "maximumPeak": 9.471357043366879e-05
+        }
+      },
+      "through": 0.04619047619047619
+    },
+    {
+      "key": "audio/songs/track-977.mp3",
+      "sourceSha": "e543e0b58e9cd3324db0333d18d24a5c7f8c9ccb",
+      "sourceSha256": "f93a143800003f42ac6d62116aa13c38525f8c14c4d60a9609c3691cf619c834",
+      "rates": {
+        "44100": {
+          "through": 0.8225850340136054,
+          "frames": 36276,
+          "maximumPeak": 9.271452290704474e-05
+        },
+        "48000": {
+          "through": 0.8225833333333333,
+          "frames": 39484,
+          "maximumPeak": 9.278854122385383e-05
+        }
+      },
+      "through": 0.8225833333333333
+    },
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "sourceSha256": "a7accfcc6a67a3c9af34f2f2f08fb62dede0b6d119b19a770e2cd47937294178",
+      "rates": {
+        "44100": {
+          "through": 0.045691609977324264,
+          "frames": 2015,
+          "maximumPeak": 9.919460717355832e-05
+        },
+        "48000": {
+          "through": 0.0456875,
+          "frames": 2193,
+          "maximumPeak": 9.863072773441672e-05
+        }
+      },
+      "through": 0.0456875
+    }
+  ]
+}

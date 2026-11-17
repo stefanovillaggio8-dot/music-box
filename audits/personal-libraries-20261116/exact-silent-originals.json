@@ -1,0 +1,1449 @@
+{
+  "version": 1,
+  "method": "original-stereo-exact-zero-suffix-v1",
+  "threshold": 0,
+  "entries": {
+    "audio/songs/track-102.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "a4e6c247fc00611bdba2ba286f1849da72e31c46",
+      "sourceSha256": "c29980266cc32e35d8b4de55e493db49cb288995a6d75d74d73bb30e9cc1d42a",
+      "zeroFrom": 153.44333333333333,
+      "through": 153.705,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 6778369,
+          "decodedDuration": 153.70451247165533,
+          "nonzeroThroughFrame": 6766851,
+          "zeroFrom": 153.44333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "c81a75457d0aa255288adf0c15ca3764e97e9e739a80a28b2bb4e39074b8ca39"
+        },
+        "48000": {
+          "frames": 7377816,
+          "decodedDuration": 153.7045,
+          "nonzeroThroughFrame": 7365263,
+          "zeroFrom": 153.44297916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1613fb99f66853dc44e4e536889012bdb7f4f1015fc8c393c1e3b23cdcc55c84"
+        }
+      }
+    },
+    "audio/songs/track-1020.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "7b0c997f168d4e09a8fbf45e612631307ffa70a9",
+      "sourceSha256": "21106ab4d678f528b1cad9e1a46812b8614f2d7f180d9b8345539918b2e9e0fd",
+      "zeroFrom": 207.26333333333332,
+      "through": 208.725,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 9204788,
+          "decodedDuration": 208.7253514739229,
+          "nonzeroThroughFrame": 9140313,
+          "zeroFrom": 207.26333333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d237e1d2d51b1b7806b2a1764174aa839c88286ce48347afcec63f3312aff1ed"
+        },
+        "48000": {
+          "frames": 10018816,
+          "decodedDuration": 208.72533333333334,
+          "nonzeroThroughFrame": 9948623,
+          "zeroFrom": 207.26297916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4a72d43bf3240aae6e6d28fcb4484914e01e918e1b403d25d3bec60593304afc"
+        }
+      }
+    },
+    "audio/songs/track-1054.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "6c915620323ae9191d43f66774f45e36e8e287db",
+      "sourceSha256": "0db27a613af7a84bb4c67bf9529e232f932b7ac224bc681fb5123285adeaf499",
+      "zeroFrom": 157.73934240362811,
+      "through": 160.009,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7056396,
+          "decodedDuration": 160.00897959183675,
+          "nonzeroThroughFrame": 6956305,
+          "zeroFrom": 157.73934240362811,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "2929a1db077ed10519185fadb717ebd44b6bf2ac253a2ef7b2281968b0ff8b0d"
+        },
+        "48000": {
+          "frames": 7680431,
+          "decodedDuration": 160.00897916666668,
+          "nonzeroThroughFrame": 7571471,
+          "zeroFrom": 157.73897916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "3b131613283726ef7f1fd7bcf51822e9ed69416977c6b43764294c11e97e4bd7"
+        }
+      }
+    },
+    "audio/songs/track-1070.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "63d905bf275f07db788558e8880fc9f9e5e493a5",
+      "sourceSha256": "c4c55bed9bef86fd9ea168a500c278a971bda1f34199179364d080d54590e510",
+      "zeroFrom": 163.6193424036281,
+      "through": 165.152,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7283201,
+          "decodedDuration": 165.1519501133787,
+          "nonzeroThroughFrame": 7215613,
+          "zeroFrom": 163.6193424036281,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "7f49daec5976d5d139d326383f552d648b1c26087f71249214414d3bf595ec98"
+        },
+        "48000": {
+          "frames": 7927293,
+          "decodedDuration": 165.1519375,
+          "nonzeroThroughFrame": 7853711,
+          "zeroFrom": 163.61897916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "a23b901e060c16d39f20242e590c8e6e21505f83c6694793d61836eafb11035a"
+        }
+      }
+    },
+    "audio/songs/track-1104.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "b9eed93f1616c59659d04abdd187cd8a2583a388",
+      "sourceSha256": "41ad0595d184ce7e7bb4fc67efdad5a026af8fdc1582acdb7c3b46fde3a053db",
+      "zeroFrom": 160.2953514739229,
+      "through": 161.727,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7132161,
+          "decodedDuration": 161.7270068027211,
+          "nonzeroThroughFrame": 7069025,
+          "zeroFrom": 160.2953514739229,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "464df4cfc00fd11c1fa88ae0bbbd32acfefe41145d6d74fb602ea6e4491dd6bb"
+        },
+        "48000": {
+          "frames": 7762896,
+          "decodedDuration": 161.727,
+          "nonzeroThroughFrame": 7694159,
+          "zeroFrom": 160.29497916666668,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4ac2833ca54b2dfc215eae9ddfa98974fc18fa6813321a87bc82e5b1587b471e"
+        }
+      }
+    },
+    "audio/songs/track-1105.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "e780252a305c0e62681826373f4f64f9aa17ab39",
+      "sourceSha256": "42be9b836f7e44ac8b8f3173d5e4be0ce5d3b1706d836b694f9d273ed8ee7b31",
+      "zeroFrom": 173.5673469387755,
+      "through": 173.883,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7668225,
+          "decodedDuration": 173.8826530612245,
+          "nonzeroThroughFrame": 7654320,
+          "zeroFrom": 173.5673469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "db87e293a067a6067f20d63e27d0914c66ee3d6027924a6ae03aadb64373c8cc"
+        },
+        "48000": {
+          "frames": 8346367,
+          "decodedDuration": 173.88264583333333,
+          "nonzeroThroughFrame": 8331215,
+          "zeroFrom": 173.56697916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f046eda9b287e911ee56eed7f65f1bc73c2903633bd103a14213418ccb088e8f"
+        }
+      }
+    },
+    "audio/songs/track-1160.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "9b64c95c3bcac184a3b11b3ad3bc742b93569659",
+      "sourceSha256": "7188fcb97b5c2cc603fd569f72e24fbaf1d7db840de7b28000bfa13f54378036",
+      "zeroFrom": 188.7713378684807,
+      "through": 189.73,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 8367105,
+          "decodedDuration": 189.73027210884354,
+          "nonzeroThroughFrame": 8324816,
+          "zeroFrom": 188.7713378684807,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "37119dcd342c7bc42f1abfab7541f601e0cdfda839ad70a8336c3acb226268b0"
+        },
+        "48000": {
+          "frames": 9107052,
+          "decodedDuration": 189.73025,
+          "nonzeroThroughFrame": 9061007,
+          "zeroFrom": 188.77097916666668,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "a23c1f7fc19a5c888a572bc4eac87de215cd7a5d60c66d29a6aa2bed34346342"
+        }
+      }
+    },
+    "audio/songs/track-1198.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "48b318f5e13e59ad44e58b925466f8ec9751134d",
+      "sourceSha256": "3dd33dfd8acd9fa21eb8e5c1f613f1dbd2894f5f9e0f62d4a171fa67840d8f47",
+      "zeroFrom": 320.8673469387755,
+      "through": 321.16,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 14163156,
+          "decodedDuration": 321.16,
+          "nonzeroThroughFrame": 14150250,
+          "zeroFrom": 320.8673469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "9f970ec2e353e5e1b4c2d0dceacfaa5b64a3aa7da95b450e69e4ae1c43ca86c1"
+        },
+        "48000": {
+          "frames": 15415680,
+          "decodedDuration": 321.16,
+          "nonzeroThroughFrame": 15401615,
+          "zeroFrom": 320.8669791666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "c1123611299c8cf1826459352539e0c27794bcea9fb5655de6a83dff80406ea9"
+        }
+      }
+    },
+    "audio/songs/track-550.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "4df7284f4ed8319d6b70b0cfda2fec9abeb0205b",
+      "sourceSha256": "6e6659ee691002be8b418e96567e8ab6680ed9afe55986560273bb05766b6724",
+      "zeroFrom": 188.78333333333333,
+      "through": 189.73,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 8367105,
+          "decodedDuration": 189.73027210884354,
+          "nonzeroThroughFrame": 8325345,
+          "zeroFrom": 188.78333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "8b0f3effaeef44951566cc2fcc5dfcd52a2b328c7ef6cd83cb768853258d3a4e"
+        },
+        "48000": {
+          "frames": 9107052,
+          "decodedDuration": 189.73025,
+          "nonzeroThroughFrame": 9061583,
+          "zeroFrom": 188.78297916666668,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "02750c5c801b9768a2c7c67b98e504a38d01220bdd0f4ee66926eeb99d31ed34"
+        }
+      }
+    },
+    "audio/songs/track-555.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "fc6adf5d6791b8d50f841895d398f7ff52ec0097",
+      "sourceSha256": "5be651a337fabb3cea78fbb81c9eda62d3c07a38bce167b6d72d629a849ad891",
+      "zeroFrom": 162.1793424036281,
+      "through": 163.887,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7227393,
+          "decodedDuration": 163.88646258503402,
+          "nonzeroThroughFrame": 7152109,
+          "zeroFrom": 162.1793424036281,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "7efdf1b26ad9f27a4765c235c1c9269b61a538de99b26641fd3f2cbedf3cd273"
+        },
+        "48000": {
+          "frames": 7866550,
+          "decodedDuration": 163.88645833333334,
+          "nonzeroThroughFrame": 7784591,
+          "zeroFrom": 162.17897916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "a5f9f1e45cfeaab4b15d75cf134f18f493147f7bcf8fd4d0c5ad92809c52a6b3"
+        }
+      }
+    },
+    "audio/songs/track-6.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "sourceSha256": "90de8a4e750d712b4fa5d404301a8255ba56ac85a1f285deb9eb855138398112",
+      "zeroFrom": 138.53858333333332,
+      "through": 139.833,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 6166656,
+          "decodedDuration": 139.83346938775512,
+          "nonzeroThroughFrame": 6109536,
+          "zeroFrom": 138.538231292517,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "cbff9d7b358a3af67d73670046a4a20d49a11ec83104bfd2acdb1ae088a11559"
+        },
+        "48000": {
+          "frames": 6712007,
+          "decodedDuration": 139.83347916666668,
+          "nonzeroThroughFrame": 6649852,
+          "zeroFrom": 138.53858333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "65c83c0198dc0a6195fa930948da0532fd05edfc2385052be9ae88940b22cff6"
+        }
+      }
+    },
+    "audio/songs/track-609.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "1643b51561fcfd2e42355569f6ff5ea43d3479bb",
+      "sourceSha256": "2c855bac7833d2d4b49a401eeab6fed909e8fbb79ead80ccdc4da9c48fb6ba01",
+      "zeroFrom": 199.8473469387755,
+      "through": 200.412,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 8838145,
+          "decodedDuration": 200.41145124716553,
+          "nonzeroThroughFrame": 8813268,
+          "zeroFrom": 199.8473469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "e1c1751663691d97b2a7a2621957e85a36c7ab4d6717b571733b55e7d70f70b7"
+        },
+        "48000": {
+          "frames": 9619749,
+          "decodedDuration": 200.4114375,
+          "nonzeroThroughFrame": 9592655,
+          "zeroFrom": 199.84697916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "62de75a9c8dfd9b4ad3da0d51bc4ca7b915481d18d49f1bfee8f848988457a0b"
+        }
+      }
+    },
+    "audio/songs/track-636.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "37e5ff8b1ce22ff86245bad32223ecdb1dc1b150",
+      "sourceSha256": "ed835baa9ec0a2c1f7bd8bb215932048f7e886e82574a34b02d25fe2d82faa79",
+      "zeroFrom": 294.3833333333333,
+      "through": 295.834,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 13046273,
+          "decodedDuration": 295.83385487528346,
+          "nonzeroThroughFrame": 12982305,
+          "zeroFrom": 294.3833333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "706a7f13e6a07bf5e6b7803a2a717a415cf9860bf288dd2570ea939e5cfbd40b"
+        },
+        "48000": {
+          "frames": 14200024,
+          "decodedDuration": 295.83383333333336,
+          "nonzeroThroughFrame": 14130383,
+          "zeroFrom": 294.38297916666664,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "9b72c60fe51adcb31da00be7c31adbee03f14a8911eb2131a42b28e8ff5788f2"
+        }
+      }
+    },
+    "audio/songs/track-644.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "a94a1393af3112e8766472069141b7c7399c2eda",
+      "sourceSha256": "d262603fad1c85971bef7842d73fcf09f09b7eb887485d2bf47c8b174674e5cf",
+      "zeroFrom": 244.54734693877552,
+      "through": 244.831,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 10797057,
+          "decodedDuration": 244.83122448979591,
+          "nonzeroThroughFrame": 10784538,
+          "zeroFrom": 244.54734693877552,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "eac474bd04037f718fb5f343387c5bd5ab3abdc97bde456906ef835314710cc5"
+        },
+        "48000": {
+          "frames": 11751898,
+          "decodedDuration": 244.83120833333334,
+          "nonzeroThroughFrame": 11738255,
+          "zeroFrom": 244.54697916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "c58212b91b05f7ae8cc8e5514e166ab0a1e3e4555dc3c27a633de3e9a5f1d84f"
+        }
+      }
+    },
+    "audio/songs/track-705.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+      "sourceSha256": "d1430491332a160650d565e7a5f836f3ed62337c74f968e966a73a7820e746c9",
+      "zeroFrom": 158.4473469387755,
+      "through": 159.301,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 7025153,
+          "decodedDuration": 159.3005215419501,
+          "nonzeroThroughFrame": 6987528,
+          "zeroFrom": 158.4473469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "ed9424eadd39613055f637893d8958735fb02a6712270ae4e17744f3faa23889"
+        },
+        "48000": {
+          "frames": 7646424,
+          "decodedDuration": 159.3005,
+          "nonzeroThroughFrame": 7605455,
+          "zeroFrom": 158.44697916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4eebc25b179ad8305522a0ed2175c7cd46d407c9888f55997312751574726419"
+        }
+      }
+    },
+    "audio/songs/track-830.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "552d183f7096aaa7a6ee79b4188bd7d623b8ec77",
+      "sourceSha256": "9e8889d2c6d3daa65a4151b65eabc7cd0984498263470a9dcf6364fd263d3345",
+      "zeroFrom": 307.9193424036281,
+      "through": 308.442,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 13602305,
+          "decodedDuration": 308.4422902494331,
+          "nonzeroThroughFrame": 13579243,
+          "zeroFrom": 307.9193424036281,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "421f54b3caa9e21f2ef6fc5f1c7f559dd495a6c62bede09e7acc97f6206756f6"
+        },
+        "48000": {
+          "frames": 14805229,
+          "decodedDuration": 308.44227083333334,
+          "nonzeroThroughFrame": 14780111,
+          "zeroFrom": 307.91897916666665,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "6edb3c3b0e004f4c39c8e0dc942c0a08b87c8267b621107a87c17b0756b353b4"
+        }
+      }
+    },
+    "audio/songs/track-884.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "d5412c81a1569847000d96c39c481e4a13b95b2c",
+      "sourceSha256": "79afc2ddbdc0d069127e40937ee5c632a39926b530dd137cf59ce42b5a4ae864",
+      "zeroFrom": 267.1673469387755,
+      "through": 268.028,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 11820033,
+          "decodedDuration": 268.0279591836735,
+          "nonzeroThroughFrame": 11782080,
+          "zeroFrom": 267.1673469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "873b04ecbefd64dff3252e9ff81ef50308168b60af9abd84a558ead35be47dd1"
+        },
+        "48000": {
+          "frames": 12865341,
+          "decodedDuration": 268.0279375,
+          "nonzeroThroughFrame": 12824015,
+          "zeroFrom": 267.1669791666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "c8ff82eb7f2cdef7fee9a612a248ab608b4ff9391036006a288ac6568c996047"
+        }
+      }
+    },
+    "audio/songs/track-905.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "21a22f3bec722bcdb32dba2ed21f7baaeeba1924",
+      "sourceSha256": "2e57d65e7cb08d6b5128ac7b65d4adf76694ba886594730445d132c84590cc6c",
+      "zeroFrom": 134.98734693877552,
+      "through": 137.149,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 6048257,
+          "decodedDuration": 137.14868480725625,
+          "nonzeroThroughFrame": 5952942,
+          "zeroFrom": 134.98734693877552,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "b71b0a74bd74d44b90242c1cc2b276262b00cf434bf4c7bd0c8852ac3bdbc65b"
+        },
+        "48000": {
+          "frames": 6583136,
+          "decodedDuration": 137.14866666666666,
+          "nonzeroThroughFrame": 6479375,
+          "zeroFrom": 134.98697916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "3991ff45a41048235e0a85fb0c7f2cbed473921905e4ddef599693bc55e41251"
+        }
+      }
+    },
+    "audio/songs/track-925.mp3": {
+      "method": "original-stereo-exact-zero-suffix-v1",
+      "sourceSha": "c6ba42acd3756082c6f832ac7b5e65f8df8e68cf",
+      "sourceSha256": "b394b9f0f4ea1421f1c4148ec62b24ea31ab54f941a336f83da09f7b56c0cd11",
+      "zeroFrom": 230.00333333333333,
+      "through": 230.284,
+      "threshold": 0,
+      "rates": {
+        "44100": {
+          "frames": 10155521,
+          "decodedDuration": 230.28392290249434,
+          "nonzeroThroughFrame": 10143147,
+          "zeroFrom": 230.00333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "9b2fe1c8372e39c07fcc2c6255636ce3028543a15ef8a233899bd2c5c1677470"
+        },
+        "48000": {
+          "frames": 11053628,
+          "decodedDuration": 230.28391666666667,
+          "nonzeroThroughFrame": 11040143,
+          "zeroFrom": 230.00297916666668,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "be9fa93b66b129502dc78fcec4cd52a14cb9fa3aa73ce568e009432b89b6cdab"
+        }
+      }
+    }
+  },
+  "rejected": [
+    {
+      "key": "audio/songs/track-1007.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 10321517,
+          "decodedDuration": 234.04800453514738,
+          "nonzeroThroughFrame": 10321517,
+          "zeroFrom": 234.04800453514738,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d589e53777a5d650c430966a9460ef52ee2bc055a84da7977ab44b18b028020e"
+        },
+        "48000": {
+          "frames": 11234304,
+          "decodedDuration": 234.048,
+          "nonzeroThroughFrame": 11234304,
+          "zeroFrom": 234.048,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "9663e363a567b6c24f5552955cf4bcefed3527316f0aa64a0ff57b5c898596ea"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1016.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8350083,
+          "decodedDuration": 189.34428571428572,
+          "nonzeroThroughFrame": 8350083,
+          "zeroFrom": 189.34428571428572,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "a70d6df3f6b6235bc03356242ccf4473376e7f65be77a85c1c2a9ac892ad8fab"
+        },
+        "48000": {
+          "frames": 9088525,
+          "decodedDuration": 189.34427083333333,
+          "nonzeroThroughFrame": 9088525,
+          "zeroFrom": 189.34427083333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1217757c20896704f3a56e26d51aa9f1d7b75171da08144be2860978cdaeddd9"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1017.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8188724,
+          "decodedDuration": 185.6853514739229,
+          "nonzeroThroughFrame": 8188724,
+          "zeroFrom": 185.6853514739229,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f0deb3c9b2b61f8473a78440dae128c2b3b627f836f5b7c6f8045eabe2bc5443"
+        },
+        "48000": {
+          "frames": 8912896,
+          "decodedDuration": 185.68533333333335,
+          "nonzeroThroughFrame": 8912896,
+          "zeroFrom": 185.68533333333335,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f6cdb6885239d34ac0f06eabfc54d8fb74ad0d111dfcb315e8ea714dbc6213d0"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1040.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7728641,
+          "decodedDuration": 175.25263038548752,
+          "nonzeroThroughFrame": 7728641,
+          "zeroFrom": 175.25263038548752,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "af76b30c29015f0f414372ff7d3c84b557d85fc7d5ed22a0e19845c0147af360"
+        },
+        "48000": {
+          "frames": 8412126,
+          "decodedDuration": 175.252625,
+          "nonzeroThroughFrame": 8412126,
+          "zeroFrom": 175.252625,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "997f984302ce8f72251c097ee0236ead8d276f5c7439f3a58ea45587084a6ab7"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1056.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 9480192,
+          "decodedDuration": 214.97034013605443,
+          "nonzeroThroughFrame": 9478607,
+          "zeroFrom": 214.93439909297052,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "724c03e6481ede170292c9af5e40bff88cefc15389d8f4ffd2ff233eb41a7ae9"
+        },
+        "48000": {
+          "frames": 10318577,
+          "decodedDuration": 214.97035416666668,
+          "nonzeroThroughFrame": 10316868,
+          "zeroFrom": 214.93475,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "251ff28e12db56bb032a102264ca6dcd13db81c99d4c94ff6d64d0b26296b538"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1077.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6571488,
+          "decodedDuration": 149.01333333333332,
+          "nonzeroThroughFrame": 6566814,
+          "zeroFrom": 148.9073469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "b8c4510f7aa25f904aabb630a98cee8c01be37a10f074be7e2d73ed3ee486873"
+        },
+        "48000": {
+          "frames": 7152640,
+          "decodedDuration": 149.01333333333332,
+          "nonzeroThroughFrame": 7147535,
+          "zeroFrom": 148.90697916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "c55ca3cc6005edf87db9f1ef5661afbf6f0c2ad6aaaae1bd359559700f0419e0"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1080.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 10481153,
+          "decodedDuration": 237.66786848072562,
+          "nonzeroThroughFrame": 10481153,
+          "zeroFrom": 237.66786848072562,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "22adc7d4bdb44a3f733b2ead24522a1b6f95a1a38d5d891a2163e97fcf54d0eb"
+        },
+        "48000": {
+          "frames": 11408057,
+          "decodedDuration": 237.66785416666667,
+          "nonzeroThroughFrame": 11408057,
+          "zeroFrom": 237.66785416666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "6a0228c0babed8c90264da864926aa7c0220f1deabb9b7b59113072279bb4eff"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1109.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8404480,
+          "decodedDuration": 190.57777777777778,
+          "nonzeroThroughFrame": 8404196,
+          "zeroFrom": 190.57133786848073,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "414216d0843374903a2a187810f9ae388c4ef6ec5bdb315c3a283d21986a8058"
+        },
+        "48000": {
+          "frames": 9147734,
+          "decodedDuration": 190.57779166666666,
+          "nonzeroThroughFrame": 9147407,
+          "zeroFrom": 190.57097916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "6ea0ff8878078755a61b19ba76002a36a27f14e5ee1830e018e7cd1a3af904b4"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1117.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6123521,
+          "decodedDuration": 138.8553514739229,
+          "nonzeroThroughFrame": 6123521,
+          "zeroFrom": 138.8553514739229,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "5be66cfa056c941e99d399fd114fd5f69dee0ef49b6491a47e85152ce988e3a2"
+        },
+        "48000": {
+          "frames": 6665056,
+          "decodedDuration": 138.85533333333333,
+          "nonzeroThroughFrame": 6665056,
+          "zeroFrom": 138.85533333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "36d9e3967844b234ce6ba85d2b91d9ca880d940ff0fcc1d6a6be0e15275b77cd"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1122.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6854657,
+          "decodedDuration": 155.43439909297052,
+          "nonzeroThroughFrame": 6854657,
+          "zeroFrom": 155.43439909297052,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4faa143faefb2b96afb900bef13cfc32c2ceda423b9ed61cb2c114dc52436549"
+        },
+        "48000": {
+          "frames": 7460851,
+          "decodedDuration": 155.43439583333333,
+          "nonzeroThroughFrame": 7460851,
+          "zeroFrom": 155.43439583333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "00fb86505777f0d1d446f50b1db12ae1fe4857bf8ee2310ef51574615ed9ad8c"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1145.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7826945,
+          "decodedDuration": 177.48174603174604,
+          "nonzeroThroughFrame": 7825251,
+          "zeroFrom": 177.44333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "ba3732051f06850e2a0dfb6fdcffdabe69ed799e175c3496c87507fb5a3ec420"
+        },
+        "48000": {
+          "frames": 8519123,
+          "decodedDuration": 177.48172916666667,
+          "nonzeroThroughFrame": 8517263,
+          "zeroFrom": 177.44297916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "944af9dea5028fe71e03b75bf7ed6307d50146ed3a3b73c5abea83601cbcfb9a"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1175.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8994817,
+          "decodedDuration": 203.96410430839003,
+          "nonzeroThroughFrame": 8994817,
+          "zeroFrom": 203.96410430839003,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "3875917b51f0510c2ef8650d4e7eb3ed0121fd12210fd748cae42113b723ac9b"
+        },
+        "48000": {
+          "frames": 9790276,
+          "decodedDuration": 203.96408333333332,
+          "nonzeroThroughFrame": 9790276,
+          "zeroFrom": 203.96408333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4edfe0bd16086cf2773fd270fb4104732a88d1464b985f1f59e10ad29e6b2b22"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1183.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6196737,
+          "decodedDuration": 140.51557823129252,
+          "nonzeroThroughFrame": 6196737,
+          "zeroFrom": 140.51557823129252,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "250dd9b51a66998bdfcc6424d408379d94bc5ca8a1663901547138d3fec1fd5a"
+        },
+        "48000": {
+          "frames": 6744747,
+          "decodedDuration": 140.5155625,
+          "nonzeroThroughFrame": 6744747,
+          "zeroFrom": 140.5155625,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "7f5d81ec9d10579a677067bc9628863912b9a8d092e59b2420feff0711645f24"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 10099201,
+          "decodedDuration": 229.0068253968254,
+          "nonzeroThroughFrame": 10099201,
+          "zeroFrom": 229.0068253968254,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "3194121ed75b5d45265e9a38107a1dd967b06c1f3bf0960c702fd7817cf7d933"
+        },
+        "48000": {
+          "frames": 10992327,
+          "decodedDuration": 229.0068125,
+          "nonzeroThroughFrame": 10992327,
+          "zeroFrom": 229.0068125,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d8c1df606625259c8b66af2fb9208004a1a2e43de2941519e6799aaf3960a080"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-353.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6099969,
+          "decodedDuration": 138.3212925170068,
+          "nonzeroThroughFrame": 6099969,
+          "zeroFrom": 138.3212925170068,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "8bb5b9836238cc83618c7682567381dff15d841d351d9ba96167256930fa7967"
+        },
+        "48000": {
+          "frames": 6639421,
+          "decodedDuration": 138.32127083333333,
+          "nonzeroThroughFrame": 6639421,
+          "zeroFrom": 138.32127083333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f2d132b9e271b66b0da868326078753cf661a8e02f0cce369fa671b32b465c1c"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 5595264,
+          "decodedDuration": 126.87673469387755,
+          "nonzeroThroughFrame": 5595264,
+          "zeroFrom": 126.87673469387755,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "df8e66e96d50a4467478baf172e50ad7852ecd202c4a596496ba6b5d1fb1761b"
+        },
+        "48000": {
+          "frames": 6090084,
+          "decodedDuration": 126.87675,
+          "nonzeroThroughFrame": 6090084,
+          "zeroFrom": 126.87675,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "85793530b0b2d2f848be378f0c36d9421b60060bca040d7bb7c5c58a6c2de1e5"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-566.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7841568,
+          "decodedDuration": 177.81333333333333,
+          "nonzeroThroughFrame": 7841568,
+          "zeroFrom": 177.81333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "2ef1489cb427bd8a2b47b21f4e023360ca7524e381f65730f4ded8816cbdd24c"
+        },
+        "48000": {
+          "frames": 8535040,
+          "decodedDuration": 177.81333333333333,
+          "nonzeroThroughFrame": 8535040,
+          "zeroFrom": 177.81333333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "88b028442a60b586e781af552ac2f592b58ef9252ef113d71213b366e0b4da61"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-567.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7427073,
+          "decodedDuration": 168.4143537414966,
+          "nonzeroThroughFrame": 7427073,
+          "zeroFrom": 168.4143537414966,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "62c1ffc1ac329173d7d358344891fcafb535addd29dd49868e7c63632c9a7a12"
+        },
+        "48000": {
+          "frames": 8083888,
+          "decodedDuration": 168.41433333333333,
+          "nonzeroThroughFrame": 8083888,
+          "zeroFrom": 168.41433333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "8c9a8c868e0dd35375bf535e9825212832c285f7c08a175ef6758a0534b0276a"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-574.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8173057,
+          "decodedDuration": 185.33009070294784,
+          "nonzeroThroughFrame": 8171877,
+          "zeroFrom": 185.30333333333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "fb5145b156b263ed0eaefbc83e14986bf93e969622697a099e9fc0fcf3b08578"
+        },
+        "48000": {
+          "frames": 8895844,
+          "decodedDuration": 185.33008333333333,
+          "nonzeroThroughFrame": 8894543,
+          "zeroFrom": 185.30297916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "bf56ea6dcf89f22d564aca8ee3f0b1ce57a2357d49c4143694c0443aa3cff182"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-578.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7147521,
+          "decodedDuration": 162.07530612244898,
+          "nonzeroThroughFrame": 7147521,
+          "zeroFrom": 162.07530612244898,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f72cc8e4c311798cbc9a7f814466c928c98aa516fca18ff6faf352bd330fed2d"
+        },
+        "48000": {
+          "frames": 7779614,
+          "decodedDuration": 162.07529166666666,
+          "nonzeroThroughFrame": 7779614,
+          "zeroFrom": 162.07529166666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "93e149a278facb5faa08070fb40724f69042c3c98744a82792c7ebd6d5913226"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-607.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 10345860,
+          "decodedDuration": 234.6,
+          "nonzeroThroughFrame": 10345860,
+          "zeroFrom": 234.6,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "a8363af81c1f4994b59b02ea8733ff20547ce9b7cd2df510cff426ae87e379e3"
+        },
+        "48000": {
+          "frames": 11260800,
+          "decodedDuration": 234.6,
+          "nonzeroThroughFrame": 11260800,
+          "zeroFrom": 234.6,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "6df0297cda0eb0ef38f0cfa2b9fba49f3b1e6b72351c95bd388466befc3c24c9"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-611.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8475649,
+          "decodedDuration": 192.1915873015873,
+          "nonzeroThroughFrame": 8475649,
+          "zeroFrom": 192.1915873015873,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "74af17377c98a3db30419968008b2e51233395bd60634982dc5c96105053e956"
+        },
+        "48000": {
+          "frames": 9225196,
+          "decodedDuration": 192.19158333333334,
+          "nonzeroThroughFrame": 9225196,
+          "zeroFrom": 192.19158333333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "3b9ac2ecb212cbff7598f7d6d76616b149aff18c9e821acef5a27e1e9e5f1c12"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-626.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7691265,
+          "decodedDuration": 174.40510204081633,
+          "nonzeroThroughFrame": 7683955,
+          "zeroFrom": 174.23934240362811,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d3c1cf1a2417e8560b3d039829d3978714df1eccc0c4dd690266a4a70c5578a7"
+        },
+        "48000": {
+          "frames": 8371444,
+          "decodedDuration": 174.40508333333332,
+          "nonzeroThroughFrame": 8363471,
+          "zeroFrom": 174.23897916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "cc878b8da87cc5e297f7959487e26665f4bc29180c256436aca9aee155ba28f4"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-627.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7615489,
+          "decodedDuration": 172.68682539682538,
+          "nonzeroThroughFrame": 7615489,
+          "zeroFrom": 172.68682539682538,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "abf007e7615c4fbe2e0a48287d941fe3b120252ed56df45a47a392338e519ff5"
+        },
+        "48000": {
+          "frames": 8288967,
+          "decodedDuration": 172.6868125,
+          "nonzeroThroughFrame": 8288967,
+          "zeroFrom": 172.6868125,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1112f8a5f67dbda99fe6f0f102e79b6df1f488723fda2533bf50e6138f1489a6"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-631.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8403448,
+          "decodedDuration": 190.55437641723356,
+          "nonzeroThroughFrame": 8403448,
+          "zeroFrom": 190.55437641723356,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f710a90e5bedb92ed47c7e723c6baf7e2da440d10ff872ae7ff41d10a4c7d67c"
+        },
+        "48000": {
+          "frames": 9146609,
+          "decodedDuration": 190.55435416666666,
+          "nonzeroThroughFrame": 9146609,
+          "zeroFrom": 190.55435416666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "cd28129ff83920cd5b064314d84285815e312bfe473754aa364c1c658e6d2892"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-634.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 11457025,
+          "decodedDuration": 259.79648526077096,
+          "nonzeroThroughFrame": 11457025,
+          "zeroFrom": 259.79648526077096,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "322b8142e9693038ca14959b07053bbcc65ec04f23cac22af183e8413ef31653"
+        },
+        "48000": {
+          "frames": 12470231,
+          "decodedDuration": 259.79647916666664,
+          "nonzeroThroughFrame": 12470231,
+          "zeroFrom": 259.79647916666664,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "76e3f69b6113a99c7e096d9e078898fd41735ac8fbcde69cee549501c818f0a6"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-684.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 9079297,
+          "decodedDuration": 205.87975056689342,
+          "nonzeroThroughFrame": 9076809,
+          "zeroFrom": 205.82333333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "27476117b82f501e27cdc75477f64610a1df5c325e602e64de4428d98e85715e"
+        },
+        "48000": {
+          "frames": 9882227,
+          "decodedDuration": 205.87972916666666,
+          "nonzeroThroughFrame": 9879503,
+          "zeroFrom": 205.82297916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "8378db18c31c5081cea5d6f84957d63f3402fa9365c9b68eba1ce41da74b0f5a"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-687.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6682113,
+          "decodedDuration": 151.52183673469386,
+          "nonzeroThroughFrame": 6682113,
+          "zeroFrom": 151.52183673469386,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "e89930af805f6963b782f4bdbb3d2abf35a8a7a8a146ce7d35efe3e9aa47cc47"
+        },
+        "48000": {
+          "frames": 7273048,
+          "decodedDuration": 151.52183333333332,
+          "nonzeroThroughFrame": 7273048,
+          "zeroFrom": 151.52183333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d0e798b24bb5c35b77f8eeeaadafb2f37996e5ae995ae3deefb1de6dee7fef65"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-689.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 9928705,
+          "decodedDuration": 225.1407029478458,
+          "nonzeroThroughFrame": 9928705,
+          "zeroFrom": 225.1407029478458,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "eea08520eee647487516a822e3b1432e13288b6c3781e589e41bcd607c27275d"
+        },
+        "48000": {
+          "frames": 10806753,
+          "decodedDuration": 225.1406875,
+          "nonzeroThroughFrame": 10806753,
+          "zeroFrom": 225.1406875,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "be346b01994117635a42c622087ce691feae4c3862bf49df54169ab5945997a9"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-699.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 14774324,
+          "decodedDuration": 335.01868480725625,
+          "nonzeroThroughFrame": 14774324,
+          "zeroFrom": 335.01868480725625,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "266f1b300eb2829085ba97806a60bbc6c3976ade1e5dbfefe235d8722520d1d2"
+        },
+        "48000": {
+          "frames": 16080896,
+          "decodedDuration": 335.01866666666666,
+          "nonzeroThroughFrame": 16080896,
+          "zeroFrom": 335.01866666666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "0d9b9bb0e1c10c77d3cb0849d06aef4ea74d811044a16cab999831b582ce85e6"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-701.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 13960705,
+          "decodedDuration": 316.56927437641724,
+          "nonzeroThroughFrame": 13960705,
+          "zeroFrom": 316.56927437641724,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "7f9ae0725d3ecc8a8978abb443590b510f7086d11694b46a0b636c78c6e4bb82"
+        },
+        "48000": {
+          "frames": 15195325,
+          "decodedDuration": 316.56927083333335,
+          "nonzeroThroughFrame": 15195325,
+          "zeroFrom": 316.56927083333335,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "82692f464c97ebfdc35fdc62daade2c3e66403c0d2aa1b97aeb3acdd8ffec0ba"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-725.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7506433,
+          "decodedDuration": 170.21390022675737,
+          "nonzeroThroughFrame": 7506433,
+          "zeroFrom": 170.21390022675737,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1615ed4ddaa389250c1316aa76ef5e19a1faa3511441da4b0c09c0c4d3063bef"
+        },
+        "48000": {
+          "frames": 8170267,
+          "decodedDuration": 170.21389583333334,
+          "nonzeroThroughFrame": 8170267,
+          "zeroFrom": 170.21389583333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "84bddf703229c3151cdccb86eae1fc3ea017624224db4b8d2ca45b9044e28199"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-745.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 10882561,
+          "decodedDuration": 246.77009070294784,
+          "nonzeroThroughFrame": 10882561,
+          "zeroFrom": 246.77009070294784,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "536debac1ca98bcb159299aa01d3600c48a2e18f04be9d12d73984e1c629a0c0"
+        },
+        "48000": {
+          "frames": 11844964,
+          "decodedDuration": 246.77008333333333,
+          "nonzeroThroughFrame": 11844964,
+          "zeroFrom": 246.77008333333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1c44c8acea8c851f9872a10b7dc5121361da5b947f818e1009a8be4c1ced1c19"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-777.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 6120960,
+          "decodedDuration": 138.79727891156463,
+          "nonzeroThroughFrame": 6117523,
+          "zeroFrom": 138.7193424036281,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d74789d2bd432e930d47fe3cd9d0d7dd884a1c8620efe00408b3404537825bdc"
+        },
+        "48000": {
+          "frames": 6662270,
+          "decodedDuration": 138.79729166666667,
+          "nonzeroThroughFrame": 6658511,
+          "zeroFrom": 138.71897916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "79983fcddfd1e5ec9b0200eec1cfefa60672c950233ba7a2bcb4d6dda6957cc7"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-794.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8201684,
+          "decodedDuration": 185.97922902494332,
+          "nonzeroThroughFrame": 8201684,
+          "zeroFrom": 185.97922902494332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "1e8dc15a941732c0ceb283ebb07fb49078b64466895cac6b2416b5512ffbc27d"
+        },
+        "48000": {
+          "frames": 8927002,
+          "decodedDuration": 185.97920833333333,
+          "nonzeroThroughFrame": 8927002,
+          "zeroFrom": 185.97920833333333,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "fff722a580485038c95084647a746c423d45a17765011f54a4075393161550f6"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-813.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8202836,
+          "decodedDuration": 186.0053514739229,
+          "nonzeroThroughFrame": 8068683,
+          "zeroFrom": 182.96333333333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "240f491ba1717ccdbc2ad4085d2e9b0c1adeba2675a0dea9ae5aeb7afc9a4cd7"
+        },
+        "48000": {
+          "frames": 8928256,
+          "decodedDuration": 186.00533333333334,
+          "nonzeroThroughFrame": 8782223,
+          "zeroFrom": 182.96297916666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "94d55899d591be1af4d06887ed44cb9aa518850edf3b74ed65cc0a7bb2f14e08"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-817.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 9950841,
+          "decodedDuration": 225.64265306122448,
+          "nonzeroThroughFrame": 9950841,
+          "zeroFrom": 225.64265306122448,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "03ad17aa3bbac7ae9704ca4215bc006a2ceb0e5cb8fcb6ac294f8cd455f69671"
+        },
+        "48000": {
+          "frames": 10830848,
+          "decodedDuration": 225.64266666666666,
+          "nonzeroThroughFrame": 10830848,
+          "zeroFrom": 225.64266666666666,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "f1970380dbe6ca553e91b20cfd68c4bda3321b453628ef7d07881f5a6251c6ea"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-861.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 8143373,
+          "decodedDuration": 184.65698412698413,
+          "nonzeroThroughFrame": 8143373,
+          "zeroFrom": 184.65698412698413,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "4424053919499b33315031323c9f6142881388017b45cbaf54ba21f342de8579"
+        },
+        "48000": {
+          "frames": 8863535,
+          "decodedDuration": 184.65697916666667,
+          "nonzeroThroughFrame": 8863535,
+          "zeroFrom": 184.65697916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "30c4cbdf86142e05d03094a40010d1597549beb43c4dcc9836b4876f701972bf"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-864.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7271444,
+          "decodedDuration": 164.8853514739229,
+          "nonzeroThroughFrame": 7271444,
+          "zeroFrom": 164.8853514739229,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "52a2de410746ab6866b00f01fa448a8974f0e2bfc1dd3f07aa2c7772c39a5f0e"
+        },
+        "48000": {
+          "frames": 7914496,
+          "decodedDuration": 164.88533333333334,
+          "nonzeroThroughFrame": 7914496,
+          "zeroFrom": 164.88533333333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "0a425ff3d7c495aba819e04cc095f0d23febf21deab49a0d6b246f8f3a2d1fc0"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-878.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7759873,
+          "decodedDuration": 175.96083900226756,
+          "nonzeroThroughFrame": 7759873,
+          "zeroFrom": 175.96083900226756,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "755902503411870f7274fab91fcf5d8979de3650bc75ed78e3854c905fda83f5"
+        },
+        "48000": {
+          "frames": 8446120,
+          "decodedDuration": 175.96083333333334,
+          "nonzeroThroughFrame": 8446120,
+          "zeroFrom": 175.96083333333334,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "34b9b004574d10300d6416a9a408413a1dfce5c5ca9748f00ef53911f67b9392"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-889.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7413830,
+          "decodedDuration": 168.1140589569161,
+          "nonzeroThroughFrame": 7413830,
+          "zeroFrom": 168.1140589569161,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "ef1984e3631c401311eea56c1fedb016d4ec6ff161f2a8b7cdd92df14a05dd5d"
+        },
+        "48000": {
+          "frames": 8069474,
+          "decodedDuration": 168.11404166666668,
+          "nonzeroThroughFrame": 8069474,
+          "zeroFrom": 168.11404166666668,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "7cc5632fd43fcc2970cac2bff506b5b867a33764ffd275c8fc72a2ccf8b9bf9f"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-934.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 9020417,
+          "decodedDuration": 204.54460317460317,
+          "nonzeroThroughFrame": 9020417,
+          "zeroFrom": 204.54460317460317,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "88df873ffb1ff167f5f27b682310441814eb4c492dca1855904114131eb23d28"
+        },
+        "48000": {
+          "frames": 9818140,
+          "decodedDuration": 204.54458333333332,
+          "nonzeroThroughFrame": 9818140,
+          "zeroFrom": 204.54458333333332,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "d18b911f7fd884a55ea8031d693df7ec46e5212893fe663a5aebe0e16d62f028"
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-994.mp3",
+      "reason": "no-bounded-exact-zero-suffix",
+      "rates": {
+        "44100": {
+          "frames": 7187550,
+          "decodedDuration": 162.98299319727892,
+          "nonzeroThroughFrame": 7187550,
+          "zeroFrom": 162.98299319727892,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "321bf8c96def82fb34d48731fb29d929bf946ffadfafaee8d87e6b53b912cd99"
+        },
+        "48000": {
+          "frames": 7823183,
+          "decodedDuration": 162.98297916666667,
+          "nonzeroThroughFrame": 7823183,
+          "zeroFrom": 162.98297916666667,
+          "maximumSuffixPeak": 0,
+          "pcmSha256": "5e66c4559a62709a03932342496eb4c26f9b296cd38884568041ab3bc0a1954f"
+        }
+      }
+    }
+  ]
+}

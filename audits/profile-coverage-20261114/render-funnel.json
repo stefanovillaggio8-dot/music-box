@@ -1,0 +1,37 @@
+{
+  "attack-report": {
+    "requested": 17,
+    "rendered": 9,
+    "rejectedReasons": {
+      "Post-render rhythm certificate failed": 5,
+      "Oversampled overlap peak exceeds ceiling": 1,
+      "Stretch timing failed": 2
+    }
+  },
+  "attack-44100-report": {
+    "requested": 17,
+    "rendered": 10,
+    "rejectedReasons": {
+      "Oversampled overlap peak exceeds ceiling": 1,
+      "Post-render rhythm certificate failed": 5,
+      "Stretch timing failed": 1
+    }
+  },
+  "intact-union-48k-report": {
+    "requested": 17,
+    "rendered": 7,
+    "rejectedReasons": {
+      "Post-render rhythm certificate failed": 7,
+      "Oversampled overlap peak exceeds ceiling": 1,
+      "Stretch timing failed": 2
+    }
+  },
+  "all-zero-48k-report": {
+    "requested": 4,
+    "rendered": 2,
+    "rejectedReasons": {
+      "Smooth common gain exceeds safe peak": 1,
+      "Lossless/oversampled render validation failed": 1
+    }
+  }
+}

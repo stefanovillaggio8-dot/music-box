@@ -36,7 +36,7 @@ test("IndexedDB renames are serialized and cloud updates are saved locally",()=>
 });
 test("reload resubmits unacknowledged rename changes",()=>{
  assert.match(app,/Object\.keys\(_rinominiDaMandare\(\)\)\.length\)\s*_salvaStatoCondiviso\(\)/);
- const body=section("function _salvaStatoCondiviso()","const _mbUltimaLetturaWorker");
+ const body=section("function _salvaStatoCondiviso(","const _mbUltimaLetturaWorker");
  assert.match(body,/_rinominiDaMandareSvuota\(sent\.rinomini\)/);
  assert.match(body,/_statoDaSalvare=Object\.keys\(_rinominiDaMandare\(\)\)\.length>0/);
 });

@@ -1,0 +1,130 @@
+{
+  "before": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "27002e628433a9278c4cfbe48b8979130ce4f1df18d8544c3c265b0a89d441c0",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    },
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "fb927d1e283d64c6b93a7168e1c4d5fcfa12564a06f1895ae5c9970294c2d161"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "Pure_Mids_-_The_Leader@63.507",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Moon_I_Mean_-_Wrong_Concept@177.506",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Moon_I_Mean_-_Wrong_Concept@109.340",
+        "category": "repeated-phrase",
+        "referenceWords": 50,
+        "legacyReferenceWords": 50,
+        "acceptedWords": 0,
+        "errors": []
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 78,
+      "acceptedWords": 0,
+      "coverage": 0,
+      "onset": {
+        "count": 0
+      },
+      "end": {
+        "count": 0
+      }
+    }
+  },
+  "after": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "27002e628433a9278c4cfbe48b8979130ce4f1df18d8544c3c265b0a89d441c0",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    },
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "fb927d1e283d64c6b93a7168e1c4d5fcfa12564a06f1895ae5c9970294c2d161"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "Pure_Mids_-_The_Leader@63.507",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Moon_I_Mean_-_Wrong_Concept@177.506",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Moon_I_Mean_-_Wrong_Concept@109.340",
+        "category": "repeated-phrase",
+        "referenceWords": 50,
+        "legacyReferenceWords": 50,
+        "acceptedWords": 0,
+        "errors": []
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 78,
+      "acceptedWords": 0,
+      "coverage": 0,
+      "onset": {
+        "count": 0
+      },
+      "end": {
+        "count": 0
+      }
+    }
+  }
+}

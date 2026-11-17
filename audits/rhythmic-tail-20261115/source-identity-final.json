@@ -1,0 +1,15 @@
+{
+  "indexEntriesChecked": 1176,
+  "prefixCounts": {
+    "audio": 1163,
+    "app": 6,
+    "mobile": 7
+  },
+  "sourceTrees": {
+    "audio": "73f8f7ea2008c0b9310e67a3e7296eb442677fc9",
+    "app": "33a47ab241156d1d5d33e91a3f8f3fc8eac50631",
+    "mobile": "e3f575b3c5428f9f3a0a74d9b53865519b9be8a8"
+  },
+  "mismatches": [],
+  "notFreshFullDecoding": true
+}

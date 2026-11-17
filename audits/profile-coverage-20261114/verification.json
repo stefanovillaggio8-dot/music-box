@@ -1,0 +1,45 @@
+{
+  "runtimeCodeCommit": "3ce1003213b38e73a45b2a8ec17ee4699013dd6f",
+  "fullLocal": {
+    "pass": 627,
+    "fail": 0,
+    "log": "regression-627.log"
+  },
+  "fullRemoteWebKit": {
+    "pass": 627,
+    "fail": 0,
+    "run": 43612810977
+  },
+  "djRemote": {
+    "pass": 565,
+    "fail": 0,
+    "run": 43612791254
+  },
+  "pythonWholeStructure": {
+    "pass": 8,
+    "fail": 0
+  },
+  "physicalIPhone": false,
+  "subjectiveListeningCertified": false,
+  "historicalCommonWorkflowTimeouts": [
+    {
+      "run": 43612798697,
+      "attempts": 2,
+      "phase": "library row activation; native decode and handoff passed"
+    },
+    {
+      "run": 43615185359,
+      "attempts": [
+        2
+      ],
+      "phase": "library activation; currentId null and no assigned source"
+    }
+  ],
+  "commonBrowserFinalRun": 43615742920,
+  "browserHarnessCommit": "e7a5d54fb12ab44a1dd8a854c64d1c7c2fe7f231",
+  "webKitPassedAttempts": [
+    1,
+    2
+  ],
+  "harnessCorrection": "Await the debounced filtered row; click title text; retain every playback assertion."
+}

@@ -1,0 +1,332 @@
+{
+  "main": {
+    "before": {
+      "referenceWords": 590,
+      "acceptedWords": 168,
+      "coverage": 0.2847457627118644,
+      "onset": {
+        "count": 168,
+        "medianAbsoluteMs": 53.84814449999453,
+        "p95AbsoluteMs": 200.2113189999992
+      },
+      "end": {
+        "count": 168,
+        "medianAbsoluteMs": 65.77288819998728,
+        "p95AbsoluteMs": 228.38804630000098
+      }
+    },
+    "after": {
+      "referenceWords": 590,
+      "acceptedWords": 182,
+      "coverage": 0.30847457627118646,
+      "onset": {
+        "count": 182,
+        "medianAbsoluteMs": 52.86950680002178,
+        "p95AbsoluteMs": 199.6096191000163
+      },
+      "end": {
+        "count": 182,
+        "medianAbsoluteMs": 60.38146980000647,
+        "p95AbsoluteMs": 216.24670410000135
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 345.805908199992,
+      "maximumEndAbsoluteMs": 904.5696410999966
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 345.805908199992,
+      "maximumEndAbsoluteMs": 904.5696410999966
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "21a157ba8ce74793c53603dbbc987e3ebe5af5ad8d7c8afde3f9e324db44e98f",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "transfer": {
+    "before": {
+      "referenceWords": 243,
+      "acceptedWords": 24,
+      "coverage": 0.09876543209876543,
+      "onset": {
+        "count": 24,
+        "medianAbsoluteMs": 29.111755399998884,
+        "p95AbsoluteMs": 227.5915527000052
+      },
+      "end": {
+        "count": 24,
+        "medianAbsoluteMs": 50.2540893999992,
+        "p95AbsoluteMs": 203.36169429999984
+      }
+    },
+    "after": {
+      "referenceWords": 243,
+      "acceptedWords": 25,
+      "coverage": 0.102880658436214,
+      "onset": {
+        "count": 25,
+        "medianAbsoluteMs": 29.111755399998884,
+        "p95AbsoluteMs": 227.5915527000052
+      },
+      "end": {
+        "count": 25,
+        "medianAbsoluteMs": 50.2540893999992,
+        "p95AbsoluteMs": 203.36169429999984
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 416.6625976999967,
+      "maximumEndAbsoluteMs": 203.37463379999576
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 416.6625976999967,
+      "maximumEndAbsoluteMs": 203.37463379999576
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "cdcd7ca16a9038157582de26522ff2d1159c951c5cc410420500b3ddc0326dce",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "validation": {
+    "before": {
+      "referenceWords": 166,
+      "acceptedWords": 25,
+      "coverage": 0.15060240963855423,
+      "onset": {
+        "count": 25,
+        "medianAbsoluteMs": 65.93472290000335,
+        "p95AbsoluteMs": 360.9120482999941
+      },
+      "end": {
+        "count": 25,
+        "medianAbsoluteMs": 76.91281130000505,
+        "p95AbsoluteMs": 384.893157999997
+      }
+    },
+    "after": {
+      "referenceWords": 166,
+      "acceptedWords": 26,
+      "coverage": 0.1566265060240964,
+      "onset": {
+        "count": 26,
+        "medianAbsoluteMs": 67.16937259999867,
+        "p95AbsoluteMs": 360.9120482999941
+      },
+      "end": {
+        "count": 26,
+        "medianAbsoluteMs": 76.91281130000505,
+        "p95AbsoluteMs": 384.893157999997
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 398.7399901999993,
+      "maximumEndAbsoluteMs": 406.33856199998775
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 398.7399901999993,
+      "maximumEndAbsoluteMs": 406.33856199998775
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "2305a28e856fbdcff0fb52b7d7f04a6e9ebc1c1e58754704a31cef2adcd1053d",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "holdout": {
+    "before": {
+      "referenceWords": 150,
+      "acceptedWords": 14,
+      "coverage": 0.09333333333333334,
+      "onset": {
+        "count": 14,
+        "medianAbsoluteMs": 33.942138699998736,
+        "p95AbsoluteMs": 156.6727904999965
+      },
+      "end": {
+        "count": 14,
+        "medianAbsoluteMs": 39.937866199991845,
+        "p95AbsoluteMs": 202.7949218999936
+      }
+    },
+    "after": {
+      "referenceWords": 150,
+      "acceptedWords": 14,
+      "coverage": 0.09333333333333334,
+      "onset": {
+        "count": 14,
+        "medianAbsoluteMs": 33.942138699998736,
+        "p95AbsoluteMs": 156.6727904999965
+      },
+      "end": {
+        "count": 14,
+        "medianAbsoluteMs": 39.937866199991845,
+        "p95AbsoluteMs": 202.7949218999936
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 156.6727904999965,
+      "maximumEndAbsoluteMs": 202.7949218999936
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 156.6727904999965,
+      "maximumEndAbsoluteMs": 202.7949218999936
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "bd9eb85379760d646e20860950c40a0744a095da07d8fe0b739199894ab598d8",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "fresh": {
+    "before": {
+      "referenceWords": 110,
+      "acceptedWords": 32,
+      "coverage": 0.2909090909090909,
+      "onset": {
+        "count": 32,
+        "medianAbsoluteMs": 115.3563232000181,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 32,
+        "medianAbsoluteMs": 160.80554199999142,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "after": {
+      "referenceWords": 110,
+      "acceptedWords": 33,
+      "coverage": 0.3,
+      "onset": {
+        "count": 33,
+        "medianAbsoluteMs": 109.94274899999823,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 33,
+        "medianAbsoluteMs": 156.7509154999982,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 483.22644039998863,
+      "maximumEndAbsoluteMs": 635.769287100004
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 483.22644039998863,
+      "maximumEndAbsoluteMs": 635.769287100004
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "3cde92b255200908a32a39d5763010df9333a1b3d9c547f07c55928344b12afd",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "blind": {
+    "before": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    },
+    "after": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 193.91143800000066,
+      "maximumEndAbsoluteMs": 304.93823239999074
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 193.91143800000066,
+      "maximumEndAbsoluteMs": 304.93823239999074
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "a741be23229cd9f83f6f24792d4c0abb0de4be3ef4792b0d372118ff2323bc48",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  }
+}

@@ -1,0 +1,1109 @@
+{
+  "version": 1,
+  "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+  "implementedInBranchPlayer": true,
+  "publicDeployment": false,
+  "observationPassesPerReferenceWindow": 7,
+  "referenceLanguages": [
+    "en"
+  ],
+  "runtimeSha256": {
+    "audio-lyrics-align.js": "a09077ec61444718b3e82a0bf964dae2f955ab892f38ecbea4701176e41d73ab",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925"
+  },
+  "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+  "cases": [
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@156.225",
+      "category": "singing-sparse",
+      "referenceWords": 16,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@91.988",
+      "category": "repeated-phrase",
+      "referenceWords": 26,
+      "acceptedWords": 6,
+      "errors": [
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 0,
+          "startErrorMs": -39.91503910000915,
+          "endErrorMs": 9.267700199998785
+        },
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 1,
+          "startErrorMs": 9.267700199998785,
+          "endErrorMs": 116.34564210000065
+        },
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 2,
+          "startErrorMs": 116.34564210000065,
+          "endErrorMs": -65.77288819998728
+        },
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 3,
+          "startErrorMs": -65.77288819998728,
+          "endErrorMs": 108.81420900000194
+        },
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 4,
+          "startErrorMs": 108.81420900000194,
+          "endErrorMs": 140.4502562999994
+        },
+        {
+          "lineSourceT": 92.4879150391,
+          "wordIndex": 5,
+          "startErrorMs": 140.4502562999994,
+          "endErrorMs": 290.54302980000557
+        }
+      ]
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@33.900",
+      "category": "rap-dense",
+      "referenceWords": 114,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@89.234",
+      "category": "repeated-phrase",
+      "referenceWords": 110,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@146.081",
+      "category": "rap-dense",
+      "referenceWords": 101,
+      "acceptedWords": 70,
+      "errors": [
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 0,
+          "startErrorMs": 199.6096191000163,
+          "endErrorMs": 11.467529300006163
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 1,
+          "startErrorMs": 11.467529300006163,
+          "endErrorMs": 69.70483400002081
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 2,
+          "startErrorMs": 69.70483400002081,
+          "endErrorMs": 139.8916015999987
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 3,
+          "startErrorMs": 139.8916015999987,
+          "endErrorMs": 109.57543949999149
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 4,
+          "startErrorMs": 109.57543949999149,
+          "endErrorMs": 73.24975589997962
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 5,
+          "startErrorMs": 9.147582999986525,
+          "endErrorMs": 126.95764160000067
+        },
+        {
+          "lineSourceT": 146.5813903809,
+          "wordIndex": 6,
+          "startErrorMs": 126.95764160000067,
+          "endErrorMs": 279.05786129997523
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 0,
+          "startErrorMs": -146.72094729999685,
+          "endErrorMs": -3.714355500022748
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 1,
+          "startErrorMs": -3.714355500022748,
+          "endErrorMs": 46.14343259999032
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 2,
+          "startErrorMs": 46.14343259999032,
+          "endErrorMs": 43.3211670000162
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 3,
+          "startErrorMs": 43.3211670000162,
+          "endErrorMs": 94.18176270000345
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 4,
+          "startErrorMs": 94.18176270000345,
+          "endErrorMs": 0.7924805000243396
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 5,
+          "startErrorMs": 0.7924805000243396,
+          "endErrorMs": 4.980712899993023
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 6,
+          "startErrorMs": 4.980712899993023,
+          "endErrorMs": -15.94274899997572
+        },
+        {
+          "lineSourceT": 154.5077209473,
+          "wordIndex": 7,
+          "startErrorMs": -15.94274899997572,
+          "endErrorMs": 197.32690430001298
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 0,
+          "startErrorMs": -115.21887210000159,
+          "endErrorMs": 59.606567400010135
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 1,
+          "startErrorMs": 59.606567400010135,
+          "endErrorMs": 47.8078612999866
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 2,
+          "startErrorMs": 47.8078612999866,
+          "endErrorMs": -2.0267333999868242
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 3,
+          "startErrorMs": -2.0267333999868242,
+          "endErrorMs": 126.98510740000302
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 4,
+          "startErrorMs": 126.98510740000302,
+          "endErrorMs": 73.21191409999983
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 5,
+          "startErrorMs": 73.21191409999983,
+          "endErrorMs": 109.3477782999912
+        },
+        {
+          "lineSourceT": 156.2962188721,
+          "wordIndex": 6,
+          "startErrorMs": 18.935790999989877,
+          "endErrorMs": 260.23193360001073
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 1,
+          "startErrorMs": 2.492309600000908,
+          "endErrorMs": -15.35742190000633
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 2,
+          "startErrorMs": -15.35742190000633,
+          "endErrorMs": 69.66333010001335
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 3,
+          "startErrorMs": 69.66333010001335,
+          "endErrorMs": 53.41394039999159
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 4,
+          "startErrorMs": 53.41394039999159,
+          "endErrorMs": 54.07312009998577
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 5,
+          "startErrorMs": 54.07312009998577,
+          "endErrorMs": 4.746337900002118
+        },
+        {
+          "lineSourceT": 158.0102386475,
+          "wordIndex": 6,
+          "startErrorMs": 4.746337900002118,
+          "endErrorMs": 256.37902829998893
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 1,
+          "startErrorMs": 85.81933589999835,
+          "endErrorMs": 40.7564696999998
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 2,
+          "startErrorMs": 40.7564696999998,
+          "endErrorMs": 59.84155270002134
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 3,
+          "startErrorMs": 59.84155270002134,
+          "endErrorMs": 61.89355469999214
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 4,
+          "startErrorMs": 61.89355469999214,
+          "endErrorMs": -6.445068399983711
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 5,
+          "startErrorMs": -6.445068399983711,
+          "endErrorMs": 108.23205570000027
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 6,
+          "startErrorMs": 108.23205570000027,
+          "endErrorMs": 106.8898926000088
+        },
+        {
+          "lineSourceT": 159.8702392578,
+          "wordIndex": 7,
+          "startErrorMs": 5.846191399996314,
+          "endErrorMs": 42.32263180000473
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 0,
+          "startErrorMs": -188.76501459999417,
+          "endErrorMs": 31.239868199975263
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 1,
+          "startErrorMs": 31.239868199975263,
+          "endErrorMs": 57.712646499993525
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 2,
+          "startErrorMs": 57.712646499993525,
+          "endErrorMs": -41.246704099989984
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 3,
+          "startErrorMs": -41.246704099989984,
+          "endErrorMs": 101.61157229998707
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 4,
+          "startErrorMs": 101.61157229998707,
+          "endErrorMs": -15.289672899996276
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 5,
+          "startErrorMs": -15.289672899996276,
+          "endErrorMs": 7.838989299983723
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 6,
+          "startErrorMs": 7.838989299983723,
+          "endErrorMs": -24.513305699997545
+        },
+        {
+          "lineSourceT": 161.6497650146,
+          "wordIndex": 7,
+          "startErrorMs": -24.513305699997545,
+          "endErrorMs": 37.46972659999415
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 1,
+          "startErrorMs": -30.094360399999687,
+          "endErrorMs": 60.210205100020175
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 2,
+          "startErrorMs": 60.210205100020175,
+          "endErrorMs": 22.556396499993525
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 3,
+          "startErrorMs": 22.556396499993525,
+          "endErrorMs": 177.1358642999985
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 4,
+          "startErrorMs": 177.1358642999985,
+          "endErrorMs": 0.42016599999783466
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 5,
+          "startErrorMs": 0.42016599999783466,
+          "endErrorMs": 41.59570310000049
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 6,
+          "startErrorMs": 41.59570310000049,
+          "endErrorMs": -27.31665039999598
+        },
+        {
+          "lineSourceT": 164.0549163818,
+          "wordIndex": 7,
+          "startErrorMs": -27.31665039999598,
+          "endErrorMs": 102.80969240000104
+        },
+        {
+          "lineSourceT": 165.9378356934,
+          "wordIndex": 0,
+          "startErrorMs": -236.83569339999622,
+          "endErrorMs": 30.898681600007194
+        },
+        {
+          "lineSourceT": 165.9378356934,
+          "wordIndex": 1,
+          "startErrorMs": 30.898681600007194,
+          "endErrorMs": 71.13244629999826
+        },
+        {
+          "lineSourceT": 165.9378356934,
+          "wordIndex": 2,
+          "startErrorMs": 71.13244629999826,
+          "endErrorMs": -5.084594699980016
+        },
+        {
+          "lineSourceT": 165.9378356934,
+          "wordIndex": 3,
+          "startErrorMs": -5.084594699980016,
+          "endErrorMs": 105.47937009999941
+        },
+        {
+          "lineSourceT": 165.9378356934,
+          "wordIndex": 4,
+          "startErrorMs": 105.47937009999941,
+          "endErrorMs": 51.93505860000869
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 0,
+          "startErrorMs": 45.97436520000997,
+          "endErrorMs": 24.51867679999964
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 1,
+          "startErrorMs": 24.51867679999964,
+          "endErrorMs": 6.651245099988046
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 2,
+          "startErrorMs": 6.651245099988046,
+          "endErrorMs": 161.26977540000098
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 3,
+          "startErrorMs": 161.26977540000098,
+          "endErrorMs": 125.53186040000242
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 4,
+          "startErrorMs": 52.86950680002178,
+          "endErrorMs": 30.348754900018093
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 5,
+          "startErrorMs": 30.348754900018093,
+          "endErrorMs": 106.35583499998802
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 6,
+          "startErrorMs": 106.35583499998802,
+          "endErrorMs": -0.8737793000079819
+        },
+        {
+          "lineSourceT": 169.4950256348,
+          "wordIndex": 7,
+          "startErrorMs": -0.8737793000079819,
+          "endErrorMs": 142.13525389999404
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 0,
+          "startErrorMs": -35.82495119999862,
+          "endErrorMs": -2.6602782999987085
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 1,
+          "startErrorMs": -2.6602782999987085,
+          "endErrorMs": -2.7249756000173875
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 2,
+          "startErrorMs": -2.7249756000173875,
+          "endErrorMs": 3.324829099994986
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 3,
+          "startErrorMs": 3.324829099994986,
+          "endErrorMs": 79.52600100000495
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 4,
+          "startErrorMs": 79.52600100000495,
+          "endErrorMs": 28.167968800005383
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 5,
+          "startErrorMs": 28.167968800005383,
+          "endErrorMs": 68.42797849998306
+        },
+        {
+          "lineSourceT": 171.2768249512,
+          "wordIndex": 6,
+          "startErrorMs": 68.42797849998306,
+          "endErrorMs": -31.802123999995047
+        }
+      ]
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@77.153",
+      "category": "repeated-phrase",
+      "referenceWords": 84,
+      "acceptedWords": 43,
+      "errors": [
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 0,
+          "startErrorMs": 131.20037840000975,
+          "endErrorMs": 46.672180199990976
+        },
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 1,
+          "startErrorMs": 46.672180199990976,
+          "endErrorMs": 119.01196290000371
+        },
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 2,
+          "startErrorMs": 119.01196290000371,
+          "endErrorMs": 115.62512209999909
+        },
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 3,
+          "startErrorMs": 115.62512209999909,
+          "endErrorMs": 30.259521500013875
+        },
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 4,
+          "startErrorMs": 30.259521500013875,
+          "endErrorMs": -53.84814449999453
+        },
+        {
+          "lineSourceT": 79.4617996216,
+          "wordIndex": 5,
+          "startErrorMs": -53.84814449999453,
+          "endErrorMs": 45.24700929999881
+        },
+        {
+          "lineSourceT": 81.3808670044,
+          "wordIndex": 0,
+          "startErrorMs": 72.13299560000053,
+          "endErrorMs": -12.507812500004434
+        },
+        {
+          "lineSourceT": 81.3808670044,
+          "wordIndex": 1,
+          "startErrorMs": -12.507812500004434,
+          "endErrorMs": -33.54235839999831
+        },
+        {
+          "lineSourceT": 81.3808670044,
+          "wordIndex": 2,
+          "startErrorMs": -33.54235839999831,
+          "endErrorMs": 50.147522000003164
+        },
+        {
+          "lineSourceT": 81.3808670044,
+          "wordIndex": 3,
+          "startErrorMs": 50.147522000003164,
+          "endErrorMs": -80.93615720000003
+        },
+        {
+          "lineSourceT": 81.3808670044,
+          "wordIndex": 4,
+          "startErrorMs": -80.93615720000003,
+          "endErrorMs": -74.98522950000108
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 0,
+          "startErrorMs": -41.331665000001294,
+          "endErrorMs": 109.98242189999985
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 1,
+          "startErrorMs": 53.75378419999777,
+          "endErrorMs": 44.897277800004076
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 2,
+          "startErrorMs": 44.897277800004076,
+          "endErrorMs": 117.5947266000037
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 3,
+          "startErrorMs": 117.5947266000037,
+          "endErrorMs": 9.828308099997685
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 4,
+          "startErrorMs": 9.828308099997685,
+          "endErrorMs": -99.92266849999965
+        },
+        {
+          "lineSourceT": 84.674331665,
+          "wordIndex": 5,
+          "startErrorMs": -99.92266849999965,
+          "endErrorMs": 185.4609374999967
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 0,
+          "startErrorMs": -90.99139399999956,
+          "endErrorMs": -19.75054930001363
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 1,
+          "startErrorMs": -19.75054930001363,
+          "endErrorMs": 35.27020260000313
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 2,
+          "startErrorMs": 35.27020260000313,
+          "endErrorMs": -9.553710899993462
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 3,
+          "startErrorMs": -9.553710899993462,
+          "endErrorMs": 31.740539599994122
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 4,
+          "startErrorMs": 31.740539599994122,
+          "endErrorMs": -8.371765099994377
+        },
+        {
+          "lineSourceT": 87.223991394,
+          "wordIndex": 5,
+          "startErrorMs": -8.371765099994377,
+          "endErrorMs": 169.03576660000397
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 0,
+          "startErrorMs": 170.32208250000735,
+          "endErrorMs": 56.17230219999669
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 1,
+          "startErrorMs": 0.729492200008508,
+          "endErrorMs": 112.67681879999714
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 2,
+          "startErrorMs": 112.67681879999714,
+          "endErrorMs": 67.90234380000015
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 3,
+          "startErrorMs": 67.90234380000015,
+          "endErrorMs": 88.32836909999742
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 4,
+          "startErrorMs": 35.700805700003,
+          "endErrorMs": 10.876892100000646
+        },
+        {
+          "lineSourceT": 89.0026779175,
+          "wordIndex": 5,
+          "startErrorMs": 10.876892100000646,
+          "endErrorMs": 166.0776978000058
+        },
+        {
+          "lineSourceT": 90.9187850952,
+          "wordIndex": 0,
+          "startErrorMs": 174.21490480001012,
+          "endErrorMs": -11.903564500002517
+        },
+        {
+          "lineSourceT": 90.9187850952,
+          "wordIndex": 1,
+          "startErrorMs": -11.903564500002517,
+          "endErrorMs": 79.72515870000052
+        },
+        {
+          "lineSourceT": 90.9187850952,
+          "wordIndex": 2,
+          "startErrorMs": 79.72515870000052,
+          "endErrorMs": 144.74255369999867
+        },
+        {
+          "lineSourceT": 90.9187850952,
+          "wordIndex": 3,
+          "startErrorMs": 144.74255369999867,
+          "endErrorMs": -16.737548799994784
+        },
+        {
+          "lineSourceT": 90.9187850952,
+          "wordIndex": 4,
+          "startErrorMs": -16.737548799994784,
+          "endErrorMs": -6.044494600004668
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 0,
+          "startErrorMs": -67.58105469999975,
+          "endErrorMs": -55.83056639999029
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 1,
+          "startErrorMs": -55.83056639999029,
+          "endErrorMs": 61.62243650000221
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 2,
+          "startErrorMs": 61.62243650000221,
+          "endErrorMs": 88.70037840000577
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 3,
+          "startErrorMs": 88.70037840000577,
+          "endErrorMs": 16.356323200000134
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 4,
+          "startErrorMs": 16.356323200000134,
+          "endErrorMs": 5.557678200005967
+        },
+        {
+          "lineSourceT": 94.2205810547,
+          "wordIndex": 5,
+          "startErrorMs": 5.557678200005967,
+          "endErrorMs": 183.05493159999742
+        },
+        {
+          "lineSourceT": 96.4895629883,
+          "wordIndex": 0,
+          "startErrorMs": -36.56298829999116,
+          "endErrorMs": 201.49627690000216
+        },
+        {
+          "lineSourceT": 97.7102737427,
+          "wordIndex": 0,
+          "startErrorMs": -37.27374269999473,
+          "endErrorMs": 79.43066410000199
+        },
+        {
+          "lineSourceT": 97.7102737427,
+          "wordIndex": 1,
+          "startErrorMs": 79.43066410000199,
+          "endErrorMs": 191.6358643000109
+        }
+      ]
+    },
+    {
+      "id": "Slingshot_Miracle_-_Whistler@103.648",
+      "category": "singing-sparse",
+      "referenceWords": 17,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@15.216",
+      "category": "singing-fast",
+      "referenceWords": 69,
+      "acceptedWords": 18,
+      "errors": [
+        {
+          "lineSourceT": 15.716211319,
+          "wordIndex": 0,
+          "startErrorMs": -200.2113189999992,
+          "endErrorMs": 100.89791869999942
+        },
+        {
+          "lineSourceT": 15.716211319,
+          "wordIndex": 1,
+          "startErrorMs": -7.613052399999987,
+          "endErrorMs": -13.017791700001169
+        },
+        {
+          "lineSourceT": 15.716211319,
+          "wordIndex": 2,
+          "startErrorMs": -13.017791700001169,
+          "endErrorMs": 215.18296809999882
+        },
+        {
+          "lineSourceT": 15.716211319,
+          "wordIndex": 3,
+          "startErrorMs": 96.46005249999945,
+          "endErrorMs": -13.795303300000228
+        },
+        {
+          "lineSourceT": 15.716211319,
+          "wordIndex": 4,
+          "startErrorMs": -65.57409669999714,
+          "endErrorMs": -228.38804630000098
+        },
+        {
+          "lineSourceT": 20.6414833069,
+          "wordIndex": 0,
+          "startErrorMs": -45.483306899999576,
+          "endErrorMs": 138.3859405999992
+        },
+        {
+          "lineSourceT": 20.6414833069,
+          "wordIndex": 1,
+          "startErrorMs": 138.3859405999992,
+          "endErrorMs": 202.77070619999904
+        },
+        {
+          "lineSourceT": 20.6414833069,
+          "wordIndex": 2,
+          "startErrorMs": 202.77070619999904,
+          "endErrorMs": -41.14256289999929
+        },
+        {
+          "lineSourceT": 20.6414833069,
+          "wordIndex": 3,
+          "startErrorMs": -117.94577029999687,
+          "endErrorMs": 204.5710907
+        },
+        {
+          "lineSourceT": 20.6414833069,
+          "wordIndex": 4,
+          "startErrorMs": 104.34564210000019,
+          "endErrorMs": -334.4088592999981
+        },
+        {
+          "lineSourceT": 32.3488388062,
+          "wordIndex": 0,
+          "startErrorMs": 147.16119380000237,
+          "endErrorMs": 144.97933959999898
+        },
+        {
+          "lineSourceT": 32.3488388062,
+          "wordIndex": 1,
+          "startErrorMs": 65.72900389999603,
+          "endErrorMs": 71.9181212999942
+        },
+        {
+          "lineSourceT": 32.3488388062,
+          "wordIndex": 2,
+          "startErrorMs": 17.46713259999666,
+          "endErrorMs": 142.72500610000094
+        },
+        {
+          "lineSourceT": 32.3488388062,
+          "wordIndex": 3,
+          "startErrorMs": 142.72500610000094,
+          "endErrorMs": -50.35101320000024
+        },
+        {
+          "lineSourceT": 37.5353355408,
+          "wordIndex": 0,
+          "startErrorMs": 20.66445919999893,
+          "endErrorMs": 140.35989380000302
+        },
+        {
+          "lineSourceT": 37.5353355408,
+          "wordIndex": 1,
+          "startErrorMs": 140.35989380000302,
+          "endErrorMs": 74.40545650000274
+        },
+        {
+          "lineSourceT": 37.5353355408,
+          "wordIndex": 2,
+          "startErrorMs": 74.40545650000274,
+          "endErrorMs": 106.26596070000005
+        },
+        {
+          "lineSourceT": 37.5353355408,
+          "wordIndex": 3,
+          "startErrorMs": 106.26596070000005,
+          "endErrorMs": 100.89761350000259
+        }
+      ]
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@91.396",
+      "category": "repeated-phrase",
+      "referenceWords": 53,
+      "acceptedWords": 31,
+      "errors": [
+        {
+          "lineSourceT": 95.6736907959,
+          "wordIndex": 0,
+          "startErrorMs": -17.690795899994782,
+          "endErrorMs": 126.3381348000081
+        },
+        {
+          "lineSourceT": 95.6736907959,
+          "wordIndex": 1,
+          "startErrorMs": 126.3381348000081,
+          "endErrorMs": 58.083435100002134
+        },
+        {
+          "lineSourceT": 95.6736907959,
+          "wordIndex": 2,
+          "startErrorMs": 58.083435100002134,
+          "endErrorMs": 73.14111329999662
+        },
+        {
+          "lineSourceT": 95.6736907959,
+          "wordIndex": 3,
+          "startErrorMs": 19.613281200008714,
+          "endErrorMs": 43.347717300008526
+        },
+        {
+          "lineSourceT": 101.4313964844,
+          "wordIndex": 0,
+          "startErrorMs": -15.396484400000077,
+          "endErrorMs": 171.62530519999564
+        },
+        {
+          "lineSourceT": 101.4313964844,
+          "wordIndex": 1,
+          "startErrorMs": 171.62530519999564,
+          "endErrorMs": 38.589111299998535
+        },
+        {
+          "lineSourceT": 101.4313964844,
+          "wordIndex": 2,
+          "startErrorMs": 38.589111299998535,
+          "endErrorMs": 182.62048340000092
+        },
+        {
+          "lineSourceT": 101.4313964844,
+          "wordIndex": 3,
+          "startErrorMs": 182.62048340000092,
+          "endErrorMs": 48.65319820000025
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 0,
+          "startErrorMs": -225.77612299998862,
+          "endErrorMs": 55.19158940001034
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 1,
+          "startErrorMs": 55.19158940001034,
+          "endErrorMs": -11.506713900004684
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 2,
+          "startErrorMs": -11.506713900004684,
+          "endErrorMs": 108.5988770000057
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 3,
+          "startErrorMs": 108.5988770000057,
+          "endErrorMs": 126.13610840000433
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 4,
+          "startErrorMs": 126.13610840000433,
+          "endErrorMs": -71.95410159999938
+        },
+        {
+          "lineSourceT": 103.601776123,
+          "wordIndex": 5,
+          "startErrorMs": -71.95410159999938,
+          "endErrorMs": 143.84606929999677
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 0,
+          "startErrorMs": -14.207824699994376,
+          "endErrorMs": 90.27032470000051
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 1,
+          "startErrorMs": 90.27032470000051,
+          "endErrorMs": 103.0336914000003
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 2,
+          "startErrorMs": 103.0336914000003,
+          "endErrorMs": 251.1400756999933
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 3,
+          "startErrorMs": 251.1400756999933,
+          "endErrorMs": 203.46795649999194
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 4,
+          "startErrorMs": 203.46795649999194,
+          "endErrorMs": -0.6528320000001031
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 5,
+          "startErrorMs": -0.6528320000001031,
+          "endErrorMs": 47.124572800001374
+        },
+        {
+          "lineSourceT": 107.3302078247,
+          "wordIndex": 6,
+          "startErrorMs": 47.124572800001374,
+          "endErrorMs": 52.51306150000801
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 0,
+          "startErrorMs": -63.74853520000556,
+          "endErrorMs": -53.69299320000209
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 1,
+          "startErrorMs": -53.69299320000209,
+          "endErrorMs": 31.111999499998433
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 2,
+          "startErrorMs": 31.111999499998433,
+          "endErrorMs": 19.67370610000785
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 3,
+          "startErrorMs": -34.81542970000362,
+          "endErrorMs": 201.2957153000059
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 4,
+          "startErrorMs": 201.2957153000059,
+          "endErrorMs": 26.72021479999387
+        },
+        {
+          "lineSourceT": 111.1797485352,
+          "wordIndex": 5,
+          "startErrorMs": 26.72021479999387,
+          "endErrorMs": 904.5696410999966
+        },
+        {
+          "lineSourceT": 115.4658203125,
+          "wordIndex": 0,
+          "startErrorMs": -149.8203124999975,
+          "endErrorMs": 345.805908199992
+        },
+        {
+          "lineSourceT": 115.4658203125,
+          "wordIndex": 1,
+          "startErrorMs": 345.805908199992,
+          "endErrorMs": 159.2617187999963
+        },
+        {
+          "lineSourceT": 115.4658203125,
+          "wordIndex": 2,
+          "startErrorMs": 38.67150880000736,
+          "endErrorMs": 205.860534699994
+        },
+        {
+          "lineSourceT": 115.4658203125,
+          "wordIndex": 3,
+          "startErrorMs": 205.860534699994,
+          "endErrorMs": -216.24670410000135
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "referenceWords": 590,
+    "acceptedWords": 168,
+    "coverage": 0.2847457627118644,
+    "onset": {
+      "count": 168,
+      "medianAbsoluteMs": 53.84814449999453,
+      "p95AbsoluteMs": 200.2113189999992
+    },
+    "end": {
+      "count": 168,
+      "medianAbsoluteMs": 65.77288819998728,
+      "p95AbsoluteMs": 228.38804630000098
+    }
+  }
+}

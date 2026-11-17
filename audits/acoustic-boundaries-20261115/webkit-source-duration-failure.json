@@ -1,0 +1,70 @@
+{
+  "setup": {
+    "stage": "target-queued",
+    "id": "b-track-4",
+    "time": 0
+  },
+  "media": [
+    {
+      "event": "loadedmetadata",
+      "at": 0,
+      "duration": 0.001115963,
+      "paused": false,
+      "seeking": true,
+      "rate": 1
+    },
+    {
+      "event": "playing",
+      "at": 0,
+      "duration": 0.001115963,
+      "paused": false,
+      "seeking": true,
+      "rate": 1
+    },
+    {
+      "event": "seeking",
+      "at": 0.001115963,
+      "duration": 0.001115963,
+      "paused": true,
+      "seeking": false,
+      "rate": 1
+    },
+    {
+      "event": "timeupdate",
+      "at": 0.001115963,
+      "duration": 0.001115963,
+      "paused": true,
+      "seeking": false,
+      "rate": 1
+    },
+    {
+      "event": "seeked",
+      "at": 0.001115963,
+      "duration": 0.001115963,
+      "paused": true,
+      "seeking": false,
+      "rate": 1
+    },
+    {
+      "event": "pause",
+      "at": 0.001115963,
+      "duration": 0.001115963,
+      "paused": true,
+      "seeking": false,
+      "rate": 1
+    },
+    {
+      "event": "ended",
+      "at": 0.001115963,
+      "duration": 0.001115963,
+      "paused": true,
+      "seeking": false,
+      "rate": 1
+    }
+  ],
+  "common": {
+    "active": false,
+    "lastStop": null
+  },
+  "contentSafe": true
+}

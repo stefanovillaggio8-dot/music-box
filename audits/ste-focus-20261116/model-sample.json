@@ -1,0 +1,185 @@
+{
+  "selection": "Before final1 inference: strongest observed attacks among missing-bar edges, plus all 12 existing near-pulse pairs; personal Ste only",
+  "out": [
+    {
+      "key": "audio/songs/track-513.mp3",
+      "count": 30
+    },
+    {
+      "key": "audio/songs/track-170.mp3",
+      "count": 28
+    },
+    {
+      "key": "audio/songs/track-2.mp3",
+      "count": 27
+    },
+    {
+      "key": "audio/songs/track-47.mp3",
+      "count": 25
+    },
+    {
+      "key": "audio/songs/track-124.mp3",
+      "count": 23
+    },
+    {
+      "key": "audio/songs/track-148.mp3",
+      "count": 23
+    },
+    {
+      "key": "audio/songs/track-19.mp3",
+      "count": 23
+    },
+    {
+      "key": "audio/songs/track-248.mp3",
+      "count": 23
+    },
+    {
+      "key": "audio/songs/track-160.mp3",
+      "count": 22
+    },
+    {
+      "key": "audio/songs/track-483.mp3",
+      "count": 22
+    },
+    {
+      "key": "audio/songs/track-670.mp3",
+      "count": 22
+    },
+    {
+      "key": "audio/songs/track-133.mp3",
+      "count": 20
+    },
+    {
+      "key": "audio/songs/track-135.mp3",
+      "count": 20
+    },
+    {
+      "key": "audio/songs/track-17.mp3",
+      "count": 20
+    },
+    {
+      "key": "audio/songs/track-349.mp3",
+      "count": 20
+    },
+    {
+      "key": "audio/songs/track-37.mp3",
+      "count": 20
+    }
+  ],
+  "intro": [
+    {
+      "key": "audio/songs/track-466.mp3",
+      "count": 27
+    },
+    {
+      "key": "audio/songs/track-95.mp3",
+      "count": 27
+    },
+    {
+      "key": "audio/songs/track-44.mp3",
+      "count": 24
+    },
+    {
+      "key": "audio/songs/track-119.mp3",
+      "count": 19
+    },
+    {
+      "key": "audio/songs/track-2.mp3",
+      "count": 19
+    },
+    {
+      "key": "audio/songs/track-208.mp3",
+      "count": 19
+    },
+    {
+      "key": "audio/songs/track-239.mp3",
+      "count": 19
+    },
+    {
+      "key": "audio/songs/track-218.mp3",
+      "count": 15
+    },
+    {
+      "key": "audio/songs/track-17.mp3",
+      "count": 14
+    },
+    {
+      "key": "audio/songs/track-457.mp3",
+      "count": 14
+    },
+    {
+      "key": "audio/songs/track-485.mp3",
+      "count": 14
+    },
+    {
+      "key": "audio/songs/track-514.mp3",
+      "count": 14
+    },
+    {
+      "key": "audio/songs/track-518.mp3",
+      "count": 13
+    },
+    {
+      "key": "audio/songs/track-39.mp3",
+      "count": 12
+    },
+    {
+      "key": "audio/songs/track-664.mp3",
+      "count": 12
+    },
+    {
+      "key": "audio/songs/track-670.mp3",
+      "count": 12
+    }
+  ],
+  "keys": [
+    "audio/songs/track-10.mp3",
+    "audio/songs/track-102.mp3",
+    "audio/songs/track-105.mp3",
+    "audio/songs/track-119.mp3",
+    "audio/songs/track-124.mp3",
+    "audio/songs/track-133.mp3",
+    "audio/songs/track-135.mp3",
+    "audio/songs/track-144.mp3",
+    "audio/songs/track-148.mp3",
+    "audio/songs/track-160.mp3",
+    "audio/songs/track-166.mp3",
+    "audio/songs/track-17.mp3",
+    "audio/songs/track-170.mp3",
+    "audio/songs/track-181.mp3",
+    "audio/songs/track-19.mp3",
+    "audio/songs/track-2.mp3",
+    "audio/songs/track-208.mp3",
+    "audio/songs/track-218.mp3",
+    "audio/songs/track-239.mp3",
+    "audio/songs/track-248.mp3",
+    "audio/songs/track-250.mp3",
+    "audio/songs/track-30.mp3",
+    "audio/songs/track-304.mp3",
+    "audio/songs/track-349.mp3",
+    "audio/songs/track-37.mp3",
+    "audio/songs/track-38.mp3",
+    "audio/songs/track-39.mp3",
+    "audio/songs/track-4.mp3",
+    "audio/songs/track-44.mp3",
+    "audio/songs/track-457.mp3",
+    "audio/songs/track-466.mp3",
+    "audio/songs/track-47.mp3",
+    "audio/songs/track-483.mp3",
+    "audio/songs/track-485.mp3",
+    "audio/songs/track-50.mp3",
+    "audio/songs/track-513.mp3",
+    "audio/songs/track-514.mp3",
+    "audio/songs/track-518.mp3",
+    "audio/songs/track-574.mp3",
+    "audio/songs/track-6.mp3",
+    "audio/songs/track-627.mp3",
+    "audio/songs/track-664.mp3",
+    "audio/songs/track-670.mp3",
+    "audio/songs/track-705.mp3",
+    "audio/songs/track-89.mp3",
+    "audio/songs/track-94.mp3",
+    "audio/songs/track-95.mp3",
+    "audio/songs/track-98.mp3"
+  ]
+}

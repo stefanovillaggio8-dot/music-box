@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 212,
+  "profileFunnel": {
+    "Diego": {
+      "pairs": 44732,
+      "noCoherentEndingBars": 19201,
+      "meterOrTempo": 15312,
+      "noCoherentInitialBars": 8555,
+      "localHarmony": 207,
+      "incomingVocalOrLyric": 1454,
+      "completeCandidates": 2,
+      "independentBeatFit": 1
+    }
+  },
+  "pairConditions": {
+    "Diego": {
+      "bpm": 14011,
+      "harmony": 207,
+      "voice": 1454,
+      "meterAndSpan": 849,
+      "observedDownbeat": 91,
+      "duration": 255,
+      "affineDownbeatFit": 106,
+      "completeCandidates": 2,
+      "independentBeatFit": 1
+    }
+  },
+  "windowExclusions": {
+    "Diego": {
+      "bpm": 202183,
+      "barSpan": 218363,
+      "harmony": 5658,
+      "affineDownbeatFit": 3489,
+      "overlapDuration": 42995,
+      "voice": 47430,
+      "meter": 14225,
+      "observedDownbeat": 1742,
+      "downbeatTiming": 3,
+      "observedPulseAgreement": 57,
+      "contourOrPulseSupport": 6
+    }
+  },
+  "windows": 113,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Diego",
+    "tracks": 212,
+    "unavailableMembers": 0,
+    "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "baseline": "d737a27fbc381a16972badf277d1d51ea61dd9e0",
+  "productCodeCommit": "11576f5e7e8f97110c6992daf92e4f1d327f90fe",
+  "latestTestCommit": "556dc4dd9f38e6083942a225caa78ac7300bb54d",
+  "changedSinceProductCode": [
+    ".github/workflows/composite-browser.yml",
+    "tests/composite-browser.cjs"
+  ],
+  "fullSuite": {
+    "run": 43788040387,
+    "passed": 692,
+    "failed": 0
+  },
+  "djSuite": {
+    "run": 43788036993,
+    "passed": 629,
+    "failed": 0,
+    "includedInFullSuite": true
+  },
+  "otherProductRuns": [
+    {
+      "name": "Chromium foreground",
+      "run": 43788043769,
+      "conclusion": "success"
+    },
+    {
+      "name": "integrity",
+      "run": 43788048670,
+      "conclusion": "success"
+    },
+    {
+      "name": "karaoke regression",
+      "run": 43788036947,
+      "conclusion": "success"
+    },
+    {
+      "name": "volume",
+      "run": 43788037010,
+      "conclusion": "success"
+    },
+    {
+      "name": "original metadata and title",
+      "run": 43788053516,
+      "conclusion": "success"
+    }
+  ],
+  "pythonSelected": {
+    "ctcBoundaries": 3,
+    "wholeStructure": 8,
+    "renderedTail": 3,
+    "audioRender": 1,
+    "failed": 0,
+    "allRepositoryPythonTestsClaimed": false
+  },
+  "nativeSourceDiagnostic": {
+    "run": 43787556143,
+    "conclusion": "success",
+    "collectionOnlyNotAllMediaCasesPassed": true
+  },
+  "commonPcm": {
+    "run": 43788037210,
+    "conclusion": "failure",
+    "jobsPassed": 6,
+    "jobsFailed": 1,
+    "failedJob": "real-audio (webkit, Ste)",
+    "nextRun": 43788780959,
+    "nextRunStatus": "failure"
+  },
+  "physicalIPhone": false,
+  "phoneCpuRamMeasured": false,
+  "offlineUserDataDeleted": false,
+  "commonPcmMac": {
+    "run": 43789096589,
+    "status": "completed",
+    "webkitRunner": "macos-latest",
+    "chromiumRunner": "ubuntu-latest",
+    "sameAssertions": true,
+    "conclusion": "success",
+    "jobsPassed": 7,
+    "jobsFailed": 0,
+    "repeatedSteJobId": 133043694471,
+    "repeatStatus": "success",
+    "repeatAttempt": 2,
+    "repeatActualHandoff": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "allSevenPassedAttempt1": true
+  }
+}

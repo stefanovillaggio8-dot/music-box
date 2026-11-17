@@ -1,0 +1,670 @@
+{
+  "requested": 2,
+  "rendered": 2,
+  "contextMode": "independently-verified-warm-or-cold",
+  "results": [
+    {
+      "from": "audio/songs/track-934.mp3",
+      "to": "audio/songs/track-1124.mp3",
+      "profiles": [
+        "Emanuele"
+      ],
+      "primary": false,
+      "cue": {
+        "kind": "beat",
+        "structuralBeat": true,
+        "preservedFileTail": true,
+        "measuredFullBeat": true,
+        "metricalRhythmic": false,
+        "nativeTailFullBeat": true,
+        "preserveTail": true,
+        "quietCertified": false,
+        "silenceTrim": false,
+        "softTailTrim": false,
+        "begin": 190.65879078015283,
+        "end": 204.545,
+        "fade": 13.88620921984716,
+        "entry": 0,
+        "tempo": 1.046014715892516,
+        "gain": 1,
+        "vocalFadeSeconds": 0,
+        "preservedEntrance": "vocal-handoff-foreground-v1",
+        "sourceSha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+        "targetSha": "a1f4c25773e7f7a5873e078b387abf0f01c67d42",
+        "contentPenalty": 0,
+        "sourceTempoBpm": 70.48458149779734,
+        "targetTempoBpm": 67.60563380281691,
+        "nominalTempo": 1.042584434654919,
+        "nativeRatePreferred": false,
+        "beatAnchor": 190.745,
+        "nextBeat": 0.12,
+        "beatPeriod": 0.8512500000000003,
+        "measuredBeatCount": 17,
+        "beatPulseAgreement": 1,
+        "measuredPlacementError": 0.015678375991159975,
+        "grooveScore": 0.8432162400884002,
+        "score": 0.8432162400884002,
+        "fullOnsetFirst": 0.32589251263361163,
+        "fullOnsetSecond": 0.23478815375760725,
+        "measuredPulseMode": true,
+        "fullPulseFirst": 9,
+        "fullPulseSecond": 8,
+        "fullPulseAttackSupport": 1,
+        "harmonicEvidence": {
+          "compatibleKey": true,
+          "average": 0.4115989635328653,
+          "weakest": 0,
+          "keyFrom": "2B",
+          "keyTo": "2B",
+          "keyConfidence": 0.7846379369150822,
+          "keyCompatibility": 1,
+          "dissonanceMax": -0.007820381233603848,
+          "rawDissonanceMax": 0.33566153906865004
+        },
+        "harmonicMode": "compatible-key",
+        "percussiveIntro": false,
+        "harmonicScore": 0.4115989635328653,
+        "harmonicWeakest": 0,
+        "structuralEvidence": {
+          "version": 1,
+          "bars": 4,
+          "beatsPerBar": 4,
+          "sourcePhaseConfidence": 1,
+          "targetPhaseConfidence": 0.9999999999999831,
+          "downbeatRms": 0.01934499723045959,
+          "incomingWholeOverlap": {
+            "start": 0,
+            "end": 14.825179191922464,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.119091,
+            "maxRelativeVocal": 0.9787199129450983,
+            "clear": false,
+            "notHumanVerified": true
+          },
+          "outgoingWholeOverlap": {
+            "start": 190.35879078015282,
+            "end": 204.545,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.079511,
+            "maxRelativeVocal": 0.2371258287015335,
+            "clear": false,
+            "notHumanVerified": true
+          },
+          "vocalOverlapPolicy": "separated-vocal-handoff-v1",
+          "vocalHandoff": {
+            "method": "original-pcm-separated-vocal-handoff-v1",
+            "at": 6.312238790880868,
+            "marginSeconds": 0.3,
+            "outgoingQuietSuffix": {
+              "start": 196.67102957103367,
+              "end": 204.545,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 0.0007,
+              "maxRelativeVocal": 0.043130006161429445,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "incomingQuietPrefix": {
+              "start": 0,
+              "end": 6.916499080256724,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 3.5e-05,
+              "maxRelativeVocal": 0.0023791720481272515,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "humanVocalReference": false
+          },
+          "sourceObservedDownbeats": [
+            190.745,
+            194.145,
+            197.545,
+            200.965
+          ],
+          "targetObservedDownbeats": [
+            0.12,
+            3.64,
+            7.22,
+            10.76
+          ],
+          "sourceModelDownbeats": [
+            190.7,
+            194.12,
+            197.52,
+            200.92,
+            204.32
+          ],
+          "targetModelDownbeats": [
+            0.08,
+            3.6,
+            7.18,
+            10.74,
+            14.28
+          ],
+          "pulseCheck": {
+            "source": [
+              0.08620921984717711,
+              0.9262092198471805,
+              1.7862092198471657,
+              2.626209219847169,
+              3.486209219847183,
+              4.326209219847186,
+              5.186209219847171,
+              6.046209219847185,
+              6.88620921984716,
+              7.746209219847174,
+              8.586209219847177,
+              9.446209219847162,
+              10.306209219847176,
+              11.14620921984718,
+              12.006209219847165,
+              12.866209219847178,
+              13.686209219847171
+            ],
+            "target": [
+              0.12,
+              0.96,
+              1.84,
+              2.74,
+              3.64,
+              4.52,
+              5.44,
+              6.32,
+              7.22,
+              8.1,
+              9,
+              9.88,
+              10.76,
+              11.66,
+              12.58,
+              13.44,
+              14.34
+            ],
+            "sourceBars": [
+              0.08620921984717711,
+              3.486209219847183,
+              6.88620921984716,
+              10.306209219847176
+            ],
+            "targetBars": [
+              0.11472113936524263,
+              3.4798745607456936,
+              6.902388551808765,
+              10.286662163083422
+            ]
+          },
+          "method": "source-eof-and-original-pcm-initial-pickup-v1",
+          "humanVerified": false,
+          "semanticLabelsVerified": false
+        },
+        "composite": {
+          "version": 1,
+          "path": "dj-mixes/bfc32122c932824071c796d4ebac4b5a74a92560caf90c3c8ef1a03a5048cfc4.flac",
+          "sha256": "bfc32122c932824071c796d4ebac4b5a74a92560caf90c3c8ef1a03a5048cfc4",
+          "sourceSha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+          "targetSha": "a1f4c25773e7f7a5873e078b387abf0f01c67d42",
+          "begin": 190.65879078015283,
+          "entry": 0,
+          "fade": 13.88620921984716,
+          "tempo": 1.046014715892516,
+          "seconds": 16.88621315192744,
+          "peak": 0.9973660707473755,
+          "headroom": 0.9775165200672206,
+          "pitchPreserved": true,
+          "timingVerified": true,
+          "renderedFromOriginals": true,
+          "handoffPosition": 14.525179191922463,
+          "sampleRate": 44100,
+          "nativeHandoffAt": 13.885804988662132,
+          "nativeRevealAt": 15.535804988662132,
+          "preRoll": 0.6,
+          "releaseSeconds": 1.5,
+          "overlapPeak": 0.8804515600204468,
+          "envelopeVersion": 4,
+          "warmupOriginalSeconds": 0,
+          "gainProof": {
+            "method": "offline-stereo-shared-lookahead-v1",
+            "truePeakLookahead": true,
+            "maximumReductionDb": 0.19751788552868552,
+            "meanOverlapReductionDb": 0,
+            "attackDbPerSecond": 40,
+            "releaseDbPerSecond": 8,
+            "firstGain": 1,
+            "nativeRevealGain": 1
+          },
+          "sourceReadThrough": 204.54459576881496,
+          "outgoingEnvelope": "unity-through-decoded-eof-v1",
+          "oversampledPeak": 0.998009979724884,
+          "oversampledOverlapPeak": 0.9122090339660645,
+          "processing": "soundtouch-wsola",
+          "rhythmVerified": true,
+          "postRenderRhythm": {
+            "method": "rendered-hpss-attacks-v1",
+            "mode": "full-pcm",
+            "accepted": true,
+            "sourceAttacks": 17,
+            "incomingAttacks": 17,
+            "matches": 17,
+            "agreement": 1.0,
+            "rmsSeconds": 0.01476635338794868,
+            "firstHalfMatches": 9,
+            "secondHalfMatches": 8,
+            "sharedPerBar": [],
+            "sourceObserved": [
+              0.07918367346938782,
+              0.9209070294784582,
+              1.76843537414966,
+              2.621768707482993,
+              3.4751020408163265,
+              4.316825396825397,
+              5.181768707482994,
+              6.029297052154195,
+              6.876825396825398,
+              7.730158730158731,
+              8.577687074829932,
+              9.431020408163265,
+              10.295963718820863,
+              11.12607709750567,
+              11.991020408163266,
+              12.85015873015873,
+              13.680272108843537
+            ],
+            "incomingObserved": [
+              0.10820861678004534,
+              0.9209070294784582,
+              1.7568253968253966,
+              2.61015873015873,
+              3.4867120181405897,
+              4.322630385487528,
+              5.193378684807256,
+              6.023492063492064,
+              6.876825396825398,
+              7.7417687074829935,
+              8.589297052154196,
+              9.425215419501134,
+              10.278548752834467,
+              11.160907029478459,
+              12.002630385487528,
+              12.85015873015873,
+              13.697687074829933
+            ],
+            "notHumanListening": true,
+            "downbeatsVerified": true,
+            "downbeatRmsSeconds": 0.017892176697960047,
+            "maximumDownbeatError": 0.029024943310657525,
+            "downbeatMatches": 4
+          }
+        }
+      },
+      "renderProof": {
+        "rate": 44100,
+        "seconds": 16.88620921984716,
+        "preRoll": 0.6,
+        "releaseSeconds": 1.5,
+        "envelopeVersion": 4,
+        "gainProof": {
+          "method": "offline-stereo-shared-lookahead-v1",
+          "truePeakLookahead": true,
+          "maximumReductionDb": 0.19751788552868552,
+          "meanOverlapReductionDb": 0,
+          "attackDbPerSecond": 40,
+          "releaseDbPerSecond": 8,
+          "firstGain": 1,
+          "nativeRevealGain": 1
+        },
+        "warmupOriginalSeconds": 0,
+        "nativeHandoffAt": 13.885804988662132,
+        "nativeRevealAt": 15.535804988662132,
+        "peak": 0.9973661175317697,
+        "overlapPeak": 0.8804515600204468,
+        "headroom": 0.9775165200672206,
+        "pitchPreserved": true,
+        "sourceReadThrough": 204.54459576881496,
+        "outgoingEnvelope": "unity-through-decoded-eof-v1",
+        "timingVerified": true,
+        "timing": {
+          "whole": {
+            "score": 0.5264384591442479,
+            "lagMs": -10
+          },
+          "first": {
+            "score": 0.5130798632255553,
+            "lagMs": -10
+          },
+          "second": {
+            "score": 0.5277250150166855,
+            "lagMs": -10
+          },
+          "verified": true
+        },
+        "handoffPosition": 14.525179191922463
+      },
+      "renderContext": "warm",
+      "bytes": 2751071,
+      "renderAttempts": [
+        {
+          "context": "warm",
+          "error": null
+        }
+      ]
+    },
+    {
+      "from": "audio/songs/track-700.mp3",
+      "to": "audio/songs/track-521.mp3",
+      "profiles": [
+        "Emanuele"
+      ],
+      "primary": true,
+      "cue": {
+        "kind": "beat",
+        "structuralBeat": true,
+        "preservedFileTail": true,
+        "measuredFullBeat": true,
+        "metricalRhythmic": false,
+        "nativeTailFullBeat": true,
+        "preserveTail": true,
+        "quietCertified": false,
+        "silenceTrim": false,
+        "softTailTrim": false,
+        "begin": 283.08132075515675,
+        "end": 293.933,
+        "fade": 10.85167924484324,
+        "entry": 0,
+        "tempo": 0.9615025480209735,
+        "gain": 1,
+        "vocalFadeSeconds": 0,
+        "preservedEntrance": "vocal-handoff-foreground-v1",
+        "sourceSha": "d82406d989fb0baf6f4703fadb1f0c1d34aa136a",
+        "targetSha": "92d8348a034e04cf62a4c3a6cc9c1f520dd2aff8",
+        "contentPenalty": 0,
+        "sourceTempoBpm": 67.03910614525117,
+        "targetTempoBpm": 69.97084548104957,
+        "nominalTempo": 0.9581005586592146,
+        "nativeRatePreferred": false,
+        "beatAnchor": 283.433,
+        "nextBeat": 0.32,
+        "beatPeriod": 0.8950000000000031,
+        "measuredBeatCount": 11,
+        "beatPulseAgreement": 0.9166666666666666,
+        "measuredPlacementError": 0.02893926564735253,
+        "grooveScore": 0.583359897378937,
+        "score": 0.583359897378937,
+        "fullOnsetFirst": 0.698916608568714,
+        "fullOnsetSecond": 0.44692700476321,
+        "measuredPulseMode": false,
+        "fullPulseFirst": 6,
+        "fullPulseSecond": 5,
+        "fullPulseAttackSupport": 0.9090909090909091,
+        "harmonicEvidence": {
+          "method": "pcm-key-with-quiet-frame-bound-v1",
+          "compatibleKey": true,
+          "keyFrom": "5B",
+          "keyTo": "5A",
+          "keyConfidence": 0.7531874126741087,
+          "keyCompatibility": 0.97,
+          "dissonanceMax": 0.037106742185046254,
+          "rawDissonanceMax": 0.20612178978912926,
+          "frames": 20,
+          "sharedTonalFrames": 16,
+          "boundedQuietFrames": 1,
+          "quietInteractionMaximum": 0.05,
+          "sourceGain": 1,
+          "incomingEnvelope": "vocal-handoff-foreground-v1"
+        },
+        "harmonicMode": "compatible-key",
+        "percussiveIntro": false,
+        "structuralEvidence": {
+          "version": 1,
+          "edgeAnalysisViews": {
+            "source": "whole-original",
+            "target": "edge-original"
+          },
+          "bars": 2,
+          "beatsPerBar": 4,
+          "sourcePhaseConfidence": 0.964725448425867,
+          "targetPhaseConfidence": 0.9999999999281048,
+          "downbeatRms": 0.018866814279592886,
+          "incomingWholeOverlap": {
+            "start": 0,
+            "end": 10.73391724422309,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.013096,
+            "maxRelativeVocal": 0.14397379096535878,
+            "clear": false,
+            "notHumanVerified": true
+          },
+          "outgoingWholeOverlap": {
+            "start": 282.78132075515674,
+            "end": 293.933,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.030301,
+            "maxRelativeVocal": 0.3249924921704063,
+            "clear": false,
+            "notHumanVerified": true
+          },
+          "vocalOverlapPolicy": "separated-vocal-handoff-v1",
+          "vocalHandoff": {
+            "method": "original-pcm-separated-vocal-handoff-v1",
+            "at": 5.533460043506949,
+            "marginSeconds": 0.3,
+            "outgoingQuietSuffix": {
+              "start": 288.31478079866366,
+              "end": 293.933,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 0.000397,
+              "maxRelativeVocal": 0.018550452003971363,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "incomingQuietPrefix": {
+              "start": 0,
+              "end": 5.60888669561047,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 0.000107,
+              "maxRelativeVocal": 0.008333333333333333,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "humanVocalReference": false
+          },
+          "sourceObservedDownbeats": [
+            283.433,
+            286.973
+          ],
+          "targetObservedDownbeats": [
+            0.32,
+            3.76
+          ],
+          "sourceModelDownbeats": [
+            283.38,
+            286.94,
+            290.54
+          ],
+          "targetModelDownbeats": [
+            0.3,
+            3.74,
+            7.16
+          ],
+          "pulseCheck": {
+            "source": [
+              0.35167924484323976,
+              1.2716792448432557,
+              2.151679244843251,
+              3.0116792448432648,
+              3.89167924484326,
+              4.811679244843219,
+              5.731679244843235,
+              6.611679244843231,
+              7.511679244843265,
+              8.411679244843242,
+              9.271679244843256
+            ],
+            "target": [
+              0.32,
+              1.18,
+              2.04,
+              2.9,
+              3.76,
+              4.62,
+              5.48,
+              6.32,
+              7.18,
+              8.06,
+              8.9,
+              9.76
+            ],
+            "sourceBars": [
+              0.35167924484323976,
+              3.89167924484326
+            ],
+            "targetBars": [
+              0.3328124305636471,
+              3.9105460591228534
+            ]
+          },
+          "method": "source-eof-and-original-pcm-initial-pickup-v1",
+          "humanVerified": false,
+          "semanticLabelsVerified": false
+        },
+        "composite": {
+          "version": 1,
+          "path": "dj-mixes/0cd2f79d0bf885bee6c5d5a570ad7679228cdffa7f8146aecac18b0089d53f86.flac",
+          "sha256": "0cd2f79d0bf885bee6c5d5a570ad7679228cdffa7f8146aecac18b0089d53f86",
+          "sourceSha": "d82406d989fb0baf6f4703fadb1f0c1d34aa136a",
+          "targetSha": "92d8348a034e04cf62a4c3a6cc9c1f520dd2aff8",
+          "begin": 283.08132075515675,
+          "entry": 0,
+          "fade": 10.85167924484324,
+          "tempo": 0.9615025480209735,
+          "seconds": 13.851678004535147,
+          "peak": 0.4952038526535034,
+          "headroom": 1,
+          "pitchPreserved": true,
+          "timingVerified": true,
+          "renderedFromOriginals": true,
+          "handoffPosition": 10.433917244223089,
+          "sampleRate": 44100,
+          "nativeHandoffAt": 10.85201814058957,
+          "nativeRevealAt": 12.50201814058957,
+          "preRoll": 0.6,
+          "releaseSeconds": 1.5,
+          "overlapPeak": 0.4952038526535034,
+          "envelopeVersion": 4,
+          "warmupOriginalSeconds": 0,
+          "gainProof": {
+            "method": "offline-stereo-shared-lookahead-v1",
+            "truePeakLookahead": true,
+            "maximumReductionDb": 0,
+            "meanOverlapReductionDb": 0,
+            "attackDbPerSecond": 40,
+            "releaseDbPerSecond": 8,
+            "firstGain": 1,
+            "nativeRevealGain": 1
+          },
+          "sourceReadThrough": 293.9333388957463,
+          "outgoingEnvelope": "unity-through-decoded-eof-v1",
+          "oversampledPeak": 0.4993782639503479,
+          "oversampledOverlapPeak": 0.4993782639503479,
+          "processing": "soundtouch-wsola",
+          "rhythmVerified": true,
+          "postRenderRhythm": {
+            "method": "rendered-hpss-attacks-v1",
+            "mode": "full-pcm",
+            "accepted": true,
+            "sourceAttacks": 11,
+            "incomingAttacks": 12,
+            "matches": 11,
+            "agreement": 0.9166666666666666,
+            "rmsSeconds": 0.039371348654877056,
+            "firstHalfMatches": 6,
+            "secondHalfMatches": 5,
+            "sharedPerBar": [],
+            "sourceObserved": [
+              0.3404081632653061,
+              1.280816326530612,
+              2.15156462585034,
+              3.0165079365079364,
+              3.8930612244897955,
+              4.816054421768708,
+              5.721632653061225,
+              6.609795918367348,
+              7.503764172335602,
+              8.403537414965987,
+              9.268480725623583
+            ],
+            "incomingObserved": [
+              0.31138321995464857,
+              1.222766439909297,
+              2.116734693877551,
+              2.9874829931972786,
+              3.8872562358276643,
+              4.792834467120182,
+              5.669387755102041,
+              6.58077097505669,
+              7.451519274376418,
+              8.345487528344671,
+              9.245260770975056,
+              10.150839002267574
+            ],
+            "notHumanListening": true,
+            "downbeatsVerified": true,
+            "downbeatRmsSeconds": 0.020930184274802203,
+            "maximumDownbeatError": 0.029024943310657525,
+            "downbeatMatches": 2
+          }
+        }
+      },
+      "renderProof": {
+        "rate": 44100,
+        "seconds": 13.85167924484324,
+        "preRoll": 0.6,
+        "releaseSeconds": 1.5,
+        "envelopeVersion": 4,
+        "gainProof": {
+          "method": "offline-stereo-shared-lookahead-v1",
+          "truePeakLookahead": true,
+          "maximumReductionDb": 0,
+          "meanOverlapReductionDb": 0,
+          "attackDbPerSecond": 40,
+          "releaseDbPerSecond": 8,
+          "firstGain": 1,
+          "nativeRevealGain": 1
+        },
+        "warmupOriginalSeconds": 0,
+        "nativeHandoffAt": 10.85201814058957,
+        "nativeRevealAt": 12.50201814058957,
+        "peak": 0.4952038526535034,
+        "overlapPeak": 0.4952038526535034,
+        "headroom": 1,
+        "pitchPreserved": true,
+        "sourceReadThrough": 293.9333388957463,
+        "outgoingEnvelope": "unity-through-decoded-eof-v1",
+        "timingVerified": true,
+        "timing": {
+          "whole": {
+            "score": 0.5556143902188526,
+            "lagMs": -20
+          },
+          "first": {
+            "score": 0.5459765301209618,
+            "lagMs": -20
+          },
+          "second": {
+            "score": 0.5721939708165026,
+            "lagMs": -20
+          },
+          "verified": true
+        },
+        "handoffPosition": 10.433917244223089
+      },
+      "renderContext": "warm",
+      "bytes": 2359459,
+      "renderAttempts": [
+        {
+          "context": "warm",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

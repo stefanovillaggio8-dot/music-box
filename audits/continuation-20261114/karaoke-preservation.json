@@ -1,0 +1,10 @@
+{
+  "acceptedBefore": 160,
+  "acceptedAfter": 168,
+  "previouslyAcceptedTimesPreservedExactly": 160,
+  "additionalWords": 8,
+  "passesBefore": 3,
+  "passesAfter": 7,
+  "normalPhoneSessionCap": 3,
+  "normalPhoneExtraPassesEnabled": false
+}

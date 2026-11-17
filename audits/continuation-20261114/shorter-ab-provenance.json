@@ -1,0 +1,24 @@
+[
+  {
+    "label": "prima",
+    "sourceStart": 116.42669825436406,
+    "transitionAt": 10.299999999999997,
+    "overlapSeconds": 13.789301745635939,
+    "bars": 4,
+    "uniformPreviewGain": 0.8370146120885638,
+    "oversampledMp3Peak192k": 0.8621149659156799,
+    "exactPlayerAssetSha256": "244126aad52154dc707b4c5815cc3241cfc7d9645770192a29cefd8b11d7a048",
+    "note": "Same outgoing context and uniform preview gain; exact original player FLAC also provided. Not a subjective listening certificate."
+  },
+  {
+    "label": "dopo",
+    "sourceStart": 116.42669825436406,
+    "transitionAt": 14.134849689792759,
+    "overlapSeconds": 9.954452055843177,
+    "bars": 4,
+    "uniformPreviewGain": 0.8370146120885638,
+    "oversampledMp3Peak192k": 0.8621149659156799,
+    "exactPlayerAssetSha256": "44e0a9c61d07ab3799b5e0c358ead56b016a67b9f9d530109c6135db12e9f7a1",
+    "note": "Same outgoing context and uniform preview gain; exact original player FLAC also provided. Not a subjective listening certificate."
+  }
+]

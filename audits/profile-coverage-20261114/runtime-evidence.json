@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-14",
+  "historicalCommit": "2efb4c3ec3205b47cefcb7e4f0d6aaffc200a440",
+  "resumeCommit": "5eaaa6f63bf4422236d97f63fd3c887666962b2f",
+  "codeCommit": "3ce1003213b38e73a45b2a8ec17ee4699013dd6f",
+  "files": {
+    "app.js": "444942c8f452e1aee173eded0b2151e8695e055496249fc560c4cf2b6c426108",
+    "mix-intelligente.js": "c2c34252352d4278c949a1ad4085ba7da1bcad6fe1ba310fcf24bdbfd4e8f422",
+    "audio-composite-core.mjs": "99da51aa316ebe3036af93d78ab8c68f786ad172065b3261db643555830c666c",
+    "audio-composite-mix.js": "103da39757cbad5493e247e3b8bca7d2bbfdea08671a2941f02061a782c95009",
+    "audio-lyrics-align.js": "88fca4445ecda083f855e97c85672f45c38a07b63747af635286010925b6f674",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "dj-deep-analysis.json": "6a7fde0fc189da9c66323f190d3701699eaef27859154417097022789b234dd3",
+    "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e"
+  },
+  "simulationToolSha256": "8792b948567d4c47efcc42db77978512f859662d11b48d34bdd332c9eb668cb2",
+  "provenanceNote": "Full-cycle reports embed engine/index/app hashes at execution. The fourteen-scenario replay finished before the metadata-only addition; production engine and index were unchanged."
+}

@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 1031,
+  "profileFunnel": {
+    "Diego": {
+      "pairs": 47294,
+      "noCoherentEndingBars": 20177,
+      "meterOrTempo": 17543,
+      "noCoherentInitialBars": 9205,
+      "localHarmony": 41,
+      "incomingVocalOrLyric": 326,
+      "independentBeatFit": 2
+    },
+    "Ste": {
+      "pairs": 75292,
+      "noCoherentEndingBars": 43257,
+      "noCoherentInitialBars": 10615,
+      "meterOrTempo": 20834,
+      "incomingVocalOrLyric": 496,
+      "localHarmony": 90
+    },
+    "Emanuele": {
+      "pairs": 383772,
+      "meterOrTempo": 170805,
+      "noCoherentInitialBars": 91887,
+      "incomingVocalOrLyric": 3071,
+      "localHarmony": 398,
+      "noCoherentEndingBars": 117606,
+      "independentBeatFit": 5
+    }
+  },
+  "plans": [],
+  "windows": 169
+}

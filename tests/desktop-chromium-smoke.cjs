@@ -3,7 +3,7 @@ const assert=require("node:assert/strict");
 const http=require("node:http"),fs=require("node:fs"),path=require("node:path");
 const {chromium}=require("playwright");
 const root=path.resolve(__dirname,"..");
-const mime={".html":"text/html",".js":"text/javascript",".json":"application/json",
+const mime={".html":"text/html",".js":"text/javascript",".mjs":"text/javascript",".json":"application/json",
  ".css":"text/css",".svg":"image/svg+xml",".png":"image/png",".webp":"image/webp",
  ".jpg":"image/jpeg",".mp3":"audio/mpeg"};
 const srv=http.createServer((req,res)=>{
@@ -27,6 +27,7 @@ async function run(){
   const context=await browser.newContext({viewport:{width:1350,height:900}});
   const page=await context.newPage(),errors=[];
   page.on("pageerror",e=>errors.push(e.message));
+  page.on("console",msg=>{if(msg.text().includes("DJ PCM")||msg.text().includes("fuori fase"))console.log(msg.text())});
   await page.route("**/mix-intelligente.js*",async route=>{
    const source=fs.readFileSync(path.join(root,"mix-intelligente.js"),"utf8");
    const marker="window.MusicBoxMix={";
@@ -163,6 +164,66 @@ async function run(){
   await page.waitForFunction(()=>window.__MB_DESKTOP_STATE__.adopted,
    null,{timeout:9000});
   assert.equal((await page.evaluate(()=>window.__MB_DESKTOP_STATE__.id)),"impact-next");
+  // Exercise the complete-window path against a real media decoder;
+  // a mock clock alone cannot prove that the preview starts in time.
+  async function fullBeatSetup(){
+   await page.evaluate(async()=>{
+    const state=window.__MB_DESKTOP_STATE__;
+    state.id="full-old";state.adopted=false;
+    state.next={id:"full-next",url:state.next.url};
+    const old=new Audio(state.next.url);old.preload="auto";old.volume=.7;
+    await new Promise((resolve,reject)=>{old.onloadedmetadata=resolve;old.onerror=reject;old.load()});
+    old.currentTime=.35;
+    await new Promise(resolve=>{old.onseeked=resolve});
+    state.audio=old;
+    window.__MB_DESKTOP_MIX_TEST__.prepare(state.next,state.id,window.MusicBoxBridge);
+   });
+   await page.waitForFunction(()=>window.__MB_DESKTOP_MIX_TEST__.preview()?.ready===true,
+    null,{timeout:12000});
+   return page.evaluate(async()=>{
+    const state=window.__MB_DESKTOP_STATE__;
+    await state.audio.play();
+    const begin=state.audio.currentTime+.14;
+    const cue={kind:"beat",measuredFullBeat:true,measuredBeatBridge:true,
+     measuredBeatPlacement:true,nativeTailFullBeat:true,begin,end:state.audio.duration-.035,
+     fade:state.audio.duration-.035-begin,entry:0,
+     tempo:1,gain:1,preserveTail:true,quietCertified:false,
+     beatPeriod:.5,beatAnchor:begin,nextBeat:0};
+    await window.__MB_DESKTOP_MIX_TEST__.beginMix(state.next,cue);
+    const act=window.__MB_DESKTOP_MIX_TEST__.active();
+    return {active:!!act,playing:act?.upcoming?.paused===false};
+   });
+  }
+  const fullBeat=await fullBeatSetup();
+  assert.ok(fullBeat.active&&fullBeat.playing,"complete-window mix did not start in Chromium");
+  await page.waitForFunction(()=>window.__MB_DESKTOP_STATE__.adopted,null,{timeout:9000});
+  const fullFinish=await page.evaluate(()=>({id:window.__MB_DESKTOP_STATE__.id,
+   position:window.__MB_DESKTOP_STATE__.audio.currentTime,
+   rate:window.__MB_DESKTOP_STATE__.audio.playbackRate}));
+  assert.equal(fullFinish.id,"full-next");assert.ok(fullFinish.position>4.5);
+  assert.ok(Math.abs(fullFinish.rate-1)<.08,"adopted tempo must relax smoothly");
+  await page.waitForFunction(()=>window.__MB_DESKTOP_STATE__.audio.playbackRate===1,null,{timeout:2000});
+  assert.ok((await fullBeatSetup()).active);
+  await page.evaluate(()=>window.__MB_DESKTOP_MIX_TEST__.active().upcoming.pause());
+  await page.waitForFunction(()=>!window.__MB_DESKTOP_MIX_TEST__.active(),null,{timeout:1500});
+  assert.equal(await page.evaluate(()=>window.__MB_DESKTOP_STATE__.id),"full-old",
+   "a stalled full-beat decoder must preserve the current recording");
+  console.log("[DESKTOP CHROMIUM FULL BEAT]",JSON.stringify({fullBeat,fullFinish,decoderStallCancelled:true}));
+  const workerStretch=await page.evaluate(async()=>{
+   const sr=16000,pcm=new Float32Array(sr*16);let seed=991;
+   for(let i=0;i<pcm.length;i++){
+    seed=(1664525*seed+1013904223)>>>0;const phase=i%(sr/2);
+    pcm[i]=.04*Math.sin(2*Math.PI*440*i/sr)+(phase<sr*.07?(.5-seed/2**32)*Math.exp(-phase/(sr*.018))*.7:0);
+   }
+   const raw={rate:sr,start:0,channels:[pcm]},cue={entry:0,tempo:1.0458,fade:6.849};
+   const result=await window.MusicBoxStretch.prepare(raw,cue);
+   const cached=window.MusicBoxStretch.get(raw,cue)===result;
+   window.MusicBoxStretch.cancel();
+   return {verified:result?.timing?.verified,pitchPreserved:result?.pitchPreserved,
+    rawPreserved:pcm.length===sr*16,cached};
+  });
+  assert.ok(workerStretch.verified&&workerStretch.pitchPreserved&&workerStretch.rawPreserved&&workerStretch.cached);
+  console.log("[CHROMIUM STRETCH WORKER]",JSON.stringify(workerStretch));
   assert.deepEqual(errors,[],"unhandled JavaScript exception in real Chromium");
   console.log("[DESKTOP CHROMIUM FINAL IMPACT]",JSON.stringify({setupImpact,impact}));
   console.log("[DESKTOP CHROMIUM DJ SMOKE]",JSON.stringify({meta,setup:{

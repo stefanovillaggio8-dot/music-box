@@ -1,0 +1,132 @@
+{
+  "codeCommit": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+  "runtimeEngineSha256": "8e0151efcd29375789881cc9bb434c5d5a4aa7b70fa8609a7da6936635655f71",
+  "testResults": {
+    "full": {
+      "passed": 655,
+      "failed": 0,
+      "run": 43672675506
+    },
+    "dj": {
+      "passed": 597,
+      "failed": 0,
+      "run": 43672672846
+    },
+    "python": {
+      "passed": 8,
+      "failed": 0,
+      "log": "python-tests.log"
+    },
+    "targetedFixtureAndRealQueue": {
+      "passed": 38,
+      "failed": 0
+    },
+    "invalidBoostDescriptorRejected": true
+  },
+  "requiredWorkflows": {
+    "Immersive Mode Chromium layout and controls": {
+      "conclusion": "success",
+      "databaseId": 43672144377,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672144377",
+      "workflowName": "Immersive Mode Chromium layout and controls"
+    },
+    "Desktop DJ Chromium playback smoke": {
+      "conclusion": "success",
+      "databaseId": 43672130234,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672130234",
+      "workflowName": "Desktop DJ Chromium playback smoke"
+    },
+    "iPhone DJ WebKit foreground smoke": {
+      "conclusion": "success",
+      "databaseId": 43672675506,
+      "headSha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672675506",
+      "workflowName": "iPhone DJ WebKit foreground smoke"
+    },
+    "Common PCM mix Chromium and WebKit playback": {
+      "conclusion": "success",
+      "databaseId": 43672108599,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672108599",
+      "workflowName": "Common PCM mix Chromium and WebKit playback"
+    },
+    "Music Box - exhaustive Mixa pair audit": {
+      "conclusion": "success",
+      "databaseId": 43672097361,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672097361",
+      "workflowName": "Music Box - exhaustive Mixa pair audit"
+    },
+    "Karaoke and DJ regression checks": {
+      "conclusion": "success",
+      "databaseId": 43672672821,
+      "headSha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672672821",
+      "workflowName": "Karaoke and DJ regression checks"
+    },
+    "Volume precision tests": {
+      "conclusion": "success",
+      "databaseId": 43672067601,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672067601",
+      "workflowName": "Volume precision tests"
+    },
+    "DJ Mix regression tests": {
+      "conclusion": "success",
+      "databaseId": 43672672846,
+      "headSha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672672846",
+      "workflowName": "DJ Mix regression tests"
+    },
+    "Music Box DJ independent raw-audio audit": {
+      "conclusion": "success",
+      "databaseId": 43672067631,
+      "headSha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672067631",
+      "workflowName": "Music Box DJ independent raw-audio audit"
+    }
+  },
+  "allConfiguredWorkflowsInspected": 35,
+  "fullPairAudit": {
+    "orderedPairs": 1381800,
+    "full": 11,
+    "run": 43672097361
+  },
+  "browserCommonBuffers": {
+    "run": 43672108599,
+    "engines": [
+      "chromium",
+      "webkit"
+    ],
+    "decodedPerEngineAt48000": 106,
+    "decodedPerEngineAt44100": 106,
+    "physicalIPhone": false
+  },
+  "initialFailedRuns": [
+    {
+      "run": 43672067618,
+      "reason": "Legacy synthetic fixture omitted indexedFullBeatBridge; fixed in 95c81f4d"
+    },
+    {
+      "run": 43672118174,
+      "reason": "Same two synthetic fixture failures; browser smoke passed, full suite subsequently rerun green"
+    }
+  ],
+  "physicalIPhoneVerified": false,
+  "publicDeployment": false,
+  "offlineUserDataDeleted": false,
+  "mainModified": false,
+  "mergeExecuted": false,
+  "logFormatting": "Trailing whitespace normalized in delivered logs; original raw logs remain at the linked GitHub runs."
+}

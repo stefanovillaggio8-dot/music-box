@@ -1,0 +1,32 @@
+[
+  {
+    "from": "audio/songs/track-934.mp3",
+    "to": "audio/songs/track-1124.mp3",
+    "exactCommonSha256": "68364e66183ce4c5555bf78d9b3fbbdf6d9f5e21a0a2afca7df2ce57243d4d19",
+    "previewUniformGain": 0.7775058045917038,
+    "previewTruePeak": 0.8350484371185303,
+    "overlapSeconds": 13.88620921984716,
+    "originalPrefixStart": 182.65879078015283,
+    "sourceEOF": 204.545,
+    "incomingEntry": 0,
+    "rmsHalfSecondBeforeEOF": 0.11173494160175323,
+    "rmsHalfSecondAfterRelease": 0.12459985911846161,
+    "levelChangeDb": 0.9465708986579782,
+    "notHumanListening": true
+  },
+  {
+    "from": "audio/songs/track-700.mp3",
+    "to": "audio/songs/track-521.mp3",
+    "exactCommonSha256": "21f030cc52e0dea58bce03eb625046a0221fb92e53c5a20bacf2b1af2eab4dbe",
+    "previewUniformGain": 0.8716134173850791,
+    "previewTruePeak": 0.8742259740829468,
+    "overlapSeconds": 10.836679244843253,
+    "originalPrefixStart": 275.08132075515675,
+    "sourceEOF": 293.933,
+    "incomingEntry": 0,
+    "rmsHalfSecondBeforeEOF": 0.06516653299331665,
+    "rmsHalfSecondAfterRelease": 0.06223462522029877,
+    "levelChangeDb": -0.3998507522310314,
+    "notHumanListening": true
+  }
+]

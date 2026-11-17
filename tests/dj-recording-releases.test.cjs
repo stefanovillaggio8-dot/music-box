@@ -12,6 +12,22 @@ const immediate=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
 const liveText=source.slice(source.indexOf("function liveQuietOutroReady("),
  source.indexOf("function needsLiveQuietRecovery("));
 const ready=new Function(liveText+"return liveQuietOutroReady")();
+test('normal EOF and queued playback retain quiet pickups through the public intro API',()=>{
+ const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+ const plain=app.slice(app.indexOf('  function _riproduciSenzaIntro('),app.indexOf('  function handleEnded('));
+ const route=source.slice(source.indexOf(' introStart:(id)=>{'),source.indexOf(' onSeek:(',source.indexOf(' introStart:(id)=>{')));
+ const track={id:'next',url:'next.mp3'},data={sha:'a'.repeat(40),safeIntroAt:5.2,first:5.5,introDrive:.8,beatConfidence:.4};
+ const bridge=()=>({allTracks:()=>[track],mixUrl:t=>t.url});
+ const make=enabled=>new Function('enabled','bridge','deepLookup','cache',
+  'const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));'+introHelpers+'return ({'+route+'});')(enabled,bridge,()=>data,new Map());
+ const run=api=>new Function('window','playById',plain+'return _riproduciSenzaIntro;')(
+  {MusicBoxMix:api},(id,autoplay,at)=>({id,autoplay,at}))('next');
+ assert.equal(run(make(true)).at,0,'the ordinary EOF path cannot bypass the pickup guard');
+ data.musicalContent={leadingDigitalSilence:{sourceSha:data.sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:5.2,maximumPeak:0}};
+ assert.equal(run(make(true)).at,5.2);
+ assert.equal(run(make(false)).at,0,'Mix off must also disable intro skipping');
+ data.musicalContent.leadingDigitalSilence.sourceSha='b'.repeat(40);assert.equal(run(make(true)).at,0);
+});
 function samples(){
  const data=[];
  // Synthetic envelope approximates the user's second screen recording:
@@ -55,7 +71,10 @@ test("reject incoming music that enters late despite high four-second average",(
   "Strongest onset at 8s is not evidence that the first musical beat is at 8s");
 });
 test("verified digital silence at the start can be skipped without deleting music",()=>{
- assert.equal(immediate({introDrive:.85,first:3.5,safeIntroAt:3.25,introBeat:3.8}),true);
+ const b={sha:'a'.repeat(40),introDrive:.85,first:3.5,safeIntroAt:3.25,introBeat:3.8};
+ assert.equal(immediate(b),false,'a low-energy threshold does not prove the omitted pickup is silence');
+ b.musicalContent={leadingDigitalSilence:{sourceSha:b.sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:3.25,maximumPeak:0}};
+ assert.equal(immediate(b),true);
 });
 test("detect an intro whose first bar is weak despite late high-volume beat",()=>{
  const g=[...Array(8).fill(-1.2),...Array(16).fill(.6),...Array(8).fill(0)];
@@ -263,6 +282,7 @@ test("certified release fallback does not authorize unsafe or iPhone overlays",(
  const make=(failed,early,post,isIOS=false)=>{
   const factory=new Function("isIOS","desktopMeasuredReleaseLeadIn",
    "lowEnergyPostludeLeadIn","musicallyCompatibleOverlay",
+   "const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+introHelpers+
    part+"return certifiedAlternateRelease;");
   return factory(isIOS,()=>early,()=>post,(a,b,p)=>p?.certified===true)(
    {duration:200},{duration:200},200,failed);

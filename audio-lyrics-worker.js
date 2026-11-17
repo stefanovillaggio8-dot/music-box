@@ -9,8 +9,8 @@ async function getModel(){
   model=(async()=>{
    const lib=await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1");
    return lib.pipeline("automatic-speech-recognition",
-     "onnx-community/whisper-tiny",
-     {device:"webgpu",dtype:{encoder_model:"fp32",decoder_model_merged:"q4"}});
+     "onnx-community/whisper-tiny_timestamped",
+     {device:"webgpu",revision:"517244293732ee2d58139af5814231b7e6830a0d",dtype:{encoder_model:"fp32",decoder_model_merged:"q4"}});
   })();
  }
  return model;

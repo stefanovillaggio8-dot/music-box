@@ -1,0 +1,208 @@
+{
+  "method": "evaluation-only-observation-upper-bound-v1",
+  "sourceReports": [
+    {
+      "file": "karaoke-acoustic-final-five.json",
+      "sha256": "ec014ab3847db26dbf66979f75cc494a772c67d1e8d70a5a71cefaed4bc7e6aa",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d"
+      }
+    },
+    {
+      "file": "karaoke-short-context.json",
+      "sha256": "68fa6cf5418c553f8667e54fbd23ba10ea551c59f88e67fbb46851d4cafa4c9b",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 14,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    },
+    {
+      "file": "karaoke-context7.json",
+      "sha256": "cfc4fdea0d4b13b8e3c6905f2ba8e4bf8eb6ae4146ca7e7be638f6a439194c7e",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 7,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Human word boundaries are evaluation inputs only; never shipped as observed timestamps.",
+    "Exact normalized lexical match within 750ms is a generous upper bound, not WER or occurrence certification.",
+    "One observation within 100ms does not establish safe automatic selection among competing observations.",
+    "Contexts can share correlated recognizer mistakes; agreement is not independent musical truth."
+  ],
+  "groups": {
+    "all": {
+      "words": 590,
+      "noNearbyExactObservation": 202,
+      "nearbyExactObservation": 388,
+      "anyObservationWithin100msAtBothBoundaries": 184,
+      "consensusWithin60msButWrongOver250ms": 27
+    },
+    "shortAtMostTwoCharacters": {
+      "words": 130,
+      "noNearbyExactObservation": 42,
+      "nearbyExactObservation": 88,
+      "anyObservationWithin100msAtBothBoundaries": 32,
+      "consensusWithin60msButWrongOver250ms": 7
+    },
+    "repeatedInPhrase": {
+      "words": 134,
+      "noNearbyExactObservation": 57,
+      "nearbyExactObservation": 77,
+      "anyObservationWithin100msAtBothBoundaries": 36,
+      "consensusWithin60msButWrongOver250ms": 9
+    }
+  },
+  "cases": [
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@156.225",
+      "category": "singing-sparse",
+      "words": 16,
+      "noNearbyExactObservation": 8,
+      "nearbyExactObservation": 8,
+      "anyObservationWithin100msAtBothBoundaries": 6,
+      "consensusWithin60msButWrongOver250ms": 1,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@91.988",
+      "category": "repeated-phrase",
+      "words": 26,
+      "noNearbyExactObservation": 11,
+      "nearbyExactObservation": 15,
+      "anyObservationWithin100msAtBothBoundaries": 6,
+      "consensusWithin60msButWrongOver250ms": 2,
+      "acceptedWords": 6,
+      "worstAcceptedBoundaryErrorMs": 290.54302980000557
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@33.900",
+      "category": "rap-dense",
+      "words": 114,
+      "noNearbyExactObservation": 52,
+      "nearbyExactObservation": 62,
+      "anyObservationWithin100msAtBothBoundaries": 22,
+      "consensusWithin60msButWrongOver250ms": 4,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@89.234",
+      "category": "repeated-phrase",
+      "words": 110,
+      "noNearbyExactObservation": 71,
+      "nearbyExactObservation": 39,
+      "anyObservationWithin100msAtBothBoundaries": 22,
+      "consensusWithin60msButWrongOver250ms": 3,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@146.081",
+      "category": "rap-dense",
+      "words": 101,
+      "noNearbyExactObservation": 10,
+      "nearbyExactObservation": 91,
+      "anyObservationWithin100msAtBothBoundaries": 58,
+      "consensusWithin60msButWrongOver250ms": 1,
+      "acceptedWords": 70,
+      "worstAcceptedBoundaryErrorMs": 279.05786129997523
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@77.153",
+      "category": "repeated-phrase",
+      "words": 84,
+      "noNearbyExactObservation": 16,
+      "nearbyExactObservation": 68,
+      "anyObservationWithin100msAtBothBoundaries": 40,
+      "consensusWithin60msButWrongOver250ms": 2,
+      "acceptedWords": 43,
+      "worstAcceptedBoundaryErrorMs": 201.49627690000216
+    },
+    {
+      "id": "Slingshot_Miracle_-_Whistler@103.648",
+      "category": "singing-sparse",
+      "words": 17,
+      "noNearbyExactObservation": 9,
+      "nearbyExactObservation": 8,
+      "anyObservationWithin100msAtBothBoundaries": 1,
+      "consensusWithin60msButWrongOver250ms": 3,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@15.216",
+      "category": "singing-fast",
+      "words": 69,
+      "noNearbyExactObservation": 16,
+      "nearbyExactObservation": 53,
+      "anyObservationWithin100msAtBothBoundaries": 13,
+      "consensusWithin60msButWrongOver250ms": 7,
+      "acceptedWords": 18,
+      "worstAcceptedBoundaryErrorMs": 334.4088592999981
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@91.396",
+      "category": "repeated-phrase",
+      "words": 53,
+      "noNearbyExactObservation": 9,
+      "nearbyExactObservation": 44,
+      "anyObservationWithin100msAtBothBoundaries": 16,
+      "consensusWithin60msButWrongOver250ms": 4,
+      "acceptedWords": 31,
+      "worstAcceptedBoundaryErrorMs": 904.5696410999966
+    }
+  ],
+  "acceptedReplayAggregate": {
+    "referenceWords": 590,
+    "acceptedWords": 168,
+    "coverage": 0.2847457627118644,
+    "onset": {
+      "count": 168,
+      "medianAbsoluteMs": 53.84814449999453,
+      "p95AbsoluteMs": 200.2113189999992
+    },
+    "end": {
+      "count": 168,
+      "medianAbsoluteMs": 65.77288819998728,
+      "p95AbsoluteMs": 228.38804630000098
+    }
+  },
+  "productionChanged": false
+}

@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6734";
+const CACHE = "spotifynonavraiimieisoldi-v6735";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -47,22 +47,31 @@ const CORE = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=9",
-  "./audio-lyrics-align.js?v=6734&lang=10",
-  "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6734&words=4",
+  "./word-karaoke.js?v=6734&words=13",
+  "./karaoke-acoustic-proof.js?v=6735&proof=2",
+  "./audio-lyrics-align.js?v=6735&lang=21",
+  "./audio-lyrics-worker.js?v=6715&lang=2",
+  "./offline-storage-audit.js?v=3",
+  "./native-mp3-metadata.js?v=1",
+  "./native-mp3-metadata.json?v=1",
+  "./app.js?v=6735&words=16",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=30", // Refresh the actual URL used by the PWA on worker install
+  "./audio-stretch.js?v=5",
+  "./audio-composite-mix.js?v=14",
+  "./audio-stretch-worker.js?v=4",
+  "./audio-stretch-core.mjs?v=4",
+  "./vendor/soundtouchjs/soundtouch.mjs",
+  "./mix-intelligente.js?v=6735&dj=57", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6734&words=6",
+  "./immersive.js?v=6734&words=9",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -89,18 +98,27 @@ const OFFLINE_SHELL = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=9",
-  "./audio-lyrics-align.js?v=6734&lang=10",
-  "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6734&words=4",
+  "./word-karaoke.js?v=6734&words=13",
+  "./karaoke-acoustic-proof.js?v=6735&proof=2",
+  "./audio-lyrics-align.js?v=6735&lang=21",
+  "./audio-lyrics-worker.js?v=6715&lang=2",
+  "./offline-storage-audit.js?v=3",
+  "./native-mp3-metadata.js?v=1",
+  "./native-mp3-metadata.json?v=1",
+  "./app.js?v=6735&words=16",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=30",
+  "./audio-stretch.js?v=5",
+  "./audio-composite-mix.js?v=14",
+  "./audio-stretch-worker.js?v=4",
+  "./audio-stretch-core.mjs?v=4",
+  "./vendor/soundtouchjs/soundtouch.mjs",
+  "./mix-intelligente.js?v=6735&dj=57",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6734&words=6"
+  "./immersive.js?v=6734&words=9"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
@@ -1260,7 +1278,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-const CORE_EXT = [".html", ".css", ".js", ".json", ".png", ".jpg", ".jpeg", ".webp"];
+const CORE_EXT = [".html", ".css", ".js", ".mjs", ".json", ".png", ".jpg", ".jpeg", ".webp"];
 
 /* Ste: "quando diego toglie la connessione non gli si apre l'app".
    Se il telefono e' offline e i file dell'app non sono piu' in cache
@@ -1535,7 +1553,10 @@ self.addEventListener("fetch", (event) => {
         if(response?.status===200)
           persistence=cache.put(event.request,response.clone()).catch(()=>{});
         return response;
-      }catch(_){return new Response("",{status:504})}
+      }catch(_){
+        const previous=await cache.match(event.request,{ignoreSearch:true}).catch(()=>null);
+        return previous||new Response("",{status:504});
+      }
     })();
     event.respondWith(job);
     event.waitUntil(job.then(()=>persistence).catch(()=>{}));

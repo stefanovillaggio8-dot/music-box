@@ -352,7 +352,7 @@ test("screen recording 19:32:45: verified soft release gets a head start without
   101,96,88,89),false,"A muted capture is not musical evidence");
  assert.match(source,/kind:"quiet",silenceTrim:false/);
  assert.match(source,/Math\.abs\(nextAnalysis\.duration-prepared\.audio\.duration\)<1\.5/);
- assert.match(source,/const entry=verifiedIntro\?clamp\(nextAnalysis\.safeIntroAt,0,18\):0/);
+ assert.match(source,/const entry=verifiedIntro\?musicalIntroEntry\(nextAnalysis\):0/);
  const curveSource=source.slice(source.indexOf("function mixCurve("),
   source.indexOf("async function beginMix("));
  const curve=new Function("const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
@@ -407,9 +407,9 @@ test("release version is identical in player, metadata, HTML assets and service 
  assert.equal(match[1],meta.versione,
   "Player version must match the online metadata: no more stale version badges");
  const token=match[1].replace(/\./g,"");
- assert.ok(html.includes('app.js?v='+token+'"')||
-   html.includes('app.js?v='+token+'&amp;words=4"'),
-  "HTML must request the updated player script and optional karaoke cache revision");
+ const appAsset=/app\.js\?v=([0-9]+)(?:&amp;words=[0-9]+)?"/.exec(html);
+ assert.equal(appAsset?.[1],token,
+  "HTML must request the updated player script with its optional karaoke revision");
  const djAsset=/mix-intelligente\.js\?v=([0-9]+)(?:&amp;dj=[0-9]+)?"/.exec(html);
  assert.equal(djAsset?.[1],token,
   "HTML must request the same release of DJ Mix, even with a cache-busting query");
@@ -548,7 +548,7 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(source,/cue\.verifiedHarmonicBridge===true/);
  assert.match(source,/cue\.verifiedMicroBeat===true/);
  assert.match(source,/if\(!verified\)\{/);
- assert.match(source,/const choicePool=scored\.length\?scored:impactScored/);
+ assert.match(source,/const choicePool=scored\.length\?scored:partialScored\.length\?partialScored:impactScored/);
  assert.match(source,/cue\.quietCertified===true/);
  assert.match(source,/return \{retry:unknown\.length>picked\.length&&noMatch/);
 });

@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs'),path=require('path'),req=require('module').createRequire(path.resolve('tools/probe.cjs'));
+let s=fs.readFileSync('mix-intelligente.js','utf8');
+const needle=' const keyCompatible=pcmCompatibleKeyHarmony(outro,intro,begin,entry,rate,fade);';
+if(!s.includes(needle))throw Error('Missing harmonic gate');
+s=s.replace(needle,` const oldFrames=outro.harmony.filter(row=>Number.isFinite(row?.t)&&row.t>=begin+.25&&row.t<=begin+fade-.25);
+ const percussiveSource=oldFrames.length>=Math.floor(fade*2)-2&&oldFrames.length>=6&&oldFrames.every(row=>Number.isFinite(row.tonalRatio)&&row.tonalRatio>=0&&row.tonalRatio<=.12&&Number.isFinite(row.rms)&&row.rms>=.005&&Array.isArray(row.notes)&&row.notes.length===12&&row.notes.every(Number.isFinite)&&Math.max(...row.notes)<=.23);
+ if(percussiveSource)return {percussiveSource:true,average:null,weakest:null,tonalRatioMax:Math.max(...oldFrames.map(row=>row.tonalRatio)),tonalPeakMax:Math.max(...oldFrames.map(row=>Math.max(...row.notes))),measuredRmsMin:Math.min(...oldFrames.map(row=>row.rms)),frames:oldFrames.length};
+`+needle);
+fs.writeFileSync('../ste-focus-20261116/percussive-source-engine.js',s);
+process.argv.push('--engine=../ste-focus-20261116/percussive-source-engine.js','--scope=../personal-20261116/scopes/Ste.json','--structure=../whole-structure-ci','--edges=../profile-coverage/cloud-edges','--exact-silence=../personal-20261116/all-personal-exact-silence.json','--output=../ste-focus-20261116/percussive-source-plans.json');
+const tool=fs.readFileSync('tools/build-preserved-tail-plans.cjs','utf8');new Function('require','__dirname',tool)(req,path.resolve('tools'));
+const d=JSON.parse(fs.readFileSync('../ste-focus-20261116/percussive-source-plans.json'));console.log(JSON.stringify({pairs:[...new Set(d.plans.map(p=>p.from+'|'+p.to))],windows:d.plans.length}));

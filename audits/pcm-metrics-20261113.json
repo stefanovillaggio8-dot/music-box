@@ -1,0 +1,3298 @@
+{
+  "date": "2026-11-13",
+  "baselineCommit": "e164d1ecb2a39b4762c993ff1b847d5b404aab2e",
+  "verifiedPlannerCommit": "7a138cb291d1ece04fd63b12f030a339a8666a5e",
+  "sourceMeasurementsPreserved": true,
+  "tracks": 1176,
+  "orderedPairs": 1381800,
+  "scope": "Numerical complete-window pulse/harmony and render verification; no human listening, labelled downbeats, phrase accuracy, physical iPhone or catalog word-error claim",
+  "baseline": {
+    "schema": 3,
+    "version": "6.734",
+    "catalogTracks": 1072,
+    "indexTracks": 1177,
+    "analyzableTracks": 1176,
+    "excludedIndexTracks": 1,
+    "lyricalBoundariesLoaded": 356,
+    "beatGridsTempoRefined": 0,
+    "possibleOrderedPairs": 1381800,
+    "shard": 0,
+    "totalShards": 1,
+    "analyzedPairs": 1381800,
+    "verifiedBeat": 3,
+    "earlyVerifiedBeat": 3,
+    "completePcmBeat": 1,
+    "renderedFullBeat": 0,
+    "shortIndexedBeat": 2,
+    "fullOverlapSeconds": 6.849184350568265,
+    "plannedKinds": {
+      "cut": 183988,
+      "underlay": 2362,
+      "soft": 59838,
+      "beat": 21,
+      "postlude": 85581,
+      "snap": 11
+    },
+    "verifiedBeatSamples": [
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-336.mp3",
+        "kind": "beat",
+        "begin": 204.26681564943175,
+        "end": 211.116,
+        "entry": 2.38,
+        "fade": 6.849184350568265,
+        "tempo": 1.0458082359676497,
+        "lastAudible": 211.1,
+        "score": 76,
+        "rendered": false,
+        "outputHeadroom": null
+      },
+      {
+        "from": "audio/songs/track-770.mp3",
+        "to": "audio/songs/track-874.mp3",
+        "kind": "snap",
+        "begin": 174.75398072911378,
+        "end": 175.85000000000002,
+        "entry": 2.78,
+        "fade": 1.096019270886245,
+        "tempo": 0.9906500824309785,
+        "lastAudible": 175.8,
+        "score": 76,
+        "rendered": false,
+        "outputHeadroom": null
+      },
+      {
+        "from": "audio/songs/track-892.mp3",
+        "to": "audio/songs/track-1096.mp3",
+        "kind": "snap",
+        "begin": 76.84770204771328,
+        "end": 78.05,
+        "entry": 0,
+        "fade": 1.2022979522867132,
+        "tempo": 0.9989043448648569,
+        "lastAudible": 78,
+        "score": 76,
+        "rendered": false,
+        "outputHeadroom": null
+      }
+    ],
+    "rejectedBeat": 29,
+    "postlude": 85581,
+    "underlay": 2362,
+    "other": 243826,
+    "none": 1049999,
+    "errors": [],
+    "nonBeatSamples": [
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "app/songs/youtube-kopi-luwak.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "app/songs/youtube-ultimo-banco.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "app/songs/youtube-un-uomo.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-251.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-252.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-253.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-254.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-256.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-258.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-259.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-260.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-261.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-262.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-263.mp3",
+        "kind": "cut"
+      },
+      {
+        "from": "app/songs/youtube-falene.mp3",
+        "to": "audio/songs/bassi/track-265.mp3",
+        "kind": "cut"
+      }
+    ],
+    "karaoke": {
+      "syncedLinesIndexed": 582,
+      "provenWordAlignmentFromIndex": false,
+      "caveat": "Synced LRC lines do not prove the times of individual words."
+    },
+    "verdict": "NOT_CERTIFIED",
+    "caveat": "Simulates the actual player feature enrichment with guarded synced-LRC and validated beat-grid BPM. Still not an acoustic listening test, comparison with Spotify, or physical iPhone verification.",
+    "averageFullOverlapSeconds": 6.849184350568265,
+    "coveragePercent": 0.00022
+  },
+  "after": {
+    "source": "waveform-derived features, not double-blind acoustic listening",
+    "analyzedTracks": 1176,
+    "expectedPairs": 1381800,
+    "analyzedPairs": 1381800,
+    "verifiedBeat": 19,
+    "earlyVerifiedBeat": 19,
+    "rejectedBeat": 29,
+    "postlude": 85581,
+    "underlay": 2358,
+    "other": 243825,
+    "none": 1049988,
+    "completePcmBeat": 17,
+    "renderedFullBeat": 17,
+    "shortIndexedBeat": 2,
+    "fullOverlapSeconds": 158.1422378243015,
+    "coveragePercent": 0.00138,
+    "averageFullOverlapSeconds": 9.302484577900088,
+    "verifiedBeatSamples": [
+      {
+        "from": "audio/songs/track-353.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "kind": "beat",
+        "begin": 126.71502679942559,
+        "end": 138.286,
+        "entry": 6.98,
+        "fade": 11.570973200574414,
+        "tempo": 0.993941822586128,
+        "lastAudible": 138.321,
+        "score": 74,
+        "rendered": true,
+        "outputHeadroom": 0.7135757029615981
+      },
+      {
+        "from": "audio/songs/track-1122.mp3",
+        "to": "audio/songs/track-326.mp3",
+        "kind": "beat",
+        "begin": 150.8901082190826,
+        "end": 155.399,
+        "entry": 3.0999,
+        "fade": 4.508891780917395,
+        "tempo": 0.972650863068205,
+        "lastAudible": 155.4,
+        "score": 76,
+        "rendered": true,
+        "outputHeadroom": 0.6396674026511615
+      },
+      {
+        "from": "audio/songs/bassi/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "kind": "beat",
+        "begin": 193.67375556916667,
+        "end": 207.18,
+        "entry": 5.5263,
+        "fade": 13.506244430833334,
+        "tempo": 0.9862824548570301,
+        "lastAudible": 204,
+        "score": 75,
+        "rendered": true,
+        "outputHeadroom": 0.714845342675484
+      },
+      {
+        "from": "audio/songs/track-50.mp3",
+        "to": "audio/songs/track-474.mp3",
+        "kind": "beat",
+        "begin": 297.16,
+        "end": 305.65599999999995,
+        "entry": 0.9,
+        "fade": 8.495999999999924,
+        "tempo": 1.0444900925273104,
+        "lastAudible": 304.3,
+        "score": 82,
+        "rendered": true,
+        "outputHeadroom": 0.9931033898987504
+      },
+      {
+        "from": "audio/songs/track-588.mp3",
+        "to": "audio/songs/track-344.mp3",
+        "kind": "beat",
+        "begin": 119.17280757704451,
+        "end": 127.10600000000001,
+        "entry": 0.82,
+        "fade": 7.9331924229555,
+        "tempo": 0.9693500279624684,
+        "lastAudible": 125.9,
+        "score": 80,
+        "rendered": true,
+        "outputHeadroom": 0.746561331444162
+      },
+      {
+        "from": "audio/songs/track-599.mp3",
+        "to": "audio/songs/track-166.mp3",
+        "kind": "beat",
+        "begin": 172.2707,
+        "end": 177.224,
+        "entry": 6.6757,
+        "fade": 4.9532999999999845,
+        "tempo": 1.0482348012439375,
+        "lastAudible": 177.259,
+        "score": 76,
+        "rendered": true,
+        "outputHeadroom": 1
+      },
+      {
+        "from": "audio/songs/track-844.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "kind": "beat",
+        "begin": 50.24,
+        "end": 59.977000000000004,
+        "entry": 0.14,
+        "fade": 9.737000000000002,
+        "tempo": 1.0020838376724843,
+        "lastAudible": 60,
+        "score": 77,
+        "rendered": true,
+        "outputHeadroom": 0.6688241194119222
+      },
+      {
+        "from": "audio/songs/track-856.mp3",
+        "to": "audio/songs/track-443.mp3",
+        "kind": "beat",
+        "begin": 162.54,
+        "end": 174.417,
+        "entry": 3.16,
+        "fade": 11.87700000000001,
+        "tempo": 0.9892588004358932,
+        "lastAudible": 174.3,
+        "score": 78,
+        "rendered": true,
+        "outputHeadroom": 0.7063861796311386
+      },
+      {
+        "from": "audio/songs/track-451.mp3",
+        "to": "audio/songs/track-315.mp3",
+        "kind": "beat",
+        "begin": 142.55660886114697,
+        "end": 150.291,
+        "entry": 0,
+        "fade": 7.734391138853027,
+        "tempo": 0.9792452707237752,
+        "lastAudible": 150.1,
+        "score": 84,
+        "rendered": true,
+        "outputHeadroom": 0.7227277296103255
+      },
+      {
+        "from": "audio/songs/track-347.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "kind": "beat",
+        "begin": 109.918,
+        "end": 118.143,
+        "entry": 4.1,
+        "fade": 8.224999999999994,
+        "tempo": 1.0466121579043495,
+        "lastAudible": 118.178,
+        "score": 72,
+        "rendered": true,
+        "outputHeadroom": 0.9812475702038519
+      },
+      {
+        "from": "audio/songs/track-348.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "kind": "beat",
+        "begin": 111.30779880975764,
+        "end": 119.095,
+        "entry": 3.66,
+        "fade": 7.787201190242357,
+        "tempo": 1.01828,
+        "lastAudible": 118.4,
+        "score": 76,
+        "rendered": true,
+        "outputHeadroom": 1
+      },
+      {
+        "from": "audio/songs/track-892.mp3",
+        "to": "audio/songs/track-1096.mp3",
+        "kind": "snap",
+        "begin": 76.84770204771328,
+        "end": 78.05,
+        "entry": 0,
+        "fade": 1.2022979522867132,
+        "tempo": 0.9989043448648569,
+        "lastAudible": 78,
+        "score": 76,
+        "rendered": false,
+        "outputHeadroom": null
+      },
+      {
+        "from": "audio/songs/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "kind": "beat",
+        "begin": 193.6632,
+        "end": 207.18,
+        "entry": 5.5263,
+        "fade": 13.516800000000018,
+        "tempo": 0.9861949717683646,
+        "lastAudible": 203.4,
+        "score": 75,
+        "rendered": true,
+        "outputHeadroom": 0.8000268396798796
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-336.mp3",
+        "kind": "beat",
+        "begin": 204.263034668843,
+        "end": 211.116,
+        "entry": 2.38,
+        "fade": 6.852965331157009,
+        "tempo": 1.0481456245346752,
+        "lastAudible": 211.1,
+        "score": 77,
+        "rendered": true,
+        "outputHeadroom": 0.6393197142028167
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "kind": "beat",
+        "begin": 202.6984,
+        "end": 211.116,
+        "entry": 5.8398,
+        "fade": 8.417600000000022,
+        "tempo": 1.0147401693085265,
+        "lastAudible": 211.1,
+        "score": 74,
+        "rendered": true,
+        "outputHeadroom": 0.6426540877568372
+      },
+      {
+        "from": "audio/songs/track-1008.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "kind": "beat",
+        "begin": 114.22113865526664,
+        "end": 130.217,
+        "entry": 0.12,
+        "fade": 15.99586134473337,
+        "tempo": 1.0023778391786329,
+        "lastAudible": 128,
+        "score": 76,
+        "rendered": true,
+        "outputHeadroom": 1
+      },
+      {
+        "from": "audio/songs/track-770.mp3",
+        "to": "audio/songs/track-874.mp3",
+        "kind": "snap",
+        "begin": 174.75398072911378,
+        "end": 175.85000000000002,
+        "entry": 2.78,
+        "fade": 1.096019270886245,
+        "tempo": 0.9906500824309785,
+        "lastAudible": 175.8,
+        "score": 76,
+        "rendered": false,
+        "outputHeadroom": null
+      },
+      {
+        "from": "audio/songs/track-203.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "kind": "beat",
+        "begin": 199.1903471074567,
+        "end": 205.497,
+        "entry": 5.8398,
+        "fade": 6.306652892543326,
+        "tempo": 0.9837700824685627,
+        "lastAudible": 204.5,
+        "score": 67,
+        "rendered": true,
+        "outputHeadroom": 0.7485337449019966
+      },
+      {
+        "from": "audio/songs/track-388.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "kind": "beat",
+        "begin": 181.2418359085082,
+        "end": 191.965,
+        "entry": 0.5,
+        "fade": 10.72316409149181,
+        "tempo": 0.9521851560366829,
+        "lastAudible": 192,
+        "score": 79,
+        "rendered": true,
+        "outputHeadroom": 0.8045050901819872
+      }
+    ],
+    "karaokeIndexedTimedLines": 582,
+    "karaokeVerifiedWordTimestamps": "NOT_PROVEN_BY_THIS_AUDIT",
+    "spotifyEquivalence": "NOT_CERTIFIED",
+    "allPairsBeatmatched": false
+  },
+  "compiled": {
+    "features": 1176,
+    "analyzable": 1176,
+    "consideredPairs": 1381800,
+    "evaluatedPairs": 1381636,
+    "sameRecordingSkipped": 164,
+    "fullBeatPlans": 17,
+    "averagePlannedOverlap": 9.302484577900088,
+    "downbeatsVerified": false,
+    "phrasesVerified": false,
+    "listeningVerified": false,
+    "plans": [
+      {
+        "from": "audio/songs/bassi/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 120,
+          "targetTempoBpm": 121.669,
+          "sourceSha": "8b7d6a9faae73cabe0524454b963b5e826a3333d",
+          "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 193.67375556916667,
+          "end": 207.18,
+          "fade": 13.506244430833334,
+          "entry": 5.5263,
+          "tempo": 0.9862824548570301,
+          "gain": 1,
+          "beatAnchor": 194.18,
+          "nextBeat": 0.49929999999999986,
+          "beatPeriod": 0.5,
+          "nominalTempo": 0.9862824548570301,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 193.67375556916667,
+          "measuredPlacementError": 0.016604376780820555,
+          "beatPulseAgreement": 1,
+          "measuredBeatCount": 19,
+          "grooveScore": 0.5127238459297152,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 14,
+          "fullPulseSecond": 5,
+          "fullPulseAttackSupport": 0.7894736842105263,
+          "fullOnsetCorrelation": 0.5127238459297152,
+          "beatGridScore": 1,
+          "fullOnsetFirst": 0.5660293097214313,
+          "fullOnsetSecond": 0.506828279023799,
+          "harmonicScore": 0.9072100945229576,
+          "harmonicWeakest": 0.7817182279796541,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "matched-chords",
+          "harmonicKeyFrom": null,
+          "harmonicKeyTo": null,
+          "harmonicKeyConfidence": null,
+          "harmonicDissonanceMax": null,
+          "harmonicRawDissonanceMax": null,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 75,
+          "outputHeadroom": 0.714845342675484,
+          "renderEvidence": {
+            "sourceSha": "8b7d6a9faae73cabe0524454b963b5e826a3333d",
+            "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-1008.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 120,
+          "targetTempoBpm": 120,
+          "sourceSha": "7a0132c72615f2cd2cf386217257512bd7cb4688",
+          "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 114.22113865526664,
+          "end": 130.217,
+          "fade": 15.99586134473337,
+          "entry": 0.12,
+          "tempo": 1.0023778391786329,
+          "gain": 1,
+          "beatAnchor": 114.7,
+          "nextBeat": 0.48,
+          "beatPeriod": 0.5,
+          "nominalTempo": 1,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 114.22113865526664,
+          "measuredPlacementError": 0.022226234849011286,
+          "beatPulseAgreement": 0.9333333333333333,
+          "measuredBeatCount": 28,
+          "grooveScore": 0.6518350957021255,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 17,
+          "fullPulseSecond": 11,
+          "fullPulseAttackSupport": 0.8928571428571429,
+          "fullOnsetCorrelation": 0.6518350957021255,
+          "beatGridScore": 0.9333333333333333,
+          "fullOnsetFirst": 0.7850478439520673,
+          "fullOnsetSecond": 0.42653578001362935,
+          "harmonicScore": 0.7966758717860015,
+          "harmonicWeakest": 0.6699862027354083,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "matched-chords",
+          "harmonicKeyFrom": null,
+          "harmonicKeyTo": null,
+          "harmonicKeyConfidence": null,
+          "harmonicDissonanceMax": null,
+          "harmonicRawDissonanceMax": null,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 76,
+          "outputHeadroom": 1,
+          "renderEvidence": {
+            "sourceSha": "7a0132c72615f2cd2cf386217257512bd7cb4688",
+            "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.4884580093622208,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-1122.mp3",
+        "to": "audio/songs/track-326.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 164.886,
+          "targetTempoBpm": 167.959,
+          "sourceSha": "83c197635fc0a35061953457c089a9e60dfdd462",
+          "targetSha": "ae0191f839ee2d5fe7498f4594859c2f8f135a7a",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 150.8901082190826,
+          "end": 155.399,
+          "fade": 4.508891780917395,
+          "entry": 3.0999,
+          "tempo": 0.972650863068205,
+          "gain": 1,
+          "beatAnchor": 151.654,
+          "nextBeat": 0.7430000000000003,
+          "beatPeriod": 0.36388777700957026,
+          "nominalTempo": 0.9817038682059311,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 150.8901082190826,
+          "measuredPlacementError": 0.026532583209068247,
+          "beatPulseAgreement": 0.9166666666666666,
+          "measuredBeatCount": 11,
+          "grooveScore": 0.5611353418169319,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 6,
+          "fullPulseSecond": 5,
+          "fullPulseAttackSupport": 0.9090909090909091,
+          "fullOnsetCorrelation": 0.5611353418169319,
+          "beatGridScore": 0.9166666666666666,
+          "fullOnsetFirst": 0.6156616450304767,
+          "fullOnsetSecond": 0.5293906734089895,
+          "harmonicScore": 0.3819354143154487,
+          "harmonicWeakest": 0.10438798633823844,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "1B",
+          "harmonicKeyTo": "2B",
+          "harmonicKeyConfidence": 0.7260003416299771,
+          "harmonicDissonanceMax": 0.02534286841146044,
+          "harmonicRawDissonanceMax": 0.31931540604828035,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 76,
+          "outputHeadroom": 0.6396674026511615,
+          "renderEvidence": {
+            "sourceSha": "83c197635fc0a35061953457c089a9e60dfdd462",
+            "targetSha": "ae0191f839ee2d5fe7498f4594859c2f8f135a7a",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-203.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 126.631,
+          "targetTempoBpm": 127.814,
+          "sourceSha": "1a13220803ad51d7523a21da7beae950670e016c",
+          "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 199.1903471074567,
+          "end": 205.497,
+          "fade": 6.306652892543326,
+          "entry": 5.8398,
+          "tempo": 0.9837700824685627,
+          "gain": 1,
+          "beatAnchor": 199.6742,
+          "nextBeat": 0.476,
+          "beatPeriod": 0.4738176275951386,
+          "nominalTempo": 0.9907443629023425,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 199.1903471074567,
+          "measuredPlacementError": 0.032646922307420174,
+          "beatPulseAgreement": 0.9166666666666666,
+          "measuredBeatCount": 11,
+          "grooveScore": 0.37059597748712936,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 7,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 1,
+          "fullOnsetCorrelation": 0.37059597748712936,
+          "beatGridScore": 0.9166666666666666,
+          "fullOnsetFirst": 0.2438285988850284,
+          "fullOnsetSecond": 0.5300668257099691,
+          "harmonicScore": 0.3486015813424223,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "6A",
+          "harmonicKeyTo": "5A",
+          "harmonicKeyConfidence": 1,
+          "harmonicDissonanceMax": 0.037085884050769846,
+          "harmonicRawDissonanceMax": 0.23110761743373187,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 67,
+          "outputHeadroom": 0.7485337449019966,
+          "renderEvidence": {
+            "sourceSha": "1a13220803ad51d7523a21da7beae950670e016c",
+            "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-347.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 65.055,
+          "targetTempoBpm": 62.5,
+          "sourceSha": "0eac9c008f5d13872fda73440003bea5ff7d4610",
+          "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 109.918,
+          "end": 118.143,
+          "fade": 8.224999999999994,
+          "entry": 4.1,
+          "tempo": 1.0466121579043495,
+          "gain": 1,
+          "beatAnchor": 109.918,
+          "nextBeat": 0,
+          "beatPeriod": 0.9222965183306432,
+          "nominalTempo": 1.04088,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 109.918,
+          "measuredPlacementError": 0.021233805588606863,
+          "beatPulseAgreement": 1,
+          "measuredBeatCount": 9,
+          "grooveScore": 0.3793754260655537,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 5,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 0.8888888888888888,
+          "fullOnsetCorrelation": 0.3793754260655537,
+          "beatGridScore": 1,
+          "fullOnsetFirst": 0.41434751274348514,
+          "fullOnsetSecond": 0.39518158993073543,
+          "harmonicScore": 0.3821425152665077,
+          "harmonicWeakest": 0.01760368660505811,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "12B",
+          "harmonicKeyTo": "12B",
+          "harmonicKeyConfidence": 0.9463390980826747,
+          "harmonicDissonanceMax": 0.0466053125970986,
+          "harmonicRawDissonanceMax": 0.22998434788777788,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 72,
+          "outputHeadroom": 0.9812475702038519,
+          "renderEvidence": {
+            "sourceSha": "0eac9c008f5d13872fda73440003bea5ff7d4610",
+            "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-348.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 127.285,
+          "targetTempoBpm": 125,
+          "sourceSha": "047c4bdaf7b780c0cd7f68f71a6a0129379d12ee",
+          "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 111.30779880975764,
+          "end": 119.095,
+          "fade": 7.787201190242357,
+          "entry": 3.66,
+          "tempo": 1.01828,
+          "gain": 1,
+          "beatAnchor": 111.7399,
+          "nextBeat": 0.4399999999999995,
+          "beatPeriod": 0.47138311662803944,
+          "nominalTempo": 1.01828,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 111.30779880975764,
+          "measuredPlacementError": 0.03318866856281111,
+          "beatPulseAgreement": 0.9090909090909091,
+          "measuredBeatCount": 10,
+          "grooveScore": 0.5693361202622296,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 6,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 0.7,
+          "fullOnsetCorrelation": 0.5693361202622296,
+          "beatGridScore": 0.9090909090909091,
+          "fullOnsetFirst": 0.6461609691924415,
+          "fullOnsetSecond": 0.49490515694357323,
+          "harmonicScore": 0.23501654708454275,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "11B",
+          "harmonicKeyTo": "12B",
+          "harmonicKeyConfidence": 0.7714262383909831,
+          "harmonicDissonanceMax": 0.046251878395147356,
+          "harmonicRawDissonanceMax": 0.2264244386002668,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 76,
+          "outputHeadroom": 1,
+          "renderEvidence": {
+            "sourceSha": "047c4bdaf7b780c0cd7f68f71a6a0129379d12ee",
+            "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.3894957393407822,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-353.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 62.491,
+          "targetTempoBpm": 62.5,
+          "sourceSha": "72b6ff9ffe85ceea9490eb4679b9fc84441357db",
+          "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 126.71502679942559,
+          "end": 138.286,
+          "fade": 11.570973200574414,
+          "entry": 6.98,
+          "tempo": 0.993941822586128,
+          "gain": 1,
+          "beatAnchor": 127.701,
+          "nextBeat": 0.9799999999999995,
+          "beatPeriod": 0.9601382599094269,
+          "nominalTempo": 0.999856,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 126.71502679942559,
+          "measuredPlacementError": 0.024685942806481564,
+          "beatPulseAgreement": 1,
+          "measuredBeatCount": 12,
+          "grooveScore": 0.4848824070633123,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 6,
+          "fullPulseSecond": 6,
+          "fullPulseAttackSupport": 1,
+          "fullOnsetCorrelation": 0.4848824070633123,
+          "beatGridScore": 1,
+          "fullOnsetFirst": 0.4061157372612511,
+          "fullOnsetSecond": 0.5505307351235866,
+          "harmonicScore": 0.1529722067791139,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "10B",
+          "harmonicKeyTo": "11B",
+          "harmonicKeyConfidence": 0.8089366591867155,
+          "harmonicDissonanceMax": -0.04115631784184426,
+          "harmonicRawDissonanceMax": 0.3665503719511416,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 74,
+          "outputHeadroom": 0.7135757029615981,
+          "renderEvidence": {
+            "sourceSha": "72b6ff9ffe85ceea9490eb4679b9fc84441357db",
+            "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.9599999999999999,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-388.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 150,
+          "targetTempoBpm": 157.895,
+          "sourceSha": "7f90687332e549a2612e95b6541b66592d311710",
+          "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 181.2418359085082,
+          "end": 191.965,
+          "fade": 10.72316409149181,
+          "entry": 0.5,
+          "tempo": 0.9521851560366829,
+          "gain": 1,
+          "beatAnchor": 182.04,
+          "nextBeat": 0.76,
+          "beatPeriod": 0.4,
+          "nominalTempo": 0.9499984166693055,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 181.2418359085082,
+          "measuredPlacementError": 0.018480115400565805,
+          "beatPulseAgreement": 0.9629629629629629,
+          "measuredBeatCount": 26,
+          "grooveScore": 0.5625976545705541,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 14,
+          "fullPulseSecond": 12,
+          "fullPulseAttackSupport": 0.7307692307692307,
+          "fullOnsetCorrelation": 0.5625976545705541,
+          "beatGridScore": 0.9629629629629629,
+          "fullOnsetFirst": 0.6901084927331991,
+          "fullOnsetSecond": 0.4684146144413275,
+          "harmonicScore": 0.17309159876664934,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "9A",
+          "harmonicKeyTo": "9B",
+          "harmonicKeyConfidence": 0.7238944186351364,
+          "harmonicDissonanceMax": -0.0671692011780711,
+          "harmonicRawDissonanceMax": 0.15484739698742434,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 79,
+          "outputHeadroom": 0.8045050901819872,
+          "renderEvidence": {
+            "sourceSha": "7f90687332e549a2612e95b6541b66592d311710",
+            "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-451.mp3",
+        "to": "audio/songs/track-315.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 62.5,
+          "targetTempoBpm": 65.217,
+          "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+          "targetSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 142.55660886114697,
+          "end": 150.291,
+          "fade": 7.734391138853027,
+          "entry": 0,
+          "tempo": 0.9792452707237752,
+          "gain": 1,
+          "beatAnchor": 142.72,
+          "nextBeat": 0.16,
+          "beatPeriod": 0.96,
+          "nominalTempo": 0.9583390833678336,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 142.55660886114697,
+          "measuredPlacementError": 0.014062065898685144,
+          "beatPulseAgreement": 1,
+          "measuredBeatCount": 8,
+          "grooveScore": 0.6727948287301008,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 4,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 0.875,
+          "fullOnsetCorrelation": 0.6727948287301008,
+          "beatGridScore": 1,
+          "fullOnsetFirst": 0.7376317421397174,
+          "fullOnsetSecond": 0.6236325135917131,
+          "harmonicScore": 0.5019375968600802,
+          "harmonicWeakest": 0.10375875821258163,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "5A",
+          "harmonicKeyTo": "5B",
+          "harmonicKeyConfidence": 0.7197997711618196,
+          "harmonicDissonanceMax": -0.003326912053410347,
+          "harmonicRawDissonanceMax": 0.31434574192255865,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 84,
+          "outputHeadroom": 0.7227277296103255,
+          "renderEvidence": {
+            "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+            "targetSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.9600000000000001,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-50.mp3",
+        "to": "audio/songs/track-474.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 78.947,
+          "targetTempoBpm": 75,
+          "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+          "targetSha": "293125bd1c160577fc5b739676153a123ae7ceab",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 297.16,
+          "end": 305.65599999999995,
+          "fade": 8.495999999999924,
+          "entry": 0.9,
+          "tempo": 1.0444900925273104,
+          "gain": 1,
+          "beatAnchor": 297.16,
+          "nextBeat": 0,
+          "beatPeriod": 0.7600035466832178,
+          "nominalTempo": 1.0526266666666666,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03500000000002501,
+          "safeOutroAt": 297.16,
+          "measuredPlacementError": 0.013640372955687255,
+          "beatPulseAgreement": 0.9166666666666666,
+          "measuredBeatCount": 11,
+          "grooveScore": 0.6340406580321171,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 6,
+          "fullPulseSecond": 5,
+          "fullPulseAttackSupport": 0.9090909090909091,
+          "fullOnsetCorrelation": 0.6340406580321171,
+          "beatGridScore": 0.9166666666666666,
+          "fullOnsetFirst": 0.6339581893211136,
+          "fullOnsetSecond": 0.636094951860111,
+          "harmonicScore": 0.36104381403697094,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "9B",
+          "harmonicKeyTo": "9B",
+          "harmonicKeyConfidence": 1,
+          "harmonicDissonanceMax": 0.04931668308560032,
+          "harmonicRawDissonanceMax": 0.22648837514494397,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 82,
+          "outputHeadroom": 0.9931033898987504,
+          "renderEvidence": {
+            "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+            "targetSha": "293125bd1c160577fc5b739676153a123ae7ceab",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 120.01,
+          "targetTempoBpm": 121.669,
+          "sourceSha": "3153f12208feb3f0b6f4a5fcb46a5a3a0917830b",
+          "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 193.6632,
+          "end": 207.18,
+          "fade": 13.516800000000018,
+          "entry": 5.5263,
+          "tempo": 0.9861949717683646,
+          "gain": 1,
+          "beatAnchor": 193.6632,
+          "nextBeat": 0,
+          "beatPeriod": 0.4999583368052662,
+          "nominalTempo": 0.9863646450616016,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 193.6632,
+          "measuredPlacementError": 0.016451527359398196,
+          "beatPulseAgreement": 1,
+          "measuredBeatCount": 19,
+          "grooveScore": 0.5217978109676621,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 14,
+          "fullPulseSecond": 5,
+          "fullPulseAttackSupport": 0.7894736842105263,
+          "fullOnsetCorrelation": 0.5217978109676621,
+          "beatGridScore": 1,
+          "fullOnsetFirst": 0.5799799362145528,
+          "fullOnsetSecond": 0.511377107527967,
+          "harmonicScore": 0.8992365115933139,
+          "harmonicWeakest": 0.7709501627656999,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "matched-chords",
+          "harmonicKeyFrom": null,
+          "harmonicKeyTo": null,
+          "harmonicKeyConfidence": null,
+          "harmonicDissonanceMax": null,
+          "harmonicRawDissonanceMax": null,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 75,
+          "outputHeadroom": 0.8000268396798796,
+          "renderEvidence": {
+            "sourceSha": "3153f12208feb3f0b6f4a5fcb46a5a3a0917830b",
+            "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.9599999999999999,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-336.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 130.435,
+          "targetTempoBpm": 124.017,
+          "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+          "targetSha": "7c2338bc6a0daa32673dd6bbbc011255b61b2f08",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 204.263034668843,
+          "end": 211.116,
+          "fade": 6.852965331157009,
+          "entry": 2.38,
+          "tempo": 1.0481456245346752,
+          "gain": 1,
+          "beatAnchor": 204.54,
+          "nextBeat": 0.2903000000000002,
+          "beatPeriod": 0.4599992333346111,
+          "nominalTempo": 1.0517509696251321,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 204.263034668843,
+          "measuredPlacementError": 0.01745153128138374,
+          "beatPulseAgreement": 0.9285714285714286,
+          "measuredBeatCount": 13,
+          "grooveScore": 0.5795927837822662,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 7,
+          "fullPulseSecond": 6,
+          "fullPulseAttackSupport": 0.8461538461538461,
+          "fullOnsetCorrelation": 0.5795927837822662,
+          "beatGridScore": 0.9285714285714286,
+          "fullOnsetFirst": 0.6268814930037278,
+          "fullOnsetSecond": 0.5242457070143121,
+          "harmonicScore": 0.38284685901362997,
+          "harmonicWeakest": 0.06455072684609178,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "4A",
+          "harmonicKeyTo": "5A",
+          "harmonicKeyConfidence": 0.8756182197641846,
+          "harmonicDissonanceMax": -0.025435175190965303,
+          "harmonicRawDissonanceMax": 0.29372445084506943,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 77,
+          "outputHeadroom": 0.6393197142028167,
+          "renderEvidence": {
+            "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+            "targetSha": "7c2338bc6a0daa32673dd6bbbc011255b61b2f08",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 129.698,
+          "targetTempoBpm": 127.814,
+          "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+          "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 202.6984,
+          "end": 211.116,
+          "fade": 8.417600000000022,
+          "entry": 5.8398,
+          "tempo": 1.0147401693085265,
+          "gain": 1,
+          "beatAnchor": 202.6984,
+          "nextBeat": 0,
+          "beatPeriod": 0.46261314746565096,
+          "nominalTempo": 1.0147401693085265,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 202.6984,
+          "measuredPlacementError": 0.022550270397070117,
+          "beatPulseAgreement": 0.9411764705882353,
+          "measuredBeatCount": 16,
+          "grooveScore": 0.5170378049679141,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 10,
+          "fullPulseSecond": 6,
+          "fullPulseAttackSupport": 0.9375,
+          "fullOnsetCorrelation": 0.5170378049679141,
+          "beatGridScore": 0.9411764705882353,
+          "fullOnsetFirst": 0.3908525077655495,
+          "fullOnsetSecond": 0.6488622749279713,
+          "harmonicScore": 0.4378128669994181,
+          "harmonicWeakest": 0.14609210625403263,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "4A",
+          "harmonicKeyTo": "5A",
+          "harmonicKeyConfidence": 0.8649137654373689,
+          "harmonicDissonanceMax": 0.028177537268716968,
+          "harmonicRawDissonanceMax": 0.3096390372907902,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 74,
+          "outputHeadroom": 0.6426540877568372,
+          "renderEvidence": {
+            "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+            "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-588.mp3",
+        "to": "audio/songs/track-344.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 70.036,
+          "targetTempoBpm": 71.429,
+          "sourceSha": "dc618cfe625eeb0fdb465e547b930d73f001dbf6",
+          "targetSha": "29d53e8dcbdf0144deec5b38eb4f8090da8c32da",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 119.17280757704451,
+          "end": 127.10600000000001,
+          "fade": 7.9331924229555,
+          "entry": 0.82,
+          "tempo": 0.9693500279624684,
+          "gain": 1,
+          "beatAnchor": 120.06,
+          "nextBeat": 0.86,
+          "beatPeriod": 0.8567022674053344,
+          "nominalTempo": 0.980498117011298,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 119.17280757704451,
+          "measuredPlacementError": 0.01799663344494162,
+          "beatPulseAgreement": 0.9,
+          "measuredBeatCount": 9,
+          "grooveScore": 0.590441734892579,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 5,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 1,
+          "fullOnsetCorrelation": 0.590441734892579,
+          "beatGridScore": 0.9,
+          "fullOnsetFirst": 0.6246207051998873,
+          "fullOnsetSecond": 0.5674799716576657,
+          "harmonicScore": 0.41100528396479014,
+          "harmonicWeakest": 0.040601903576930436,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "3A",
+          "harmonicKeyTo": "3A",
+          "harmonicKeyConfidence": 0.706823429255213,
+          "harmonicDissonanceMax": -0.027939231520743263,
+          "harmonicRawDissonanceMax": 0.2824619800743271,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 80,
+          "outputHeadroom": 0.746561331444162,
+          "renderEvidence": {
+            "sourceSha": "dc618cfe625eeb0fdb465e547b930d73f001dbf6",
+            "targetSha": "29d53e8dcbdf0144deec5b38eb4f8090da8c32da",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-599.mp3",
+        "to": "audio/songs/track-166.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 130.109,
+          "targetTempoBpm": 124.122,
+          "sourceSha": "b57a8d1bc6ed4829c7cd6a7f47dcb3ce4be51ce2",
+          "targetSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 172.2707,
+          "end": 177.224,
+          "fade": 4.9532999999999845,
+          "entry": 6.6757,
+          "tempo": 1.0482348012439375,
+          "gain": 1,
+          "beatAnchor": 172.2707,
+          "nextBeat": 0,
+          "beatPeriod": 0.4611518034878448,
+          "nominalTempo": 1.0482348012439375,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 172.2707,
+          "measuredPlacementError": 0.029895802186326984,
+          "beatPulseAgreement": 0.9090909090909091,
+          "measuredBeatCount": 10,
+          "grooveScore": 0.5080221092355846,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 6,
+          "fullPulseSecond": 4,
+          "fullPulseAttackSupport": 0.9,
+          "fullOnsetCorrelation": 0.5080221092355846,
+          "beatGridScore": 0.9090909090909091,
+          "fullOnsetFirst": 0.5389642633304228,
+          "fullOnsetSecond": 0.48212679798596025,
+          "harmonicScore": 0.6638080731045708,
+          "harmonicWeakest": 0.2841886160329292,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "9A",
+          "harmonicKeyTo": "9A",
+          "harmonicKeyConfidence": 1,
+          "harmonicDissonanceMax": 0.01644005363386708,
+          "harmonicRawDissonanceMax": 0.1428525719288391,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 76,
+          "outputHeadroom": 1,
+          "renderEvidence": {
+            "sourceSha": "b57a8d1bc6ed4829c7cd6a7f47dcb3ce4be51ce2",
+            "targetSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.7394735807180405,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-844.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 78.947,
+          "targetTempoBpm": 78.947,
+          "sourceSha": "4cd6d815cf6e79085e0523f0d1549730d4485e15",
+          "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 50.24,
+          "end": 59.977000000000004,
+          "fade": 9.737000000000002,
+          "entry": 0.14,
+          "tempo": 1.0020838376724843,
+          "gain": 1,
+          "beatAnchor": 50.24,
+          "nextBeat": 0,
+          "beatPeriod": 0.7600035466832178,
+          "nominalTempo": 1,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 50.24,
+          "measuredPlacementError": 0.013926844778158585,
+          "beatPulseAgreement": 0.9230769230769231,
+          "measuredBeatCount": 12,
+          "grooveScore": 0.5539024987452505,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 7,
+          "fullPulseSecond": 5,
+          "fullPulseAttackSupport": 1,
+          "fullOnsetCorrelation": 0.5539024987452505,
+          "beatGridScore": 0.9230769230769231,
+          "fullOnsetFirst": 0.6425685810650584,
+          "fullOnsetSecond": 0.45245593704737236,
+          "harmonicScore": 0.3300085239926994,
+          "harmonicWeakest": 0.074007466031774,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "10A",
+          "harmonicKeyTo": "10B",
+          "harmonicKeyConfidence": 0.7352692817616124,
+          "harmonicDissonanceMax": 0.02465396060844305,
+          "harmonicRawDissonanceMax": 0.266666893235846,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 77,
+          "outputHeadroom": 0.6688241194119222,
+          "renderEvidence": {
+            "sourceSha": "4cd6d815cf6e79085e0523f0d1549730d4485e15",
+            "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.9599999999999999,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      },
+      {
+        "from": "audio/songs/track-856.mp3",
+        "to": "audio/songs/track-443.mp3",
+        "cue": {
+          "kind": "beat",
+          "measuredFullBeat": true,
+          "fullBeatSearchVersion": 2,
+          "sourceTempoBpm": 200,
+          "targetTempoBpm": 200,
+          "sourceSha": "137b30c4381d9a2fd2f12cce2408cc106f3f1a58",
+          "targetSha": "dc1594d6a4b1061b2869855607c056040fc0c1c5",
+          "measuredBeatBridge": true,
+          "measuredBeatPlacement": true,
+          "measuredOnsetGrid": true,
+          "begin": 162.54,
+          "end": 174.417,
+          "fade": 11.87700000000001,
+          "entry": 3.16,
+          "tempo": 0.9892588004358932,
+          "gain": 1,
+          "beatAnchor": 162.54,
+          "nextBeat": 0,
+          "beatPeriod": 0.3,
+          "nominalTempo": 1,
+          "quietCertified": false,
+          "nativeTailFullBeat": true,
+          "preserveTail": true,
+          "softTailTrim": false,
+          "silenceTrim": false,
+          "trailing": 0.03499999999999659,
+          "safeOutroAt": 162.54,
+          "measuredPlacementError": 0.023772237699252633,
+          "beatPulseAgreement": 0.9,
+          "measuredBeatCount": 36,
+          "grooveScore": 0.571649831337867,
+          "measuredPulseMode": false,
+          "fullPulseFirst": 20,
+          "fullPulseSecond": 16,
+          "fullPulseAttackSupport": 0.8611111111111112,
+          "fullOnsetCorrelation": 0.571649831337867,
+          "beatGridScore": 0.9,
+          "fullOnsetFirst": 0.7194724807825511,
+          "fullOnsetSecond": 0.4557220650274979,
+          "harmonicScore": 0.32433918401315426,
+          "harmonicWeakest": 0,
+          "percussiveIntro": false,
+          "introPcmVersion": 3,
+          "outroPcmVersion": 3,
+          "harmonicMode": "compatible-key",
+          "harmonicKeyFrom": "9A",
+          "harmonicKeyTo": "9B",
+          "harmonicKeyConfidence": 0.7764680560949815,
+          "harmonicDissonanceMax": -0.03433785078977286,
+          "harmonicRawDissonanceMax": 0.26003409299807667,
+          "introTonalRatioMax": null,
+          "introTonalPeakMax": null,
+          "introMeasuredRmsMin": null,
+          "introTonalFrames": null,
+          "score": 78,
+          "outputHeadroom": 0.7063861796311386,
+          "renderEvidence": {
+            "sourceSha": "137b30c4381d9a2fd2f12cce2408cc106f3f1a58",
+            "targetSha": "dc1594d6a4b1061b2869855607c056040fc0c1c5",
+            "sampleRates": [
+              16000,
+              48000
+            ],
+            "pitchPreserved": true,
+            "timingVerified": true,
+            "peakBound": 0.96,
+            "humanListening": false,
+            "downbeatsVerified": false,
+            "phrasesVerified": false
+          }
+        }
+      }
+    ]
+  },
+  "renders16k": {
+    "pairsRequested": 17,
+    "pairsRendered": 17,
+    "results": [
+      {
+        "from": "audio/songs/bassi/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 13.50625,
+        "sourceShaVerified": true,
+        "sourceSha": "8b7d6a9faae73cabe0524454b963b5e826a3333d",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 13.506244430833334,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5596703272196557,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.5815923151991275,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.5260118197813789,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.35602497802190464,
+          "first": 0.36368378433914017,
+          "second": 0.4093295079734892
+        },
+        "samplePeak": 1.103100637965973,
+        "samplesOverFullScale": 184,
+        "sourcePeak": 1.0736432075500488,
+        "processedPeak": 0.797347366809845,
+        "recommendedHeadroom": 0.7181501321929998,
+        "safeSamplePeak": 0.7921918689774459,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-1008.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 15.995875,
+        "sourceShaVerified": true,
+        "sourceSha": "7a0132c72615f2cd2cf386217257512bd7cb4688",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 15.99586134473337,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6788074549422599,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.7708994512057857,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5158776668575772,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.5574242436241967,
+          "first": 0.6856714401614722,
+          "second": 0.32129545867235715
+        },
+        "samplePeak": 0.32920956490735986,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.21424324810504913,
+        "processedPeak": 0.797347366809845,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.32920956490735986,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-1122.mp3",
+        "to": "audio/songs/track-326.mp3",
+        "seconds": 4.508875,
+        "sourceShaVerified": true,
+        "sourceSha": "83c197635fc0a35061953457c089a9e60dfdd462",
+        "targetSha": "ae0191f839ee2d5fe7498f4594859c2f8f135a7a",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 4.508891780917395,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5564109615127809,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4669826891673422,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6301855065243994,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.4895396437315751,
+          "first": 0.6483672264846174,
+          "second": 0.3884126829240515
+        },
+        "samplePeak": 1.2351108334394092,
+        "samplesOverFullScale": 70,
+        "sourcePeak": 1.0972250699996948,
+        "processedPeak": 1.0601463317871094,
+        "recommendedHeadroom": 0.6634079700967676,
+        "safeSamplePeak": 0.8193823708565652,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-203.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "seconds": 6.306625,
+        "sourceShaVerified": true,
+        "sourceSha": "1a13220803ad51d7523a21da7beae950670e016c",
+        "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 6.306652892543326,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5034293812899887,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.5856625256059084,
+              "lagMs": 0
+            },
+            "second": {
+              "score": 0.494293875761912,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.2809511091282017,
+          "first": 0.13196398028478945,
+          "second": 0.4634445106928786
+        },
+        "samplePeak": 1.163294916576507,
+        "samplesOverFullScale": 6,
+        "sourcePeak": 0.9607568979263306,
+        "processedPeak": 0.9280855059623718,
+        "recommendedHeadroom": 0.7576803243402004,
+        "safeSamplePeak": 0.8814056696949941,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-347.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 8.225,
+        "sourceShaVerified": true,
+        "sourceSha": "0eac9c008f5d13872fda73440003bea5ff7d4610",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.224999999999994,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.7058316110137234,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6727124517280251,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.7257135695332546,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.37756495765635284,
+          "first": 0.3598361832365646,
+          "second": 0.43166589762051555
+        },
+        "samplePeak": 0.7588782191442298,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.7590019702911377,
+        "processedPeak": 0.664680004119873,
+        "recommendedHeadroom": 0.9812475702038519,
+        "safeSamplePeak": 0.7446474086159017,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-348.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 7.7871875,
+        "sourceShaVerified": true,
+        "sourceSha": "047c4bdaf7b780c0cd7f68f71a6a0129379d12ee",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.787201190242357,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6462533553799119,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6643908040379021,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6313634120314645,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.3645000032148289,
+          "first": 0.4626847174601411,
+          "second": 0.2633910801071796
+        },
+        "samplePeak": 0.25263943284749985,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.17015133798122406,
+        "processedPeak": 0.664680004119873,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.25263943284749985,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-353.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 11.571,
+        "sourceShaVerified": true,
+        "sourceSha": "72b6ff9ffe85ceea9490eb4679b9fc84441357db",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 11.570973200574414,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6041785936918789,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.638448117772128,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5636726619034719,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.3356196643647966,
+          "first": 0.2722268093126657,
+          "second": 0.3930104303109325
+        },
+        "samplePeak": 1.1176859572529794,
+        "samplesOverFullScale": 265,
+        "sourcePeak": 1.067866563796997,
+        "processedPeak": 0.664680004119873,
+        "recommendedHeadroom": 0.745798494563975,
+        "safeSamplePeak": 0.8335685043145673,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-388.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "seconds": 10.7231875,
+        "sourceShaVerified": true,
+        "sourceSha": "7f90687332e549a2612e95b6541b66592d311710",
+        "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 10.72316409149181,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.4589846022235953,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4808274725811164,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.44232934500619475,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.2360016957732546,
+          "first": 0.3685528487256744,
+          "second": 0.16565297859460615
+        },
+        "samplePeak": 1.0378000876307487,
+        "samplesOverFullScale": 5,
+        "sourcePeak": 0.9675683975219727,
+        "processedPeak": 0.501588761806488,
+        "recommendedHeadroom": 0.8472387205292234,
+        "safeSamplePeak": 0.8792644184093915,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-451.mp3",
+        "to": "audio/songs/track-315.mp3",
+        "seconds": 7.734375,
+        "sourceShaVerified": true,
+        "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "targetSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.734391138853027,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5203926515676159,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4932176733435985,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5453372800493562,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.31384490905975776,
+          "first": 0.38492185785493743,
+          "second": 0.3791138374544325
+        },
+        "samplePeak": 1.1589892215116162,
+        "samplesOverFullScale": 9,
+        "sourcePeak": 1.002240538597107,
+        "processedPeak": 0.9372516870498657,
+        "recommendedHeadroom": 0.731967525210944,
+        "safeSamplePeak": 0.8483424722160163,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-50.mp3",
+        "to": "audio/songs/track-474.mp3",
+        "seconds": 8.496,
+        "sourceShaVerified": true,
+        "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "targetSha": "293125bd1c160577fc5b739676153a123ae7ceab",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.495999999999924,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6411566725156859,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6273606658412595,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6581555445890502,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.5662349752010261,
+          "first": 0.5911002731215858,
+          "second": 0.550565832058629
+        },
+        "samplePeak": 0.5629033743651495,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.5433995127677917,
+        "processedPeak": 0.8324966430664062,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.5629033743651495,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 13.5168125,
+        "sourceShaVerified": true,
+        "sourceSha": "3153f12208feb3f0b6f4a5fcb46a5a3a0917830b",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 13.516800000000018,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5835938332265261,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.6072571818640278,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.5463829026096336,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.3530072719055496,
+          "first": 0.40649434488319386,
+          "second": 0.3542193810611053
+        },
+        "samplePeak": 0.9305972496784018,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.9185844659805298,
+        "processedPeak": 0.797347366809845,
+        "recommendedHeadroom": 0.8123826772719116,
+        "safeSamplePeak": 0.7560010851556177,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-336.mp3",
+        "seconds": 6.8529375,
+        "sourceShaVerified": true,
+        "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+        "targetSha": "7c2338bc6a0daa32673dd6bbbc011255b61b2f08",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 6.852965331157009,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6150058946478916,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.717352671185358,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5867770514822669,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.4230346161122559,
+          "first": 0.47173482837740527,
+          "second": 0.3762011933224968
+        },
+        "samplePeak": 1.1840050997442428,
+        "samplesOverFullScale": 1177,
+        "sourcePeak": 1.1875369548797607,
+        "processedPeak": 0.9516944289207458,
+        "recommendedHeadroom": 0.6393197142028167,
+        "safeSamplePeak": 0.7569578019831669,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "seconds": 8.417625,
+        "sourceShaVerified": true,
+        "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+        "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.417600000000022,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6026355801728319,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6985783486811801,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5401622905735831,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.28142205452104807,
+          "first": 0.23713850654436874,
+          "second": 0.32716212565403396
+        },
+        "samplePeak": 1.227205099236684,
+        "samplesOverFullScale": 1461,
+        "sourcePeak": 1.1875369548797607,
+        "processedPeak": 0.9280855059623718,
+        "recommendedHeadroom": 0.6426540877568372,
+        "safeSamplePeak": 0.78866837354049,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-588.mp3",
+        "to": "audio/songs/track-344.mp3",
+        "seconds": 7.9331875,
+        "sourceShaVerified": true,
+        "sourceSha": "dc618cfe625eeb0fdb465e547b930d73f001dbf6",
+        "targetSha": "29d53e8dcbdf0144deec5b38eb4f8090da8c32da",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.9331924229555,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5328226312528176,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.5387515490222335,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.5328418576339082,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.4708140181366318,
+          "first": 0.49472323438632526,
+          "second": 0.4525477173415603
+        },
+        "samplePeak": 1.087656259087238,
+        "samplesOverFullScale": 12,
+        "sourcePeak": 1.0662504434585571,
+        "processedPeak": 0.615653395652771,
+        "recommendedHeadroom": 0.7562532310776487,
+        "safeSamplePeak": 0.8225435602365521,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-599.mp3",
+        "to": "audio/songs/track-166.mp3",
+        "seconds": 4.9533125,
+        "sourceShaVerified": true,
+        "sourceSha": "b57a8d1bc6ed4829c7cd6a7f47dcb3ce4be51ce2",
+        "targetSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 4.9532999999999845,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.590889354197449,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.5480804139229114,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6282016973032682,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.4508229883006588,
+          "first": 0.583631896137162,
+          "second": 0.32978610444752704
+        },
+        "samplePeak": 0.44894636311776215,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.4185032248497009,
+        "processedPeak": 0.9590542316436768,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.44894636311776215,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-844.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "seconds": 9.737,
+        "sourceShaVerified": true,
+        "sourceSha": "4cd6d815cf6e79085e0523f0d1549730d4485e15",
+        "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 9.737000000000002,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5181870942679838,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.5553186410114087,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5960354716133223,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.5414126430677595,
+          "first": 0.5974752858856296,
+          "second": 0.4753416418635743
+        },
+        "samplePeak": 1.2052180203795433,
+        "samplesOverFullScale": 355,
+        "sourcePeak": 1.180229663848877,
+        "processedPeak": 0.501588761806488,
+        "recommendedHeadroom": 0.7133547676069919,
+        "safeSamplePeak": 0.8597480208436079,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-856.mp3",
+        "to": "audio/songs/track-443.mp3",
+        "seconds": 11.877,
+        "sourceShaVerified": true,
+        "sourceSha": "137b30c4381d9a2fd2f12cce2408cc106f3f1a58",
+        "targetSha": "dc1594d6a4b1061b2869855607c056040fc0c1c5",
+        "sampleRate": 16000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 11.87700000000001,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6742267329781464,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.617233302279463,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.7210234885725055,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.5154077110370375,
+          "first": 0.5311133410829669,
+          "second": 0.5025134436623572
+        },
+        "samplePeak": 1.107125351886487,
+        "samplesOverFullScale": 102,
+        "sourcePeak": 1.1080734729766846,
+        "processedPeak": 0.7231415510177612,
+        "recommendedHeadroom": 0.7128482511132315,
+        "safeSamplePeak": 0.7892123708554032,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      }
+    ]
+  },
+  "renders48k": {
+    "pairsRequested": 17,
+    "pairsRendered": 17,
+    "results": [
+      {
+        "from": "audio/songs/bassi/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 13.50625,
+        "sourceShaVerified": true,
+        "sourceSha": "8b7d6a9faae73cabe0524454b963b5e826a3333d",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 13.506244430833334,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5478432329874229,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6057356352172752,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5428802645748874,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.29099459859170473,
+          "first": 0.24716816663449204,
+          "second": 0.38837135119407024
+        },
+        "samplePeak": 1.1169423512636456,
+        "samplesOverFullScale": 636,
+        "sourcePeak": 1.0698271989822388,
+        "processedPeak": 0.8276382684707642,
+        "recommendedHeadroom": 0.714845342675484,
+        "safeSamplePeak": 0.7984410378378216,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-1008.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 15.995854166666666,
+        "sourceShaVerified": true,
+        "sourceSha": "7a0132c72615f2cd2cf386217257512bd7cb4688",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 15.99586134473337,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.45967997716316616,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4681753257734911,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.46361776491884504,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.23303418856448468,
+          "first": 0.2684906221727162,
+          "second": 0.18320934835419972
+        },
+        "samplePeak": 0.40173640370368957,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.2153373807668686,
+        "processedPeak": 0.8276382684707642,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.40173640370368957,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-1122.mp3",
+        "to": "audio/songs/track-326.mp3",
+        "seconds": 4.508895833333334,
+        "sourceShaVerified": true,
+        "sourceSha": "83c197635fc0a35061953457c089a9e60dfdd462",
+        "targetSha": "ae0191f839ee2d5fe7498f4594859c2f8f135a7a",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 4.508891780917395,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.570225117630678,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.5099139604184797,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.6135151073554699,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.34870244979957105,
+          "first": 0.37625338793729834,
+          "second": 0.3175252662280679
+        },
+        "samplePeak": 1.3411838551287667,
+        "samplesOverFullScale": 456,
+        "sourcePeak": 1.1673954725265503,
+        "processedPeak": 1.0102559328079224,
+        "recommendedHeadroom": 0.6396674026511615,
+        "safeSamplePeak": 0.8579115930878899,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-203.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "seconds": 6.3066458333333335,
+        "sourceShaVerified": true,
+        "sourceSha": "1a13220803ad51d7523a21da7beae950670e016c",
+        "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 6.306652892543326,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6038676045422636,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6127608581510193,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5977768482991376,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.1270264533644316,
+          "first": 0.11051105011840259,
+          "second": 0.1844186465876971
+        },
+        "samplePeak": 1.0269910920103673,
+        "samplesOverFullScale": 6,
+        "sourcePeak": 0.968830406665802,
+        "processedPeak": 0.9505360722541809,
+        "recommendedHeadroom": 0.7485337449019966,
+        "safeSamplePeak": 0.7687374880835113,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-347.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 8.225,
+        "sourceShaVerified": true,
+        "sourceSha": "0eac9c008f5d13872fda73440003bea5ff7d4610",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.224999999999994,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.642857444612799,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6738593079268945,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6249356228567344,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.19663290878704115,
+          "first": 0.21092135587042887,
+          "second": 0.22803001906850098
+        },
+        "samplePeak": 0.7563068810665171,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.7564610838890076,
+        "processedPeak": 0.6634250283241272,
+        "recommendedHeadroom": 0.9842203405405393,
+        "safeSamplePeak": 0.7443726160364407,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-348.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 7.787208333333333,
+        "sourceShaVerified": true,
+        "sourceSha": "047c4bdaf7b780c0cd7f68f71a6a0129379d12ee",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.787201190242357,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6753847796582102,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.7431964637248724,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6193915351275571,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.12746614149013843,
+          "first": 0.2515326883343946,
+          "second": 0.044345785490177585
+        },
+        "samplePeak": 0.27399071961641314,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.16969849169254303,
+        "processedPeak": 0.6634250283241272,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.27399071961641314,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-353.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "seconds": 11.570979166666667,
+        "sourceShaVerified": true,
+        "sourceSha": "72b6ff9ffe85ceea9490eb4679b9fc84441357db",
+        "targetSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 11.570973200574414,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.564768213564502,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.5753933032349363,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5603249637261156,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.1910061873121077,
+          "first": 0.16142792410483142,
+          "second": 0.2184629780856682
+        },
+        "samplePeak": 1.232072332624017,
+        "samplesOverFullScale": 1004,
+        "sourcePeak": 1.1264070272445679,
+        "processedPeak": 0.6634250283241272,
+        "recommendedHeadroom": 0.7135757029615981,
+        "safeSamplePeak": 0.8791768808517189,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-388.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "seconds": 10.723166666666666,
+        "sourceShaVerified": true,
+        "sourceSha": "7f90687332e549a2612e95b6541b66592d311710",
+        "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 10.72316409149181,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.46526824261442923,
+              "lagMs": -20
+            },
+            "first": {
+              "score": 0.4667379750852193,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5150988856560376,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.12153168751578779,
+          "first": 0.18512436616906505,
+          "second": 0.08492453577986199
+        },
+        "samplePeak": 1.047075236439705,
+        "samplesOverFullScale": 20,
+        "sourcePeak": 0.9677342176437378,
+        "processedPeak": 0.6834726929664612,
+        "recommendedHeadroom": 0.8045050901819872,
+        "safeSamplePeak": 0.8423773575192504,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-451.mp3",
+        "to": "audio/songs/track-315.mp3",
+        "seconds": 7.734395833333333,
+        "sourceShaVerified": true,
+        "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "targetSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.734391138853027,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.4763910590689297,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.5040669904274514,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.45026491649028494,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.20323883148362126,
+          "first": 0.27033398433621114,
+          "second": 0.15722316702676306
+        },
+        "samplePeak": 1.0344799911788771,
+        "samplesOverFullScale": 10,
+        "sourcePeak": 1.0178818702697754,
+        "processedPeak": 0.9406641721725464,
+        "recommendedHeadroom": 0.7227277296103255,
+        "safeSamplePeak": 0.7476473753520194,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-50.mp3",
+        "to": "audio/songs/track-474.mp3",
+        "seconds": 8.496,
+        "sourceShaVerified": true,
+        "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "targetSha": "293125bd1c160577fc5b739676153a123ae7ceab",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.495999999999924,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.539288624154518,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6530606639065867,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.702623135817094,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.37159674625127104,
+          "first": 0.41508239813921016,
+          "second": 0.3349391448484488
+        },
+        "samplePeak": 0.6923760451443293,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.6917678117752075,
+        "processedPeak": 0.8330270051956177,
+        "recommendedHeadroom": 0.9931033898987504,
+        "safeSamplePeak": 0.6876009975175236,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "seconds": 13.516791666666666,
+        "sourceShaVerified": true,
+        "sourceSha": "3153f12208feb3f0b6f4a5fcb46a5a3a0917830b",
+        "targetSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 13.516800000000018,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.4644896360290682,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4851199162873443,
+              "lagMs": -20
+            },
+            "second": {
+              "score": 0.5302624498347004,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.3504330210212095,
+          "first": 0.3335628578573777,
+          "second": 0.43379724158320193
+        },
+        "samplePeak": 0.9284269553930093,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.9268391132354736,
+        "processedPeak": 0.8276382684707642,
+        "recommendedHeadroom": 0.8000268396798796,
+        "safeSamplePeak": 0.7427664829966819,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-336.mp3",
+        "seconds": 6.8529583333333335,
+        "sourceShaVerified": true,
+        "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+        "targetSha": "7c2338bc6a0daa32673dd6bbbc011255b61b2f08",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 6.852965331157009,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.6167443849067858,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.7841796162356176,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5714012357401254,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.17201622903177533,
+          "first": 0.18513278518273565,
+          "second": 0.16055675931728314
+        },
+        "samplePeak": 1.1956668549776077,
+        "samplesOverFullScale": 3542,
+        "sourcePeak": 1.1663620471954346,
+        "processedPeak": 0.9444985389709473,
+        "recommendedHeadroom": 0.6495059240327296,
+        "safeSamplePeak": 0.7765927054775388,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "seconds": 8.417604166666667,
+        "sourceShaVerified": true,
+        "sourceSha": "d231c3d7a2d4f516b56abec20c04bc84c5a1b9db",
+        "targetSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 8.417600000000022,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5395776957324917,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.6029388044959942,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5691988000021505,
+              "lagMs": -20
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.03602948597946432,
+          "first": 0.03923750064054925,
+          "second": 0.035250364427296045
+        },
+        "samplePeak": 1.3596497660846205,
+        "samplesOverFullScale": 4652,
+        "sourcePeak": 1.1663620471954346,
+        "processedPeak": 0.9458639025688171,
+        "recommendedHeadroom": 0.6493079879874005,
+        "safeSamplePeak": 0.8828314539839447,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-588.mp3",
+        "to": "audio/songs/track-344.mp3",
+        "seconds": 7.9331875,
+        "sourceShaVerified": true,
+        "sourceSha": "dc618cfe625eeb0fdb465e547b930d73f001dbf6",
+        "targetSha": "29d53e8dcbdf0144deec5b38eb4f8090da8c32da",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 7.9331924229555,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5154399376023254,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4832904000341435,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.5379255453516214,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.23140159251604686,
+          "first": 0.2355657798963115,
+          "second": 0.22838268980958187
+        },
+        "samplePeak": 1.0743626294384827,
+        "samplesOverFullScale": 55,
+        "sourcePeak": 1.0827159881591797,
+        "processedPeak": 0.6156960725784302,
+        "recommendedHeadroom": 0.746561331444162,
+        "safeSamplePeak": 0.8020775950874445,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-599.mp3",
+        "to": "audio/songs/track-166.mp3",
+        "seconds": 4.953291666666667,
+        "sourceShaVerified": true,
+        "sourceSha": "b57a8d1bc6ed4829c7cd6a7f47dcb3ce4be51ce2",
+        "targetSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 4.9532999999999845,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.4886263384018603,
+              "lagMs": 0
+            },
+            "first": {
+              "score": 0.544498512612446,
+              "lagMs": 40
+            },
+            "second": {
+              "score": 0.4824293135522582,
+              "lagMs": 0
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.33989750971454324,
+          "first": 0.28444268696822317,
+          "second": 0.39671253449423477
+        },
+        "samplePeak": 0.45597760349603694,
+        "samplesOverFullScale": 0,
+        "sourcePeak": 0.4177792966365814,
+        "processedPeak": 0.9748311638832092,
+        "recommendedHeadroom": 1.0,
+        "safeSamplePeak": 0.45597760349603694,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-844.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "seconds": 9.737,
+        "sourceShaVerified": true,
+        "sourceSha": "4cd6d815cf6e79085e0523f0d1549730d4485e15",
+        "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 9.737000000000002,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.45126009507746967,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.4517960174927649,
+              "lagMs": 20
+            },
+            "second": {
+              "score": 0.47057407626273146,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.32006450036694223,
+          "first": 0.3823031393353594,
+          "second": 0.24698732563003337
+        },
+        "samplePeak": 1.2373656395950097,
+        "samplesOverFullScale": 1103,
+        "sourcePeak": 1.2098089456558228,
+        "processedPeak": 0.6834726929664612,
+        "recommendedHeadroom": 0.6688241194119222,
+        "safeSamplePeak": 0.8275799842927023,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      },
+      {
+        "from": "audio/songs/track-856.mp3",
+        "to": "audio/songs/track-443.mp3",
+        "seconds": 11.877,
+        "sourceShaVerified": true,
+        "sourceSha": "137b30c4381d9a2fd2f12cce2408cc106f3f1a58",
+        "targetSha": "dc1594d6a4b1061b2869855607c056040fc0c1c5",
+        "sampleRate": 48000,
+        "timing": {
+          "pitchPreserved": true,
+          "hold": 11.87700000000001,
+          "ramp": 0.85,
+          "timing": {
+            "whole": {
+              "score": 0.5920595029041875,
+              "lagMs": -10
+            },
+            "first": {
+              "score": 0.558951350747606,
+              "lagMs": -10
+            },
+            "second": {
+              "score": 0.6193189454452432,
+              "lagMs": -10
+            },
+            "verified": true
+          }
+        },
+        "stretchAccepted": true,
+        "onsets": {
+          "whole": 0.4126959575458216,
+          "first": 0.4295344996666125,
+          "second": 0.4022926015795313
+        },
+        "samplePeak": 1.1733914506077727,
+        "samplesOverFullScale": 477,
+        "sourcePeak": 1.1033809185028076,
+        "processedPeak": 0.7746941447257996,
+        "recommendedHeadroom": 0.7063861796311386,
+        "safeSamplePeak": 0.8288675040066644,
+        "safeSamplesOverFullScale": 0,
+        "humanListening": "NOT_PERFORMED",
+        "downbeatAndPhrase": "NOT_VERIFIED"
+      }
+    ]
+  },
+  "freshExtractionRun": 43449151573,
+  "freshExtractionAgreesOnPairsTimingsRatesAndGains": true,
+  "prefixFitExperiment": {
+    "prefixPulseCounts": [
+      8,
+      12,
+      16,
+      24
+    ],
+    "orderedPairsConsidered": 1381800,
+    "fullPairs": 17,
+    "additions": 0,
+    "enabled": false
+  },
+  "renderMethod": "Full MP3 decode before accurate output-side trim; no input-side bit-reservoir padding",
+  "decoderRegression": {
+    "syntheticMp3BeforeRmsError": 0.016414860263466835,
+    "afterRmsErrorBelow": 0.0001,
+    "test": "tools/test-dj-audio-render.py"
+  }
+}
