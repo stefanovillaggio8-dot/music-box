@@ -1,0 +1,10 @@
+e7a5d54fb12ab44a1dd8a854c64d1c7c2fe7f231 Wait for debounced library search before real browser playback gesture
+9f253891de61e7fdf7bf7033511e671e87ce97f8 Capture native WebKit library-start failures without weakening playback checks
+3ce1003213b38e73a45b2a8ec17ee4699013dd6f Apply verified-prefix protection to prebuffered EOF and every native fallback
+d95e5aa446c3db0ad067c4c1f33722587b30b93a Preserve quiet intros in normal EOF playback and replay archived content guards safely
+7371fd005a426c8eb53f3d16901528c2ec69b380 Refresh protected mix data in PWA caches and verify stretched intact native handoffs
+1770009c4a28bacf22d342d6f2f56f1e428f72b7 Certify intact pickups with later initial bars and audit actual Gym audio variants
+2dbf600e54c2a3beefafa73c500f554009b4b955 Wait for the real profile library and replay bounded karaoke evidence reproducibly
+4689787c7fded9d88da2c9697a8684d584425c0d Attach independent rendered pulse proof and isolate real browser playback checks
+27d7fd264df458a05e8f3c88c01283cf2905f79d Recover additional acoustic karaoke words with bounded short-context retries
+df6ab4b1cc17c50707b16eece57196a13d6437ea Keep incoming pickups and complete outgoing recordings in verified profile mixes

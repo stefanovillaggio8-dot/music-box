@@ -1,0 +1,39 @@
+{
+  "baseline": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
+  "productCommit": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+  "unchangedFromBaseline": {
+    "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
+    "versione.json": "8772eefbac7224acd64727fac3100988025b3e05cb2995d6f67c90646ffd15d0",
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb",
+    "tools/precompute-karaoke-rows.mjs": "edc481499ac1f3ed8f0ff5e7092a9a6e6ad4749aa71421c3b0cce569cc6d8030",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "e38e61410cb23c0be52169c57637a768de79ec2c3d3fb2f8daf98e08d6fe171e",
+    "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
+    "native-mp3-metadata.json": "94b2f005c18986ba68f7c6a648a52e7d32323898a2e714953fa008453227ba4c"
+  },
+  "changedProduct": {
+    "app.js": "6b06ba86bc251a372932322d7925ec70dc9bce640184f812c8d91d5cfb090c4a",
+    "audio-composite-core.mjs": "129957b6215b44761756b1e18138fb0028a634ae4e6d81f0fd4dd8a5c9d9948c",
+    "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+    "mix-intelligente.js": "28bcdd314e9a13ce2ca5cd3b18abff829bdbd34ae3d94bfb2600582e1783f08e",
+    "dj-deep-analysis.json": "2a6ed1d43f3d46a889fae1ac38e5fd40603c01f72ede9e5823fd1ef52959ad53",
+    "index.html": "d9d167a6c351d5bd1fbe2a1fc130e0c69a85c80295ed3d7021b9b825ea6e2830",
+    "sw.js": "159515f7561b7acca1358da0acae82a10efb1aa63d8693578a19c4bc4e5a3ff4"
+  },
+  "allPreExistingAnalysisAndCueRecordsSemanticallyUnchanged": true,
+  "soleNewDirectedRecordingPair": [
+    "audio/songs/track-166.mp3",
+    "audio/songs/track-181.mp3"
+  ],
+  "simulationToolSha256": "1f8e63da73217192d9d649ba06dc848ec15c3ed1632d544ee128d1f80cb6948f",
+  "originalMp3Rewritten": false,
+  "userDataModified": false,
+  "phoneModelsAdded": false,
+  "mainModified": false,
+  "publicDeployment": false,
+  "newSteDistinctPartialPairs": 1,
+  "newSteCompletePairs": 0
+}

@@ -1,0 +1,31 @@
+{
+  "selection": "first two alphabetical English recordings not present in any previous benchmark; before inference",
+  "excluded": [
+    "Avercage_-_Embers",
+    "Color_Out_-_Falling_Star",
+    "Confession_-_Quesabe",
+    "Cortez_-_Feel__Stripped_",
+    "Der_Musiker_-_d-music",
+    "Explosive_Ear_Candy_-_Like_The_Sun",
+    "JASON_MILLER_-_CROWD_PLEASER",
+    "Mes_Larmes_-_kobzx2z",
+    "Quentin_Hannappe_-_Keep_On",
+    "Slingshot_Miracle_-_Whistler",
+    "Wordsmith_-_The_Statement"
+  ],
+  "selected": [
+    {
+      "name": "HILA_-_Give_Me_the_Same",
+      "language": "en",
+      "genre": "Pop",
+      "file_name": "subsets/en/mp3/HILA_-_Give_Me_the_Same.mp3"
+    },
+    {
+      "name": "Kinematic_-_Peyote",
+      "language": "en",
+      "genre": "Rock",
+      "file_name": "subsets/en/mp3/Kinematic_-_Peyote.mp3"
+    }
+  ],
+  "remainingIndependentEnglishRapRecordings": 0
+}

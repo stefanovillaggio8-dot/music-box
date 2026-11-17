@@ -65,7 +65,7 @@ test("full-band promotion requires direct PCM beats plus unchanged vocal/harmoni
  assert.match(early,/drums\.correlation>=\.55/);
  assert.match(early,/if\(reliableLocalGrid&&!observedPlacement\)continue/);
  assert.match(early,/voiceConfirmed/);
- assert.match(early,/firstNextVoice>=fade\+\.65/);
+ assert.match(early,/incomingVoiceAfter>=fade\+\.65/);
  assert.match(early,/barAccents\?\.reliable&&barAccents\.score<\.62/);
  assert.match(early,/measuredBeatPlacement:!!observedPlacement/);
 });
@@ -96,4 +96,40 @@ test("3.5 percent rhythm adjustment needs both PCM grids and cannot certify full
  assert.match(portion,/placed\.fit\.ratio<\.90\|\|placed\.fit\.rms>\.06/);
  assert.match(portion,/drumOnlyUnderlay:true,preserveTail:true/);
  assert.match(portion,/quietCertified:false/);
+});
+
+test("live full-band mix cancels decoder drift smaller than the continuity watchdog",()=>{
+ const phaseCode=js.slice(js.indexOf("function djBeatPhaseError("),js.indexOf("function djSoftFocusEnvelope("));
+ const clockCode=js.slice(js.indexOf("function djAudioClockProgress("),js.indexOf("function desktopBeatStartDelay("));
+ const fadeCode=js.slice(js.indexOf("  function fadeStep(){"),js.indexOf("  fadeStep();",js.indexOf("  function fadeStep(){")));
+ function fixture(measured){
+  const old={currentTime:100.5,paused:false,readyState:4,volume:1};
+  const upcoming={currentTime:.5,readyState:4,volume:0};
+  const act={oldAudioAt:100,newAudioAt:0,tempo:1,fade:8,kind:"beat",end:108};
+  const proposed={measuredBeatBridge:measured,beatPeriod:.5,beatAnchor:100,nextBeat:0,entry:0,tempo:1};
+  const app={audio:()=>old,currentId:()=>"old",mixNext:()=>({id:"next"}),volume:()=>.8};
+  const pending=[];
+  const build=new Function("old","upcoming","act","proposed","app","setTimeout",`
+   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+   let active=act,plan=proposed,cancelled=false;
+   const id="old",song={id:"next"},window={},mixFailures=new Map();
+   const cancel=()=>{cancelled=true;active=null},handoff=()=>{};
+   const mixCurve=()=>({outGain:1,inGain:.1});
+   ${phaseCode}\n${clockCode}\n${fadeCode}
+   return {step:fadeStep,cancelled:()=>cancelled};
+  `);
+  return {old,upcoming,pending,api:build(old,upcoming,act,proposed,app,fn=>pending.push(fn))};
+ }
+ const f=fixture(true);
+ f.api.step();assert.equal(f.api.cancelled(),false);
+ f.old.currentTime+=.3;f.upcoming.currentTime+=.12;
+ f.pending.shift()();assert.equal(f.api.cancelled(),true,
+  "180ms decoder drift must not continue as a certified beatmatch");
+ const aligned=fixture(true);
+ aligned.api.step();aligned.old.currentTime+=.3;aligned.upcoming.currentTime+=.3;
+ aligned.pending.shift()();assert.equal(aligned.api.cancelled(),false);
+ const neutral=fixture(false);
+ neutral.api.step();neutral.old.currentTime+=.3;neutral.upcoming.currentTime+=.12;
+ neutral.pending.shift()();assert.equal(neutral.api.cancelled(),false,
+  "a neutral fade does not require matching drum phase");
 });

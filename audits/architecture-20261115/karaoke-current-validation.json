@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+  "implementedInBranchPlayer": true,
+  "publicDeployment": false,
+  "consensusEnabled": true,
+  "observationPassesPerReferenceWindow": 7,
+  "referenceLanguages": [
+    "en",
+    "de"
+  ],
+  "runtimeSha256": {
+    "audio-lyrics-align.js": "374a1c6647c0ca807512097bce96d58f9dab97a151ce3cb7a220e01cb3699e8a",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925"
+  },
+  "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+  "cases": [
+    {
+      "id": "Color_Out_-_Falling_Star@184.349",
+      "category": "singing-sparse",
+      "referenceWords": 15,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Color_Out_-_Falling_Star@107.629",
+      "category": "repeated-phrase",
+      "referenceWords": 47,
+      "acceptedWords": 6,
+      "errors": [
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 1,
+          "startErrorMs": -8.104187000000707,
+          "endErrorMs": 167.76800539999215
+        },
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 2,
+          "startErrorMs": 167.76800539999215,
+          "endErrorMs": 114.4000854000069
+        },
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 3,
+          "startErrorMs": 114.4000854000069,
+          "endErrorMs": 144.8511353000015
+        },
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 4,
+          "startErrorMs": 144.8511353000015,
+          "endErrorMs": 246.5335692999986
+        },
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 5,
+          "startErrorMs": 246.5335692999986,
+          "endErrorMs": 218.73999019999246
+        },
+        {
+          "lineSourceT": 123.3306503296,
+          "wordIndex": 6,
+          "startErrorMs": 398.7399901999993,
+          "endErrorMs": 406.33856199998775
+        }
+      ]
+    },
+    {
+      "id": "Der_Musiker_-_d-music@42.578",
+      "category": "rap-dense",
+      "referenceWords": 86,
+      "acceptedWords": 19,
+      "errors": [
+        {
+          "lineSourceT": 43.0784568787,
+          "wordIndex": 0,
+          "startErrorMs": -20.45687870000279,
+          "endErrorMs": -3.7674254999942036
+        },
+        {
+          "lineSourceT": 43.0784568787,
+          "wordIndex": 1,
+          "startErrorMs": -3.7674254999942036,
+          "endErrorMs": 91.10623169999599
+        },
+        {
+          "lineSourceT": 43.0784568787,
+          "wordIndex": 2,
+          "startErrorMs": 91.10623169999599,
+          "endErrorMs": 37.410858199997676
+        },
+        {
+          "lineSourceT": 43.0784568787,
+          "wordIndex": 3,
+          "startErrorMs": -43.86126709999871,
+          "endErrorMs": 384.893157999997
+        },
+        {
+          "lineSourceT": 46.5251693726,
+          "wordIndex": 0,
+          "startErrorMs": -67.16937259999867,
+          "endErrorMs": 63.623474099998134
+        },
+        {
+          "lineSourceT": 46.5251693726,
+          "wordIndex": 1,
+          "startErrorMs": 11.377380399999026,
+          "endErrorMs": 91.69461060000117
+        },
+        {
+          "lineSourceT": 46.5251693726,
+          "wordIndex": 2,
+          "startErrorMs": 91.69461060000117,
+          "endErrorMs": -14.971801799994466
+        },
+        {
+          "lineSourceT": 46.5251693726,
+          "wordIndex": 3,
+          "startErrorMs": -14.971801799994466,
+          "endErrorMs": -8.078185999998766
+        },
+        {
+          "lineSourceT": 51.1158294678,
+          "wordIndex": 0,
+          "startErrorMs": -297.82946779999975,
+          "endErrorMs": -79.36938480000322
+        },
+        {
+          "lineSourceT": 51.1158294678,
+          "wordIndex": 1,
+          "startErrorMs": -79.36938480000322,
+          "endErrorMs": -17.33050539999681
+        },
+        {
+          "lineSourceT": 51.1158294678,
+          "wordIndex": 2,
+          "startErrorMs": -17.33050539999681,
+          "endErrorMs": 33.103546100001324
+        },
+        {
+          "lineSourceT": 56.7989120483,
+          "wordIndex": 0,
+          "startErrorMs": -360.9120482999941,
+          "endErrorMs": 76.91281130000505
+        },
+        {
+          "lineSourceT": 56.7989120483,
+          "wordIndex": 1,
+          "startErrorMs": 9.518554700001403,
+          "endErrorMs": 42.897460900000794
+        },
+        {
+          "lineSourceT": 56.7989120483,
+          "wordIndex": 2,
+          "startErrorMs": 42.897460900000794,
+          "endErrorMs": 39.76818850000541
+        },
+        {
+          "lineSourceT": 56.7989120483,
+          "wordIndex": 3,
+          "startErrorMs": 39.76818850000541,
+          "endErrorMs": -50.20584110000215
+        },
+        {
+          "lineSourceT": 59.1586380005,
+          "wordIndex": 0,
+          "startErrorMs": 239.36199950000514,
+          "endErrorMs": 111.33267209999786
+        },
+        {
+          "lineSourceT": 59.1586380005,
+          "wordIndex": 1,
+          "startErrorMs": -1.8646545000038373,
+          "endErrorMs": 65.93472290000335
+        },
+        {
+          "lineSourceT": 59.1586380005,
+          "wordIndex": 2,
+          "startErrorMs": 65.93472290000335,
+          "endErrorMs": 97.5921325999991
+        },
+        {
+          "lineSourceT": 59.1586380005,
+          "wordIndex": 3,
+          "startErrorMs": -0.3654785000009042,
+          "endErrorMs": 22.30685419999645
+        }
+      ]
+    },
+    {
+      "id": "Der_Musiker_-_d-music@155.718",
+      "category": "repeated-phrase",
+      "referenceWords": 18,
+      "acceptedWords": 0,
+      "errors": []
+    }
+  ],
+  "aggregate": {
+    "referenceWords": 166,
+    "acceptedWords": 25,
+    "coverage": 0.15060240963855423,
+    "onset": {
+      "count": 25,
+      "medianAbsoluteMs": 65.93472290000335,
+      "p95AbsoluteMs": 360.9120482999941
+    },
+    "end": {
+      "count": 25,
+      "medianAbsoluteMs": 76.91281130000505,
+      "p95AbsoluteMs": 384.893157999997
+    }
+  }
+}

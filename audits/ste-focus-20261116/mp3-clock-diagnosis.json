@@ -1,0 +1,99 @@
+{
+  "targetSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+  "sourceClock": {
+    "method": "original-mp3-gapless-metadata-v1",
+    "sourceSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+    "sampleRate": 48000,
+    "rawFrames": 10993536,
+    "decodedFrames": 10992327,
+    "primingFrames": 1105,
+    "paddingFrames": 104
+  },
+  "targetClock": {
+    "method": "original-mp3-gapless-metadata-v1",
+    "sourceSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+    "sampleRate": 48000,
+    "rawFrames": 10063872,
+    "decodedFrames": 10061671,
+    "primingFrames": 1105,
+    "paddingFrames": 1096
+  },
+  "before": {
+    "run": 43902080078,
+    "linuxWebKitDecodedAndMediaSeconds": 209.664,
+    "originalDecodedSeconds": 209.61814583333333,
+    "native44100NominalCorrelation": 0.6801479506476251,
+    "native48000NominalCorrelation": 0.6738930420815885,
+    "diagnosticLagSearchAccepted": false
+  },
+  "after": {
+    "method": "actual-browser-decode-v1",
+    "assetSha256": "6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc",
+    "rates": {
+      "44100": {
+        "samplePeak": 0.9956722259521484,
+        "overlapPeak": 0.9496957063674927,
+        "browsers": [
+          "chromium",
+          "webkit"
+        ],
+        "nativeSplice": {
+          "method": "actual-native-original-splice-v1",
+          "targetSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+          "frames": 4410,
+          "minimumCorrelation": 0.9997099316603246,
+          "maximumRelativeRms": 0.024085043011497522,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ],
+          "clockMethod": "original-mp3-gapless-metadata-v1",
+          "decodedPrimingSeconds": [
+            0,
+            0.023020833333333334
+          ],
+          "mediaPrimingSeconds": [
+            0,
+            0.023020833333333334
+          ]
+        }
+      },
+      "48000": {
+        "samplePeak": 0.9971576929092407,
+        "overlapPeak": 0.9484472274780273,
+        "browsers": [
+          "chromium",
+          "webkit"
+        ],
+        "nativeSplice": {
+          "method": "actual-native-original-splice-v1",
+          "targetSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+          "frames": 4800,
+          "minimumCorrelation": 0.9999999989448136,
+          "maximumRelativeRms": 4.594424010896974e-05,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ],
+          "clockMethod": "original-mp3-gapless-metadata-v1",
+          "decodedPrimingSeconds": [
+            0,
+            0.023020833333333334
+          ],
+          "mediaPrimingSeconds": [
+            0,
+            0.023020833333333334
+          ]
+        }
+      }
+    },
+    "physicalIPhone": false,
+    "provenanceRuns": [
+      43938097742,
+      43938102887
+    ]
+  },
+  "runtimeConversionUsesActualMediaDuration": true,
+  "unknownOrAmbiguousDurationRejectsMix": true,
+  "physicalNativeSampleAccurateSeekNotCertified": true
+}

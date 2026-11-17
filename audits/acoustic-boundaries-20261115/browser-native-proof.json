@@ -1,0 +1,89 @@
+[
+  {
+    "browser": "webkit",
+    "platform": "linux",
+    "browserVersion": "27.2",
+    "karaoke": {
+      "browser": "webkit",
+      "actualNativeWebCryptoAndFetch": true,
+      "offlineCachedOrSafeFallback": true,
+      "offline": {
+        "cached": false,
+        "words": 0
+      },
+      "precomputedWords": 6,
+      "accepted": 6,
+      "domWords": 6,
+      "changedRejected": true,
+      "wrongSourceRejected": true,
+      "exactEnd": 1.3
+    },
+    "nativeAssetsMeasured": 30,
+    "sampleRates": [
+      44100,
+      48000
+    ],
+    "maximumSamplePeak": 0.9987537860870361,
+    "maximumOverlapPeak": 0.9612768888473511,
+    "sourceRun": 43765534000,
+    "physicalIPhone": false
+  },
+  {
+    "browser": "chromium",
+    "platform": "linux",
+    "browserVersion": "156.0.8078.4",
+    "karaoke": {
+      "browser": "chromium",
+      "actualNativeWebCryptoAndFetch": true,
+      "offlineCachedOrSafeFallback": true,
+      "offline": {
+        "cached": true,
+        "words": 6
+      },
+      "precomputedWords": 6,
+      "accepted": 6,
+      "domWords": 6,
+      "changedRejected": true,
+      "wrongSourceRejected": true,
+      "exactEnd": 1.3
+    },
+    "nativeAssetsMeasured": 30,
+    "sampleRates": [
+      44100,
+      48000
+    ],
+    "maximumSamplePeak": 0.9991183876991272,
+    "maximumOverlapPeak": 0.9602028131484985,
+    "sourceRun": 43765534000,
+    "physicalIPhone": false
+  },
+  {
+    "browser": "webkit",
+    "platform": "macos",
+    "browserVersion": "27.2",
+    "karaoke": {
+      "browser": "webkit",
+      "actualNativeWebCryptoAndFetch": true,
+      "offlineCachedOrSafeFallback": true,
+      "offline": {
+        "cached": false,
+        "words": 0
+      },
+      "precomputedWords": 6,
+      "accepted": 6,
+      "domWords": 6,
+      "changedRejected": true,
+      "wrongSourceRejected": true,
+      "exactEnd": 1.3
+    },
+    "nativeAssetsMeasured": 30,
+    "sampleRates": [
+      44100,
+      48000
+    ],
+    "maximumSamplePeak": 0.9991493225097656,
+    "maximumOverlapPeak": 0.9602358341217041,
+    "sourceRun": 43789096589,
+    "physicalIPhone": false
+  }
+]

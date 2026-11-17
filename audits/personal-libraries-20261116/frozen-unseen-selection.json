@@ -1,0 +1,19 @@
+{
+  "metadataSha256": "a214dbc7ca88fee4e41effa559502777365f5798e28ef585812e8413330be73b",
+  "rule": "first alphabetical unused English recordings before inference, maximum two",
+  "selected": [
+    {
+      "name": "Moon_I_Mean_-_Wrong_Concept",
+      "genre": "Reggae",
+      "language": "en",
+      "file_name": "subsets/en/mp3/Moon_I_Mean_-_Wrong_Concept.mp3"
+    },
+    {
+      "name": "Pure_Mids_-_The_Leader",
+      "genre": "Indie",
+      "language": "en",
+      "file_name": "subsets/en/mp3/Pure_Mids_-_The_Leader.mp3"
+    }
+  ],
+  "tunedOnNewOutputs": false
+}

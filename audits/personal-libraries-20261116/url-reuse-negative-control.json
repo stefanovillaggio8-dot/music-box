@@ -1,0 +1,81 @@
+{
+  "nonce": {
+    "sourceLogSha256": "880ed16e3a55be28fee7d77fdba1808e9714963f58c2c66a940cff8f28f9cc98",
+    "observations": [
+      {
+        "kind": "planner",
+        "setup": {
+          "stage": "target-queued",
+          "id": "b-track-4",
+          "time": 0.000931361
+        },
+        "media": [
+          {
+            "event": "loadedmetadata",
+            "at": 0.000931361,
+            "duration": 0.000931361,
+            "paused": false,
+            "seeking": false,
+            "rate": 1,
+            "pendingInitialSeek": true,
+            "src": "http://127.0.0.1:37577/songs/track-4.mp3?native-assignment-probe=2"
+          },
+          {
+            "event": "playing",
+            "at": 0.000931361,
+            "duration": 0.000931361,
+            "paused": false,
+            "seeking": false,
+            "rate": 1,
+            "pendingInitialSeek": true,
+            "src": "http://127.0.0.1:37577/songs/track-4.mp3?native-assignment-probe=2"
+          },
+          {
+            "event": "timeupdate",
+            "at": 0.000931361,
+            "duration": 0.000931361,
+            "paused": false,
+            "seeking": false,
+            "rate": 1,
+            "pendingInitialSeek": true,
+            "src": "http://127.0.0.1:37577/songs/track-4.mp3?native-assignment-probe=2"
+          }
+        ],
+        "seekWrites": [
+          {
+            "value": 2,
+            "at": 0.001289302,
+            "duration": 126.876708333,
+            "readyState": 4,
+            "src": "http://127.0.0.1:37577/songs/track-4.mp3?native-assignment-probe=1",
+            "stack": "at@http://127.0.0.1:37577/app.js:8248:17"
+          }
+        ],
+        "common": {
+          "active": false,
+          "lastStop": null
+        }
+      }
+    ]
+  },
+  "original": {
+    "sourceLogSha256": "21ba7b54e3b0109b82777032a4b137c7ceb37df4e5c3ab63aaf237fdb8a4e616",
+    "observations": [
+      {
+        "kind": "initial-bridge",
+        "trace": {
+          "requested": "b-track-4",
+          "resolved": true
+        },
+        "currentId": "b-track-4",
+        "profile": "Ste",
+        "paused": false,
+        "src": "http://127.0.0.1:41739/songs/track-4.mp3",
+        "readyState": 4,
+        "duration": 0.000893909,
+        "time": 0.000893909,
+        "pendingInitialSeek": true
+      }
+    ]
+  }
+}

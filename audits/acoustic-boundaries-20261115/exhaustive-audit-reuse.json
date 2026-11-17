@@ -1,0 +1,11 @@
+{
+  "baseline": "d737a27fbc381a16972badf277d1d51ea61dd9e0",
+  "sourceCodeChangedOutsideMusicalAuditFactory": true,
+  "musicalFactorySha256Before": "4606d389f2cb356fb348706f11a4807ce41a23bb2ba8bf7c61aea87871c3ca95",
+  "musicalFactorySha256After": "4606d389f2cb356fb348706f11a4807ce41a23bb2ba8bf7c61aea87871c3ca95",
+  "indexSha256Before": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
+  "indexSha256After": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
+  "orderedPairsPreviouslyAudited": 1381800,
+  "newExhaustiveAuditClaimed": false,
+  "classificationImplementationIdentical": true
+}

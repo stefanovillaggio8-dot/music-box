@@ -1,0 +1,162 @@
+{
+  "main": {
+    "before": {
+      "referenceWords": 590,
+      "acceptedWords": 182,
+      "coverage": 0.30847457627118646,
+      "onset": {
+        "count": 182,
+        "medianAbsoluteMs": 52.86950680002178,
+        "p95AbsoluteMs": 199.6096191000163
+      },
+      "end": {
+        "count": 182,
+        "medianAbsoluteMs": 60.38146980000647,
+        "p95AbsoluteMs": 216.24670410000135
+      }
+    },
+    "after": {
+      "referenceWords": 590,
+      "acceptedWords": 192,
+      "coverage": 0.3254237288135593,
+      "onset": {
+        "count": 192,
+        "medianAbsoluteMs": 47.8078612999866,
+        "p95AbsoluteMs": 199.6096191000163
+      },
+      "end": {
+        "count": 192,
+        "medianAbsoluteMs": 60.210205100020175,
+        "p95AbsoluteMs": 216.24670410000135
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 345.805908199992,
+      "maximumEndAbsoluteMs": 904.5696410999966
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 345.805908199992,
+      "maximumEndAbsoluteMs": 904.5696410999966
+    },
+    "oldIntervalsMissing": 0,
+    "oldIntervalsMoved": 0
+  },
+  "previous-blind": {
+    "before": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    },
+    "after": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 193.91143800000066,
+      "maximumEndAbsoluteMs": 304.93823239999074
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 193.91143800000066,
+      "maximumEndAbsoluteMs": 304.93823239999074
+    },
+    "oldIntervalsMissing": 0,
+    "oldIntervalsMoved": 0
+  },
+  "new-unseen": {
+    "before": {
+      "referenceWords": 78,
+      "acceptedWords": 0,
+      "coverage": 0,
+      "onset": {
+        "count": 0
+      },
+      "end": {
+        "count": 0
+      }
+    },
+    "after": {
+      "referenceWords": 78,
+      "acceptedWords": 0,
+      "coverage": 0,
+      "onset": {
+        "count": 0
+      },
+      "end": {
+        "count": 0
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": null,
+      "maximumEndAbsoluteMs": null
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": null,
+      "maximumEndAbsoluteMs": null
+    },
+    "oldIntervalsMissing": 0,
+    "oldIntervalsMoved": 0
+  },
+  "fresh-transfer": {
+    "before": {
+      "referenceWords": 110,
+      "acceptedWords": 33,
+      "coverage": 0.3,
+      "onset": {
+        "count": 33,
+        "medianAbsoluteMs": 109.94274899999823,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 33,
+        "medianAbsoluteMs": 156.7509154999982,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "after": {
+      "referenceWords": 110,
+      "acceptedWords": 33,
+      "coverage": 0.3,
+      "onset": {
+        "count": 33,
+        "medianAbsoluteMs": 109.94274899999823,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 33,
+        "medianAbsoluteMs": 156.7509154999982,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "beforeExtremes": {
+      "maximumOnsetAbsoluteMs": 483.22644039998863,
+      "maximumEndAbsoluteMs": 635.769287100004
+    },
+    "afterExtremes": {
+      "maximumOnsetAbsoluteMs": 483.22644039998863,
+      "maximumEndAbsoluteMs": 635.769287100004
+    },
+    "oldIntervalsMissing": 0,
+    "oldIntervalsMoved": 0
+  }
+}

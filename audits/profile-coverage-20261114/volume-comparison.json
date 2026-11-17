@@ -1,0 +1,25 @@
+{
+  "before": {
+    "rms": 0.12482617050409317,
+    "peak": 0.9599999189376831,
+    "truePeak": 0.9655105471611023,
+    "headroom": 0.9280024825864434,
+    "gainProof": null
+  },
+  "after": {
+    "rms": 0.1328107714653015,
+    "peak": 0.9535804986953735,
+    "truePeak": 0.9713336229324341,
+    "headroom": 0.9217969226130959,
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0.7072949217214437,
+      "meanOverlapReductionDb": 0.012034057552798658,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    }
+  },
+  "rmsDifferenceDb": 0.538553045181464
+}

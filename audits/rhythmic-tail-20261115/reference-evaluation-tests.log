@@ -1,0 +1,11 @@
+✔ overlapping sung phrases keep their declared word identity without duplicate reference words (1.1357ms)
+✔ missing or contradictory annotation ownership cannot silently fall back to timestamp containment (0.305ms)
+✔ context replay rejects different or unpinned model outputs while allowing different context lengths (0.2192ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63.6216

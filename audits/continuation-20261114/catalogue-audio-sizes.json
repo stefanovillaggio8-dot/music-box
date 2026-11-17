@@ -1,0 +1,28 @@
+{
+  "sourceTree": "73f8f7ea2008c0b9310e67a3e7296eb442677fc9",
+  "scope": "Catalogue file payload sizes for one original copy per visible library member; NOT measured device downloads or physical Safari usage.",
+  "totals": [
+    {
+      "profile": "Ste",
+      "members": 227,
+      "knownFiles": 227,
+      "logicalOriginalMp3Bytes": 1124879533,
+      "unknownFiles": []
+    },
+    {
+      "profile": "Diego",
+      "members": 212,
+      "knownFiles": 212,
+      "logicalOriginalMp3Bytes": 957041024,
+      "unknownFiles": []
+    },
+    {
+      "profile": "Emanuele",
+      "members": 621,
+      "knownFiles": 621,
+      "logicalOriginalMp3Bytes": 3080862777,
+      "unknownFiles": []
+    }
+  ],
+  "appSourceTree": "6fe352295eab07dd64347ddca1bd2c51b75e12a0"
+}

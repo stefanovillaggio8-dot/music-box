@@ -1,0 +1,15 @@
+{
+  "scope": "Real before/after prefetch function with deterministic CacheStorage fixtures. This preloader is disabled on native iPhone playback; not a diagnosis of Diego's phone.",
+  "concurrentRequests": 5,
+  "assumedAudioPayloadBytes": 5000000,
+  "savedExactUrl": {
+    "before": 5,
+    "after": 0
+  },
+  "coldCache": {
+    "before": 5,
+    "after": 1
+  },
+  "deviceCpuMeasured": false,
+  "existingDownloadsDeleted": 0
+}

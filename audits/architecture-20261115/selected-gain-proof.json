@@ -1,0 +1,170 @@
+[
+  {
+    "from": "audio/songs/track-353.mp3",
+    "to": "audio/songs/track-135.mp3",
+    "asset": "977070a8972bdbd9dfe2a9c9da87e47f030536eb70361b70fbbb887eee294b66",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 1.6277005527448907,
+      "meanOverlapReductionDb": 0.28875631738498203,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.010354736587939
+  },
+  {
+    "from": "audio/songs/track-353.mp3",
+    "to": "audio/songs/track-717.mp3",
+    "asset": "977070a8972bdbd9dfe2a9c9da87e47f030536eb70361b70fbbb887eee294b66",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 1.6277005527448907,
+      "meanOverlapReductionDb": 0.28875631738498203,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.010354736587939
+  },
+  {
+    "from": "audio/songs/track-353.mp3",
+    "to": "audio/songs/track-722.mp3",
+    "asset": "977070a8972bdbd9dfe2a9c9da87e47f030536eb70361b70fbbb887eee294b66",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 1.6277005527448907,
+      "meanOverlapReductionDb": 0.28875631738498203,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.010354736587939
+  },
+  {
+    "from": "audio/songs/track-700.mp3",
+    "to": "audio/songs/track-521.mp3",
+    "asset": "21f030cc52e0dea58bce03eb625046a0221fb92e53c5a20bacf2b1af2eab4dbe",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "truePeakLookahead": true,
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.02800431898844739
+  },
+  {
+    "from": "audio/songs/track-451.mp3",
+    "to": "audio/songs/track-315.mp3",
+    "asset": "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0.7072949217214437,
+      "meanOverlapReductionDb": 0.012034057552798658,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "outputHeadroom": 0.7227277296103255,
+    "postRenderRhythm": 0.015630410324562707
+  },
+  {
+    "from": "audio/songs/track-745.mp3",
+    "to": "audio/songs/track-694.mp3",
+    "asset": "2946cdafd2b1f6b07bb825d12f387c40eea077867e23431e94c13d5421670ab0",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.026442981817017645
+  },
+  {
+    "from": "audio/songs/track-934.mp3",
+    "to": "audio/songs/track-1124.mp3",
+    "asset": "68364e66183ce4c5555bf78d9b3fbbdf6d9f5e21a0a2afca7df2ce57243d4d19",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "truePeakLookahead": true,
+      "maximumReductionDb": 0.20074727953048768,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.01735796103480088
+  },
+  {
+    "from": "audio/songs/track-1183.mp3",
+    "to": "audio/songs/track-1070.mp3",
+    "asset": "7e3ecf5cb9c570439c9f9af35bf180209b75aac95b7177022290ea1b670052e3",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.018151873537638606
+  },
+  {
+    "from": "audio/songs/track-1183.mp3",
+    "to": "audio/songs/track-1198.mp3",
+    "asset": "44e0a9c61d07ab3799b5e0c358ead56b016a67b9f9d530109c6135db12e9f7a1",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.013475689338469873
+  },
+  {
+    "from": "audio/songs/track-884.mp3",
+    "to": "audio/songs/track-1043.mp3",
+    "asset": "2188057c318a4c72c35ef9ea1ecea53e904efe400c7db00ae4bbf1465341098e",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.013364087505236776
+  },
+  {
+    "from": "audio/songs/track-884.mp3",
+    "to": "audio/songs/track-626.mp3",
+    "asset": "feaf70bcb3b4f627c6501e20975d2baac6035ae2f3fa222b64dac5525c100073",
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "maximumReductionDb": 0,
+      "meanOverlapReductionDb": 0,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "postRenderRhythm": 0.02172027870780345
+  }
+]

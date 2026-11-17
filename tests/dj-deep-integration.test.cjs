@@ -64,7 +64,7 @@ test("same MP3 filename in different repos never borrows unrelated waveform",()=
   "known mobile source must not use a different main-audio recording");
 });
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
- assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
+ assert.match(text,/fetch\("dj-deep-analysis\.json(?:\?[^"\n]*)?"/);
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
  assert.ok(text.includes('const saved=await savedAnalysis(key)'));
  assert.ok(text.includes('decode(next,true).catch(()=>{})'));
@@ -204,5 +204,5 @@ test("skipping rapidly never starts stale lyrics searches or skips unmeasured mu
  const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  assert.match(app,/setTimeout\(\(\) => \{ if\(currentId===id&&!document\.hidden\) _completaTestoInAscolto\(t\)/);
  assert.match(text,/const measured=deepLookup\(track\)\|\|cache\.get\(String\(source\)\)/);
- assert.match(text,/return Number\.isFinite\(measured\?\.safeIntroAt\)\?clamp/);
+ assert.match(text,/return musicalIntroEntry\(measured\)/);
 });

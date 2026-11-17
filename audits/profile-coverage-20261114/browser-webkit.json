@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "browser": "webkit",
+      "decodedOriginalMixes": 103,
+      "resampled": {
+        "sampleRate": 44100,
+        "decoded": 103,
+        "rejected": []
+      },
+      "actualNativeHandoff": {
+        "id": "in",
+        "handoffs": 1,
+        "mutedBeforePlay": true,
+        "paused": false,
+        "at": 7.15876676,
+        "playError": null
+      },
+      "nativeHandoffMode": {
+        "preservedFileTail": true,
+        "entry": 0,
+        "tempo": 1.0444966439495809
+      },
+      "seekRollback": true,
+      "silentAppBridge": {
+        "muted": true,
+        "lastPlayWasMuted": true
+      },
+      "actualSameProfilePlannerPlayback": {
+        "handoffs": 1,
+        "paused": false,
+        "sourceMatches": true
+      },
+      "muteDuringOverlap": {
+        "muted": true,
+        "unmuteKeptCommonOwnership": true
+      },
+      "automaticShuffle": {
+        "full": true,
+        "manualQueue": 0,
+        "poolRespected": true
+      },
+      "physicalIPhone": false
+    }
+  ]
+}

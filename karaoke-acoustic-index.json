@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "entries": {
+    "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4": {
+      "path": "karaoke-acoustic/f655a17518694bbd498fb6557b107c565edc4606b04694892c5e2a822ef64fee.json",
+      "sha256": "f655a17518694bbd498fb6557b107c565edc4606b04694892c5e2a822ef64fee",
+      "bytes": 15507
+    },
+    "5cee93c2b21c2da7ba9af6ea1e20b6ff1839e5cb63236b87a4b3fc0955069bb5": {
+      "path": "karaoke-acoustic/9f216def4b3aef5d0ee68382025d0bec5e6caca02dd9539cbf2a18d0cb36132b.json",
+      "sha256": "9f216def4b3aef5d0ee68382025d0bec5e6caca02dd9539cbf2a18d0cb36132b",
+      "bytes": 10863
+    },
+    "0cd862f3ebf2907d0ed6ac15a2f9728c6fdd08a2edb2cf402e8f5f851fee15c8": {
+      "path": "karaoke-acoustic/cbb1c286caa05df6440087c0583c2f2eba34e8d0fe914af3b5c61d1e97e63f28.json",
+      "sha256": "cbb1c286caa05df6440087c0583c2f2eba34e8d0fe914af3b5c61d1e97e63f28",
+      "bytes": 7725
+    },
+    "03ef9dec1e014d24e2ce693f626930ffe3c16b81ea06e998d2dbdf8d734eab50": {
+      "path": "karaoke-acoustic/126c66ae7a2193a85788347748f86ba4e4aaf8b7fd7e4b035ee96de5b769e3ae.json",
+      "sha256": "126c66ae7a2193a85788347748f86ba4e4aaf8b7fd7e4b035ee96de5b769e3ae",
+      "bytes": 7720
+    }
+  },
+  "tracks": {
+    "b-track-7": [
+      "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4"
+    ],
+    "b-track-46": [
+      "5cee93c2b21c2da7ba9af6ea1e20b6ff1839e5cb63236b87a4b3fc0955069bb5"
+    ],
+    "b-track-47": [
+      "0cd862f3ebf2907d0ed6ac15a2f9728c6fdd08a2edb2cf402e8f5f851fee15c8"
+    ],
+    "b-track-51": [
+      "03ef9dec1e014d24e2ce693f626930ffe3c16b81ea06e998d2dbdf8d734eab50"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "status": 206,
+  "headers": {
+    "Accept-Ranges": "bytes",
+    "Content-Type": "audio/mpeg",
+    "Content-Range": "bytes 0-1/3045085",
+    "Content-Length": "2",
+    "Access-Control-Allow-Origin": "*"
+  }
+}

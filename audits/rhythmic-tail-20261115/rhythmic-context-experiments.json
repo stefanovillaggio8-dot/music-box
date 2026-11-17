@@ -1,0 +1,194 @@
+{
+  "deployed": false,
+  "context64SelectedBeforeInference": true,
+  "samePinnedBeatThisCheckpoint": true,
+  "noNewCandidateRecordingPairs": true,
+  "results": {
+    "long": {
+      "Ste": {
+        "tracks": 227,
+        "profileFunnel": {
+          "Ste": {
+            "pairs": 51292,
+            "meterOrTempo": 12724,
+            "noCoherentInitialBars": 8088,
+            "incomingVocalOrLyric": 1229,
+            "localHarmony": 319,
+            "noCoherentEndingBars": 28920,
+            "independentBeatFit": 12
+          }
+        },
+        "pairConditions": {
+          "Ste": {
+            "bpm": 11452,
+            "meterAndSpan": 858,
+            "voice": 1229,
+            "harmony": 319,
+            "duration": 197,
+            "observedDownbeat": 65,
+            "affineDownbeatFit": 152,
+            "independentBeatFit": 12
+          }
+        },
+        "windows": 291,
+        "candidateRecordingPairs": []
+      },
+      "Gym": {
+        "tracks": 24,
+        "profileFunnel": {
+          "Gym": {
+            "pairs": 552,
+            "noCoherentEndingBars": 299,
+            "noCoherentInitialBars": 33,
+            "meterOrTempo": 198,
+            "localHarmony": 2,
+            "incomingVocalOrLyric": 19,
+            "independentBeatFit": 1
+          }
+        },
+        "pairConditions": {
+          "Gym": {
+            "bpm": 191,
+            "harmony": 2,
+            "voice": 19,
+            "observedDownbeat": 5,
+            "duration": 1,
+            "affineDownbeatFit": 1,
+            "independentBeatFit": 1
+          }
+        },
+        "windows": 49,
+        "candidateRecordingPairs": []
+      }
+    },
+    "context64": {
+      "Ste": {
+        "tracks": 227,
+        "profileFunnel": {
+          "Ste": {
+            "pairs": 51292,
+            "meterOrTempo": 12182,
+            "noCoherentInitialBars": 8034,
+            "incomingVocalOrLyric": 1161,
+            "localHarmony": 305,
+            "noCoherentEndingBars": 29598,
+            "independentBeatFit": 10,
+            "rhythmicTailCandidates": 2
+          }
+        },
+        "pairConditions": {
+          "Ste": {
+            "bpm": 10827,
+            "meterAndSpan": 967,
+            "voice": 1161,
+            "harmony": 305,
+            "duration": 193,
+            "observedDownbeat": 57,
+            "affineDownbeatFit": 138,
+            "independentBeatFit": 10,
+            "rhythmicTailCandidates": 2
+          }
+        },
+        "windows": 291,
+        "candidateRecordingPairs": [
+          "audio/songs/track-4.mp3 -> audio/songs/track-38.mp3",
+          "audio/songs/track-705.mp3 -> audio/songs/track-50.mp3"
+        ]
+      },
+      "Gym": {
+        "tracks": 24,
+        "profileFunnel": {
+          "Gym": {
+            "pairs": 552,
+            "noCoherentEndingBars": 299,
+            "noCoherentInitialBars": 33,
+            "meterOrTempo": 198,
+            "localHarmony": 2,
+            "incomingVocalOrLyric": 19,
+            "rhythmicTailCandidates": 1
+          }
+        },
+        "pairConditions": {
+          "Gym": {
+            "bpm": 191,
+            "harmony": 2,
+            "voice": 19,
+            "observedDownbeat": 5,
+            "duration": 1,
+            "affineDownbeatFit": 1,
+            "rhythmicTailCandidates": 1
+          }
+        },
+        "windows": 49,
+        "candidateRecordingPairs": [
+          "audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3"
+        ]
+      }
+    },
+    "intro64": {
+      "Ste": {
+        "tracks": 227,
+        "profileFunnel": {
+          "Ste": {
+            "pairs": 51292,
+            "meterOrTempo": 12182,
+            "noCoherentInitialBars": 8034,
+            "incomingVocalOrLyric": 1161,
+            "localHarmony": 305,
+            "noCoherentEndingBars": 29598,
+            "independentBeatFit": 10,
+            "rhythmicTailCandidates": 2
+          }
+        },
+        "pairConditions": {
+          "Ste": {
+            "bpm": 10827,
+            "meterAndSpan": 967,
+            "voice": 1161,
+            "harmony": 305,
+            "duration": 193,
+            "observedDownbeat": 57,
+            "affineDownbeatFit": 138,
+            "independentBeatFit": 10,
+            "rhythmicTailCandidates": 2
+          }
+        },
+        "windows": 291,
+        "candidateRecordingPairs": [
+          "audio/songs/track-4.mp3 -> audio/songs/track-38.mp3",
+          "audio/songs/track-705.mp3 -> audio/songs/track-50.mp3"
+        ]
+      },
+      "Gym": {
+        "tracks": 24,
+        "profileFunnel": {
+          "Gym": {
+            "pairs": 552,
+            "noCoherentEndingBars": 299,
+            "noCoherentInitialBars": 22,
+            "meterOrTempo": 209,
+            "localHarmony": 2,
+            "incomingVocalOrLyric": 19,
+            "rhythmicTailCandidates": 1
+          }
+        },
+        "pairConditions": {
+          "Gym": {
+            "bpm": 202,
+            "harmony": 2,
+            "voice": 19,
+            "observedDownbeat": 5,
+            "duration": 1,
+            "affineDownbeatFit": 1,
+            "rhythmicTailCandidates": 1
+          }
+        },
+        "windows": 49,
+        "candidateRecordingPairs": [
+          "audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3"
+        ]
+      }
+    }
+  },
+  "intro64SelectedMissingIntroTracks": 7
+}

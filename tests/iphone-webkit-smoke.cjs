@@ -5,7 +5,7 @@ const assert=require("node:assert/strict");
 const http=require("node:http"),fs=require("node:fs"),path=require("node:path");
 const {webkit}=require("playwright");
 const root=path.resolve(__dirname,"..");
-const mime={".html":"text/html",".js":"text/javascript",".json":"application/json",
+const mime={".html":"text/html",".js":"text/javascript",".mjs":"text/javascript",".json":"application/json",
  ".css":"text/css",".svg":"image/svg+xml",".png":"image/png",".jpg":"image/jpeg"};
 const srv=http.createServer((req,res)=>{
  const url=new URL(req.url,"http://127.0.0.1"),name=decodeURIComponent(url.pathname);
@@ -38,6 +38,7 @@ async function run(){
    assert.equal(original.split(marker).length,2);
    const hook="window.__MB_WEBKIT_DJ_TEST__={"+
     "seed:(key,buffer,info)=>rememberMobileClip(key,buffer,info),"+
+    "clip:key=>mobileIntroClips.get(key),end:naturalEndHandoff,isolate:()=>{tick=()=>{};stopSnapPrecision()},"+
     "put:(key,info)=>cache.set(key,info),"+
     "start:startMobileMix,active:()=>mobileActive,stop:stopMobileMix,"+
     "played:mobilePlayedSeconds,seekReady:mobileNativeSeekReady};";
@@ -170,7 +171,8 @@ async function run(){
     seekable,buffered:buffered(12)},5);
    const unsafeSeek=testing.seekReady({readyState:4,seeking:false,
     seekable,buffered:buffered(4)},5);
-   await ctx.close();
+   // Keep the user-gesture-unlocked context alive for the full-beat test
+   // below. A closed AudioContext cannot start another Safari preview.
    return {started,scheduled,advanced,contextState:ctx.state,
     rapidStarts,pausedStops,cleanStops,maxClockError,rateCases,
     safeSeek,unsafeSeek};
@@ -192,6 +194,54 @@ async function run(){
   assert.equal(audioResult.safeSeek,true);
   assert.equal(audioResult.unsafeSeek,false,
    "WebKit must not seek into unbuffered audio");
+
+  const pitchSafe=await page.evaluate(async()=>{
+   const ctx=window.__MB_REAL_CONTEXT__,testing=window.__MB_WEBKIT_DJ_TEST__;
+   testing.isolate();
+   const sr=16000,buffer=ctx.createBuffer(1,sr*16,sr),pcm=buffer.getChannelData(0);let seed=991;
+   for(let i=0;i<pcm.length;i++){
+    seed=(1664525*seed+1013904223)>>>0;const phase=i%(sr/2);
+    pcm[i]=.04*Math.sin(2*Math.PI*440*i/sr)+(phase<sr*.07?(.5-seed/2**32)*Math.exp(-phase/(sr*.018))*.7:0);
+   }
+   const outgoing={id:"full-old",url:"memory:full-old"},incoming={id:"full-new",url:"memory:full-new"};
+   const p={kind:"beat",measuredFullBeat:true,nativeTailFullBeat:true,sourceSha:"source",targetSha:"next",
+    begin:27,entry:0,fade:6.849,end:33.849,safeOutroAt:27,tempo:1.0458,
+    quietCertified:false,preserveTail:true,silenceTrim:false,measuredBeatBridge:true,
+    measuredBeatCount:13,beatPulseAgreement:.93,measuredPlacementError:.02,grooveScore:.57,
+    fullOnsetFirst:.63,fullOnsetSecond:.47,harmonicMode:"compatible-key",harmonicKeyConfidence:.88,
+    harmonicDissonanceMax:-.02,harmonicRawDissonanceMax:.29,beatPeriod:.5,beatAnchor:27,nextBeat:0};
+   testing.put(outgoing.url,{sha:"source",duration:p.end+.035,last:p.end,
+    pcmBeatPlans:{next:{version:1}}});
+   testing.seed(incoming.url,buffer,{duration:120,first:0,safeIntroAt:0});
+   const raw=testing.clip(incoming.url),processed=await window.MusicBoxStretch.prepare(raw,p);
+   if(!processed)return {verified:false};
+   const old={currentTime:27,paused:false,ended:false,volume:.45,addEventListener(){},removeEventListener(){}};
+   const handoffs=[];
+   const app={currentId:()=>outgoing.id,allTracks:()=>[outgoing,incoming],mixUrl:t=>t.url,
+    audio:()=>old,mixNext:()=>incoming,mixLyricCues:()=>null,mixRunningContext:()=>ctx,volume:()=>.45,
+    mixHandoff:(id,position)=>{handoffs.push({id,position});return Promise.resolve()}};
+   const started=testing.start(incoming,p,app,old),act=testing.active();
+   const result={verified:processed.timing.verified,timing:processed.timing,started,
+    sourceRate:act?.source?.playbackRate?.value,mappedRate:act?.rateSpeed,
+    pitchPreserved:processed.pitchPreserved,originalVolume:old.volume};
+   if(!started||!act){
+    testing.stop();window.MusicBoxStretch.cancel();await ctx.close();
+    return {...result,blocker:window.MusicBoxMix.diagnostics()?.mobileMixLastBlocker};
+   }
+   const originalBridge=window.MusicBoxBridge;window.MusicBoxBridge=app;
+   old.ended=true;old.currentTime=p.end+.035;
+   act.started=ctx.currentTime-(old.currentTime-act.audioStartedAt);
+   result.nativeEOFHandled=testing.end();testing.end();
+   result.handoffCount=handoffs.length;result.nativePosition=handoffs[0]?.position;
+   testing.stop();window.MusicBoxBridge=originalBridge;
+   window.MusicBoxStretch.cancel();await ctx.close();return result;
+  });
+  assert.ok(pitchSafe.verified&&pitchSafe.started&&pitchSafe.pitchPreserved);
+  assert.equal(pitchSafe.sourceRate,1,"WebKit must not pitch the prepared buffer a second time");
+  assert.equal(pitchSafe.mappedRate,1.0458);assert.equal(pitchSafe.originalVolume,.45);
+  assert.ok(pitchSafe.nativeEOFHandled);assert.equal(pitchSafe.handoffCount,1);
+  assert.ok(pitchSafe.nativePosition>7,'native handoff must resume after the already-heard intro');
+  console.log("[WEBKIT PITCH-PRESERVING FULL BEAT]",JSON.stringify(pitchSafe));
 
   // A missing/stalled audio context must not crash the app or hide the
   // native song controls. User-gesture requirements remain iOS-specific.

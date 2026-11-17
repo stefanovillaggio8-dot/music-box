@@ -1,0 +1,85 @@
+name: Full transition PCM feature extraction
+on:
+  pull_request:
+    paths:
+      - 'tools/dj-transition-features.py'
+      - 'tools/test-dj-transition-features.py'
+      - 'tools/build-full-beat-plans.cjs'
+      - 'tools/retrack-dj-pcm.py'
+      - 'tools/audit-full-beat-audio.py'
+      - 'tools/test-dj-audio-render.py'
+      - 'tools/apply-full-beat-audio-proof.cjs'
+      - 'tools/dj-verify-stretch.cjs'
+      - 'mix-intelligente.js'
+      - '.github/workflows/dj-pcm-transition-features.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pcm-transition-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install original MP3 decoder
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python -m pip install 'numpy>=1.26,<3' 'librosa==0.11.0'
+      - run: python tools/test-dj-transition-features.py
+      - name: Extract SHA-verified original MP3 transition features
+        env:
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+        run: python tools/dj-transition-features.py --shard=${{ matrix.shard }}/12 --workers=2 --output=results/pcm-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pcm-transition-${{ matrix.shard }}
+          path: results/pcm-${{ matrix.shard }}.json
+          retention-days: 7
+  compile:
+    needs: extract
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install original-audio rendering dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'numpy>=1.26,<3' 'librosa==0.11.0'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pcm-transition-*
+          path: features
+          merge-multiple: true
+      - name: Compile all original-audio features to small SHA-bound playback plans
+        run: node tools/build-full-beat-plans.cjs --features=features --output=results/dj-deep-analysis.json --report=results/full-beat-report.json
+      - name: Render every complete candidate at 16 and 48 kHz and bind output headroom
+        env:
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+        run: |
+          python tools/test-dj-audio-render.py
+          python tools/audit-full-beat-audio.py --plans=results/full-beat-report.json --output=results/audio-16k --cache=original-mp3
+          python tools/audit-full-beat-audio.py --plans=results/full-beat-report.json --output=results/audio-48k --cache=original-mp3 --rate=48000
+          node tools/apply-full-beat-audio-proof.cjs --index=results/dj-deep-analysis.json --plans=results/full-beat-report.json --reports=results/audio-16k/report.json,results/audio-48k/report.json --output=results/dj-deep-analysis.json --report=results/verified-full-beat-plans.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compiled-full-beat-plans
+          path: results/
+          retention-days: 7

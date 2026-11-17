@@ -247,7 +247,12 @@ test("real indexed DJ candidates evaluated with independently joined synced lyri
   if(old?.kind!==after?.kind||old?.begin!==after?.begin)changed++;
   if(old?.kind&&old.kind!=="cut"&&(!after||after.kind==="cut"))
    prevented++;
-  if(after&&["beat","snap","phrase"].includes(after.kind)&&
+  if(after?.structuralBeat){
+   assert.ok(tools.desktopBeatPairCertified(a,b,after),"internal entries need the source-bound rendered certificate");
+   assert.ok(after.structuralEvidence.outgoingVocalTail.clear&&after.composite.postRenderRhythm.accepted,
+    "a future unplayed LRC line cannot substitute for local vocal and actual rhythm evidence");
+   if(Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=after.end-1.2&&a.lastLyricAt<after.end)lrcViolations++;
+  }else if(after&&["beat","snap","phrase"].includes(after.kind)&&
      !after.vocalBeatUnderlay&&Number.isFinite(a.lastLyricAt)&&
      a.lastLyricAt>after.begin-5.5)
    {lrcViolations++;if(violations.length<8)violations.push({from:A.key,to:B.key,kind:after.kind,begin:after.begin,end:after.end,lastLyricAt:a.lastLyricAt,voiceModel:a.voiceModel,vocalBeatUnderlay:after.vocalBeatUnderlay,protectedEnding:a.protectedEnding,plan:after});}
@@ -796,7 +801,7 @@ test("diagnose real-index musical match stages without inventing BPM agreements"
 });
 
 
-test("real indexed pulse grid survives against mismatched BPM and chord progressions",()=>{
+test("real pulse evidence survives diagnostically without authorizing omission of the incoming pickup",()=>{
  const a=find("audio/songs/track-378.mp3"),b=find("audio/songs/track-91.mp3");
  assert.ok(a&&b);
  const evidence=tools.rhythmicGridEvidence(a.data,b.data);
@@ -815,17 +820,8 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
   bad:tools.onsetPairAgreement(bad.data,badNext.data)}));
  assert.ok(evidence,"real measured kick patterns should have a strict positive example");
  const plan=tools.transition(a.data,b.data,a.data.duration);
- assert.equal(plan?.rhythmicGridJoin,true);
- assert.equal(plan.kind,"snap","without verified singer ending, use only a short protected beat");
- assert.equal(tools.desktopBeatPairCertified(a.data,b.data,plan),true);
- assert.ok(plan.fade>=.75&&plan.fade<=1.36);
- const wait=tools.desktopBeatStartDelay(plan,plan.begin);
- assert.ok(wait!==null&&wait>=.08&&wait<=.19,
-  "pre-roll must start before a real kick so it can enter in phase");
- const beat=plan.begin+wait+plan.nextBeat;
- const error=Math.abs(((beat-plan.beatAnchor)/plan.beatPeriod)-
-  Math.round((beat-plan.beatAnchor)/plan.beatPeriod))*plan.beatPeriod;
- assert.ok(error<=.045,"the audible next kick must land on the old beat grid");
+ assert.equal(plan,null,'a matching kick pattern cannot permit discarding unverified opening content');
+ assert.equal(b.data.musicalContent?.leadingDigitalSilence,undefined);
  const wrongA=find("audio/songs/track-78.mp3"),
   wrongB=find("audio/songs/track-966.mp3");
  assert.equal(tools.rhythmicGridEvidence(wrongA.data,wrongB.data),null,

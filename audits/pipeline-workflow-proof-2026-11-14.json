@@ -1,0 +1,124 @@
+{
+  "checkedProductionCommit": "2f236a1e",
+  "checkedAtUTC": "2026-11-14T03:53:31.804968+00:00",
+  "latestRelevantRuns": [
+    {
+      "id": 43553094713,
+      "name": "iPhone DJ WebKit foreground smoke",
+      "head_sha": "2f236a1e5d9254c50e4b2a3eb1f82f1c2234724c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43553094713",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43553075739,
+      "name": "Common PCM mix Chromium and WebKit playback",
+      "head_sha": "2f236a1e5d9254c50e4b2a3eb1f82f1c2234724c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43553075739",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43553067385,
+      "name": "Karaoke and DJ regression checks",
+      "head_sha": "2f236a1e5d9254c50e4b2a3eb1f82f1c2234724c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43553067385",
+      "event": "push"
+    },
+    {
+      "id": 43553067467,
+      "name": "Volume precision tests",
+      "head_sha": "2f236a1e5d9254c50e4b2a3eb1f82f1c2234724c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43553067467",
+      "event": "push"
+    },
+    {
+      "id": 43553067458,
+      "name": "DJ Mix regression tests",
+      "head_sha": "2f236a1e5d9254c50e4b2a3eb1f82f1c2234724c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43553067458",
+      "event": "push"
+    },
+    {
+      "id": 43552738892,
+      "name": "Music Box - exhaustive Mixa pair audit",
+      "head_sha": "151754ff5529295f7ac96522483b53df9a95037e",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43552738892",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43552528411,
+      "name": "Music Box DJ independent raw-audio audit",
+      "head_sha": "151754ff5529295f7ac96522483b53df9a95037e",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43552528411",
+      "event": "push"
+    },
+    {
+      "id": 43550766829,
+      "name": "Internal musical windows and common PCM rendering",
+      "head_sha": "6f787dee5711a0f3d5183c7a02b67f80df4c0080",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43550766829",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43533189398,
+      "name": "Music Box title display and original metadata regression",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533189398",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43533181201,
+      "name": "Full transition PCM feature extraction",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533181201",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43533177128,
+      "name": "Music Box - Audit indipendente audio reale DJ",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533177128",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43533164577,
+      "name": "Immersive Mode Chromium layout and controls",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533164577",
+      "event": "workflow_dispatch"
+    },
+    {
+      "id": 43533160539,
+      "name": "Desktop DJ Chromium playback smoke",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533160539",
+      "event": "workflow_dispatch"
+    }
+  ],
+  "allLatestRelevantSuccessful": true
+}

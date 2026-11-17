@@ -1,0 +1,28 @@
+{
+  "annotationRevision": "de188c963fd4539bc769b3feb83582e5a9595e36",
+  "selection": "first alphabetical remaining Hip-Hop and English non-Hip-Hop; before inference",
+  "excludedRecordings": [
+    "Avercage_-_Embers",
+    "Color_Out_-_Falling_Star",
+    "Confession_-_Quesabe",
+    "Der_Musiker_-_d-music",
+    "Explosive_Ear_Candy_-_Like_The_Sun",
+    "JASON_MILLER_-_CROWD_PLEASER",
+    "Quentin_Hannappe_-_Keep_On",
+    "Slingshot_Miracle_-_Whistler",
+    "Wordsmith_-_The_Statement"
+  ],
+  "selected": [
+    {
+      "name": "Mes_Larmes_-_kobzx2z",
+      "language": "fr",
+      "genre": "Hip-Hop"
+    },
+    {
+      "name": "Cortez_-_Feel__Stripped_",
+      "language": "en",
+      "genre": "Pop"
+    }
+  ],
+  "predefinedAudioView": "zero-phase 120 Hz highpass and 6000 Hz lowpass; no model/prompt changes"
+}

@@ -8,6 +8,12 @@ on:
       - 'index.html'
       - 'tests/immersive-ui-smoke.cjs'
       - '.github/workflows/immersive-ui-smoke.yml'
+  pull_request:
+    paths:
+      - 'immersive.js'
+      - 'word-karaoke.js'
+      - 'tests/immersive-ui-smoke.cjs'
+      - '.github/workflows/immersive-ui-smoke.yml'
   workflow_dispatch:
 permissions:
   contents: read

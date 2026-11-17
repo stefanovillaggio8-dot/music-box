@@ -1,0 +1,485 @@
+[
+  {
+    "id": 408045715,
+    "name": "Build Music Box Android APK",
+    "path": ".github/workflows/build-android-apk.yml",
+    "state": "active",
+    "latest": {
+      "id": 42020338772,
+      "head_branch": "main",
+      "head_sha": "82ca84e479df00e4eed734b220e16390902f7e7f",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/42020338772"
+    }
+  },
+  {
+    "id": 382529240,
+    "name": "Build free iPhone app (unsigned IPA)",
+    "path": ".github/workflows/build-ios-ipa.yml",
+    "state": "active",
+    "latest": {
+      "id": 41381487554,
+      "head_branch": "main",
+      "head_sha": "6acc7ebf1dd041ac5e214e2ce3dae0a05b2c8b97",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41381487554"
+    }
+  },
+  {
+    "id": 403066947,
+    "name": "Music Box - verifica riconoscimento artista YouTube",
+    "path": ".github/workflows/check-youtube-track-metadata.yml",
+    "state": "active",
+    "latest": {
+      "id": 41243455528,
+      "head_branch": "main",
+      "head_sha": "2750e0d6d0b69f221ed39a3bb5a2212a76d43d45",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41243455528"
+    }
+  },
+  {
+    "id": 417663775,
+    "name": "Common PCM mix Chromium and WebKit playback",
+    "path": ".github/workflows/composite-browser.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672108599,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672108599"
+    }
+  },
+  {
+    "id": 408543698,
+    "name": "Desktop DJ Chromium playback smoke",
+    "path": ".github/workflows/desktop-chromium-smoke.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672130234,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672130234"
+    }
+  },
+  {
+    "id": 403004100,
+    "name": "Music Box - diagnostica YouTube cloud senza MP3",
+    "path": ".github/workflows/diagnose-youtube-source.yml",
+    "state": "active",
+    "latest": {
+      "id": 41235079769,
+      "head_branch": "main",
+      "head_sha": "a5739920695f214907c14d95fa15489c87f7c6ae",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41235079769"
+    }
+  },
+  {
+    "id": 404599634,
+    "name": "Music Box Discord Rich Presence tests",
+    "path": ".github/workflows/discord-presence-tests.yml",
+    "state": "active",
+    "latest": {
+      "id": 41473632300,
+      "head_branch": "main",
+      "head_sha": "661f97a1c670c28b26d2fa9c927f3c1eb25d1fea",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41473632300"
+    }
+  },
+  {
+    "id": 406452136,
+    "name": "Music Box DJ independent raw-audio audit",
+    "path": ".github/workflows/dj-audio-spotcheck.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672067631,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672067631"
+    }
+  },
+  {
+    "id": 404746254,
+    "name": "Music Box - Scansione DJ completa in parallelo",
+    "path": ".github/workflows/dj-deep-full-scan.yml",
+    "state": "active",
+    "latest": {
+      "id": 43092008944,
+      "head_branch": "main",
+      "head_sha": "1b358983df447c2f8fea08b192810ce756df2409",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43092008944"
+    }
+  },
+  {
+    "id": 404732571,
+    "name": "Music Box - Analisi DJ reale degli MP3",
+    "path": ".github/workflows/dj-deep-index.yml",
+    "state": "active",
+    "latest": {
+      "id": 43665333547,
+      "head_branch": "main",
+      "head_sha": "94bb1180f58be20b4792917c6811ebe50e92d736",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43665333547"
+    }
+  },
+  {
+    "id": 416772476,
+    "name": "Music Box - exhaustive Mixa pair audit",
+    "path": ".github/workflows/dj-equivalence-audit.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672097361,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672097361"
+    }
+  },
+  {
+    "id": 415209690,
+    "name": "Music Box - aggiorna limiti vocali da testi sincronizzati",
+    "path": ".github/workflows/dj-lyric-boundaries.yml",
+    "state": "active",
+    "latest": {
+      "id": 43130215966,
+      "head_branch": "main",
+      "head_sha": "0cffa06b227b95b8f8ad8d864811e59c66761521",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43130215966"
+    }
+  },
+  {
+    "id": 403880608,
+    "name": "DJ Mix regression tests",
+    "path": ".github/workflows/dj-mix-tests.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672672846,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672672846"
+    }
+  },
+  {
+    "id": 417054322,
+    "name": "Full transition PCM feature extraction",
+    "path": ".github/workflows/dj-pcm-transition-features.yml",
+    "state": "active",
+    "latest": {
+      "id": 43533181201,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533181201"
+    }
+  },
+  {
+    "id": 406454098,
+    "name": "Music Box - Audit indipendente audio reale DJ",
+    "path": ".github/workflows/dj-real-audio-audit.yml",
+    "state": "active",
+    "latest": {
+      "id": 43533177128,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "564489a713a417c3cb0a19d4c409272236b232ca",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43533177128"
+    }
+  },
+  {
+    "id": 415265007,
+    "name": "Music Box DJ - independent vocal stem PCM proof",
+    "path": ".github/workflows/dj-stem-pcm-audit.yml",
+    "state": "active",
+    "latest": {
+      "id": 43118914885,
+      "head_branch": "main",
+      "head_sha": "deb910b8f7598893dbaf642857fa958639606a94",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43118914885"
+    }
+  },
+  {
+    "id": 417663777,
+    "name": "Internal musical windows and common PCM rendering",
+    "path": ".github/workflows/dj-structural-integration.yml",
+    "state": "active",
+    "latest": {
+      "id": 43560889412,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "365318dca6adaee94a2600b10475eb73c1c271d8",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43560889412"
+    }
+  },
+  {
+    "id": 414305035,
+    "name": "Music Box DJ structural audio extraction tests",
+    "path": ".github/workflows/dj-structure-tests.yml",
+    "state": "active",
+    "latest": {
+      "id": 43092008574,
+      "head_branch": "main",
+      "head_sha": "1b358983df447c2f8fea08b192810ce756df2409",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43092008574"
+    }
+  },
+  {
+    "id": 415161703,
+    "name": "Music Box - separazione vocale reale DJ (un brano)",
+    "path": ".github/workflows/dj-vocal-stem.yml",
+    "state": "active",
+    "latest": {
+      "id": 43117928738,
+      "head_branch": "main",
+      "head_sha": "7672d08a5dee01ff6e3317f2e78256a3f3982d79",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43117928738"
+    }
+  },
+  {
+    "id": 417490182,
+    "name": "Whole-recording musical structure evidence",
+    "path": ".github/workflows/dj-whole-structure.yml",
+    "state": "active",
+    "latest": {
+      "id": 43494090228,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "83f0590eb983e21a3e3ce688ca9c31cf55bd343f",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43494090228"
+    }
+  },
+  {
+    "id": 402315092,
+    "name": "Completa copertine non Spotify",
+    "path": ".github/workflows/fill-other-covers.yml",
+    "state": "active",
+    "latest": {
+      "id": 43352968833,
+      "head_branch": "main",
+      "head_sha": "31a0aef3652e08dc71715ba18c57b683a01e4454",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43352968833"
+    }
+  },
+  {
+    "id": 402308261,
+    "name": "Completa copertine Spotify",
+    "path": ".github/workflows/fill-spotify-covers.yml",
+    "state": "active",
+    "latest": {
+      "id": 41141345221,
+      "head_branch": "main",
+      "head_sha": "fc6c8d41c52cacfda03f444700aea70e4098ce17",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41141345221"
+    }
+  },
+  {
+    "id": 410062998,
+    "name": "Immersive Mode Chromium layout and controls",
+    "path": ".github/workflows/immersive-ui-smoke.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672144377,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672144377"
+    }
+  },
+  {
+    "id": 402807919,
+    "name": "Music Box - importa YouTube online (PC spento)",
+    "path": ".github/workflows/import-youtube-online.yml",
+    "state": "active",
+    "latest": null
+  },
+  {
+    "id": 407870017,
+    "name": "iPhone DJ WebKit foreground smoke",
+    "path": ".github/workflows/iphone-webkit-smoke.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672675506,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672675506"
+    }
+  },
+  {
+    "id": 416830350,
+    "name": "Karaoke and DJ regression checks",
+    "path": ".github/workflows/karaoke-dj-regression.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672672821,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672672821"
+    }
+  },
+  {
+    "id": 402319165,
+    "name": "Indicizza karaoke disponibili (solo ID)",
+    "path": ".github/workflows/karaoke-index.yml",
+    "state": "active",
+    "latest": {
+      "id": 43648683013,
+      "head_branch": "main",
+      "head_sha": "fa20af1eab9c0eba84b5c869316f5519b64be2d4",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43648683013"
+    }
+  },
+  {
+    "id": 411628943,
+    "name": "Music Box lyric sync cloud smoke",
+    "path": ".github/workflows/lyric-cloud-smoke.yml",
+    "state": "active",
+    "latest": {
+      "id": 42550728280,
+      "head_branch": "main",
+      "head_sha": "64691773323f636e33bb53923d5746e86f141638",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/42550728280"
+    }
+  },
+  {
+    "id": 411241485,
+    "name": "Music Box catalog authority audit",
+    "path": ".github/workflows/musicbox-catalog-audit.yml",
+    "state": "active",
+    "latest": {
+      "id": 42494529695,
+      "head_branch": "main",
+      "head_sha": "1e0d8ca5eeacda638c3341cbab116d8048376767",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/42494529695"
+    }
+  },
+  {
+    "id": 403010900,
+    "name": "Music Box - verifica Samplecut API cloud",
+    "path": ".github/workflows/probe-samplecut-cloud.yml",
+    "state": "active",
+    "latest": {
+      "id": 41235957108,
+      "head_branch": "main",
+      "head_sha": "e639e2dde4eee4bc6a8409882a3cf91d0c915445",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/41235957108"
+    }
+  },
+  {
+    "id": 402823391,
+    "name": "Music Box - importa da telefono senza account GitHub",
+    "path": ".github/workflows/process-mobile-imports.yml",
+    "state": "active",
+    "latest": {
+      "id": 43670262189,
+      "head_branch": "main",
+      "head_sha": "58b61a41be1d90aca610e0d933331489d760f8f5",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43670262189"
+    }
+  },
+  {
+    "id": 411272343,
+    "name": "Music Box title display and original metadata regression",
+    "path": ".github/workflows/title-display-tests.yml",
+    "state": "active",
+    "latest": {
+      "id": 43631815741,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "9335e22c2b09b7261b97395ac96c11767fd979a8",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43631815741"
+    }
+  },
+  {
+    "id": 402332286,
+    "name": "Verifica integrita Music Box",
+    "path": ".github/workflows/verify-integrity.yml",
+    "state": "active",
+    "latest": {
+      "id": 43352968889,
+      "head_branch": "main",
+      "head_sha": "31a0aef3652e08dc71715ba18c57b683a01e4454",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43352968889"
+    }
+  },
+  {
+    "id": 404093594,
+    "name": "Volume precision tests",
+    "path": ".github/workflows/volume-precision.yml",
+    "state": "active",
+    "latest": {
+      "id": 43672067601,
+      "head_branch": "audit-karaoke-beatmatch-20261113",
+      "head_sha": "07877f7fe03156c2ff85f92c76c269898caba32d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672067601"
+    }
+  },
+  {
+    "id": 365226567,
+    "name": "pages-build-deployment",
+    "path": "dynamic/pages/pages-build-deployment",
+    "state": "active",
+    "latest": {
+      "id": 43672938405,
+      "head_branch": "main",
+      "head_sha": "d52ec188aa9b50901ae449ab370ae37bad767de3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43672938405"
+    }
+  }
+]

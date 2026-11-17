@@ -1,0 +1,267 @@
+[
+  {
+    "from": "audio/songs/track-166.mp3",
+    "to": "audio/songs/track-181.mp3",
+    "fade": 9.989309210526386,
+    "targetStart": 6.22,
+    "sourceAfterBars": 0.20699999999999363,
+    "gridRms": 0.017438084227037822,
+    "gridMax": 0.03242763157892181,
+    "count": 8,
+    "counts": [
+      4,
+      4
+    ],
+    "rms": 0.008191714173120725,
+    "why": [
+      "missingStrongBarAnchor"
+    ]
+  },
+  {
+    "from": "audio/songs/track-166.mp3",
+    "to": "audio/songs/track-181.mp3",
+    "fade": 9.988267326732654,
+    "targetStart": 6.22,
+    "sourceAfterBars": 0.20699999999999363,
+    "gridRms": 0.017557987169379837,
+    "gridMax": 0.032594059405961495,
+    "count": 8,
+    "counts": [
+      4,
+      4
+    ],
+    "rms": 0.008263472155307514,
+    "why": [
+      "missingStrongBarAnchor"
+    ]
+  },
+  {
+    "from": "audio/songs/track-166.mp3",
+    "to": "audio/songs/track-181.mp3",
+    "fade": 9.993815789473729,
+    "targetStart": 6.22,
+    "sourceAfterBars": 0.20699999999999363,
+    "gridRms": 0.01639256131548209,
+    "gridMax": 0.02792105263157918,
+    "count": 8,
+    "counts": [
+      4,
+      4
+    ],
+    "rms": 0.00934951522288503,
+    "why": [
+      "missingStrongBarAnchor"
+    ]
+  },
+  {
+    "from": "audio/songs/track-6.mp3",
+    "to": "audio/songs/track-304.mp3",
+    "fade": 14.04516666666666,
+    "targetStart": 0.8,
+    "sourceAfterBars": 2.960000000000008,
+    "gridRms": 0.014284243384003501,
+    "gridMax": 0.029722222222224204,
+    "count": 9,
+    "counts": [
+      3,
+      3,
+      1,
+      2
+    ],
+    "rms": 0.019559328456655388,
+    "why": [
+      "tooFewPerBar"
+    ]
+  },
+  {
+    "from": "audio/songs/track-6.mp3",
+    "to": "audio/songs/track-304.mp3",
+    "fade": 14.024988903301548,
+    "targetStart": 0.8,
+    "sourceAfterBars": 2.960000000000008,
+    "gridRms": 0.02030893810031778,
+    "gridMax": 0.03962757918793147,
+    "count": 8,
+    "counts": [
+      3,
+      2,
+      1,
+      2
+    ],
+    "rms": 0.019980124401731723,
+    "why": [
+      "tooFewPerBar"
+    ]
+  },
+  {
+    "from": "audio/songs/track-6.mp3",
+    "to": "audio/songs/track-98.mp3",
+    "fade": 10.737593984962444,
+    "targetStart": 2.72,
+    "sourceAfterBars": 2.960000000000008,
+    "gridRms": 0.017985333312728415,
+    "gridMax": 0.02090225563908188,
+    "count": 5,
+    "counts": [
+      3,
+      2
+    ],
+    "rms": 0.008478322979232634,
+    "why": [
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-102.mp3",
+    "to": "audio/songs/track-105.mp3",
+    "fade": 15.840000000000003,
+    "targetStart": 2.72,
+    "sourceAfterBars": 7.905000000000001,
+    "gridRms": 0.017567297513438083,
+    "gridMax": 0.025875912408751756,
+    "count": 6,
+    "counts": [
+      3,
+      3
+    ],
+    "rms": 0.007989950531744866,
+    "why": [
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-102.mp3",
+    "to": "audio/songs/track-105.mp3",
+    "fade": 15.869338235294123,
+    "targetStart": 2.72,
+    "sourceAfterBars": 7.905000000000001,
+    "gridRms": 0.0175439697247625,
+    "gridMax": 0.02566176470590964,
+    "count": 6,
+    "counts": [
+      3,
+      3
+    ],
+    "rms": 0.010268437857469784,
+    "why": [
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-102.mp3",
+    "to": "audio/songs/track-105.mp3",
+    "fade": 15.854615384615414,
+    "targetStart": 2.72,
+    "sourceAfterBars": 7.905000000000001,
+    "gridRms": 0.02820804180756266,
+    "gridMax": 0.042692307692318465,
+    "count": 6,
+    "counts": [
+      3,
+      3
+    ],
+    "rms": 0.005927090067555339,
+    "why": [
+      "modelGridRms",
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-574.mp3",
+    "to": "audio/songs/track-89.mp3",
+    "fade": 11.225819935691362,
+    "targetStart": 0.78,
+    "sourceAfterBars": 4.460000000000008,
+    "gridRms": 0.007344645518032204,
+    "gridMax": 0.013408360128653207,
+    "count": 6,
+    "counts": [
+      3,
+      3
+    ],
+    "rms": 0.021916676414393283,
+    "why": [
+      "tooFewShared",
+      "observedRms"
+    ]
+  },
+  {
+    "from": "audio/songs/track-574.mp3",
+    "to": "audio/songs/track-89.mp3",
+    "fade": 11.225819935691362,
+    "targetStart": 0.78,
+    "sourceAfterBars": 4.460000000000008,
+    "gridRms": 0.007344645518032204,
+    "gridMax": 0.013408360128653207,
+    "count": 6,
+    "counts": [
+      3,
+      3
+    ],
+    "rms": 0.021916676414393283,
+    "why": [
+      "tooFewShared",
+      "observedRms"
+    ]
+  },
+  {
+    "from": "audio/songs/track-574.mp3",
+    "to": "audio/songs/track-89.mp3",
+    "fade": 11.203205128205155,
+    "targetStart": 0.78,
+    "sourceAfterBars": 4.460000000000008,
+    "gridRms": 0.022604403840393552,
+    "gridMax": 0.04230769230774101,
+    "count": 4,
+    "counts": [
+      3,
+      1
+    ],
+    "rms": 0.013962592081946551,
+    "why": [
+      "tooFewPerBar",
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-627.mp3",
+    "to": "audio/songs/track-144.mp3",
+    "fade": 8.34577259475219,
+    "targetStart": 0.22,
+    "sourceAfterBars": 1.2199999999999989,
+    "gridRms": 0.027001775310497807,
+    "gridMax": 0.04769679300293994,
+    "count": 4,
+    "counts": [
+      3,
+      1
+    ],
+    "rms": 0.010711141721530922,
+    "why": [
+      "modelGridRms",
+      "tooFewPerBar",
+      "tooFewShared"
+    ]
+  },
+  {
+    "from": "audio/songs/track-627.mp3",
+    "to": "audio/songs/track-144.mp3",
+    "fade": 8.340000000000003,
+    "targetStart": 0.22,
+    "sourceAfterBars": 1.2199999999999989,
+    "gridRms": 0.031622776601689453,
+    "gridMax": 0.06000000000001915,
+    "count": 4,
+    "counts": [
+      3,
+      1
+    ],
+    "rms": 0.009999999999994902,
+    "why": [
+      "modelGridRms",
+      "modelGridMax",
+      "tooFewPerBar",
+      "tooFewShared"
+    ]
+  }
+]

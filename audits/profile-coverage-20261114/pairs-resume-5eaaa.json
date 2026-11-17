@@ -1,0 +1,256 @@
+{
+  "schema": 3,
+  "version": "6.734",
+  "catalogTracks": 1072,
+  "indexTracks": 1177,
+  "analyzableTracks": 1176,
+  "excludedIndexTracks": 1,
+  "lyricalBoundariesLoaded": 356,
+  "beatGridsTempoRefined": 0,
+  "possibleOrderedPairs": 1381800,
+  "shard": 0,
+  "totalShards": 1,
+  "analyzedPairs": 1381800,
+  "verifiedBeat": 4,
+  "earlyVerifiedBeat": 4,
+  "completePcmBeat": 2,
+  "renderedFullBeat": 2,
+  "shortIndexedBeat": 2,
+  "fullOverlapSeconds": 21.518412777259343,
+  "metricalRhythmic": 0,
+  "structuralEarlyExits": 0,
+  "commonPcmAssets": 2,
+  "crossfadePlans": 59838,
+  "normalChanges": 1233986,
+  "plannedKinds": {
+    "cut": 183988,
+    "underlay": 2362,
+    "soft": 59838,
+    "beat": 22,
+    "postlude": 85581,
+    "snap": 11
+  },
+  "verifiedBeatSamples": [
+    {
+      "from": "audio/songs/track-1183.mp3",
+      "to": "audio/songs/track-1198.mp3",
+      "kind": "beat",
+      "begin": 126.73197836159368,
+      "end": 140.516,
+      "entry": 0,
+      "fade": 13.784021638406315,
+      "tempo": 1.0454187605118264,
+      "lastAudible": 140.5,
+      "score": 0.6668433826273965,
+      "rendered": true,
+      "metricalRhythmic": false,
+      "structuralEarlyExit": true,
+      "outputHeadroom": null
+    },
+    {
+      "from": "audio/songs/track-451.mp3",
+      "to": "audio/songs/track-315.mp3",
+      "kind": "beat",
+      "begin": 142.55660886114697,
+      "end": 150.291,
+      "entry": 0,
+      "fade": 7.734391138853027,
+      "tempo": 0.9792452707237752,
+      "lastAudible": 150.1,
+      "score": 84,
+      "rendered": true,
+      "metricalRhythmic": false,
+      "structuralEarlyExit": false,
+      "outputHeadroom": 0.7227277296103255
+    },
+    {
+      "from": "audio/songs/track-770.mp3",
+      "to": "audio/songs/track-874.mp3",
+      "kind": "snap",
+      "begin": 174.75398072911378,
+      "end": 175.85000000000002,
+      "entry": 2.78,
+      "fade": 1.096019270886245,
+      "tempo": 0.9906500824309785,
+      "lastAudible": 175.8,
+      "score": 76,
+      "rendered": false,
+      "metricalRhythmic": false,
+      "structuralEarlyExit": false,
+      "outputHeadroom": null
+    },
+    {
+      "from": "audio/songs/track-892.mp3",
+      "to": "audio/songs/track-1096.mp3",
+      "kind": "snap",
+      "begin": 76.84770204771328,
+      "end": 78.05,
+      "entry": 0,
+      "fade": 1.2022979522867132,
+      "tempo": 0.9989043448648569,
+      "lastAudible": 78,
+      "score": 76,
+      "rendered": false,
+      "metricalRhythmic": false,
+      "structuralEarlyExit": false,
+      "outputHeadroom": null
+    }
+  ],
+  "verifiedPairs": [
+    {
+      "from": "audio/songs/track-1183.mp3",
+      "to": "audio/songs/track-1198.mp3",
+      "full": true,
+      "partial": false,
+      "structural": true,
+      "common": true,
+      "fade": 13.784021638406315,
+      "begin": 126.73197836159368,
+      "end": 140.516,
+      "entry": 0,
+      "rmsSeconds": 0.018532654903814685,
+      "peak": 0.9650422930717468,
+      "commonSha": "fcd18abbff1f7c2558b568b40151991ba017df624092fcb70c27d7d91e5b89b5"
+    },
+    {
+      "from": "audio/songs/track-451.mp3",
+      "to": "audio/songs/track-315.mp3",
+      "full": true,
+      "partial": false,
+      "structural": false,
+      "common": true,
+      "fade": 7.734391138853027,
+      "begin": 142.55660886114697,
+      "end": 150.291,
+      "entry": 0,
+      "rmsSeconds": null,
+      "peak": 0.9713336229324341,
+      "commonSha": "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc"
+    },
+    {
+      "from": "audio/songs/track-770.mp3",
+      "to": "audio/songs/track-874.mp3",
+      "full": false,
+      "partial": false,
+      "structural": false,
+      "common": false,
+      "fade": 1.096019270886245,
+      "begin": 174.75398072911378,
+      "end": 175.85000000000002,
+      "entry": 2.78,
+      "rmsSeconds": null,
+      "peak": null,
+      "commonSha": null
+    },
+    {
+      "from": "audio/songs/track-892.mp3",
+      "to": "audio/songs/track-1096.mp3",
+      "full": false,
+      "partial": false,
+      "structural": false,
+      "common": false,
+      "fade": 1.2022979522867132,
+      "begin": 76.84770204771328,
+      "end": 78.05,
+      "entry": 0,
+      "rmsSeconds": null,
+      "peak": null,
+      "commonSha": null
+    }
+  ],
+  "safariFullWithCommonPcm": 2,
+  "safariFullNativeNoAttenuation": 0,
+  "safariFullAvailable": 2,
+  "rejectedBeat": 29,
+  "postlude": 85581,
+  "underlay": 2362,
+  "other": 243826,
+  "none": 1049998,
+  "errors": [],
+  "nonBeatSamples": [
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "app/songs/youtube-kopi-luwak.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "app/songs/youtube-ultimo-banco.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "app/songs/youtube-un-uomo.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-251.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-252.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-253.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-254.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-256.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-258.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-259.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-260.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-261.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-262.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-263.mp3",
+      "kind": "cut"
+    },
+    {
+      "from": "app/songs/youtube-falene.mp3",
+      "to": "audio/songs/bassi/track-265.mp3",
+      "kind": "cut"
+    }
+  ],
+  "karaoke": {
+    "syncedLinesIndexed": 582,
+    "provenWordAlignmentFromIndex": false,
+    "caveat": "Synced LRC lines do not prove the times of individual words."
+  },
+  "verdict": "NOT_CERTIFIED",
+  "caveat": "Simulates the actual player feature enrichment with guarded synced-LRC and validated beat-grid BPM. Still not an acoustic listening test, comparison with Spotify, or physical iPhone verification.",
+  "averageFullOverlapSeconds": 10.759206388629671,
+  "coveragePercent": 0.00029
+}

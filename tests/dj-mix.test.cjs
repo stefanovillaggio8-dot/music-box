@@ -144,7 +144,7 @@ test("a late vocal cue protects the song even with a quiet ending",()=>{
 });
 test("the engine does not seek into low volume opening notes",()=>{
  assert.equal(source.includes("measured?.leading>=1.8"),false);
- assert.ok(source.includes("measured?.safeIntroAt"));
+ assert.ok(source.includes("return musicalIntroEntry(measured)"));
 });
 test("iPhone leaves playback alone while app is in the background",()=>{
  assert.ok(source.includes("if(isIOS&&document.hidden)"));
@@ -537,7 +537,8 @@ test("a last-note onset is never permission to truncate a track",()=>{
 test("iPhone next-song preload cache matches service worker's per-profile cache",()=>{
  const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
- assert.ok(app.includes('caches.open("spotifynonavraiimieisoldi-prefetch-" + profile)'));
+ assert.ok(app.includes('caches.open("spotifynonavraiimieisoldi-prefetch-" + owner)'));
+ assert.ok(app.includes('const owner = profile;'));
  assert.ok(sw.includes('function cachePrefetchName(p) { return CACHE_PREFIX + "-prefetch-" + p; }'));
  assert.ok(sw.includes("cachePrefetchName(profile)"));
 });
@@ -559,6 +560,11 @@ test("voice detected earlier in song must not cancel an active desktop mix",()=>
  assert.equal(risk({firstVoiceAt:24},false,true,plan),false);
  assert.equal(risk({firstVoiceAt:0.5},false,true,plan),true);
  assert.equal(risk({lastVoiceAt:178},true,false,null),false);
+ const underlay={vocalBeatUnderlay:true,fade:8,entry:3,tempo:1.025,vocalEndAt:180};
+ assert.equal(risk({firstVoiceAt:11.7},false,true,underlay),true);
+ assert.equal(risk({firstVoiceAt:12},false,true,underlay),false);
+ assert.equal(risk({firstVoiceAt:8.7},false,true,{...underlay,entry:0,tempo:.975}),false);
+
 });
 test("PC preloads the next MP3 early rather than missing the mixing window",()=>{
  assert.ok(source.includes("Math.min(plan.begin-28,audio.duration-45)"));
@@ -569,14 +575,18 @@ test("late vocal model result does not forcibly reset an in-progress handoff",()
  assert.ok(source.includes("if(voiceThreatensPlan(v,currentTrack,nextTrack,plan)&&"));
 });
 
-test("analyzes the real first musical onset instead of a long dead intro",()=>{
+test("a late first loud onset cannot delete a quiet pickup without original digital-silence proof",()=>{
  const code=source.slice(source.indexOf("function musicalIntroEntry("),
   source.indexOf("function rhythmicFullTailJoin("));
  const entry=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+code+
   "return musicalIntroEntry;")();
- assert.ok(Math.abs(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25})-5.38)<.001);
+ assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25}),0);
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.12,beatConfidence:.25}),0);
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25,firstLyricAt:2}),0);
+ const sha='f'.repeat(40),b={sha,safeIntroAt:5.38,first:5.5,introDrive:.8,beatConfidence:.25,
+  musicalContent:{leadingDigitalSilence:{sourceSha:sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:5.38,maximumPeak:0}}};
+ assert.equal(entry(b),5.38);
+ b.musicalContent.leadingDigitalSilence.sourceSha='a'.repeat(40);assert.equal(entry(b),0);
 });
 test("late vocals veto the join; matched protected endings keep every audible beat",()=>{
  const code=source.slice(source.indexOf("function rhythmicFullTailJoin("),
@@ -650,9 +660,9 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
  assert.ok(source.includes("const weakIphoneMatch=isIOS&&candidate&&"));
- assert.ok(source.includes("plan=(weakIphoneMatch||weakDesktopMatch)?"));
+ assert.ok(source.includes("return (weakIphoneMatch||weakDesktopMatch)?"));
  assert.ok(source.includes("certifiedQuietAlternative"),"uncertified beat must degrade to measured quiet fade, never a fake beat");
- assert.ok(source.includes("continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null"));
+ assert.ok(source.includes("continuityFallback(a,b,dur):null"));
  assert.ok(source.includes("plan=null;"),"unmeasured outro must not trigger a speculative fade");
  assert.ok(!source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
@@ -703,9 +713,13 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
   pause(){}
   removeAttribute(){}
  }
- const records=new Map([["next.mp3",{safeIntroAt:3.12,first:3.24,introDrive:.8}]]);
+ const sha='a'.repeat(40);
+ const records=new Map([["next.mp3",{sha,safeIntroAt:3.12,first:3.24,introDrive:.8,
+  musicalContent:{leadingDigitalSilence:{sourceSha:sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:3.12,maximumPeak:0}}}]]);
  const harness=new Function("Audio","cache",
   "let prepared=null,plan=null;const isIOS=false;const deepLookup=()=>null;"+
+  "const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  source.slice(source.indexOf('function musicalIntroEntry('),source.indexOf('function rhythmicFullTailJoin('))+
   "const dropPrepared=()=>{prepared=null};"+
   source.slice(begin,end)+
   "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared,"+
@@ -744,6 +758,8 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
  assert.equal(harness.entry(voiced,app),0,"never skip a genuine first note");
  records.set("voice.mp3",{safeIntroAt:3,first:2.1});
  assert.equal(harness.entry(voiced,app),0,"never seek past an audible introduction");
+ records.set("voice.mp3",{sha,safeIntroAt:3.12,first:3.24,introDrive:.8});
+ assert.equal(harness.entry(voiced,app),0,"prebuffering cannot treat an energy threshold as proof of digital silence");
 });
 
 test("digital silence can adopt buffered next MP3 early, but not before the LAST audible sound",async()=>{
@@ -799,25 +815,27 @@ test("DJ handoff keeps its already playing decoded audio instead of loading same
  const old={paused:false,volume:0,pauseCount:0,
   pause(){this.paused=true;this.pauseCount++},
   removeAttribute(){this.srcRemoved=true},load(){this.cleared=true}};
- const live={paused:false,seeking:false,readyState:4,currentTime:3.4,
+ const live={paused:false,seeking:false,readyState:4,currentTime:3.4,volume:.08,
   src:"https://example.com/song.mp3"};
  const act={original:old,fromId:"out",upcoming:live,
   track:{id:"next"},entry:0,fade:2.55,timer:null};
- let current="out",main=old,adopted=0,ordinary=0,stoppedPrecision=0;
+ let current="out",main=old,adopted=0,ordinary=0,stoppedPrecision=0,revealed=0;
  const app={audio:()=>main,currentId:()=>current,
   mixNext:()=>({id:"next"}),volume:()=>.25,
   mixAdoptHandoff:(id,elem)=>{
    adopted++;current=id;main=elem;return Promise.resolve(true);
   },
   mixHandoff:()=>{ordinary++;throw new Error("refetch would interrupt audio")}};
- const harness=new Function("app","act","stopSnapPrecision",
+ const harness=new Function("app","act","stopSnapPrecision","revealAdoptedMixAudio",
   "let active=act,mixing=true;const isIOS=false;"+
   "const window={MusicBoxRoom:{isActive:()=>false}};"+
   "const bridge=()=>app;const releaseDesktopDsp=()=>{};"+
   "const cancel=()=>{throw Error('must not cancel adopted preview')};"+
   source.slice(start,end)+
   "return {handoff,state:()=>({active,mixing})};"
- )(app,act,()=>stoppedPrecision++);
+ )(app,act,()=>stoppedPrecision++,(_audio,id,at)=>{
+  revealed++;assert.equal(_audio,live);assert.equal(id,"next");assert.equal(at,.08);
+ });
  await harness.handoff();
  assert.equal(adopted,1,"adopt preloaded audio instead of downloading again");
  assert.equal(ordinary,0);
@@ -829,6 +847,7 @@ test("DJ handoff keeps its already playing decoded audio instead of loading same
  assert.equal(harness.state().active,null);
  assert.equal(harness.state().mixing,false);
  assert.equal(stoppedPrecision,1);
+ assert.equal(revealed,1,"successful native handoff must restore the new audio volume");
 });
 test("automatic handoff seek does not cancel audible preview; manual seeking does",()=>{
  const beg=source.indexOf("onSeek:(reason)=>");
@@ -901,8 +920,8 @@ test("desktop waits for an aligned beat instead of starting outside phase",()=>{
 });
 test("desktop runtime does not force an unverified beat overlap",()=>{
  assert.ok(source.includes("weakDesktopMatch=!isIOS&&candidate&&"));
- assert.ok(source.includes("desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)"));
- assert.ok(source.includes("scored.length?scored:impactScored.length?impactScored:"));
+ assert.ok(source.includes("desktopBeatPairCertified(a,b,candidate)"));
+ assert.ok(source.includes("scored.length?scored:partialScored.length?partialScored:impactScored.length?impactScored:"));
 });
 
 test("onset fingerprint must prove a rhythmic join; mismatched drums never qualify",()=>{
@@ -1047,7 +1066,7 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
   "const camelotMatch=()=>({weight:.2,score:.96});"+
   "const grooveAgreement=()=>({score:.95,correlation:.90});"+
   "const similarNotes=()=>({focused:.93,phrase:.90,alignment:{score:.93,matches:true}});"+
-  "const onsetPeriodicity=()=>.85,onsetGridPhase=()=>0,musicalIntroEntry=()=>0;"+
+  "const onsetPeriodicity=()=>.85,onsetGridPhase=()=>0,musicalIntroEntry=b=>b.safeIntroAt||0;"+
   "const alignedEarlyOnsetAgreement=()=>({score:.95,first:.95,second:.95});"+
   "const beatBearingIntro=(b,min)=>b.introDrive>=min;"+
   source.slice(source.indexOf("function measuredLocalBeatGrid("),
@@ -1072,6 +1091,12 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
  assert.ok(safe.begin<outgoing.lastLyricAt&&safe.end>outgoing.lastVoiceAt);
  assert.equal(early({...outgoing,lastVoiceAt:119.7},next,120),null,
   "protect a vocal that continues to the very end");
+ assert.equal(early(outgoing,{...next,safeIntroAt:5,firstVoiceAt:12},120),null,
+  "entry skips five seconds of the instrumental lead-in");
+ const boundary=safe.fade+.65;
+ assert.ok(early(outgoing,{...next,firstVoiceAt:boundary+.01},120));
+ assert.equal(early(outgoing,{...next,bpm:118,firstVoiceAt:boundary+.01},120),null,
+  "a faster decoder reaches the vocal before the overlap ends");
  assert.equal(early(outgoing,{...next,firstVoiceAt:4},120),null,
   "two simultaneous vocal lines are not allowed");
  assert.equal(early({...outgoing,lastLyricAt:null,voiceModel:null,

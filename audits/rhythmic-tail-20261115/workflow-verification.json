@@ -1,0 +1,142 @@
+{
+  "codeCommit": "851cb422f406416d3685c7ab844e21a691801882",
+  "runs": [
+    {
+      "workflow": "Common PCM mix Chromium and WebKit playback",
+      "path": ".github/workflows/composite-browser.yml",
+      "latest": {
+        "id": 43713787068,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43713787068",
+        "head_sha": "851cb422f406416d3685c7ab844e21a691801882",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:25:44Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Desktop DJ Chromium playback smoke",
+      "path": ".github/workflows/desktop-chromium-smoke.yml",
+      "latest": {
+        "id": 43712777286,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43712777286",
+        "head_sha": "f968a2edb3e07deae1706fe86a9335389aca260d",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:13:56Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Music Box DJ independent raw-audio audit",
+      "path": ".github/workflows/dj-audio-spotcheck.yml",
+      "latest": {
+        "id": 43711073625,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43711073625",
+        "head_sha": "302f90ad5ce2ba763ffe8216ed7fca2949f57838",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T11:53:12Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Music Box - exhaustive Mixa pair audit",
+      "path": ".github/workflows/dj-equivalence-audit.yml",
+      "latest": {
+        "id": 43712782868,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43712782868",
+        "head_sha": "f968a2edb3e07deae1706fe86a9335389aca260d",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:14:00Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "DJ Mix regression tests",
+      "path": ".github/workflows/dj-mix-tests.yml",
+      "latest": {
+        "id": 43712770967,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43712770967",
+        "head_sha": "f968a2edb3e07deae1706fe86a9335389aca260d",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:13:52Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Immersive Mode Chromium layout and controls",
+      "path": ".github/workflows/immersive-ui-smoke.yml",
+      "latest": {
+        "id": 43712780174,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43712780174",
+        "head_sha": "f968a2edb3e07deae1706fe86a9335389aca260d",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:13:58Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "iPhone DJ WebKit foreground smoke",
+      "path": ".github/workflows/iphone-webkit-smoke.yml",
+      "latest": {
+        "id": 43713643539,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43713643539",
+        "head_sha": "d4d2465bd7aa65807b8a334b3cf5761734d5e919",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:24:05Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Karaoke and DJ regression checks",
+      "path": ".github/workflows/karaoke-dj-regression.yml",
+      "latest": {
+        "id": 43713786412,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43713786412",
+        "head_sha": "851cb422f406416d3685c7ab844e21a691801882",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T12:25:43Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    },
+    {
+      "workflow": "Volume precision tests",
+      "path": ".github/workflows/volume-precision.yml",
+      "latest": {
+        "id": 43711073731,
+        "html_url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43711073731",
+        "head_sha": "302f90ad5ce2ba763ffe8216ed7fca2949f57838",
+        "head_branch": "audit-karaoke-beatmatch-20261113",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-15T11:53:12Z"
+      },
+      "testedRuntimeIdenticalToCodeCommit": true
+    }
+  ],
+  "allLatestRelevantSuccess": true,
+  "physicalIPhone": false
+}

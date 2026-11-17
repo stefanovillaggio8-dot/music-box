@@ -35,5 +35,6 @@ test("cached core shell avoids repeated background downloads",()=>{
  assert.match(sw.slice(first,last),/karaoke-index/);
  assert.doesNotMatch(sw.slice(first,last),/app\.js/);
  assert.match(sw,/event\.waitUntil\(lavoro\.then\(\(\)=>_coreRefreshPending\)/);
- assert.match(sw,/spotifynonavraiimieisoldi-v6624/);
+ const version=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8")).versione.replace(/\./g,"");
+ assert.ok(sw.includes(`const CACHE = "spotifynonavraiimieisoldi-v${version}"`));
 });

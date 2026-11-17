@@ -5522,9 +5522,11 @@ function _riparaMetadatiTraccia(t){
   function _statoKaraokeBrano(id){
     const records=[localLyrics[id],lyricsData[id]].filter(Boolean);
     const verified=records.find(l=>Array.isArray(l.wordRows)&&
-      l.wordRows.some(row=>row.words?.length>=2));
+      l.wordRows.some(row=>_haTempiParole(row)));
     if(verified)return {label:verified.audioWordSynced?"PAROLE IA":"PAROLE",
       title:verified.audioWordSynced?"Parole ricavate dall'analisi vocale sul dispositivo":"Tempi originali delle singole parole disponibili"};
+    if(records.some(l=>l.wordRows?.some(row=>window.MusicBoxWordKaraoke?.hasPartialTiming?.(row))))
+      return {label:"PAROLE IA PARZIALI",title:"Solo le sequenze riconosciute hanno tempi acustici; le parole restanti non sono allineate"};
     if(records.some(l=>typeof l.synced==="string"&&
       /\[\d{1,3}:\d{2}/.test(l.synced)))
       return {label:"PAROLE STIMATE",title:"Progressione per parole stimata dai tempi delle frasi: non verificata sull'audio"};
@@ -5941,6 +5943,10 @@ const playFromRow = () => {
   }
 
   function handleEnded() {
+    // A decoder can report a millisecond-long "file" before reading its
+    // MP3 timing metadata. It must not consume the real manual queue.
+    if(audio&&Number.isFinite(audio.duration)&&audio.duration<=.05&&!audio.error)return;
+    if(audio?._mbInitialSeekCleanup&&Number(audio.duration)<=.05)return;
     try {
     if (window.MusicBoxRoom?.isActive()) {
       window.MusicBoxRoom.control("next"); return;
@@ -6360,7 +6366,9 @@ function handleMetadata() {
   // for same-origin and GitHub raw MP3 URLs; other hosting services can lack
   // CORS headers, and enabling it for them would break playback entirely.
   function _assegnaAudioSorgente(a,source) {
+    try{a._mbNativeMetadataCleanup?.("source-assignment");}catch(_){}
     const target=String(source||"");
+    if(target&&!/^blob:/i.test(target))a._mbMixSourceUrl=target;
     try {
       const u=new URL(target,location.href);
       const safe=u.origin===location.origin||
@@ -6378,6 +6386,8 @@ function handleMetadata() {
     // The real play event clears this guard on successful restart.
     if(a===audio)a._mbCambioBrano=true;
     a.src=target;
+    if(a===audio)window.MusicBoxNativeMetadata?.arm(a,{url:target,canonical:a._mbMixSourceUrl||target,
+      current:()=>a===audio,wantsPlayback:()=>_vuoleSuonare});
   }
   // A native pause during iOS hide/show is a system interruption.
   // A deliberate foreground headphone/lockscreen pause still wins.
@@ -6528,6 +6538,7 @@ a.addEventListener("pause", () => {
        in secondo piano e quando l'iPhone gestisce la barra di sistema. */
     a.addEventListener("seeking", () => {
       if (a !== audio) return;
+      try { a._mbInitialSeekCleanup?.(); } catch (_) {}
       _ultimoSeekUtente=Date.now();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
@@ -6799,20 +6810,30 @@ function rebuildAudio(autoplay) {
 
   let _precaricaInCorso = false;
   async function _precaricaInCache(t) {
+    if (_precaricaInCorso || !t || !t.url || !("caches" in window)) return;
+    // Lock before the first await: concurrent next-track preparations must
+    // not start duplicate MP3 transfers while CacheStorage is opening.
+    _precaricaInCorso = true;
+    const owner = profile;
     try {
-      if (_precaricaInCorso) return;
-      if (!t || !t.url) return;
       /* Cache SEPARATA: i brani che scarico in anticipo non devono stare
          dove stanno le tue download (altrimenti, quando il telefono e'
          pieno, si portano via le tue). */
-      if (!("caches" in window)) return;
+      const url = _urlDelBrano(t);
+      for (const name of [cacheBraniName(owner),cacheStreamName(owner),CACHE_PREFIX+"-prefetch-"+owner]) {
+        const saved = await (await caches.open(name)).match(url);
+        // Exact URL, current owner, complete readable response only. No
+        // alias deduplication between originals and bass/alternate masters.
+        if (saved?.status===200 && saved.type!=="opaque" &&
+            Number(saved.headers.get("content-length"))>=4096 &&
+            !/text\/html|application\/json/i.test(saved.headers.get("content-type")||"")) return;
+      }
       let cache = null;
-      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch-" + profile); } catch (e) { cache = null; }
+      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch-" + owner); } catch (e) { cache = null; }
       if (!cache) return;
-      _precaricaInCorso = true;
-      try { await fetchToCache(_urlDelBrano(t), cache, null); } catch (e) { }
-      _precaricaInCorso = false;
-    } catch (e) { _precaricaInCorso = false; }
+      try { await fetchToCache(url, cache, null); } catch (e) { }
+    } catch (e) { /* optional preparation; native playback continues */ }
+    finally { _precaricaInCorso = false; }
   }
 
   function _preparaIlSuccessivo(id) {
@@ -7065,14 +7086,15 @@ function rebuildAudio(autoplay) {
            schermo spento l'aveva già azzerato: quindi riaprendo l'app non
            ripartiva niente. Adesso guardo l'intento vero. */
         if (!_vuoleSuonare || !currentId || !audio) return;
+        const initialSeekPending=audio._mbInitialSeekCleanup&&Number(audio.duration)<=.05;
         /* Il brano e' finito mentre l'app era in secondo piano? Allora NON
            riprovo a suonarlo (un brano finito non riparte, e l'utente resta
            fermo): vado al successivo. Anche qui non riscrivo la scelta del
            brano, chiamo _finitoSenzaAvanti(), che usa handleEnded(). */
         try {
-          const finito = audio.ended ||
-            (isFinite(audio.duration) && audio.duration > 0 &&
-              audio.currentTime >= audio.duration - 0.4);
+          const finito = !initialSeekPending&&!(Number.isFinite(audio.duration)&&audio.duration<=.05)&&(audio.ended ||
+            (isFinite(audio.duration) && audio.duration > .05 &&
+              audio.currentTime >= audio.duration - 0.4));
           if (finito) {
             toast("La canzone era finita: e' partita la successiva");
             _finitoSenzaAvanti();
@@ -7116,7 +7138,12 @@ function rebuildAudio(autoplay) {
       ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
     return _listaProssimiCasuali(lista, 10)
       .map(id => tracks.find(t => t.id === id))
-      .filter(t => t && t.id !== currentId && !t.youtubeId && t.url);
+      .filter(t => t && t.id !== currentId && !t.youtubeId && t.url && _mixPlayableNow(t));
+  }
+  function _mixPlayableNow(t){
+    if(typeof navigator==='undefined'||navigator.onLine!==false)return true;
+    if(String(t?.url||'').startsWith('blob:'))return true;
+    try{return isCached(t)}catch(_){return false}
   }
   function _prossimoAutomaticoInCoda() {
     return _prossimiAutomaticiInCoda()[0] || null;
@@ -7737,11 +7764,15 @@ box.innerHTML = "";
     return _testoAppartieneAlBrano(id,saved)?saved:null;
   }
 
+  function _haTempiParole(row){
+    return window.MusicBoxWordKaraoke?.hasWordTiming?.(row)===true;
+  }
+
   function currentLyrics() {
     if (!currentId) return null;
     const builtin = lyricsData[currentId];
     const saved = _testoLocaleVerificato(currentId);
-    if(saved?.wordRows?.some?.(r=>r.words?.length>=2))return saved;
+    if(saved?.wordRows?.some?.(r=>_haTempiParole(r)))return saved;
     if (saved && saved.synced && parseSynced(saved.synced).length >= 3) return saved;
     if (builtin && builtin.synced && parseSynced(builtin.synced).length >= 3) return builtin;
     if (saved && saved.text) return saved;
@@ -7757,7 +7788,7 @@ box.innerHTML = "";
     const existing=id===currentId?currentLyrics():
       _testoLocaleVerificato(id)||lyricsData[id];
     if(!track?.title||!track.artist||!existing?.synced||
-       (existing.wordRows?.some?.(row=>row.words?.length>=2)&&!existing.audioWordSynced)||
+       (existing.wordRows?.some?.(row=>_haTempiParole(row))&&!existing.audioWordSynced)||
        _ricercheParoleInCorso.has(id)||document.hidden||
        navigator.onLine===false||Date.now()<_lrclibNonPrimaDi)return;
     const key="mb.karaoke.wordSearch.v1."+id;
@@ -7771,7 +7802,7 @@ box.innerHTML = "";
         durationMs:track.spotifyDurationMs||0,album:track.spotifyAlbum||track.album||""
       });
       if(Date.now()>=_lrclibNonPrimaDi)LS.set(key,Date.now());
-      if(!result?.synced||!result.wordRows?.some?.(r=>r.words?.length>=2))return;
+      if(!result?.synced||!result.wordRows?.some?.(r=>_haTempiParole(r)))return;
       // A perfectly timed karaoke for another song is still WRONG.
       // Reject it before replacing the current recording's LRC.
       if(!_testoAppartieneAlBrano(id,{synced:result.synced}))return;
@@ -7779,7 +7810,7 @@ box.innerHTML = "";
       // Whisper stored while this provider request was still in flight.
       const newest=_testoLocaleVerificato(id);
       if(newest?.audioWordSynced&&newest.wordRows?.some(row=>
-          row.words?.length>=2&&!row.estimated))return;
+          (_haTempiParole(row)||window.MusicBoxWordKaraoke?.hasPartialTiming?.(row))&&!row.estimated))return;
       const updated={...(newest||existing),id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
         wordRows:result.wordRows,source:result.source,audioWordSynced:false};
@@ -7822,7 +7853,7 @@ box.innerHTML = "";
     const joined=baseline.map((original,i)=>{
       const kept=previous.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&row.text===original.text);
-      if(kept?.words?.length>=2&&!kept.estimated)return kept;
+      if(_haTempiParole(kept)&&!kept.estimated)return kept;
       // Preserve the extra LRC-to-voice delay only when an entire long,
       // distinctive phrase was verified word for word against the MP3.
       const tokens=String(original.text||"").match(/\S+/gu)||[];
@@ -7833,8 +7864,27 @@ box.innerHTML = "";
       const matched=incoming.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&
         row.t>=original.t-.45&&row.t<=original.t+maxLag&&
-        row.text===original.text&&row.words?.length>=3);
-      if(matched){added++;changedRows.push(i);return matched}
+        row.text===original.text&&
+        (engine?.hasPartialTiming?.(row)||row.words?.length>=3||_haTempiParole(row)&&
+         row.t>=original.t-.20&&row.t<=original.t+.30));
+      if(matched){
+        let chosen=matched;
+        if(engine?.hasPartialTiming?.(kept)&&engine?.hasPartialTiming?.(matched)){
+          const old=new Map(kept.acousticSpans.map(w=>[w.wordIndex,w]));
+          for(const w of matched.acousticSpans)if(!old.has(w.wordIndex))old.set(w.wordIndex,w);
+          const merged={...kept,acousticSpans:[...old.values()].sort((a,b)=>a.wordIndex-b.wordIndex)};
+          if(!engine.hasPartialTiming(merged)||merged.acousticSpans.length===kept.acousticSpans.length)return kept;
+          chosen=merged;
+        }
+        if(engine?.hasPartialTiming?.(kept)&&_haTempiParole(matched)){
+          const observed=new Map(kept.acousticSpans.map(w=>[w.wordIndex,w]));
+          const words=matched.words.map((w,i)=>observed.has(i)?{...w,t:observed.get(i).t,end:observed.get(i).end}:w);
+          const full=engine.normalizeRows([{...matched,words}])[0];
+          if(!full||!_haTempiParole(full))return kept;
+          chosen=full;
+        }
+        added++;changedRows.push(i);return chosen;
+      }
       return kept&&!kept.estimated?kept:original;
     });
     if(!added)return 0;
@@ -8037,10 +8087,11 @@ box.innerHTML = "";
     }, 300000);
   } catch (e) { /* noop */ }
 
-async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
+async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, silentDjStart = false) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
+      try { audio?._mbInitialSeekCleanup?.(); } catch (_) {}
       // Any new song selection wins over the initial page-reload recovery.
       // Otherwise a pending retry can restart the stale player mid-tap.
       if (autoplay) _ripresaGiaRiuscita = true;
@@ -8073,7 +8124,8 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
-      if (id !== currentId) resumeAt = 0;
+      if (id !== currentId || Number.isFinite(startAt)&&startAt>0) resumeAt = 0;
+      try { window.MusicBoxAudioAlign?.cancel?.(); } catch (_) {}
       currentId = id;
       // An explicit new selection must not inherit the old song's
       // paused playhead (even if the same track is selected again).
@@ -8155,8 +8207,13 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       const previous = audio;
       // Preserve the active native media element/session when an installed
       // iOS app advances while locked. WebKit can still deny the new play().
-      const keepNativeSession=_iosInstallataComeApp()&&document.hidden&&
-        previous&&!liveDjAudio;
+      // A common PCM buffer already owns the audible signal. Reuse the
+      // gesture-authorized native decoder for its muted handoff: WebKit
+      // may pause a newly autoplayed element as soon as it is unmuted.
+      const keepCommonSession=silentDjStart===true&&previous&&
+        window.MusicBoxCompositeMix?.owns?.(previous)===true&&!document.hidden;
+      const keepNativeSession=keepCommonSession||(_iosInstallataComeApp()&&document.hidden&&
+        previous&&!liveDjAudio);
       audio = keepNativeSession ? previous : createAudio();
       if (previous && previous !== audio) {
         previous._mbCambioBrano = true;
@@ -8164,6 +8221,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       }
     }
     audio._mbCambioBrano = !_adottaDj;
+    if(_adottaDj)audio._mbMixSourceUrl=_url;
+    // Common-buffer DJ playback owns the audible signal until this native
+    // decoder is ready. Set binary mute before src/play(), including iOS.
+    audio._mbCommonMixMuted=silentDjStart===true;
+    if (silentDjStart === true) audio.muted = true;
     /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
@@ -8171,12 +8233,31 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
     if (!_adottaDj) _assegnaAudioSorgente(audio,_url);
     if (!_adottaDj && startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
-      const at = () => {
-        if (audio !== target || currentId !== id) return;
-        try { target.currentTime = Math.max(0, Math.min(startAt, Number(target.duration || Infinity)-0.5)); } catch (_) {}
+      let initialSeekClosed=false;
+      // Some native MP3 decoders refine duration after playing without a
+      // new durationchange. Recheck on their real progress/time events too.
+      const initialSeekEvents=['loadedmetadata','durationchange','canplay','playing','progress','timeupdate'];
+      const cleanupInitialSeek=()=>{
+        if(initialSeekClosed)return;initialSeekClosed=true;
+        for(const event of initialSeekEvents)target.removeEventListener?.(event,at);
+        if(target._mbInitialSeekCleanup===cleanupInitialSeek)delete target._mbInitialSeekCleanup;
       };
-      if (target.readyState >= 1) at();
-      else target.addEventListener("loadedmetadata", at, { once: true });
+      const at = () => {
+        if(initialSeekClosed)return;
+        if (audio !== target || currentId !== id) {cleanupInitialSeek();return;}
+        const duration=Number(target.duration);
+        // WebKit can announce 0–1 ms at loadedmetadata for a complete MP3,
+        // then publish its real duration when playback starts. Clamping a
+        // requested seek to that provisional EOF immediately ends the song.
+        if(target.readyState<1||!Number.isFinite(duration)||duration<=.05)return;
+        try {
+          target.currentTime = Math.max(0, Math.min(startAt, duration-0.5));
+          cleanupInitialSeek();
+        } catch (_) { /* retry only on native readiness events; no polling */ }
+      };
+      target._mbInitialSeekCleanup=cleanupInitialSeek;
+      for(const event of initialSeekEvents)target.addEventListener(event,at);
+      at();
     }
     // Start play() from the original tap / MediaSession gesture BEFORE
     // painting the heavy song list and calculating the random queue.
@@ -8241,7 +8322,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
          l'indice punta a un brano diverso (e' successo: avanti suonava un
          brano nascosto perche' gli indici venivano da due liste diverse). */
       const lista = _listaPerIlSeguito();
-      const t = (lista && lista[indice]) ? lista[indice] : tracks[indice];
+      const t = lista && lista[indice];
       return (t && t.id) ? t.id : "";
     }
 
@@ -8257,7 +8338,8 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
      suonare qualcosa, non solo sfogliare: cambia il comportamento (vedi
      visibleTracks). */
   function _listaPerIlSeguito() {
-    try { return visibleTracks(true); } catch (e) { return tracks; }
+    // A failed filter must not widen personal playback to the loaded catalog.
+    try { return visibleTracks(true); } catch (e) { return []; }
   }
 
   let _djCatalogoPrecedente=new Map();
@@ -9266,7 +9348,7 @@ function openProfile() {
   }
 
   function parseSynced(synced) {
-    if(/<\d{1,3}:\d{2}[.:]\d{1,3}>/.test(String(synced||""))){
+    if(/<\d{1,3}:\d{2}(?:[.:]\d{1,3})?>/.test(String(synced||""))){
       const parsed=window.MusicBoxWordKaraoke?.parseEnhancedLrc(synced)||[];
       if(parsed.length)return parsed;
     }
@@ -9285,8 +9367,8 @@ function openProfile() {
     const e=window.MusicBoxWordKaraoke;
     const saved=e?.normalizeRows(l?.wordRows||[])||[];
     const enhanced=e?.parseEnhancedLrc(l?.synced||"")||[];
-    const baseline=saved.some(row=>row.words?.length>=2)?saved:
-      enhanced.some(row=>row.words?.length>=2)?enhanced:parseSynced(l?.synced||"");
+    const baseline=(saved.some(_haTempiParole)||saved.some(row=>e?.hasPartialTiming?.(row)))?saved:
+      (enhanced.some(_haTempiParole))?enhanced:parseSynced(l?.synced||"");
     return e?.estimateRows?.(baseline)||baseline;
   }
   const _ritardiTesti=new Map();
@@ -9483,7 +9565,8 @@ function openProfile() {
       const knownEnd=Math.max(
         Number.isFinite(end)&&end>=last?end:-Infinity,
         Number.isFinite(wordEnd)&&wordEnd>=last?wordEnd:-Infinity);
-      const expiry=Number.isFinite(knownEnd)?knownEnd+2.5:last+9;
+      const partialEnd=Math.max(-Infinity,...(row?.acousticSpans||[]).map(w=>Number(w.end)).filter(Number.isFinite));
+      const expiry=Math.max(Number.isFinite(knownEnd)?knownEnd+2.5:last+9,partialEnd+2.5);
       if(Number.isFinite(last)&&time>expiry)return -1;
     }
     return result;
@@ -9751,8 +9834,9 @@ function openProfile() {
     $("lyricsMode").textContent=useSynced
       ?wordCoverage?.wordTimed?
         ("KARAOKE · PAROLE VERIFICATE "+wordCoverage.wordTimed+"/"+wordCoverage.total+
-         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:""))
-        :wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
+         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:"")+(wordCoverage.partialWords?" · PARZIALI "+wordCoverage.partialWords+" PAROLE":""))
+        :wordCoverage?.partial?"KARAOKE · "+wordCoverage.partialWords+" PAROLE AUDIO, ALLINEAMENTO PARZIALE":
+         wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
          "TESTO SINCRONIZZATO PER FRASI"
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
@@ -10051,7 +10135,7 @@ async function removeTrack(id) {
       const wordRows=engine?.fromRecord(j)||[];
       const synced=String(j.syncedLyrics||(wordRows.length?engine.toLrc(wordRows):""));
       return {text:String(j.plainLyrics||syncedToText(synced)||"").trim(),
-        synced,wordRows,source:wordRows.some(row=>row.words?.length>=2)
+        synced,wordRows,source:wordRows.some(row=>_haTempiParole(row))
           ?"LRCLIB (parole sincronizzate)":synced?"LRCLIB (karaoke sincronizzato)":"LRCLIB"};
     };
     const validate = (j) => {
@@ -10104,7 +10188,7 @@ async function removeTrack(id) {
           const rows = j && j.syncedLyrics && parseSynced(j.syncedLyrics);
           if(validate(j)&&((rows&&rows.length>=3)||j.hasWordSync)){
             const result=lrclibResult(j);
-            if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+            if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
               return result;
           }
         }
@@ -10136,7 +10220,7 @@ async function removeTrack(id) {
           const selected=choose(Array.isArray(data)?data:[data]);
           if(selected){
             const result=lrclibResult(selected);
-            if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+            if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
               return result;
           }
         }catch(_){
@@ -10156,7 +10240,7 @@ async function removeTrack(id) {
             const selected=choose([await r.json()]);
             if(selected){
               const result=lrclibResult(selected);
-              if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+              if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
                 return result;
             }
           }
@@ -13162,7 +13246,25 @@ window.MusicBoxBridge = {
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
     if(rows.length<3)return null;
-    return {first:rows[0].t,last:rows[rows.length-1].t};
+    const observed=(candidate.wordRows||[]).flatMap(row=>row.estimated?[]:
+      _haTempiParole(row)?row.words:window.MusicBoxWordKaraoke?.validAcousticSpans?.(row)||[]);
+    const starts=[...rows.map(r=>r.t),...observed.flatMap(w=>[w.t,w.end]).filter(Number.isFinite)].sort((a,b)=>a-b);
+    return {first:Math.min(rows[0].t,starts[0]),last:Math.max(rows[rows.length-1].t,starts[starts.length-1]),starts};
+  },
+  mixVocalCutSafe:(cue,id)=>{
+    if(!cue?.structuralBeat)return true;
+    if(cue.preservedFileTail===true&&cue.entry===0&&cue.composite?.outgoingEnvelope==='unity-through-decoded-eof-v1'&&
+       Number.isFinite(cue.composite.sourceReadThrough)&&Math.abs(cue.composite.sourceReadThrough-cue.end)<=.1)return true;
+    const local=_testoLocaleVerificato(id),candidate=(local?.synced?local:lyricsData[id])||null;
+    if(!candidate)return true;
+    const rows=_righeTestoConParole(candidate);
+    for(const row of rows){
+      const measured=row.estimated?[]:_haTempiParole(row)?row.words:window.MusicBoxWordKaraoke?.validAcousticSpans?.(row)||[];
+      if(measured.some(w=>
+        Number.isFinite(w.t)&&Number.isFinite(w.end)&&w.t<cue.end&&w.end>cue.end-.4))return false;
+      if(Number.isFinite(row.t)&&row.t>=cue.end-.4&&row.t<cue.end&&String(row.text||"").trim())return false;
+    }
+    return true;
   },
 
   mixCandidates:()=>{
@@ -13213,7 +13315,7 @@ window.MusicBoxBridge = {
     const fresh=_casualeFresche;
     if(!fresh)return [];
     return available.filter(t=>t&&t.id!==currentId&&t.url&&!t.youtubeId&&
-      fresh.has(t.id)&&!_casualeEscluse.has(t.id));
+      fresh.has(t.id)&&!_casualeEscluse.has(t.id)&&_mixPlayableNow(t));
   },
   mixSelectShuffle:({fromId,initialFirst,pickId})=>{
     if(!shuffle||queue.length||repeat||_casualeModificaUtente||
@@ -13222,11 +13324,14 @@ window.MusicBoxBridge = {
     const idx=_casualeProgrammate.indexOf(pickId);
     if(idx===0)return false;
     if(!_casualeFresche?.has(pickId)||pickId===currentId)return false;
+    // Revalidate after asynchronous analysis, including candidates that were
+    // already in the preview. Account/filter/download state can change while
+    // the planner yields; an old preview is not current authorization.
+    const pool=window.MusicBoxBridge.mixShufflePool();
+    if(!pool.some(t=>t.id===pickId))return false;
     if(idx<0){
       // This song can be outside the ten preselected shuffle items.
       // Only a fresh, playable member of the CURRENT playlist is eligible.
-      const pool=window.MusicBoxBridge.mixShufflePool();
-      if(!pool.some(t=>t.id===pickId))return false;
       _casualeProgrammate.unshift(pickId);
       if(_casualeProgrammate.length>10)_casualeProgrammate.pop();
     }else{
@@ -13237,9 +13342,17 @@ window.MusicBoxBridge = {
     _ordineCasualeModificato();
     return true;
   },
-  mixHandoff:(id,startAt)=>{
+  mixHandoff:(id,startAt,options)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
-    return playById(id,true,startAt);
+    return playById(id,true,startAt,null,options?.muted===true);
+  },
+  mixSourceMatches:(id,liveAudio)=>{
+    const track=tracks.find(t=>t.id===id);
+    if(!track||liveAudio!==audio||id!==currentId)return false;
+    try{
+      const actual=liveAudio._mbMixSourceUrl||liveAudio.currentSrc||liveAudio.src;
+      return !!actual&&new URL(actual,location.href).href===new URL(_urlDelBrano(track),location.href).href;
+    }catch(_){return false}
   },
   mixAdoptHandoff:(id,liveAudio)=>{
     if(!liveAudio||_usaControlliNativiIos())return null;
@@ -13265,7 +13378,7 @@ window.MusicBoxBridge = {
       if(song===currentId){
         const l=currentLyrics();
         if(l?.synced&&!_righeTestoConParole(l).every(r=>
-          r.words?.length>=2&&!r.estimated))
+          _haTempiParole(r)&&!r.estimated))
           window.MusicBoxAudioAlign?.request(song);
       }
     };
@@ -15053,13 +15166,38 @@ $("fabMenu").addEventListener("click", (e) => {
     }finally{offlineResumeBusy=false}
   }
 
+  let _offlineStorageRun = null;
+  async function _rapportoSpazioOffline() {
+    if (_offlineStorageRun || document.hidden || !window.MusicBoxStorageAudit) return;
+    const controller = new AbortController(),owner=profile,button=$("btnOfflineStorage");
+    _offlineStorageRun=controller;if(button)button.disabled=true;
+    const stop=()=>{if(document.hidden)controller.abort();};
+    document.addEventListener("visibilitychange",stop);
+    try {
+      const report=await window.MusicBoxStorageAudit.inspect({db,signal:controller.signal,profile:owner});
+      if(controller.signal.aborted || owner!==profile)return;
+      report.runtimeSnapshot={karaoke:window.MusicBoxAudioAlign?.diagnostics?.()||null,
+        prefetchInFlight:_precaricaInCorso,offlineDownloadInFlight:offlineBusy,
+        playbackPaused:audio.paused,visibility:document.visibilityState,
+        standalone:!!(navigator.standalone||window.matchMedia?.('(display-mode: standalone)').matches),
+        physicalCpuAndRamMeasured:false};
+      const output=$("offlineReportText"),panel=$("offlineReportBox");
+      if(output&&panel){output.value=JSON.stringify(report,null,2);panel.hidden=false;output.focus();output.select();}
+      toast("Rapporto spazio pronto da copiare. Nessun file eliminato.",6000);
+    } catch(error) {
+      if(!controller.signal.aborted)toast("Rapporto spazio non disponibile: "+String(error.message||error),6000);
+    } finally {
+      document.removeEventListener("visibilitychange",stop);
+      _offlineStorageRun=null;if(button)button.disabled=false;
+    }
+  }
   async function offlineSpaceInfo() {
     let txt = "";
     try {
       if (navigator.storage && navigator.storage.estimate) {
         const est = await navigator.storage.estimate();
         if (est && est.usage) {
-          txt = "Spazio usato dall'app: " + fmtBytes(est.usage) +
+          txt = "Stima dei dati di questo sito (origine): " + fmtBytes(est.usage) +
             (est.quota ? " (ne puoi usare " + fmtBytes(est.quota) + ")" : "");
         }
       }
@@ -15092,7 +15230,7 @@ $("fabMenu").addEventListener("click", (e) => {
         }
       }
     } catch (e) { }
-    if (!txt) txt = "Le canzoni offline occupano memoria sul telefono (circa 60 MB per tutte).";
+    if (!txt) txt = "Quantità non disponibile: lo spazio dipende dagli MP3 salvati. Il rapporto spazio distingue i dati leggibili da quelli non misurabili.";
     $("offlineSpace").textContent = txt;
   }
 
@@ -16266,6 +16404,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineReport")?.addEventListener("click", _copiaProblemiOffline);
+  $("btnOfflineStorage")?.addEventListener("click", _rapportoSpazioOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
   document.addEventListener("visibilitychange", () => {
     if(document.hidden) _workerOfflineBatch(profile);
@@ -18866,6 +19005,7 @@ for (const p of playlists) {
     try {
       const v = Number(volumePct) || 0;
       if (audio) audio.volume = Math.min(1, Math.max(0, v / 100));
+      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true;
       if (_gain) _gain.gain.value = 1;
       if (_filtroBassi) _filtroBassi.gain.value = 0;
       return true;

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 24,
+  "profileFunnel": {
+    "Gym": {
+      "pairs": 552,
+      "noCoherentEndingBars": 299,
+      "noCoherentInitialBars": 33,
+      "meterOrTempo": 198,
+      "localHarmony": 2,
+      "incomingVocalOrLyric": 19,
+      "rhythmicTailCandidates": 1
+    }
+  },
+  "pairConditions": {
+    "Gym": {
+      "bpm": 191,
+      "harmony": 2,
+      "voice": 19,
+      "observedDownbeat": 5,
+      "duration": 1,
+      "affineDownbeatFit": 1,
+      "rhythmicTailCandidates": 1
+    }
+  },
+  "windowExclusions": {
+    "Gym": {
+      "bpm": 5220,
+      "barSpan": 9245,
+      "affineDownbeatFit": 184,
+      "voice": 3157,
+      "harmony": 131,
+      "overlapDuration": 611,
+      "observedDownbeat": 81,
+      "observedPulseAgreement": 8
+    }
+  },
+  "windows": 49,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Gym",
+    "tracks": 24,
+    "unavailableMembers": 0,
+    "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+  }
+}

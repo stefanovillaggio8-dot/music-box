@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+  "implementedInBranchPlayer": true,
+  "publicDeployment": false,
+  "observationPassesPerReferenceWindow": 7,
+  "referenceLanguages": [
+    "en",
+    "fr"
+  ],
+  "runtimeSha256": {
+    "audio-lyrics-align.js": "a09077ec61444718b3e82a0bf964dae2f955ab892f38ecbea4701176e41d73ab",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925"
+  },
+  "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+  "cases": [
+    {
+      "id": "Avercage_-_Embers@219.171",
+      "category": "singing-sparse",
+      "referenceWords": 13,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Avercage_-_Embers@113.612",
+      "category": "repeated-phrase",
+      "referenceWords": 32,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Confession_-_Quesabe@91.653",
+      "category": "rap-dense",
+      "referenceWords": 105,
+      "acceptedWords": 10,
+      "errors": [
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 0,
+          "startErrorMs": 156.6727904999965,
+          "endErrorMs": 124.10961909999685
+        },
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 1,
+          "startErrorMs": 66.05755620000764,
+          "endErrorMs": 13.81726069999445
+        },
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 2,
+          "startErrorMs": 13.81726069999445,
+          "endErrorMs": 21.5693358999971
+        },
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 3,
+          "startErrorMs": 21.5693358999971,
+          "endErrorMs": 46.879089400007956
+        },
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 4,
+          "startErrorMs": 46.879089400007956,
+          "endErrorMs": 21.57360840000422
+        },
+        {
+          "lineSourceT": 107.6963272095,
+          "wordIndex": 5,
+          "startErrorMs": 21.57360840000422,
+          "endErrorMs": 202.7949218999936
+        },
+        {
+          "lineSourceT": 111.2114257812,
+          "wordIndex": 0,
+          "startErrorMs": 41.5742187999939,
+          "endErrorMs": 39.937866199991845
+        },
+        {
+          "lineSourceT": 111.2114257812,
+          "wordIndex": 1,
+          "startErrorMs": 39.937866199991845,
+          "endErrorMs": 63.79223630000297
+        },
+        {
+          "lineSourceT": 111.2114257812,
+          "wordIndex": 2,
+          "startErrorMs": -8.221618700005706,
+          "endErrorMs": -15.163757300001635
+        },
+        {
+          "lineSourceT": 111.2114257812,
+          "wordIndex": 3,
+          "startErrorMs": -15.163757300001635,
+          "endErrorMs": 6.057556200005365
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "referenceWords": 150,
+    "acceptedWords": 10,
+    "coverage": 0.06666666666666667,
+    "onset": {
+      "count": 10,
+      "medianAbsoluteMs": 39.937866199991845,
+      "p95AbsoluteMs": 156.6727904999965
+    },
+    "end": {
+      "count": 10,
+      "medianAbsoluteMs": 39.937866199991845,
+      "p95AbsoluteMs": 202.7949218999936
+    }
+  }
+}

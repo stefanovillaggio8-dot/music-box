@@ -1,0 +1,462 @@
+{
+  "requested": 1,
+  "rendered": 1,
+  "stretchPolicy": "two-bounded-offline-profiles-original-gates-v1",
+  "results": [
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "profiles": [
+        "Ste"
+      ],
+      "primary": true,
+      "cue": {
+        "kind": "beat",
+        "structuralBeat": true,
+        "preservedFileTail": true,
+        "measuredFullBeat": true,
+        "metricalRhythmic": false,
+        "nativeTailFullBeat": true,
+        "preserveTail": true,
+        "quietCertified": false,
+        "silenceTrim": false,
+        "softTailTrim": false,
+        "begin": 148.52438815789475,
+        "end": 159.301,
+        "fade": 10.77661184210524,
+        "entry": 0,
+        "tempo": 1.0167224080267576,
+        "gain": 1,
+        "vocalFadeSeconds": 0,
+        "preservedEntrance": "vocal-handoff-foreground-v1",
+        "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+        "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "contentPenalty": 0,
+        "sourceTempoBpm": 80.26755852842822,
+        "targetTempoBpm": 78.94736842105263,
+        "nominalTempo": 1.0167224080267576,
+        "nativeRatePreferred": false,
+        "beatAnchor": 148.641,
+        "nextBeat": 0.14,
+        "beatPeriod": 0.7474999999999987,
+        "measuredBeatCount": 12,
+        "beatPulseAgreement": 0.9230769230769231,
+        "measuredPlacementError": 0.016914389240109084,
+        "grooveScore": 0.4782907175454359,
+        "score": 0.4782907175454359,
+        "fullOnsetFirst": 0.6577645043385049,
+        "fullOnsetSecond": 0.4385529038422118,
+        "measuredPulseMode": false,
+        "fullPulseFirst": 7,
+        "fullPulseSecond": 5,
+        "fullPulseAttackSupport": 1,
+        "harmonicEvidence": {
+          "method": "pcm-key-with-quiet-frame-bound-v1",
+          "compatibleKey": true,
+          "keyFrom": "10B",
+          "keyTo": "10B",
+          "keyConfidence": 0.7352692817616124,
+          "keyCompatibility": 1,
+          "dissonanceMax": 0.012324193227261637,
+          "rawDissonanceMax": 0.29744738083229955,
+          "frames": 20,
+          "sharedTonalFrames": 18,
+          "boundedQuietFrames": 2,
+          "quietInteractionMaximum": 0.05,
+          "sourceGain": 1,
+          "incomingEnvelope": "vocal-handoff-foreground-v1"
+        },
+        "harmonicMode": "compatible-key",
+        "percussiveIntro": false,
+        "structuralEvidence": {
+          "version": 1,
+          "exactSilentSuffix": {
+            "method": "original-stereo-exact-zero-suffix-v1",
+            "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+            "sourceSha256": "d1430491332a160650d565e7a5f836f3ed62337c74f968e966a73a7820e746c9",
+            "zeroFrom": 158.4473469387755,
+            "through": 159.301,
+            "threshold": 0,
+            "rates": {
+              "44100": {
+                "frames": 7025153,
+                "decodedDuration": 159.3005215419501,
+                "nonzeroThroughFrame": 6987528,
+                "zeroFrom": 158.4473469387755,
+                "maximumSuffixPeak": 0,
+                "pcmSha256": "ed9424eadd39613055f637893d8958735fb02a6712270ae4e17744f3faa23889"
+              },
+              "48000": {
+                "frames": 7646424,
+                "decodedDuration": 159.3005,
+                "nonzeroThroughFrame": 7605455,
+                "zeroFrom": 158.44697916666667,
+                "maximumSuffixPeak": 0,
+                "pcmSha256": "4eebc25b179ad8305522a0ed2175c7cd46d407c9888f55997312751574726419"
+              }
+            },
+            "beatVerificationSeconds": 9.922958780880748
+          },
+          "edgeAnalysisViews": {
+            "source": "whole-original",
+            "target": "edge-original"
+          },
+          "bars": 2,
+          "beatsPerBar": 4,
+          "sourcePhaseConfidence": 0.9999999999999993,
+          "targetPhaseConfidence": 1,
+          "downbeatRms": 0.016844707087288212,
+          "incomingWholeOverlap": {
+            "start": 0,
+            "end": 11.256822742474911,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.003661,
+            "maxRelativeVocal": 0.0695831898036514,
+            "clear": true,
+            "notHumanVerified": true
+          },
+          "outgoingWholeOverlap": null,
+          "vocalOverlapPolicy": "separated-vocal-handoff-v1",
+          "vocalHandoff": {
+            "method": "original-pcm-separated-vocal-handoff-v1",
+            "at": 8.626111842105251,
+            "marginSeconds": 0.3,
+            "outgoingQuietSuffix": {
+              "start": 156.85049999999998,
+              "end": 159.301,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 1e-06,
+              "maxRelativeVocal": 0.0003333333333333333,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "incomingQuietPrefix": {
+              "start": 0,
+              "end": 9.075377926421409,
+              "method": "spleeter-2stems-energy-v1",
+              "maxVocalRms": 0.003002,
+              "maxRelativeVocal": 0.0695831898036514,
+              "clear": true,
+              "notHumanVerified": true
+            },
+            "humanVocalReference": false
+          },
+          "sourceObservedDownbeats": [
+            148.641,
+            151.641
+          ],
+          "targetObservedDownbeats": [
+            0.14,
+            3.18
+          ],
+          "sourceModelDownbeats": [
+            148.62,
+            151.6,
+            154.6
+          ],
+          "targetModelDownbeats": [
+            0.1,
+            3.14,
+            6.18
+          ],
+          "pulseCheck": {
+            "source": [
+              0.11661184210524311,
+              0.8766118421052624,
+              1.6166118421052431,
+              2.356611842105252,
+              3.116611842105243,
+              3.8766118421052624,
+              4.616611842105243,
+              5.376611842105262,
+              6.116611842105243,
+              6.856611842105252,
+              7.616611842105243,
+              8.356611842105252
+            ],
+            "target": [
+              0.14,
+              0.88,
+              1.66,
+              2.4,
+              3.18,
+              3.92,
+              4.7,
+              5.44,
+              6.22,
+              7,
+              7.76,
+              8.48,
+              9.26,
+              10,
+              10.78
+            ],
+            "sourceBars": [
+              0.11661184210524311,
+              3.116611842105243
+            ],
+            "targetBars": [
+              0.1376973684210524,
+              3.1276973684210474
+            ]
+          },
+          "method": "source-eof-and-original-pcm-initial-pickup-v1",
+          "humanVerified": false,
+          "semanticLabelsVerified": false
+        },
+        "stretchProfile": "transient-60-12-8-v1",
+        "composite": {
+          "version": 1,
+          "path": "dj-mixes/7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311.flac",
+          "sha256": "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311",
+          "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+          "targetSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+          "begin": 148.52438815789475,
+          "entry": 0,
+          "fade": 10.77661184210524,
+          "tempo": 1.0167224080267576,
+          "seconds": 12.876604166666667,
+          "peak": 0.9846172332763672,
+          "headroom": 0.8156726704008573,
+          "pitchPreserved": true,
+          "timingVerified": true,
+          "renderedFromOriginals": true,
+          "handoffPosition": 10.95682274247491,
+          "sampleRate": 48000,
+          "nativeHandoffAt": 10.776104166666666,
+          "nativeRevealAt": 11.826104166666667,
+          "preRoll": 0.3,
+          "releaseSeconds": 0.9,
+          "overlapPeak": 0.9584308888595792,
+          "envelopeVersion": 4,
+          "warmupOriginalSeconds": 0,
+          "gainProof": {
+            "method": "offline-stereo-shared-lookahead-v1",
+            "truePeakLookahead": true,
+            "maximumReductionDb": 1.769681774892389,
+            "meanOverlapReductionDb": 0.24885313858565328,
+            "attackDbPerSecond": 40,
+            "releaseDbPerSecond": 8,
+            "firstGain": 1,
+            "nativeRevealGain": 1
+          },
+          "sourceReadThrough": 159.3004923245614,
+          "outgoingEnvelope": "unity-through-decoded-eof-v1",
+          "oversampledPeak": 0.9979962110519409,
+          "oversampledOverlapPeak": 0.9590495228767395,
+          "processing": "soundtouch-wsola",
+          "stretchProfile": "transient-60-12-8-v1",
+          "levelContinuity": {
+            "method": "rendered-half-second-eof-rms-v1",
+            "beforeRms": 0.1428890973329544,
+            "afterRms": 0.13438090682029724,
+            "changeDb": -0.5332305049928102,
+            "includesOriginalSongDynamics": true,
+            "notHumanListening": true
+          },
+          "rhythmVerified": true,
+          "postRenderRhythm": {
+            "method": "rendered-hpss-attacks-v1",
+            "mode": "full-pcm",
+            "accepted": true,
+            "sourceAttacks": 12,
+            "incomingAttacks": 13,
+            "matches": 12,
+            "agreement": 0.9230769230769231,
+            "rmsSeconds": 0.01650428140575722,
+            "firstHalfMatches": 7,
+            "secondHalfMatches": 5,
+            "sharedPerBar": [],
+            "sourceObserved": [
+              0.10634920634920636,
+              0.8726077097505669,
+              1.6098412698412699,
+              2.358684807256236,
+              3.1133333333333337,
+              3.867981859410431,
+              4.616825396825397,
+              5.365668934240363,
+              6.114512471655329,
+              6.845941043083901,
+              7.612199546485261,
+              8.349433106575963
+            ],
+            "incomingObserved": [
+              0.11215419501133789,
+              0.8435827664399091,
+              1.6156462585034013,
+              2.3528798185941047,
+              3.119138321995465,
+              3.8505668934240367,
+              4.634240362811791,
+              5.342448979591837,
+              6.102902494331066,
+              6.874965986394558,
+              7.618004535147392,
+              8.3378231292517,
+              9.098276643990928
+            ],
+            "notHumanListening": true,
+            "beatVerificationSeconds": 9.922958780880748,
+            "downbeatsVerified": true,
+            "downbeatRmsSeconds": 0.005804988662131361,
+            "maximumDownbeatError": 0.005804988662131527,
+            "downbeatMatches": 2,
+            "exactSilentSuffix": {
+              "method": "unmodified-original-exact-zero-tail-v1",
+              "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+              "sampleRate": 48000,
+              "beatVerificationSeconds": 9.922958780880748,
+              "sourceTailThrough": 10.77661184210524,
+              "verifiedFrames": 40969,
+              "maximumPeak": 0.0,
+              "actualZeroFromSeconds": 9.922583333333332,
+              "sourceGainApplied": false,
+              "searchedEntireTail": true,
+              "accepted": true
+            }
+          },
+          "resampledCommonProof": {
+            "method": "encoded-common-resampling-v1",
+            "sampleRate": 44100,
+            "samplePeak": 0.9761589169502258,
+            "oversampledPeak": 0.9972516298294067,
+            "oversampledOverlapPeak": 0.9601123332977295,
+            "rhythm": {
+              "method": "rendered-hpss-attacks-v1",
+              "mode": "full-pcm",
+              "accepted": true,
+              "sourceAttacks": 12,
+              "incomingAttacks": 13,
+              "matches": 12,
+              "agreement": 0.9230769230769231,
+              "rmsSeconds": 0.01650428140575722,
+              "firstHalfMatches": 7,
+              "secondHalfMatches": 5,
+              "sharedPerBar": [],
+              "sourceObserved": [
+                0.10634920634920636,
+                0.8726077097505669,
+                1.6098412698412699,
+                2.358684807256236,
+                3.1133333333333337,
+                3.867981859410431,
+                4.616825396825397,
+                5.365668934240363,
+                6.114512471655329,
+                6.845941043083901,
+                7.612199546485261,
+                8.349433106575963
+              ],
+              "incomingObserved": [
+                0.11215419501133789,
+                0.8435827664399091,
+                1.6156462585034013,
+                2.3528798185941047,
+                3.119138321995465,
+                3.8505668934240367,
+                4.634240362811791,
+                5.342448979591837,
+                6.102902494331066,
+                6.874965986394558,
+                7.618004535147392,
+                8.3378231292517,
+                9.098276643990928
+              ],
+              "notHumanListening": true,
+              "beatVerificationSeconds": 9.922958780880748,
+              "downbeatsVerified": true,
+              "downbeatRmsSeconds": 0.005804988662131361,
+              "maximumDownbeatError": 0.005804988662131527,
+              "downbeatMatches": 2,
+              "exactSilentSuffix": {
+                "method": "unmodified-original-exact-zero-tail-v1",
+                "sourceSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+                "sampleRate": 44100,
+                "beatVerificationSeconds": 9.922958780880748,
+                "sourceTailThrough": 10.77661184210524,
+                "verifiedFrames": 37631,
+                "maximumPeak": 0.0,
+                "actualZeroFromSeconds": 9.92281179138322,
+                "sourceGainApplied": false,
+                "searchedEntireTail": true,
+                "accepted": true
+              }
+            },
+            "notASecondSoundTouchRender": true,
+            "assetSha256": "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311"
+          }
+        }
+      },
+      "renderProof": {
+        "rate": 48000,
+        "seconds": 12.876611842105241,
+        "preRoll": 0.3,
+        "releaseSeconds": 0.9,
+        "envelopeVersion": 4,
+        "gainProof": {
+          "method": "offline-stereo-shared-lookahead-v1",
+          "truePeakLookahead": true,
+          "maximumReductionDb": 1.769681774892389,
+          "meanOverlapReductionDb": 0.24885313858565328,
+          "attackDbPerSecond": 40,
+          "releaseDbPerSecond": 8,
+          "firstGain": 1,
+          "nativeRevealGain": 1
+        },
+        "warmupOriginalSeconds": 0,
+        "nativeHandoffAt": 10.776104166666666,
+        "nativeRevealAt": 11.826104166666667,
+        "peak": 0.9846172610839035,
+        "overlapPeak": 0.9584308888595792,
+        "headroom": 0.8156726704008573,
+        "pitchPreserved": true,
+        "sourceReadThrough": 159.3004923245614,
+        "outgoingEnvelope": "unity-through-decoded-eof-v1",
+        "timingVerified": true,
+        "timing": {
+          "whole": {
+            "score": 0.5415917647973111,
+            "lagMs": -10
+          },
+          "first": {
+            "score": 0.554078682257627,
+            "lagMs": -10
+          },
+          "second": {
+            "score": 0.5311363159182297,
+            "lagMs": -10
+          },
+          "verified": true,
+          "processingProfile": "transient-60-12-8-v1"
+        },
+        "handoffPosition": 10.95682274247491
+      },
+      "renderContext": "warm",
+      "bytes": 2474857,
+      "renderAttempts": [
+        {
+          "context": "warm",
+          "error": null
+        }
+      ],
+      "envelopeAttempts": [
+        {
+          "preRoll": 0.3,
+          "releaseSeconds": 0.9,
+          "error": null
+        }
+      ],
+      "stretchProfileAttempts": [
+        {
+          "profile": "auto",
+          "error": "Stretch timing failed"
+        },
+        {
+          "profile": "transient-60-12-8-v1",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "job": "main",
+    "id": "Quentin_Hannappe_-_Keep_On@156.225",
+    "words": 16,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Quentin_Hannappe_-_Keep_On@91.988",
+    "words": 26,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Wordsmith_-_The_Statement@33.900",
+    "words": 114,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Wordsmith_-_The_Statement@89.234",
+    "words": 110,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "JASON_MILLER_-_CROWD_PLEASER@146.081",
+    "words": 101,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "JASON_MILLER_-_CROWD_PLEASER@77.153",
+    "words": 84,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Slingshot_Miracle_-_Whistler@103.648",
+    "words": 17,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Explosive_Ear_Candy_-_Like_The_Sun@15.216",
+    "words": 69,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "main",
+    "id": "Explosive_Ear_Candy_-_Like_The_Sun@91.396",
+    "words": 53,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "transfer",
+    "id": "Cortez_-_Feel__Stripped_@219.285",
+    "words": 23,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "transfer",
+    "id": "Cortez_-_Feel__Stripped_@156.425",
+    "words": 42,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "validation",
+    "id": "Color_Out_-_Falling_Star@184.349",
+    "words": 15,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "validation",
+    "id": "Color_Out_-_Falling_Star@107.629",
+    "words": 47,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "holdout",
+    "id": "Avercage_-_Embers@219.171",
+    "words": 13,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "holdout",
+    "id": "Avercage_-_Embers@113.612",
+    "words": 32,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "fresh",
+    "id": "HILA_-_Give_Me_the_Same@217.529",
+    "words": 16,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "fresh",
+    "id": "HILA_-_Give_Me_the_Same@125.837",
+    "words": 42,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "fresh",
+    "id": "Kinematic_-_Peyote@123.810",
+    "words": 12,
+    "maximumNumericDifference": 0
+  },
+  {
+    "job": "fresh",
+    "id": "Kinematic_-_Peyote@88.278",
+    "words": 40,
+    "maximumNumericDifference": 0
+  }
+]

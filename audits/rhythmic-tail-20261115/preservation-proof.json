@@ -1,0 +1,28 @@
+{
+  "baselineCommit": "a6dcabb02970a23f6b8398227d5ab7caaa911bd1",
+  "codeCommit": "0b280e3bc8f325e332b0278335b81c937e991bb6",
+  "unchangedFiles": {
+    "app.js": true,
+    "stato.json": true,
+    "playlist.json": true,
+    "word-karaoke.js": true,
+    "immersive.js": true,
+    "audio-lyrics-align.js": true,
+    "audio-stretch-core.mjs": true,
+    "audio-stretch.js": true,
+    "offline-storage-audit.js": true
+  },
+  "baselineAssetsPreserved": 107,
+  "baselineAssetsRemovedOrModified": [],
+  "currentAssets": 122,
+  "publicVersion": {
+    "versione": "6.734",
+    "brani": 1072
+  },
+  "musicalContentUnchangedAllEntries": true,
+  "contentGuardFunctionsByteIdentical": {
+    "structuralContentDecision": true,
+    "incomingContentDecision": true
+  },
+  "mainHeadReadOnly": "9328eaf8429b9dc3a17bfb97b7e0676dbc6597fb"
+}

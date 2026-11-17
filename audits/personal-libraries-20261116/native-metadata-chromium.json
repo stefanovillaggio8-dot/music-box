@@ -1,0 +1,32 @@
+{
+  "method": "native-mp3-metadata-identical-pcm-v1",
+  "browser": "chromium",
+  "physicalIPhone": false,
+  "maximumAllowedDifference": 1e-7,
+  "results": [
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+      "wrappedSha256": "5604703c43b769569e80aafa05dc4b6634dba4333ba184126decd2e0f1ec5504",
+      "sampleRate": 44100,
+      "originalFrames": 5595264,
+      "wrappedFrames": 5595264,
+      "channels": 2,
+      "maximumSampleDifference": 0,
+      "accepted": true
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+      "wrappedSha256": "5604703c43b769569e80aafa05dc4b6634dba4333ba184126decd2e0f1ec5504",
+      "sampleRate": 48000,
+      "originalFrames": 6090083,
+      "wrappedFrames": 6090083,
+      "channels": 2,
+      "maximumSampleDifference": 0,
+      "accepted": true
+    }
+  ]
+}
