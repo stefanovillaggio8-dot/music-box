@@ -2561,12 +2561,26 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
   },
+  "b-track-720": {
+    "lrclibId": 18311749,
+    "synced": true,
+    "duration": 165,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-17"
+  },
   "b-track-721": {
     "lrclibId": 36882701,
     "synced": true,
     "duration": 207,
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
+  },
+  "b-track-722": {
+    "lrclibId": 18302669,
+    "synced": true,
+    "duration": 166,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-17"
   },
   "b-track-724": {
     "lrclibId": 33897563,
