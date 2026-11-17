@@ -1,0 +1,21 @@
+{
+  "method": "original-prelude-common-pcm-native-original-resume-v1",
+  "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+  "previewSha256": "042103d04c87387e3c5dacb91899b875ae8391ffc6bd4a5ce4ed5ff3dee34b75",
+  "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+  "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+  "sampleRate": 48000,
+  "seconds": 31.861833333333333,
+  "previewOnlyUniformGain": 0.7817765258259265,
+  "previewOnlyGainDb": -2.1383474828163527,
+  "unscaledOriginalPreludePeak": 1.2050422430038452,
+  "unscaledOriginalResumePeak": 0.1224861741065979,
+  "unscaledCommonSamplePeak": 0.9972109794616699,
+  "unscaledPreviewTruePeak": 1.240763783454895,
+  "scaledPreviewTruePeak": 0.97,
+  "nativeResumeSourceSeconds": 18.205406230977324,
+  "last100msOriginalMaximumDifference": 1.1891825124621391e-07,
+  "binaryRevealSampleDelta": 0.00157174002379179,
+  "physicalNativeSeekTimingSimulated": false,
+  "humanListeningCompleted": false
+}

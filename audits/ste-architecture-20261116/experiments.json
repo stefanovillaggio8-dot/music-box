@@ -1,0 +1,397 @@
+{
+  "wide.json": {
+    "tracks": 227,
+    "scope": {
+      "name": "Ste",
+      "tracks": 227,
+      "unavailableMembers": 0,
+      "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+    },
+    "profileFunnel": {
+      "Ste": {
+        "pairs": 51292,
+        "meterOrTempo": 29857,
+        "noCoherentInitialBars": 7824,
+        "incomingVocalOrLyric": 45,
+        "localHarmony": 8,
+        "noCoherentEndingBars": 13556,
+        "partialCandidates": 2
+      }
+    },
+    "pairConditions": {
+      "Ste": {
+        "bpm": 28193,
+        "meterAndSpan": 1662,
+        "voice": 45,
+        "harmony": 8,
+        "observedDownbeat": 1,
+        "affineDownbeatFit": 1,
+        "completeCandidates": 2
+      }
+    },
+    "windowExclusions": {
+      "Ste": {
+        "barSpan": 1116480,
+        "meter": 69809,
+        "bpm": 2622,
+        "voice": 1395,
+        "affineDownbeatFit": 132,
+        "pcmBounds": 23,
+        "observedDownbeat": 41,
+        "harmony": 164,
+        "overlapDuration": 43,
+        "observedPulseAgreement": 6
+      }
+    },
+    "windows": 12,
+    "sha256": "ce090b76d92253a64df36899fa5d97835effaa07e699b8e496886aa440d3f306"
+  },
+  "wide-decay.json": {
+    "tracks": 227,
+    "scope": {
+      "name": "Ste",
+      "tracks": 227,
+      "unavailableMembers": 0,
+      "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+    },
+    "profileFunnel": {
+      "Ste": {
+        "pairs": 51292,
+        "meterOrTempo": 27241,
+        "noCoherentInitialBars": 7824,
+        "incomingVocalOrLyric": 2234,
+        "localHarmony": 421,
+        "noCoherentEndingBars": 13556,
+        "partialCandidates": 5,
+        "independentBeatFit": 11
+      }
+    },
+    "pairConditions": {
+      "Ste": {
+        "bpm": 23923,
+        "meterAndSpan": 1662,
+        "voice": 2234,
+        "harmony": 421,
+        "duration": 1365,
+        "observedDownbeat": 79,
+        "completeCandidates": 3,
+        "affineDownbeatFit": 212,
+        "independentBeatFit": 11,
+        "rhythmicTailCandidates": 2
+      }
+    },
+    "windowExclusions": {
+      "Ste": {
+        "bpm": 1004453,
+        "barSpan": 1116480,
+        "meter": 69809,
+        "overlapDuration": 291276,
+        "pcmBounds": 168946,
+        "voice": 152930,
+        "affineDownbeatFit": 30381,
+        "harmony": 20748,
+        "observedDownbeat": 9949,
+        "observedPulseAgreement": 241,
+        "nativeReturnVoice": 52
+      }
+    },
+    "windows": 423,
+    "sha256": "7a3d2f1f99530d73bd1b7037fad82f32426a4eb2a8ac15e05e730377c7833e3d"
+  },
+  "seed2.json": {
+    "tracks": 227,
+    "scope": {
+      "name": "Ste",
+      "tracks": 227,
+      "unavailableMembers": 0,
+      "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+    },
+    "profileFunnel": {
+      "Ste": {
+        "pairs": 51292,
+        "meterOrTempo": 13618,
+        "noCoherentInitialBars": 8034,
+        "incomingVocalOrLyric": 32,
+        "localHarmony": 8,
+        "noCoherentEndingBars": 29598,
+        "partialCandidates": 1,
+        "independentBeatFit": 1
+      }
+    },
+    "pairConditions": {
+      "Ste": {
+        "bpm": 12647,
+        "meterAndSpan": 967,
+        "voice": 32,
+        "duration": 2,
+        "harmony": 8,
+        "observedDownbeat": 1,
+        "affineDownbeatFit": 1,
+        "completeCandidates": 1,
+        "independentBeatFit": 1
+      }
+    },
+    "windowExclusions": {
+      "Ste": {
+        "barSpan": 174441,
+        "meter": 14808,
+        "bpm": 1594,
+        "voice": 520,
+        "affineDownbeatFit": 94,
+        "overlapDuration": 356,
+        "harmony": 101,
+        "observedDownbeat": 22,
+        "observedPulseAgreement": 6
+      }
+    },
+    "windows": 10,
+    "sha256": "68092846d8a07c883769c836e891eb8d28acdb4daf2d2e957d50eccaaf5c4e6d"
+  },
+  "production-cadence-plans.json": {
+    "tracks": 227,
+    "scope": {
+      "name": "Ste",
+      "tracks": 227,
+      "unavailableMembers": 0,
+      "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+    },
+    "profileFunnel": {
+      "Ste": {
+        "pairs": 51292,
+        "meterOrTempo": 13141,
+        "noCoherentInitialBars": 8034,
+        "incomingVocalOrLyric": 432,
+        "localHarmony": 83,
+        "noCoherentEndingBars": 29598,
+        "partialCandidates": 2,
+        "independentBeatFit": 2
+      }
+    },
+    "pairConditions": {
+      "Ste": {
+        "bpm": 11864,
+        "meterAndSpan": 967,
+        "voice": 432,
+        "duration": 133,
+        "affineDownbeatFit": 122,
+        "harmony": 83,
+        "observedDownbeat": 55,
+        "completeCandidates": 2,
+        "independentBeatFit": 2
+      }
+    },
+    "windowExclusions": {
+      "Ste": {
+        "barSpan": 171638,
+        "bpm": 36822,
+        "meter": 14688,
+        "voice": 14017,
+        "affineDownbeatFit": 1941,
+        "overlapDuration": 15588,
+        "observedDownbeat": 566,
+        "harmony": 2059,
+        "observedPulseAgreement": 55,
+        "unverifiedCadenceDecay": 2
+      }
+    },
+    "windows": 81,
+    "sha256": "1941ea7744a6bc92083fde51ab6cf1932140b689b17172814cf0593bc7588810"
+  },
+  "production-render.json": {
+    "requested": 3,
+    "rendered": 1,
+    "sha256": "5db9b8de873a99c96b74676409732976e9dd4ced80d3a30c777b4ceb521174e7",
+    "renderOutcomes": [
+      {
+        "from": "audio/songs/track-6.mp3",
+        "to": "audio/songs/track-233.mp3"
+      },
+      {
+        "from": "audio/songs/track-6.mp3",
+        "to": "audio/songs/track-233.mp3",
+        "error": "Post-render rhythm certificate failed",
+        "postRenderRhythm": {
+          "method": "rendered-hpss-attacks-v1",
+          "mode": "metrical-rhythmic",
+          "accepted": false,
+          "sourceAttacks": 22,
+          "incomingAttacks": 16,
+          "matches": 13,
+          "agreement": 0.5909090909090909,
+          "rmsSeconds": 0.025558182685791613,
+          "firstHalfMatches": 6,
+          "secondHalfMatches": 7,
+          "sharedPerBar": [
+            3,
+            3,
+            3,
+            4
+          ],
+          "sourceObserved": [
+            0.39079365079365086,
+            1.052562358276644,
+            1.691111111111111,
+            2.3354648526077098,
+            2.974013605442177,
+            3.6415873015873017,
+            4.262721088435375,
+            4.930294784580499,
+            5.557233560090703,
+            6.207392290249433,
+            6.845941043083901,
+            7.501904761904762,
+            8.152063492063492,
+            8.808027210884353,
+            9.429160997732426,
+            10.073514739229024,
+            10.717868480725622,
+            11.402857142857142,
+            12.00657596371882,
+            12.650929705215418,
+            13.30108843537415,
+            14.618820861678003
+          ],
+          "incomingObserved": [
+            2.950793650793651,
+            3.600952380952381,
+            4.918684807256236,
+            5.568843537414966,
+            6.909795918367347,
+            7.501904761904762,
+            8.152063492063492,
+            8.83124716553288,
+            10.05609977324263,
+            10.729478458049886,
+            11.379637188208616,
+            12.639319727891156,
+            13.283673469387754,
+            13.951247165532878,
+            15.21673469387755,
+            15.86108843537415
+          ],
+          "notHumanListening": true,
+          "downbeatsVerified": true,
+          "downbeatRmsSeconds": 0.01421926018486409,
+          "maximumDownbeatError": 0.02321995464852611,
+          "downbeatMatches": 4
+        }
+      },
+      {
+        "from": "audio/songs/track-6.mp3",
+        "to": "audio/songs/track-233.mp3",
+        "error": "Post-render rhythm certificate failed",
+        "postRenderRhythm": {
+          "method": "rendered-hpss-attacks-v1",
+          "mode": "metrical-rhythmic",
+          "accepted": false,
+          "sourceAttacks": 22,
+          "incomingAttacks": 14,
+          "matches": 11,
+          "agreement": 0.5,
+          "rmsSeconds": 0.02745191129030573,
+          "firstHalfMatches": 6,
+          "secondHalfMatches": 5,
+          "sharedPerBar": [
+            3,
+            3,
+            2,
+            3
+          ],
+          "sourceObserved": [
+            0.38498866213151933,
+            1.0467573696145125,
+            1.6853061224489796,
+            2.3354648526077098,
+            2.974013605442177,
+            3.6415873015873017,
+            4.2569160997732425,
+            4.930294784580499,
+            5.557233560090703,
+            6.201587301587302,
+            6.840136054421769,
+            7.496099773242631,
+            8.152063492063492,
+            8.802222222222222,
+            9.429160997732426,
+            10.067709750566893,
+            10.717868480725622,
+            11.397052154195011,
+            12.00657596371882,
+            12.645124716553287,
+            13.295283446712018,
+            14.618820861678003
+          ],
+          "incomingObserved": [
+            2.939183673469388,
+            3.5893424036281183,
+            4.924489795918367,
+            5.574648526077097,
+            6.898185941043084,
+            7.490294784580499,
+            8.152063492063492,
+            10.061904761904762,
+            10.70625850340136,
+            12.633514739229025,
+            13.277868480725623,
+            13.939637188208616,
+            15.210929705215419,
+            15.855283446712019
+          ],
+          "notHumanListening": true,
+          "downbeatsVerified": true,
+          "downbeatRmsSeconds": 0.02031746031746013,
+          "maximumDownbeatError": 0.03482993197278894,
+          "downbeatMatches": 4
+        }
+      }
+    ]
+  },
+  "wide-feedback-dense.json": {
+    "tracks": 227,
+    "scope": {
+      "name": "Ste",
+      "tracks": 227,
+      "unavailableMembers": 0,
+      "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+    },
+    "profileFunnel": {
+      "Ste": {
+        "pairs": 51292,
+        "meterOrTempo": 29857,
+        "noCoherentInitialBars": 7824,
+        "incomingVocalOrLyric": 45,
+        "localHarmony": 8,
+        "noCoherentEndingBars": 13556,
+        "partialCandidates": 2
+      }
+    },
+    "pairConditions": {
+      "Ste": {
+        "bpm": 28193,
+        "meterAndSpan": 1662,
+        "voice": 45,
+        "harmony": 8,
+        "observedDownbeat": 1,
+        "affineDownbeatFit": 1,
+        "completeCandidates": 2
+      }
+    },
+    "windowExclusions": {
+      "Ste": {
+        "barSpan": 1116480,
+        "meter": 69809,
+        "bpm": 2622,
+        "voice": 1395,
+        "affineDownbeatFit": 132,
+        "pcmBounds": 23,
+        "observedDownbeat": 41,
+        "harmony": 167,
+        "overlapDuration": 43,
+        "observedPulseAgreement": 6,
+        "downbeatTiming": 2
+      }
+    },
+    "windows": 19,
+    "sha256": "b1622a8293773a256035dac0813f4ea167fc5a191f8af1ea05a64c45332a62f2"
+  }
+}
