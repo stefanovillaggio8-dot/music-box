@@ -18,6 +18,10 @@ on:
       - '.github/workflows/composite-browser.yml'
   workflow_dispatch:
     inputs:
+      forensic_source_key:
+        description: 'Optional original recording for independent source-only control; actual personal Ste membership is mandatory'
+        type: string
+        default: ''
       forensic_source_capture:
         description: 'Offline Ste source-window artifacts only; never certify or change user playback'
         type: boolean
@@ -218,6 +222,7 @@ jobs:
         env:
           MUSICBOX_NATIVE_BROWSER: ${{ matrix.browser }}
           MUSICBOX_NATIVE_WINDOW_OUTPUT: native-window
+          MUSICBOX_NATIVE_SOURCE_KEY: ${{ inputs.forensic_source_key }}
       - uses: actions/upload-artifact@v4
         with:
           name: forensic-source-${{ matrix.runner }}-${{ matrix.browser }}

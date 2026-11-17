@@ -9,12 +9,17 @@ const sim=fs.readFileSync(path.join(root,'tools/simulate-library-listening.cjs')
 process.argv.push('--personal-only=true','--exclude-playlists=Ste:gym');
 const {members}=new Function('require','__dirname',sim.slice(0,sim.indexOf('(async()=>'))+'return {members};')(require,path.join(root,'tools'));
 const personal=new Set(members('Ste').map(t=>'audio/'+t.file));
-assert.ok(personal.has(candidate.sourceKey)&&personal.has(candidate.targetKey),'Both recordings must remain in the actual personal Ste scope');
-const index=require('../dj-deep-analysis.json'),entry=index.entries[candidate.sourceKey];assert.equal(entry.sha,cue.sourceSha);assert.equal(index.entries[candidate.targetKey].sha,cue.targetSha);
+const captureKey=process.env.MUSICBOX_NATIVE_SOURCE_KEY||candidate.sourceKey,isCandidate=captureKey===candidate.sourceKey;
+assert.match(captureKey,/^audio\/songs\/[A-Za-z0-9_-]+\.mp3$/);
+assert.ok(personal.has(captureKey)&&(!isCandidate||personal.has(candidate.targetKey)),'Every captured recording must remain in the actual personal Ste scope');
+const index=require('../dj-deep-analysis.json'),entry=index.entries[captureKey],sourceSha=entry.sha;
+assert.equal(entry.status,'ok');assert.ok(Number.isFinite(entry.duration)&&entry.duration>26);
+if(isCandidate){assert.equal(sourceSha,cue.sourceSha);assert.equal(index.entries[candidate.targetKey].sha,cue.targetSha);}
+const captureCue=isCandidate?cue:{begin:entry.duration-17+.8,composite:{preRoll:.3}};
 const sha256=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
- const response=await fetch('https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+candidate.sourceKey.slice(6));assert.equal(response.ok,true);
- const bytes=Buffer.from(await response.arrayBuffer());assert.ok(bytes.length<32e6);assert.equal(crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex'),cue.sourceSha);
+ const response=await fetch('https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+captureKey.slice(6));assert.equal(response.ok,true);
+ const bytes=Buffer.from(await response.arrayBuffer());assert.ok(bytes.length<32e6);assert.equal(crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex'),sourceSha);
  fs.mkdirSync(folder,{recursive:true});const written=new Map();let server,browser;
  try{
   server=http.createServer((req,res)=>{
@@ -43,8 +48,8 @@ const sha256=b=>crypto.createHash('sha256').update(b).digest('hex');
     }finally{await ctx.close()}
    }
    return rows;
-  },cue);
-  const result={method:'actual-native-source-window-v1',forensicOnly:true,notPlaybackCertification:true,physicalIPhone:false,nativePlatform:process.platform,browser:browserName,browserVersion:browser.version(),sourceKey:candidate.sourceKey,targetKey:candidate.targetKey,sourceSha:cue.sourceSha,originalSha256:sha256(bytes),originalBytes:bytes.length,candidateAssetSha256:cue.composite.sha256,windows:windows.map(w=>{const file=written.get(w.sampleRate);assert.equal(file.bytes,w.frames*8);return {...w,...file}})};
+  },captureCue);
+  const result={method:'actual-native-source-window-v1',forensicOnly:true,notPlaybackCertification:true,physicalIPhone:false,nativePlatform:process.platform,browser:browserName,browserVersion:browser.version(),sourceKey:captureKey,targetKey:isCandidate?candidate.targetKey:null,sourceSha,originalSha256:sha256(bytes),originalBytes:bytes.length,sourceOnlyControl:!isCandidate,candidateAssetSha256:isCandidate?cue.composite.sha256:null,windows:windows.map(w=>{const file=written.get(w.sampleRate);assert.equal(file.bytes,w.frames*8);return {...w,...file}})};
   fs.writeFileSync(path.join(folder,'capture.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result,null,2));
  }finally{await browser?.close();if(server)await new Promise(r=>server.close(r));}
 })().catch(error=>{console.error(error);process.exitCode=1});
