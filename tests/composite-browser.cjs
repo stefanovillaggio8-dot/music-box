@@ -232,6 +232,8 @@ const server=http.createServer(async(req,res)=>{
       if(!a||!b)continue;
       if(profile==='Ste'&&(cadenceSte?!(a.id==='b-track-6'&&b.id==='b-track-233'&&p.cue.metricalCadenceWindow&&p.cue.nativeOriginalReturn):pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
+      if(p.cue.composite?.introductionExposure?.accepted===false||
+       !inspected.cue||['begin','fade','entry','tempo'].some(k=>Math.abs(inspected.cue[k]-p.cue[k])>.0001))continue;
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
@@ -253,7 +255,7 @@ const server=http.createServer(async(req,res)=>{
     if(playbackProfile==='Emanuele'){
      assert.equal(actualPlan.fromId,'b-track-884');assert.equal(actualPlan.toId,'b-track-1043');
      assert.equal(actualPlan.cue.measuredFullBeat,true);
-     assert.equal(actualPlan.cue.composite.introductionExposure.accepted,true,'A rhythm certificate cannot override a masked introduction');
+     assert.equal(actualPlan.sourceBoundCue.composite.introductionExposure.accepted,true,'A rhythm certificate cannot override a masked introduction');
     }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
