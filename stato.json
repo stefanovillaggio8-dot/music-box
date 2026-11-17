@@ -1115,7 +1115,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 79,
-    "s": 1937,
+    "s": 1938,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1739,7 +1739,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 78,
-    "s": 1929,
+    "s": 1930,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2116,13 +2116,13 @@
     "a": "thasup"
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 1,
+    "v": 2,
     "s": 496,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 1,
+    "v": 2,
     "s": 496,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Rino Gaetano"
@@ -2926,13 +2926,13 @@
     "a": "nayt"
    },
    "[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
-    "v": 1,
+    "v": 2,
     "s": 337,
     "t": "Eroina",
     "a": "Kid Yugi & Tutti Fenomeni"
    },
    "m:2026-11|[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
-    "v": 1,
+    "v": 2,
     "s": 337,
     "t": "Eroina",
     "a": "Kid Yugi & Tutti Fenomeni"
@@ -3172,14 +3172,14 @@
     "a": "Coez, Gemello"
    },
    "[\"end of beginning\",\"djo\"]": {
-    "v": 2,
-    "s": 308,
+    "v": 5,
+    "s": 324,
     "t": "End of Beginning",
     "a": "Djo"
    },
    "m:2026-11|[\"end of beginning\",\"djo\"]": {
-    "v": 2,
-    "s": 308,
+    "v": 5,
+    "s": 324,
     "t": "End of Beginning",
     "a": "Djo"
    },
@@ -6027,6 +6027,30 @@
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"somewhere i belong\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Somewhere I Belong",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"somewhere i belong\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Somewhere I Belong",
+    "a": "Linkin Park"
+   },
+   "[\"i love you so (jumpstyle slowed)\",\"ymrthk\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Love You So (Jumpstyle Slowed)",
+    "a": "YMRTHK"
+   },
+   "m:2026-11|[\"i love you so (jumpstyle slowed)\",\"ymrthk\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Love You So (Jumpstyle Slowed)",
+    "a": "YMRTHK"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
     "s": 448,
@@ -6831,29 +6855,29 @@
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
-   "[\"somewhere i belong\",\"linkin park\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Somewhere I Belong",
+   "[\"monster\",\"skillet\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Monster",
+    "a": "Skillet"
+   },
+   "m:2026-11|[\"monster\",\"skillet\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Monster",
+    "a": "Skillet"
+   },
+   "[\"crawling\",\"linkin park\"]": {
+    "v": 2,
+    "s": 39,
+    "t": "Crawling",
     "a": "Linkin Park"
    },
-   "m:2026-11|[\"somewhere i belong\",\"linkin park\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Somewhere I Belong",
+   "m:2026-11|[\"crawling\",\"linkin park\"]": {
+    "v": 2,
+    "s": 39,
+    "t": "Crawling",
     "a": "Linkin Park"
-   },
-   "[\"i love you so (jumpstyle slowed)\",\"ymrthk\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "I Love You So (Jumpstyle Slowed)",
-    "a": "YMRTHK"
-   },
-   "m:2026-11|[\"i love you so (jumpstyle slowed)\",\"ymrthk\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "I Love You So (Jumpstyle Slowed)",
-    "a": "YMRTHK"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
@@ -7664,30 +7688,6 @@
     "s": 229,
     "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"monster\",\"skillet\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Monster",
-    "a": "Skillet"
-   },
-   "m:2026-11|[\"monster\",\"skillet\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Monster",
-    "a": "Skillet"
-   },
-   "[\"crawling\",\"linkin park\"]": {
-    "v": 2,
-    "s": 39,
-    "t": "Crawling",
-    "a": "Linkin Park"
-   },
-   "m:2026-11|[\"crawling\",\"linkin park\"]": {
-    "v": 2,
-    "s": 39,
-    "t": "Crawling",
-    "a": "Linkin Park"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 3,
@@ -10119,6 +10119,18 @@
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"all i wanted\",\"paramore\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "All I Wanted",
+    "a": "Paramore"
+   },
+   "m:2026-11|[\"all i wanted\",\"paramore\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "All I Wanted",
+    "a": "Paramore"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
     "s": 328,
@@ -10643,13 +10655,13 @@
    },
    "[\"tiscatterò una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 334,
+    "s": 337,
     "t": "Tiscatterò una foto",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"tiscatterò una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 334,
+    "s": 337,
     "t": "Tiscatterò una foto",
     "a": "Tiziano Ferro"
    },
@@ -10928,18 +10940,6 @@
     "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"all i wanted\",\"paramore\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "All I Wanted",
-    "a": "Paramore"
-   },
-   "m:2026-11|[\"all i wanted\",\"paramore\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "All I Wanted",
-    "a": "Paramore"
    }
   },
   "Diego": {
