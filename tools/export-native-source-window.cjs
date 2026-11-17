@@ -49,7 +49,7 @@ const sha256=b=>crypto.createHash('sha256').update(b).digest('hex');
    }
    return rows;
   },captureCue);
-  const result={method:'actual-native-source-window-v1',forensicOnly:true,notPlaybackCertification:true,physicalIPhone:false,nativePlatform:process.platform,browser:browserName,browserVersion:browser.version(),sourceKey:captureKey,targetKey:isCandidate?candidate.targetKey:null,sourceSha,originalSha256:sha256(bytes),originalBytes:bytes.length,sourceOnlyControl:!isCandidate,candidateAssetSha256:isCandidate?cue.composite.sha256:null,windows:windows.map(w=>{const file=written.get(w.sampleRate);assert.equal(file.bytes,w.frames*8);return {...w,...file}})};
+  const result={method:'actual-native-source-window-v1',decoderApi:'AudioContext.decodeAudioData',captureRevision:process.env.GITHUB_SHA||null,workflowRun:process.env.GITHUB_RUN_ID||null,forensicOnly:true,notPlaybackCertification:true,physicalIPhone:false,nativePlatform:process.platform,browser:browserName,browserVersion:browser.version(),sourceKey:captureKey,targetKey:isCandidate?candidate.targetKey:null,sourceSha,originalSha256:sha256(bytes),originalBytes:bytes.length,sourceOnlyControl:!isCandidate,candidateAssetSha256:isCandidate?cue.composite.sha256:null,windows:windows.map(w=>{const file=written.get(w.sampleRate);assert.equal(file.bytes,w.frames*8);return {...w,...file}})};
   fs.writeFileSync(path.join(folder,'capture.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result,null,2));
  }finally{await browser?.close();if(server)await new Promise(r=>server.close(r));}
 })().catch(error=>{console.error(error);process.exitCode=1});

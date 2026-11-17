@@ -17,14 +17,17 @@ def main():
     if not captures:raise ValueError('No actual native captures')
     for f,c in captures:
         if c.get('method')!='actual-native-source-window-v1' or c.get('sourceSha')!=sha or c.get('originalSha256')!=hashlib.sha256(raw).hexdigest():raise ValueError('Original/capture identity mismatch')
-    result={'method':'nominal-original-vs-actual-native-window-v1','sourceSha':sha,'forensicOnly':True,'playbackCertified':False,
+    info=json.loads(subprocess.check_output(['ffprobe','-v','error','-select_streams','a:0','-show_entries','stream=sample_rate','-of','json',str(args.original)]))
+    source_rate=int(info['streams'][0]['sample_rate'])
+    if source_rate not in [32000,44100,48000]:raise ValueError('Unstudied original MP3 rate')
+    result={'method':'nominal-original-vs-actual-native-window-v1','sourceSha':sha,'originalSampleRate':source_rate,'decoderApi':'AudioContext.decodeAudioData','forensicOnly':True,'playbackCertified':False,
             'correctionApplied':False,'references':{},'captures':[]}
     for rate in [44100,48000]:
         pcm=subprocess.check_output(['ffmpeg','-nostdin','-v','error','-threads','2','-i',str(args.original),'-ac','2','-ar',str(rate),'-f','f32le','pipe:1'])
         ref=np.frombuffer(pcm,dtype='<f4').reshape(-1,2);result['references'][str(rate)]={'frames':len(ref),'sha256':hashlib.sha256(pcm).hexdigest()}
         # An explicitly labelled fixed-delay HYPOTHESIS, never a search or a
-        # value exported to runtime/certification. Original rate is 44.1kHz.
-        hypothesis=round(529*rate/44100)
+        # value exported to runtime/certification. The original rate is read from the container.
+        hypothesis=round(529*rate/source_rate)
         for file,c in captures:
             row=next(w for w in c['windows'] if w['sampleRate']==rate);data=(file.parent/row['file']).read_bytes()
             if hashlib.sha256(data).hexdigest()!=row['sha256'] or len(data)!=row['frames']*8 or row['startFrame']+row['frames']!=row['decodedSourceFrames']:raise ValueError('Native window bounds or bytes changed')

@@ -19,6 +19,6 @@
     "karaoke-scan-state.json": "450946d068deb50411f55b363a5bc21fed2ca2f37070c4a9afe9b4da547b7393"
   },
   "previousPublicVersion": "6.734",
-  "dataWrittenByRelease": false,
-  "physicalIPhoneTested": false
+  "physicalIPhoneTested": false,
+  "personalDataWrittenByRelease": false
 }
