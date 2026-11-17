@@ -2351,13 +2351,13 @@
    },
    "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 5,
-    "s": 495,
+    "s": 523,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 5,
-    "s": 495,
+    "s": 523,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
@@ -8915,13 +8915,13 @@
    },
    "[\"passione maledetta\",\"modÃÂ \"]": {
     "v": 6,
-    "s": 1055,
+    "s": 1059,
     "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
     "v": 6,
-    "s": 1055,
+    "s": 1059,
     "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
@@ -9286,8 +9286,8 @@
     "a": "thasup"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 2,
-    "s": 447,
+    "v": 3,
+    "s": 448,
     "t": "VENTANNI",
     "a": "MÃ¥neskin"
    },
@@ -9725,13 +9725,13 @@
    },
    "[\"passione maledetta\",\"modÃ \"]": {
     "v": 6,
-    "s": 1059,
+    "s": 1074,
     "t": "Passione maledetta",
     "a": "ModÃ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
     "v": 6,
-    "s": 1059,
+    "s": 1074,
     "t": "Passione maledetta",
     "a": "ModÃ "
    },
@@ -10018,8 +10018,8 @@
     "a": "ModÃ "
    },
    "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 444,
+    "v": 2,
+    "s": 445,
     "t": "VENTANNI",
     "a": "MÃ¥neskin"
    },
