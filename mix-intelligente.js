@@ -555,6 +555,38 @@ function analysisDatabase(){
 // Deep DJ index measures real MP3 audio in bounded cloud batches.
 // New or offline songs still fall back to local waveform analysis.
 let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;
+let deepRefreshNeeded=false,deepRefreshAttemptAt=0,deepRefreshRunning=false;
+function deepRefreshAllowed(state){
+ if(!state.needed||state.running||!state.enabled||state.hidden||state.offline||
+    state.transferring||state.mixing||state.seeking||state.now<state.retryAfter||
+    (state.attemptAt>0&&state.now-state.attemptAt<15*60000))return false;
+ if(state.paused)return true;
+ return state.readyState>=3&&state.bufferedAhead>=10&&state.remaining>45;
+}
+function refreshNewTrackIndex(app,audio){
+ if(!deepRefreshNeeded||deepRefreshRunning)return;
+ let ahead=0;
+ try{for(let i=0;i<audio?.buffered?.length;i++)
+  if(audio.buffered.start(i)<=audio.currentTime&&audio.buffered.end(i)>=audio.currentTime)
+   ahead=audio.buffered.end(i)-audio.currentTime;
+ }catch(_){}
+ if(!deepRefreshAllowed({needed:deepRefreshNeeded,running:deepRefreshRunning,enabled,
+  hidden:document.hidden,offline:typeof navigator!=='undefined'&&navigator.onLine===false,
+  transferring:offlineTransferPriority||app?.offlineBusy?.(),mixing:mixing||!!active||!!mobileActive,
+  seeking:audio?.seeking||Date.now()<seekRecoveryUntil,now:Date.now(),retryAfter:deepRetryAfter,
+  attemptAt:deepRefreshAttemptAt,paused:!audio||audio.paused||audio.ended,
+  readyState:audio?.readyState,bufferedAhead:ahead,remaining:audio?.duration-audio?.currentTime}))return;
+ deepRefreshRunning=true;deepRefreshAttemptAt=Date.now();
+ // Revalidate server metadata, never download models or MP3s here. Keep the
+ // request pending while a just-imported recording awaits its hourly batch.
+ loadDeepIndex(true).then(()=>{
+  const all=app?.allTracks?.()||[];
+  deepRefreshNeeded=recentLibraryIds.some(id=>{
+   const track=all.find(t=>t.id===id);
+   return track&&!deepLookup(track);
+  });
+ }).catch(()=>{}).finally(()=>{deepRefreshRunning=false});
+}
 // Existing timed lyrics are useful for SAFETY only: an LRC line marks
 // the beginning of words, not the moment the singer stopped singing.
 // Offline-built SHA/duration-bound metadata adds conservative guards.
@@ -727,7 +759,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=13",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=17",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -742,6 +774,8 @@ function loadDeepIndex(force=false){
    const next=app?.allTracks?.()?.find(t=>t.id===nextId);
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
+   const recent=recentLibraryIds.map(id=>app?.allTracks?.()?.find(t=>t.id===id)).filter(Boolean);
+   const beforeRecent=JSON.stringify(recent.map(t=>deepLookup(t)));
    deepIndex=json;
    if(typeof window!=="undefined")loadDJLyricBoundaries();
    if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
@@ -754,6 +788,7 @@ function loadDeepIndex(force=false){
    const changed=!previous||
      previous.analyzed!==json.analyzed||
      previous.sourceCount!==json.sourceCount||
+     beforeRecent!==JSON.stringify(recent.map(t=>deepLookup(t)))||
      JSON.stringify(beforeNow)!==JSON.stringify(now?deepLookup(now):null)||
      JSON.stringify(beforeNext)!==JSON.stringify(next?deepLookup(next):null);
    deepLoadFailures=0;deepRetryAfter=0;
@@ -2794,6 +2829,14 @@ function structuralContentDecision(a,p){
   penalty:fraction*100+remaining/10+Math.max(0,tail.remainingEnergyRatio-.5)*2,...details};
 }
 function incomingContentDecision(b,p){
+ const exposure=p?.composite?.introductionExposure;
+ // Entry zero alone does not preserve an introduction: it can be played
+ // inaudibly underneath the outgoing recording. Failed rendered exposure
+ // must veto the cue before its rhythmic certificate can promote it.
+ if(exposure&&(exposure.accepted!==true||exposure.targetSha!==b?.sha||
+    exposure.assetSha256!==p?.composite?.sha256||
+    exposure.method!=='rendered-introduction-masking-screen-v1'))
+  return {allowed:false,reason:'rendered-incoming-introduction-obscured',skippedSeconds:0};
  if(!Number.isFinite(p?.entry)||p.entry<0)return {allowed:false,reason:'invalid-entry'};
  if(p.entry<=.001)return {allowed:true,reason:'incoming-recording-from-start',skippedSeconds:0};
  const proof=b?.musicalContent?.leadingDigitalSilence;
@@ -2848,6 +2891,28 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   [e.sourceObservedDownbeats,e.targetObservedDownbeats,e.sourceModelDownbeats,e.targetModelDownbeats].every(v=>v.every((n,i)=>Number.isFinite(n)&&(!i||n>v[i-1])))&&
   e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
   e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
+ const cadence=p?.metricalCadenceWindow===true,cadenceWindow=e?.cadenceWindow;
+ const cadenceTailValid=(t,rate,channels=true)=>t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&t.sampleRate===rate&&
+  t.sourceGainApplied===false&&t.searchedEntireTail===true&&t.onsetThreshold===.25&&t.relativeRmsCeiling===.5&&
+  [t.rhythmicSeconds,t.sourceTailThrough,t.tailSeconds,t.maximumTailOnset,t.maximumRelativeRms,t.bodyRmsMedian,t.maximumTailRms].every(Number.isFinite)&&
+  Math.abs(t.rhythmicSeconds-cadenceWindow.rhythmicSeconds)<.001&&Math.abs(t.tailSeconds-cadenceWindow.tailSeconds)<.001&&
+  Math.abs(t.sourceTailThrough-p.fade)<.001&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&
+  t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&t.bodyRmsMedian>=.003&&t.maximumTailRms>=0&&
+  (!channels||Array.isArray(t.channelProofs)&&t.channelProofs.length===2&&t.channelProofs.every(v=>cadenceTailValid(v,rate,false)));
+ const cadenceValid=cadence&&pickup&&originalReturn&&p.nativeRecoveryCurve==='sine-1.2-v1'&&c?.nativeRecoveryCurve===p.nativeRecoveryCurve&&
+  e.bars===4&&cadenceWindow?.method==='four-observed-bars-and-preserved-decay-v1'&&
+  [cadenceWindow.sourceStart,cadenceWindow.sourceEnd,cadenceWindow.targetStart,cadenceWindow.targetEnd,cadenceWindow.rhythmicSeconds,cadenceWindow.tailSeconds].every(Number.isFinite)&&
+  cadenceWindow.rhythmicSeconds>=4.5&&cadenceWindow.tailSeconds>=.65&&cadenceWindow.tailSeconds<=4&&
+  Math.abs(cadenceWindow.rhythmicSeconds+cadenceWindow.tailSeconds-p.fade)<.001&&
+  cadenceWindow.sourceStart>=p.begin&&cadenceWindow.sourceEnd<=p.end&&cadenceWindow.targetStart>=0&&cadenceWindow.targetStart<=8&&
+  cadenceWindow.sourceEnd>cadenceWindow.sourceStart&&cadenceWindow.targetEnd>cadenceWindow.targetStart&&
+  Math.abs(cadenceWindow.sourceStart-e.sourceModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.sourceEnd-e.sourceModelDownbeats?.[4])<.001&&
+  Math.abs(cadenceWindow.targetStart-e.targetModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.targetEnd-e.targetModelDownbeats?.[4])<.001&&
+  c.cadenceTailProof?.sourceSha===a.sha&&cadenceTailValid(c.cadenceTailProof.at48000,48000)&&cadenceTailValid(c.cadenceTailProof.at44100,44100)&&
+  [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.sourceClockProof;
+   return v?.method==='actual-native-source-clock-v1'&&v.sourceSha===a.sha&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')&&
+    [v.decodedOffsets,v.mediaOffsets].every(values=>Array.isArray(values)&&values.length>0&&values.every(n=>Number.isFinite(n)&&[0,c.nativeSplice.sourceClock.primingFrames/c.nativeSplice.sourceClock.sampleRate].some(e=>Math.abs(n-e)<1e-9)));});
+ if(cadence&&!cadenceValid||!cadence&&(p?.nativeRecoveryCurve!=null||c?.nativeRecoveryCurve!=null))return null;
  const pickupValid=pickup&&p.nativeOriginalReturn===true&&originalReturn&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
   pickupCertificate.originalModelAnchorsRetained===true&&
   [pickupCertificate.gridRms,pickupCertificate.gridMaximum,pickupCertificate.observedSharedRms,pickupCertificate.observedShared,
@@ -2858,7 +2923,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   pickupCertificate.minimumSharedPerBar>=2&&pickupCertificate.observedDownbeats===e.bars&&pickupCertificate.modelGridPoints===e.bars*e.beatsPerBar&&
   pickupCertificate.maximumModelAnchorRefinement>=0&&pickupCertificate.maximumModelAnchorRefinement<=.075&&
   pickupCertificate.observedBarPairRms>=0&&pickupCertificate.observedBarPairRms<=.025&&pickupCertificate.observedBarPairMaximum>=0&&pickupCertificate.observedBarPairMaximum<=.05&&
-  p.preservedEntrance==='metrical-pickup-033-v1'&&c?.renderedEntrance===p.preservedEntrance&&c.releaseSeconds===1.5&&
+  p.preservedEntrance==='metrical-pickup-033-v1'&&c?.renderedEntrance===p.preservedEntrance&&c.releaseSeconds===(cadenceValid?1.2:1.5)&&
   c.envelopeVersion===4&&c.sampleRate===48000&&c.nativeDecoderProof?.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
   [44100,48000].every(rate=>{const v=c.nativeDecoderProof.rates?.[rate];return v&&[v.samplePeak,v.overlapPeak].every(Number.isFinite)&&v.samplePeak>0&&v.samplePeak<=.9992&&v.overlapPeak>=0&&v.overlapPeak<=.962&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')})&&
   pickupRendered(r)&&resampled?.method==='encoded-common-resampling-v1'&&resampled.sampleRate===44100&&resampled.assetSha256===c.sha256&&
@@ -2944,7 +3009,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
     !pickup&&![p.fullOnsetFirst,p.fullOnsetSecond].every(Number.isFinite)||
     p.measuredPulseMode&&![p.fullPulseFirst,p.fullPulseSecond,p.fullPulseAttackSupport].every(Number.isFinite)||
-    p.begin<26||p.fade<4.5||p.fade>16||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
+    p.begin<26||p.fade<4.5||p.fade>(cadenceValid?18:16)||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     p.tempo<.95||p.tempo>1.05||p.entry+p.fade*p.tempo>b.duration-2||
     !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.beatPulseAgreement<0||!pickup&&p.beatPulseAgreement<.9||p.beatPulseAgreement>1||p.measuredPlacementError<0||p.measuredPlacementError>(pickup?.020:.040)||p.grooveScore<.36||
     (!pickup&&(p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.9):
@@ -6736,6 +6801,7 @@ function tick(){
   return;
  }
  const next=app?.mixNext();
+ refreshNewTrackIndex(app,audio);
  if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
  // within five seconds of their start or the dedicated precision timer.
@@ -8604,6 +8670,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    measuredBeatBridge:!!cue.measuredBeatBridge,
    measuredFullBeat:!!cue.measuredFullBeat,structuralBeat:!!cue.structuralBeat,metricalRhythmic:!!cue.metricalRhythmic,
    nativeOriginalReturn:cue.nativeOriginalReturn===true,metricalPickupWindow:cue.metricalPickupWindow===true,
+   metricalCadenceWindow:cue.metricalCadenceWindow===true,nativeRecoveryCurve:cue.nativeRecoveryCurve,
    instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
    independentLowBand:!!cue.independentLowBand,
@@ -8783,6 +8850,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   // the CURRENT song. Preserve the actual playback and manually queued items.
   const added=Array.isArray(change?.addedIds)?change.addedIds:[];
   recentLibraryIds=[...new Set([...added,...recentLibraryIds])].slice(0,32);
+  if(added.length)deepRefreshNeeded=true;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
   shuffleRetryAt=0;shuffleAttempts=0;shuffleLastDecision=null;
   if(!mixing&&!active&&!mobileActive){

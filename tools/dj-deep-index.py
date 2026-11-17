@@ -394,6 +394,11 @@ def main():
         try:
             data=fetch(url,timeout=90)
             if len(data)<8192 or len(data)>24000000:raise ValueError("Unexpected MP3 size")
+            # The branch can advance between catalog discovery and fetch.
+            # Never attach the previous file's identity to replacement PCM.
+            import hashlib
+            blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+            if blob!=item['sha']:raise ValueError("Original MP3 Git identity changed during analysis")
             with tempfile.NamedTemporaryFile(suffix=".mp3",delete=False) as f:
                 temp=f.name;f.write(data)
             measured=analyze(temp)

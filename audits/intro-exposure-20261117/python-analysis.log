@@ -1,0 +1,10 @@
+PASS: multi-beat tempo precision and unverified-grid fallback.
+PASS: actual PCM analyzed, beat, chroma, verified silence, timelines.
+PASS: decaying last beat detected before real silence, final harmony preserved.
+PASS: loud final beat protected; no invented empty tail.
+PASS: waveform-only structure markers, frequency evidence and five measured windows.
+PASS: real pulse-grid timing, missing-beat and drifting-beat safeguards.
+PASS: timbre/harmonic structural boundaries independent of RMS crescendos.
+{"sources": 1, "analyzed": 1, "processedNow": 1, "failuresNow": 0, "remaining": 0}
+{"sources": 1, "analyzed": 0, "processedNow": 0, "failuresNow": 1, "remaining": 0}
+PASS: future recording automatically discovered/persisted; replacement-byte race rejected.

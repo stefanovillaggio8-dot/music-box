@@ -1,6 +1,22 @@
 /* SoundTouchJS 0.3.0 is distributed separately under LGPL-2.1; see vendor/soundtouchjs/LICENSE. */
 import {SoundTouch,SimpleFilter} from './vendor/soundtouchjs/soundtouch.mjs';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+// A four-bar cadence plus its measured decay has a different duration from
+// a four-bar loop. This is proposal geometry, never a playback certificate.
+export function cadenceSpanValid(cue){
+ const e=cue?.structuralEvidence,w=e?.cadenceWindow;
+ return cue?.metricalCadenceWindow===true&&cue.metricalPickupWindow===true&&cue.nativeOriginalReturn===true&&
+  cue.nativeRecoveryCurve==='sine-1.2-v1'&&cue.preservedFileTail===true&&cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
+  cue.entry===0&&e.bars===4&&w?.method==='four-observed-bars-and-preserved-decay-v1'&&
+  [cue.fade,w.rhythmicSeconds,w.tailSeconds,w.sourceStart,w.sourceEnd,w.targetStart,w.targetEnd].every(Number.isFinite)&&
+  cue.fade>=4.5&&cue.fade<=18&&w.rhythmicSeconds>=4.5&&w.tailSeconds>=.65&&w.tailSeconds<=4&&
+  Math.abs(w.rhythmicSeconds+w.tailSeconds-cue.fade)<.001&&w.sourceEnd>w.sourceStart&&w.targetEnd>w.targetStart&&
+  w.targetStart>=0&&w.targetStart<=8&&w.sourceStart>=cue.begin&&w.sourceEnd<=cue.end&&
+  e.sourcePhaseConfidence>=.8&&e.targetPhaseConfidence>=.8&&
+  e.sourceModelDownbeats?.length===5&&e.targetModelDownbeats?.length===5&&
+  Math.abs(w.sourceStart-e.sourceModelDownbeats[0])<.001&&Math.abs(w.sourceEnd-e.sourceModelDownbeats[4])<.001&&
+  Math.abs(w.targetStart-e.targetModelDownbeats[0])<.001&&Math.abs(w.targetEnd-e.targetModelDownbeats[4])<.001;
+}
 export function playedAt(t,tempo,hold,ramp){
  const a=Math.min(Math.max(0,t),hold),b=clamp(t-hold,0,ramp);
  return a*tempo+b*tempo+(1-tempo)*b*b/(2*ramp)+Math.max(0,t-hold-ramp);
@@ -39,7 +55,7 @@ export function stretchClip(clip,cue){
  const sr=Number(clip.rate),channels=clip.channels,tempo=Number(cue.tempo),fade=Number(cue.fade);
  if(!Array.isArray(channels)||channels.length<1||channels.length>2||
   !Number.isFinite(sr)||sr<8000||sr>96000||!Number.isFinite(tempo)||tempo<.95||tempo>1.05||
-  !Number.isFinite(fade)||fade<4.5||fade>16||
+  !Number.isFinite(fade)||fade<4.5||fade>(cadenceSpanValid(cue)?18:16)||
   channels.some(c=>!(c instanceof Float32Array)||c.length!==channels[0].length||c.length>sr*40))throw Error('Invalid time-stretch clip');
  if(cue.stretchProfile!=null&&cue.stretchProfile!=='transient-60-12-8-v1')throw Error('Unsupported time-stretch profile');
  const offset=cue.entry-clip.start,prefix=Math.round(offset*sr),inputLength=channels[0].length-prefix;

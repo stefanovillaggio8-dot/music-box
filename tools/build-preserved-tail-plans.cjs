@@ -10,6 +10,7 @@ const {rhythmicTail}=require('./pcm-rhythmic-tail.cjs');
 const {validExactSuffix}=require('./exact-silent-suffix.cjs');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const partial=arg('metrical','false')==='true';
+const cadenceWindows=arg('metrical-cadence','false')==='true';
 const tailWindows=arg('rhythmic-tail','true')==='true';
 const allowHandoff=arg('vocal-handoff','true')==='true';
 const separateGrids=arg('separate-grid-hypotheses','true')==='true';
@@ -105,7 +106,7 @@ for(const a of prepared)for(const b of prepared){
  for(const x of a.source)for(const y of b.target){
   if(x.meter!==y.meter){excluded('meter');continue;}if(x.bars!==y.bars){excluded('barSpan');continue;}reached.add('meterAndSpan');
   const pairOut=x.observed||a.outro,pairIn=y.observed||b.intro;
-  if(partial&&a.raw.duration-x.end>.65)continue;
+  if(partial&&a.raw.duration-x.end>.65&&!(cadenceWindows&&x.bars===4))continue;
   const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05){
    if(diagnose){for(const factor of [.5,2])if(ratio*factor>=.95&&ratio*factor<=1.05){
     const key=a.key+'|'+b.key,previous=octavePairs.get(key),cost=Math.abs(Math.log(ratio*factor));
@@ -122,7 +123,7 @@ for(const a of prepared)for(const b of prepared){
   if(!fitted.length)excluded('affineDownbeatFit');else reached.add('affineDownbeatFit');
   for(const {rate,begin} of fitted){
    const fade=a.raw.duration-begin,end=a.raw.duration;
-   if(fade<4.5||fade>(partial?12:16)){excluded('overlapDuration');continue;}
+   if(fade<4.5||fade>(partial?(cadenceWindows&&x.bars===4?18:12):16)){excluded('overlapDuration');continue;}
    if(begin<pairOut.start+.1||begin<26||fade*rate>pairIn.end-.1){excluded('pcmBounds');continue;}tempo=true;reached.add('duration');
    const guard=clear(b.e,0,fade*rate+.3);
    const incomingClear=guard?.clear&&!(Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<fade*rate+.3);
@@ -155,12 +156,15 @@ for(const a of prepared)for(const b of prepared){
    }
    if(!windowHarmony){excluded('tailForegroundHarmony');continue;}
    const observedBarPartial=fit.metricalCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2';
+   const cadenceTail=partial&&cadenceWindows&&x.bars===4&&observedBarPartial?rhythmicTail(pairOut,begin,fade,x.end):null;
+   const cadence=!!cadenceTail&&cadenceTail.tailSeconds<=4&&y.start<=8;
+   if(partial&&(a.raw.duration-x.end>.65||fade>12)&&!cadence){excluded('unverifiedCadenceDecay');continue;}
    // The original-PCM phase return is after EOF/tempo return; keep its
    // entire possible search region, plus a vocal margin, before any voice.
    const nativeReturnEnd=fade*rate+.85*(rate+1)/2+.25+.3;
    const nativeReturnGuard=observedBarPartial?clear(b.e,0,nativeReturnEnd):null;
    if(observedBarPartial&&(!nativeReturnGuard?.clear||Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<nativeReturnEnd)){excluded('nativeReturnVoice');continue;}
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,observedBarPartial,nativeReturnGuard,
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,observedBarPartial,nativeReturnGuard,cadence,cadenceTail,
     complete:!partial&&!!(full||zeroFit),...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
     vocalOverlapPolicy:handoff?'separated-vocal-handoff-v1':incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn,
     ...(zeroFit?{exactSilentSuffix:{...silence,beatVerificationSeconds:silentSeconds}}:{})});
@@ -175,6 +179,7 @@ for(const a of prepared)for(const b of prepared){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial&&!c.rhythmicTail,metricalRhythmic:partial||!!c.rhythmicTail,
     ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),...(c.observedBarPartial?{metricalPickupWindow:true,nativeOriginalReturn:true}:{}),
+    ...(c.cadence?{metricalCadenceWindow:true,nativeRecoveryCurve:'sine-1.2-v1'}:{}),
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
     begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.observedBarPartial?'metrical-pickup-033-v1':c.rhythmicTail?'rhythmic-tail-foreground-v1':c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
@@ -189,6 +194,9 @@ for(const a of prepared)for(const b of prepared){
     structuralEvidence:{version:1,...(c.exactSilentSuffix?{exactSilentSuffix:c.exactSilentSuffix}:{}),...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
      ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),
      ...(c.rhythmicTail?{rhythmicWindow:c.rhythmicTail}:{}),
+     ...(c.cadence?{cadenceWindow:{method:'four-observed-bars-and-preserved-decay-v1',
+      sourceStart:x.start,sourceEnd:x.end,targetStart:y.start,targetEnd:y.end,
+      rhythmicSeconds:c.cadenceTail.seconds,tailSeconds:c.cadenceTail.tailSeconds,humanVerified:false}}:{}),
      downbeatRms:c.downbeatRms,...(c.nativeReturnGuard?{incomingNativeReturn:c.nativeReturnGuard}:{}),incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,...(c.vocalHandoff?{vocalHandoff:c.vocalHandoff}:{}),
      sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
      sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,

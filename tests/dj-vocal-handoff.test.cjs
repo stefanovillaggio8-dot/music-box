@@ -5,6 +5,12 @@ const {engine,tracks}=new Function('require','__dirname',tool.slice(0,tool.index
 const entries=new Map(tracks);
 for(const [from,to] of [[934,1124],[700,521]])test(`real original ${from} to ${to} uses separated vocals with both recordings intact`,()=>{
  const a=entries.get('audio/songs/track-'+from+'.mp3'),b=entries.get('audio/songs/track-'+to+'.mp3'),cue=engine.transition(a,b,a.duration);
+ if(from===934){
+  const record=a.structuralBeatPlans[b.sha];
+  assert.equal(record.cue.composite.introductionExposure.accepted,false);
+  assert.notEqual(cue?.structuralBeat,true,'separated voices do not guarantee an exposed musical introduction');
+  return;
+ }
  assert.equal(engine.desktopBeatPairCertified(a,b,cue),true);assert.equal(cue.entry,0);assert.equal(cue.end,a.duration);
  assert.equal(cue.structuralEvidence.vocalOverlapPolicy,'separated-vocal-handoff-v1');
  const record=a.structuralBeatPlans[b.sha],validate=p=>engine.validatePreservedFileTailCue(record,p,a,b,a.duration);

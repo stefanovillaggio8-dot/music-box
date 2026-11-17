@@ -164,7 +164,7 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
   "const bridge=()=>null;const iosIndexCanLoadNow=()=>true;let offlineTransferPriority=false,deepTransferController=null;"+
   "let enabled=true,mixing=false,plannedFor='',plan=null,"+
   "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
-  "const $=()=>null;"+
+  "const $=()=>null;const recentLibraryIds=[];"+
   code+
   "return {loadDeepIndex,stat:()=>({retryAfter:deepRetryAfter,loaded:!!deepIndex})};"
  )(fetch,clock,queued);

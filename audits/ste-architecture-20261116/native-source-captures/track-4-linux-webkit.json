@@ -1,0 +1,46 @@
+{
+  "method": "actual-native-source-window-v1",
+  "forensicOnly": true,
+  "notPlaybackCertification": true,
+  "physicalIPhone": false,
+  "nativePlatform": "linux",
+  "browser": "webkit",
+  "browserVersion": "27.2",
+  "sourceKey": "audio/songs/track-4.mp3",
+  "targetKey": null,
+  "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+  "originalSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+  "originalBytes": 3045085,
+  "sourceOnlyControl": true,
+  "candidateAssetSha256": null,
+  "windows": [
+    {
+      "sampleRate": 44100,
+      "startFrame": 4845575,
+      "frames": 749689,
+      "channels": 2,
+      "decodedSourceFrames": 5595264,
+      "decodedSourceDuration": 126.87673469387755,
+      "throughDecodedEOF": true,
+      "sourceProcessing": "none",
+      "fittedLagApplied": false,
+      "file": "44100.f32le",
+      "bytes": 5997512,
+      "sha256": "026b213e65757696fa3863006c0acc4521c2d4b06426e84706f0034b2cc8c154"
+    },
+    {
+      "sampleRate": 48000,
+      "startFrame": 5274096,
+      "frames": 815987,
+      "channels": 2,
+      "decodedSourceFrames": 6090083,
+      "decodedSourceDuration": 126.87672916666666,
+      "throughDecodedEOF": true,
+      "sourceProcessing": "none",
+      "fittedLagApplied": false,
+      "file": "48000.f32le",
+      "bytes": 6527896,
+      "sha256": "8f7992edc3fb399d138d022d23da39e3d669743c13b7e4789510369ad234ecc4"
+    }
+  ]
+}

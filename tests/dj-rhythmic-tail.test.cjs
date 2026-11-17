@@ -10,6 +10,12 @@ for(const [from,to] of [['audio/songs/track-4.mp3','audio/songs/track-38.mp3'],[
   // rendered full cue wins the real selector for this recording pair.
   const p=(record.cues||[record.cue]).find(c=>c.rhythmicTailWindow);
   assert.ok(p,'The previously certified partial remains available');
+  if(p.composite.introductionExposure?.accepted===false){
+   assert.equal(engine.validatePreservedFileTailCue(record,p,a,b,a.duration),null);
+   assert.notEqual(engine.playbackTransition(a,b,a.duration)?.metricalRhythmic,true);
+   assert.equal(p.entry,0,'masking, rather than a seek, disqualifies this intro');
+   return;
+  }
   assert.ok(engine.validatePreservedFileTailCue(record,p,a,b,a.duration));
   if(from==='audio/songs/track-705.mp3'){
    const selected=engine.transition(a,b,a.duration);
@@ -31,10 +37,17 @@ for(const [from,to] of [['audio/songs/track-4.mp3','audio/songs/track-38.mp3'],[
   }
  });
 }
-test('every previously verified full pair remains full after adding partial rhythmic tails',()=>{
+test('historical full pairs stay full unless exact rendered evidence independently disqualifies the entrance',()=>{
  const baseline=JSON.parse(fs.readFileSync(path.join(root,'audits/architecture-20261115/pairs-summary.json'),'utf8'));
  const full=baseline.verifiedPairs.filter(p=>p.full);assert.equal(full.length,11);
- for(const p of full){const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration);assert.equal(cue.measuredFullBeat,true,p.from+' -> '+p.to);assert.equal(engine.playbackTransition(a,b,a.duration).measuredFullBeat,true);}
+ let retired=0;
+ for(const p of full){
+  const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration),record=a.structuralBeatPlans?.[b.sha];
+  const masked=record&&[record.cue,...(record.cues||[])].every(c=>c.composite?.introductionExposure?.accepted===false);
+  if(masked){retired++;assert.notEqual(cue?.measuredFullBeat,true);assert.notEqual(engine.playbackTransition(a,b,a.duration)?.measuredFullBeat,true);}
+  else{assert.equal(cue.measuredFullBeat,true,p.from+' -> '+p.to);assert.equal(engine.playbackTransition(a,b,a.duration).measuredFullBeat,true);}
+ }
+ assert.equal(retired,1,'The measured masking veto must explain the single retired full pair; no unrelated beat regression is permitted');
 });
 test('a later original attack cannot be hidden by shortening the rhythmic window',()=>{
  const {rhythmicTail}=require('../tools/pcm-rhythmic-tail.cjs'),onset=Array(501).fill(.01);
@@ -42,7 +55,7 @@ test('a later original attack cannot be hidden by shortening the rhythmic window
  const part={start:0,end:10,step:.02,onset};assert.ok(rhythmicTail(part,0,10,5.5));
  onset[490]=1;assert.equal(rhythmicTail(part,0,10,5.5),null,'a restarted phrase near EOF is not a quiet tail');
 });
-test('the actual Safari shuffle promotes a verified partial while keeping full counters separate',async()=>{
+test('the actual Safari shuffle cannot promote a masked partial as an audible rhythmic transition',async()=>{
  const source=fs.readFileSync(path.join(root,'tools/simulate-library-listening.cjs'),'utf8').replace(/^#![^\n]*\n/,'');
  const {engine,members,lookup}=new Function('require','__dirname',source.slice(0,source.indexOf('(async()=>'))+'return {engine,members,lookup};')(require,path.join(root,'tools'));
  const list=members('Ste'),get=id=>list.find(t=>t.id==='b-track-'+id),from=get(4),target=get(38),other=get(2);let selected=null;
@@ -50,7 +63,7 @@ test('the actual Safari shuffle promotes a verified partial while keeping full c
   mixRunningContext:()=>({sampleRate:44100}),mixShuffleCandidates:()=>pool,mixShufflePool:()=>pool,
   mixSelectShuffle:r=>{assert.ok(pool.some(t=>t.id===r.pickId));selected=r;return true}};
  await engine.intelligentShuffle(app,{duration:lookup(from).duration,currentTime:0},from.id);
- assert.equal(selected.pickId,target.id);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,1);
+ assert.equal(selected,null);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,0);
 });
 
 test('the listening audit uses the actual live fallback resolver, including quiet filtered introductions',()=>{
