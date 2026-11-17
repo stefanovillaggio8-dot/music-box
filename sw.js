@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6735";
+const CACHE = "spotifynonavraiimieisoldi-v6736";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -48,13 +48,13 @@ const CORE = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./karaoke-acoustic-proof.js?v=6735&proof=2",
-  "./audio-lyrics-align.js?v=6735&lang=21",
+  "./karaoke-acoustic-proof.js?v=6736&proof=2",
+  "./audio-lyrics-align.js?v=6736&lang=21",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6735&words=16",
+  "./app.js?v=6736&words=16",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -65,7 +65,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6735&dj=57", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6736&dj=58", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -99,13 +99,13 @@ const OFFLINE_SHELL = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./karaoke-acoustic-proof.js?v=6735&proof=2",
-  "./audio-lyrics-align.js?v=6735&lang=21",
+  "./karaoke-acoustic-proof.js?v=6736&proof=2",
+  "./audio-lyrics-align.js?v=6736&lang=21",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6735&words=16",
+  "./app.js?v=6736&words=16",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -116,7 +116,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6735&dj=57",
+  "./mix-intelligente.js?v=6736&dj=58",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=9"
 ];
@@ -1533,7 +1533,8 @@ self.addEventListener("fetch", (event) => {
       const cache=await caches.open(CACHE_DJ_INDEX);
       const saved=await cache.match(event.request);
       const request=new Request(event.request.url,{cache:"no-cache",credentials:"same-origin"});
-      if(saved?.status===200){
+      const revalidate=event.request.headers.get("X-MusicBox-DJ-Revalidate")==="1"||url.searchParams.get("mb-dj-refresh")==="1";
+      if(saved?.status===200&&!revalidate){
         persistence=(async()=>{
           const info=await caches.open(cacheInfoName());
           const marker=new URL("./__metadata__/dj-last-check",self.registration.scope).href;

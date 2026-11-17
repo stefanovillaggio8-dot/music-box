@@ -5,7 +5,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright');
 const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
-const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
+const completeSte=(process.env.MUSICBOX_STE_CASE||'complete-personal')==='complete-personal';
 const pickupSte=process.env.MUSICBOX_STE_CASE==='observed-bars-partial';
 const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
 const injectProvisionalMetadata=process.env.MUSICBOX_INJECT_PROVISIONAL_METADATA==='true';
@@ -20,6 +20,9 @@ const metadataFixture=metadataProbe||process.env.MUSICBOX_METADATA_FIXTURE_TRANS
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
 if(!plans.length)throw Error('No actual composite plans to test');
 const catalog=new Map(Object.entries(data.entries).map(([k,e])=>[e.sha,k])),sourceCache=new Map();
+const catalogAliases=new Map();for(const [key,entry] of Object.entries(data.entries)){
+ if(!catalogAliases.has(entry.sha))catalogAliases.set(entry.sha,[]);catalogAliases.get(entry.sha).push(key);
+}
 async function original(sha){
  if(sourceCache.has(sha))return sourceCache.get(sha);
  const key=catalog.get(sha);if(!key)throw Error('Unknown original');
@@ -191,12 +194,15 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.pause=function(){trace(this,'pause');return pause.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    const bridgeSource=playbackProfile==='Ste'?(pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-934';
+    const bridgeSource=playbackProfile==='Diego'?'b-track-353':playbackProfile==='Ste'?(pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
+    const bridgeTarget=playbackProfile==='Diego'?'b-track-135':playbackProfile==='Emanuele'?'b-track-1043':
+     pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
-    await shell.waitForFunction(({profile,id})=>window.MusicBoxBridge?.profile?.()===profile&&
-     MusicBoxBridge.playable().some(t=>t.id===id),{profile:playbackProfile,id:bridgeSource},{timeout:20000});
+    await shell.waitForFunction(({profile,ids})=>window.MusicBoxBridge?.profile?.()===profile&&
+     ids.every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),
+     {profile:playbackProfile,ids:[bridgeSource,bridgeTarget]},{timeout:20000});
     await shell.evaluate(id=>{
      const track=MusicBoxBridge.playable().find(t=>t.id===id);if(!track)throw Error('Native bridge reference not available');
      const button=document.createElement('button');button.id='silent-handoff';button.textContent='test';
@@ -227,17 +233,27 @@ const server=http.createServer(async(req,res)=>{
      const tracks=MusicBoxBridge.playable(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
-      const a=find(p.from),b=find(p.to);
+      const preferred=profile==='Diego'?'b-track-135':profile==='Emanuele'?'b-track-1043':
+       pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
+      const a=find(p.from),b=tracks.find(t=>t.id===preferred&&p.toAliases.includes('audio/'+t.file));
       if(!a||!b)continue;
+      if(profile==='Diego'&&!(a.id==='b-track-353'&&b.id==='b-track-135'&&p.cue.measuredFullBeat))continue;
       if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
+      if(p.cue.composite?.introductionExposure?.accepted===false||
+       !inspected.cue||['begin','fade','entry','tempo'].some(k=>Math.abs(inspected.cue[k]-p.cue[k])>.0001))continue;
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
-    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
-     Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
-     Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
+    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha),toAliases:catalogAliases.get(p.toSha)||[]})).sort((a,b)=>
+     Number(b.from==='audio/songs/track-884.mp3'&&b.to==='audio/songs/track-1043.mp3')-
+     Number(a.from==='audio/songs/track-884.mp3'&&a.to==='audio/songs/track-1043.mp3'))});
+    if(!actualPlan)console.error(name,'personal pair inspection',JSON.stringify(await shell.evaluate(({from,to})=>({
+     inspection:MusicBoxMix.inspectPair(from,to),profile:MusicBoxBridge.profile(),
+     duration:MusicBoxBridge.audio()?.duration,time:MusicBoxBridge.audio()?.currentTime,
+     permitted:[from,to].map(id=>MusicBoxBridge.playable().some(t=>t.id===id)),diagnostics:MusicBoxMix.diagnostics()
+    }),{from:bridgeSource,to:bridgeTarget})));
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
     if(pickupSte&&playbackProfile==='Ste')assert.equal(actualPlan.cue.nativeOriginalReturn,true,'Exercise the waveform-coherent rendition, never the earlier prototype');
     // Network latency retrieving the external original must not consume the
@@ -245,8 +261,9 @@ const server=http.createServer(async(req,res)=>{
     // bytes: the app still fetches, decodes and prepares through its real path.
     await Promise.all([original(actualPlan.fromSha),original(actualPlan.toSha)]);
     if(playbackProfile==='Emanuele'){
-     assert.equal(actualPlan.fromId,'b-track-934');assert.equal(actualPlan.toId,'b-track-1124');
-     assert.ok(actualPlan.cue.fade>13&&actualPlan.cue.fade<15);assert.ok(Math.abs(actualPlan.cue.tempo-1)>.001,'Exercise the new vocal-handoff cue through the real planner');
+     assert.equal(actualPlan.fromId,'b-track-884');assert.equal(actualPlan.toId,'b-track-1043');
+     assert.equal(actualPlan.cue.measuredFullBeat,true);
+     assert.equal(actualPlan.sourceBoundCue.composite.introductionExposure.accepted,true);
     }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{

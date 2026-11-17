@@ -5,10 +5,18 @@ const text=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8
 const start=text.indexOf("function verifiedIndexedGridTempo(");
 const end=text.indexOf("function deepStatus(){",start);
 assert.ok(start>0&&end>start);
-const lookup=(entries)=>new Function("deepIndex",text.slice(start,end)+"return deepLookup")({
- version:1,entries});
+const lookup=(entries,revision)=>new Function("deepIndex",text.slice(start,end)+"return deepLookup")({
+ version:1,entries,introExposureRevision:revision});
 const features={sha:"test",status:"ok",duration:160,analyzer:"librosa-onsets-chroma-rms-v1",
  chroma:Array.from({length:12},(_,i)=>i/78),bpm:120,introDrive:.8};
+test('an old offline index keeps basic measurements but cannot reactivate pre-screen static plans',()=>{
+ const entry={...features,structuralBeatPlans:{target:{cue:{kind:'beat'}}},pcmBeatPlans:{target:{cue:{kind:'beat'}}}};
+ const old=lookup({'audio/songs/future.mp3':entry})({file:'songs/future.mp3'});
+ assert.equal(old.sha,entry.sha);assert.equal(old.duration,entry.duration);
+ assert.equal(old.structuralBeatPlans,undefined);assert.equal(old.pcmBeatPlans,undefined);
+ assert.equal(entry.structuralBeatPlans.target.cue.kind,'beat','cached measurements themselves are not deleted');
+ assert.equal(lookup({'audio/songs/future.mp3':entry},2)({file:'songs/future.mp3'}),entry);
+});
 test("precomputed real audio from main audio library avoids MP3 download",()=>{
  const get=lookup({"audio/songs/track-88.mp3":features});
  assert.equal(get({file:"songs/track-88.mp3"}),features);
@@ -64,7 +72,8 @@ test("same MP3 filename in different repos never borrows unrelated waveform",()=
   "known mobile source must not use a different main-audio recording");
 });
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
- assert.match(text,/fetch\("dj-deep-analysis\.json(?:\?[^"\n]*)?"/);
+ assert.match(text,/fetch\(indexUrl,/);
+ assert.match(text,/music-box\/main\/dj-deep-analysis\.json\?mb-dj-refresh=1/);
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
  assert.ok(text.includes('const saved=await savedAnalysis(key)'));
  assert.ok(text.includes('decode(next,true).catch(()=>{})'));
