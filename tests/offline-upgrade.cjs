@@ -36,6 +36,10 @@ const server=http.createServer((req,res)=>{
   updated=true;
   await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
   await page.waitForFunction(async({prefix,revision})=>(await caches.keys()).includes(prefix+'-v'+revision),{prefix,revision},{timeout:60000});
+  // Match the app's explicit update action. Installation alone deliberately
+  // cannot activate over a listening session.
+  await page.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration())?.waiting,{},{timeout:60000});
+  await page.evaluate(async()=>{(await navigator.serviceWorker.getRegistration()).waiting.postMessage({type:'SKIP_WAITING'});});
   // Wait for the new worker to activate and finish its migration, not just install.
   await page.waitForFunction(async({prefix,revision})=>{const r=await navigator.serviceWorker.getRegistration();return !r.installing&&!r.waiting&&r.active?.state==='activated'&&!(await caches.keys()).includes(prefix+'-v6734');},{prefix,revision},{timeout:60000});
   const proof=await page.evaluate(async({seed,prefix})=>{
