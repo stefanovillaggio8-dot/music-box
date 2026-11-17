@@ -15,6 +15,9 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
  const preserveFile=cue.preservedFileTail===true,metricalPickup=preserveFile&&cue.metricalPickupWindow===true&&cue.preservedEntrance==='metrical-pickup-033-v1',tailForeground=preserveFile&&cue.preservedEntrance==='rhythmic-tail-foreground-v1',vocalForeground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1',foreground=tailForeground||vocalForeground;
  const nativeReturn=metricalPickup&&cue.nativeOriginalReturn===true;
+ const firstAttack=cue.firstAttackEnvelope==='original-intro-033-8ms-v1'&&cue.measuredFullBeat===true&&
+  !cue.structuralBeat&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&cue.entry===0;
+ if(cue.firstAttackEnvelope!=null&&!firstAttack)throw Error('Unbound original first attack');
  const cadence=cadenceSpanValid(cue);
  if(cue.metricalCadenceWindow&&!cadence||cue.nativeRecoveryCurve!=null&&!cadence)throw Error('Unbound cadence recovery');
  if(cadence&&releaseSeconds!==1.2)throw Error('Unbound cadence release');
@@ -60,6 +63,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  for(let i=0;i<frames;i++){
   const t=i/sr-preRoll,u=clamp(t/cue.fade,0,1);
   let a=1,b=.33*Math.sin(Math.min(1,u*1.5)*Math.PI/2);
+  if(firstAttack)b=.33*Math.sin(clamp(t/.008,0,1)*Math.PI/2);
   if(foreground){const rise=clamp((t-(vocalAt-.3))/.6,0,1);b=(.33+.67*rise*rise*(3-2*rise))*Math.sin(clamp(t/.008,0,1)*Math.PI/2);}
   if(preserveFile&&(cue.preservedEntrance==='first-attack-033-v1'||metricalPickup))b=.33*Math.sin(clamp(t/.008,0,1)*Math.PI/2);
   if(cue.structuralBeat&&!preserveFile){
