@@ -192,7 +192,7 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.pause=function(){trace(this,'pause');return pause.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    const bridgeSource=playbackProfile==='Ste'?(cadenceSte?'b-track-6':pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
+    const bridgeSource=playbackProfile==='Diego'?'b-track-353':playbackProfile==='Ste'?(cadenceSte?'b-track-6':pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
@@ -230,6 +230,7 @@ const server=http.createServer(async(req,res)=>{
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b)continue;
+      if(profile==='Diego'&&!(a.id==='b-track-353'&&b.id==='b-track-135'&&p.cue.measuredFullBeat))continue;
       if(profile==='Ste'&&(cadenceSte?!(a.id==='b-track-6'&&b.id==='b-track-233'&&p.cue.metricalCadenceWindow&&p.cue.nativeOriginalReturn):pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(p.cue.composite?.introductionExposure?.accepted===false||

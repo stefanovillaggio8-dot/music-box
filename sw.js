@@ -1533,7 +1533,8 @@ self.addEventListener("fetch", (event) => {
       const cache=await caches.open(CACHE_DJ_INDEX);
       const saved=await cache.match(event.request);
       const request=new Request(event.request.url,{cache:"no-cache",credentials:"same-origin"});
-      if(saved?.status===200){
+      const revalidate=event.request.headers.get("X-MusicBox-DJ-Revalidate")==="1"||url.searchParams.get("mb-dj-refresh")==="1";
+      if(saved?.status===200&&!revalidate){
         persistence=(async()=>{
           const info=await caches.open(cacheInfoName());
           const marker=new URL("./__metadata__/dj-last-check",self.registration.scope).href;

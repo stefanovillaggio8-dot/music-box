@@ -3,9 +3,8 @@
   "platform": "safari-logical-capability",
   "seed": 20261114,
   "runtimeEvidence": {
-    "engineSha256": "7165f922854894f7583596e81a4469b1ebbb882fffae3d0ab4f0913ff5778edb",
+    "engineSha256": "0b7cefa6fe2e73e4b8d0c356f0a450f8a8fb673ad2eb988e926cab7ff6fb488c",
     "indexSha256": "90f72fd06403b3fbc7c362c06d1b9b0de00767a3c43d1b8cfca16ccdb32efe36",
-    "compositeSha256": "1bcce94701948bf8f0a0f1bd532a3c187e6203c9a1c66a7366d834d9872e6ed5",
     "applicationSha256": "67a23bc9e05a5ab8bceede152a47c76aae35ab9b7450776fba36278dfa6e69be"
   },
   "audioVariant": "original recordings; no loaded boost manifest",

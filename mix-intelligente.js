@@ -556,6 +556,14 @@ function analysisDatabase(){
 // New or offline songs still fall back to local waveform analysis.
 let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;
 let deepRefreshNeeded=false,deepRefreshAttemptAt=0,deepRefreshRunning=false;
+let pendingDeepTrackIds=new Set(),deepPendingScope="";
+function unresolvedDeepTracks(app){
+ const tracks=new Map((app?.allTracks?.()||[]).map(t=>[t.id,t]));
+ return new Set([...pendingDeepTrackIds].filter(id=>{
+  const t=tracks.get(id);
+  return t&&/(?:^|\/)songs\/[A-Za-z0-9/_-]+\.mp3(?:[?#]|$)/i.test(String(t.file||t.url||""))&&!deepLookup(t);
+ }));
+}
 function deepRefreshAllowed(state){
  if(!state.needed||state.running||!state.enabled||state.hidden||state.offline||
     state.transferring||state.mixing||state.seeking||state.now<state.retryAfter||
@@ -576,15 +584,14 @@ function refreshNewTrackIndex(app,audio){
   seeking:audio?.seeking||Date.now()<seekRecoveryUntil,now:Date.now(),retryAfter:deepRetryAfter,
   attemptAt:deepRefreshAttemptAt,paused:!audio||audio.paused||audio.ended,
   readyState:audio?.readyState,bufferedAhead:ahead,remaining:audio?.duration-audio?.currentTime}))return;
+ pendingDeepTrackIds=unresolvedDeepTracks(app);
+ if(!pendingDeepTrackIds.size){deepRefreshNeeded=false;return}
  deepRefreshRunning=true;deepRefreshAttemptAt=Date.now();
  // Revalidate server metadata, never download models or MP3s here. Keep the
  // request pending while a just-imported recording awaits its hourly batch.
  loadDeepIndex(true).then(()=>{
-  const all=app?.allTracks?.()||[];
-  deepRefreshNeeded=recentLibraryIds.some(id=>{
-   const track=all.find(t=>t.id===id);
-   return track&&!deepLookup(track);
-  });
+  pendingDeepTrackIds=unresolvedDeepTracks(app);
+  deepRefreshNeeded=pendingDeepTrackIds.size>0;
  }).catch(()=>{}).finally(()=>{deepRefreshRunning=false});
 }
 // Existing timed lyrics are useful for SAFETY only: an LRC line marks
@@ -677,7 +684,13 @@ function deepLookup(track){
  const keys=origin?[origin+"/"+path]:
   ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
-  const value=deepIndex.entries?.[key];
+  let value=deepIndex.entries?.[key];
+  // Old offline metadata predates the entrance revocations. Keep its basic
+  // measurements and original downloads, but do not arm its static audio
+  // plans until the compatible metadata has arrived.
+  if(value&&deepIndex.introExposureRevision!==2&&(value.structuralBeatPlans||value.pcmBeatPlans)){
+   value={...value};delete value.structuralBeatPlans;delete value.pcmBeatPlans;
+  }
   if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return typeof withGuardedLRC==="function"?
@@ -759,7 +772,12 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=17",{
+   // Generated analysis is data: a new MP3 must not wait for another Pages
+   // deployment. The hourly analyzer publishes this public main-branch JSON.
+   const indexUrl=force?
+    "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/dj-deep-analysis.json?mb-dj-refresh=1":
+    "dj-deep-analysis.json?pcm=1&structure=18";
+   const resp=await fetch(indexUrl,{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -767,6 +785,8 @@ function loadDeepIndex(force=false){
    if(![1,2].includes(json?.version)||!json.entries||
       typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
+   if(deepIndex?.introExposureRevision===2&&json.introExposureRevision!==2)
+    throw Error("Indice DJ precedente alle verifiche degli ingressi");
    // An unchanged index should not invalidate a valid planned mix.
    const previous=deepIndex,app=bridge();
    const now=app?.allTracks?.()?.find(t=>t.id===app.currentId?.());
@@ -774,7 +794,7 @@ function loadDeepIndex(force=false){
    const next=app?.allTracks?.()?.find(t=>t.id===nextId);
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
-   const recent=recentLibraryIds.map(id=>app?.allTracks?.()?.find(t=>t.id===id)).filter(Boolean);
+   const recent=[...new Set([...recentLibraryIds,...pendingDeepTrackIds])].map(id=>app?.allTracks?.()?.find(t=>t.id===id)).filter(Boolean);
    const beforeRecent=JSON.stringify(recent.map(t=>deepLookup(t)));
    deepIndex=json;
    if(typeof window!=="undefined")loadDJLyricBoundaries();
@@ -786,6 +806,7 @@ function loadDeepIndex(force=false){
      "Il solo valore BPM non certifica un beatmatch. Serve una nuova analisi ritmica dei file reali.");
    }
    const changed=!previous||
+     previous.introExposureRevision!==json.introExposureRevision||
      previous.analyzed!==json.analyzed||
      previous.sourceCount!==json.sourceCount||
      beforeRecent!==JSON.stringify(recent.map(t=>deepLookup(t)))||
@@ -2835,7 +2856,7 @@ function incomingContentDecision(b,p){
  // must veto the cue before its rhythmic certificate can promote it.
  if(exposure&&(exposure.accepted!==true||exposure.targetSha!==b?.sha||
     exposure.assetSha256!==p?.composite?.sha256||
-    exposure.method!=='rendered-introduction-masking-screen-v1'))
+    exposure.method!=='rendered-introduction-band-masking-screen-v2'))
   return {allowed:false,reason:'rendered-incoming-introduction-obscured',skippedSeconds:0};
  if(!Number.isFinite(p?.entry)||p.entry<0)return {allowed:false,reason:'invalid-entry'};
  if(p.entry<=.001)return {allowed:true,reason:'incoming-recording-from-start',skippedSeconds:0};
@@ -4672,6 +4693,17 @@ function lowEnergyPostludeLeadIn(a,b,dur){
 }
 // One owner for the actual playback plan, inspection and listening audits.
 function playbackTransition(a,b,dur){
+   const stored=a?.structuralBeatPlans?.[b?.sha]||a?.pcmBeatPlans?.[b?.sha];
+   const checked=[stored?.cue,...(stored?.cues||[])].filter(p=>{
+    const c=p?.composite,e=c?.introductionExposure;
+    return c?.sourceSha===a?.sha&&c?.targetSha===b?.sha&&
+     e?.sourceSha===a?.sha&&e?.targetSha===b?.sha&&e?.assetSha256===c?.sha256&&
+     e?.method==='rendered-introduction-band-masking-screen-v2';
+   });
+   // Do not replace a measured masked intro with an unverified quiet preview
+   // of the same opening. A positively checked alternative remains eligible.
+   if(checked.some(p=>p.composite.introductionExposure.accepted===false)&&
+      !checked.some(p=>p.composite.introductionExposure.accepted===true))return null;
    let candidate=transition(a,b,dur);
    if(!candidate||candidate.kind==="cut"||
       (Number.isFinite(candidate.begin)&&
@@ -8848,9 +8880,15 @@ window.MusicBoxMix={isEnabled:()=>enabled,
  onLibraryChange:(change)=>{
   // A new playable MP3 or a playlist edit must reopen candidate search for
   // the CURRENT song. Preserve the actual playback and manually queued items.
-  const added=Array.isArray(change?.addedIds)?change.addedIds:[];
+  const added=[...(Array.isArray(change?.addedIds)?change.addedIds:[]),
+   ...(Array.isArray(change?.changedIds)?change.changedIds:[])];
   recentLibraryIds=[...new Set([...added,...recentLibraryIds])].slice(0,32);
-  if(added.length)deepRefreshNeeded=true;
+  if(change?.profile&&deepPendingScope!==String(change.profile)){
+   pendingDeepTrackIds.clear();deepPendingScope=String(change.profile);
+  }
+  for(const id of added)pendingDeepTrackIds.add(id);
+  for(const id of change?.removedIds||[])pendingDeepTrackIds.delete(id);
+  deepRefreshNeeded=pendingDeepTrackIds.size>0;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
   shuffleRetryAt=0;shuffleAttempts=0;shuffleLastDecision=null;
   if(!mixing&&!active&&!mobileActive){

@@ -8359,10 +8359,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
     if(!changed)return;
     if(shuffle&&currentId)_preparaCicloCasuale(list);
     const addedIds=[...fresh.keys()].filter(id=>!_djCatalogoPrecedente.has(id));
+    const changedIds=[...fresh].filter(([id,source])=>_djCatalogoPrecedente.has(id)&&_djCatalogoPrecedente.get(id)!==source).map(([id])=>id);
     const removedIds=[..._djCatalogoPrecedente.keys()].filter(id=>!fresh.has(id));
     _djCatalogoPrecedente=fresh;
     try{window.MusicBoxMix?.onLibraryChange?.({
-      addedIds,removedIds,available:fresh.size,profile
+      addedIds,changedIds,removedIds,available:fresh.size,profile
     })}catch(_){/* Never disrupt music on a library notification. */}
   }
 

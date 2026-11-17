@@ -141,7 +141,7 @@ jobs:
       fail-fast: false
       matrix:
         browser: ${{ fromJSON(inputs.diagnostic_ste_only && '["webkit"]' || '["chromium","webkit"]') }}
-        profile: ${{ fromJSON(inputs.diagnostic_ste_only && '["Ste"]' || '["Emanuele","Ste"]') }}
+        profile: ${{ fromJSON(inputs.diagnostic_ste_only && '["Ste"]' || '["Emanuele","Ste","Diego"]') }}
     runs-on: ${{ matrix.browser == 'webkit' && inputs.webkit_runner || 'ubuntu-latest' }}
     timeout-minutes: 20
     env:

@@ -452,8 +452,8 @@ test("DJ index bypasses stale JSON cache while preserving music cache",()=>{
    "DJ index survives app-version cache rotation");
  assert.ok(sw.includes("const saved=await cache.match(event.request)"),
    "read persisted analysis before downloading megabytes");
- assert.ok(sw.includes("if(saved?.status===200)"),
-   "cached index takes precedence over a slow network");
+ assert.ok(sw.includes("if(saved?.status===200&&!revalidate)"),
+   "ordinary index reads retain cache priority; deliberate new-track revalidation fetches fresh metadata");
  assert.ok(sw.includes("Date.now()-previous<60*60*1000"),
    "no repeated 5 MB DJ re-download during offline batches");
 });

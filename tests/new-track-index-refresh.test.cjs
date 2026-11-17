@@ -1,7 +1,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
-const lo=source.indexOf('function deepRefreshAllowed('),hi=source.indexOf('// Existing timed lyrics',lo);
+const lo=source.indexOf('function unresolvedDeepTracks('),hi=source.indexOf('// Existing timed lyrics',lo);
 const snippet=source.slice(lo,hi);
 const safe={needed:true,running:false,enabled:true,hidden:false,offline:false,transferring:false,mixing:false,seeking:false,
  now:2000000,retryAfter:0,attemptAt:0,paused:false,readyState:4,bufferedAhead:12,remaining:150};
@@ -33,19 +33,39 @@ test('metadata revalidation defers to native playback, offline downloads, backgr
  assert.equal(allowed({...safe,paused:true,readyState:0,bufferedAhead:0,remaining:0}),true);
 });
 test('new-track metadata is fetched once, retained while pending, then closes when resolved',async()=>{
- let track={id:'future-recording',file:'songs/future.mp3'},resolved=false,calls=0;
+ let track={id:'future-recording',file:'songs/future.mp3'},resolved=false,resolveOnFetch=false,calls=0;
  const app={allTracks:()=>[track],offlineBusy:()=>false};
  const fixture=new Function('document','navigator','loadDeepIndex','deepLookup',`
  let deepRefreshNeeded=true,deepRefreshAttemptAt=0,deepRefreshRunning=false,enabled=true,
  offlineTransferPriority=false,mixing=false,active=null,mobileActive=null,seekRecoveryUntil=0,deepRetryAfter=0;
- const recentLibraryIds=['future-recording'];
+ const recentLibraryIds=['future-recording'];let pendingDeepTrackIds=new Set(recentLibraryIds);
  ${snippet}
  return {run:()=>refreshNewTrackIndex(arguments[4],null),state:()=>({deepRefreshNeeded,deepRefreshRunning}),
  resetClock:()=>{deepRefreshAttemptAt=0}};`);
- const api=fixture({hidden:false},{onLine:true},async force=>{assert.equal(force,true);calls++},()=>resolved?{sha:'original'}:null,app);
+ const api=fixture({hidden:false},{onLine:true},async force=>{assert.equal(force,true);calls++;if(resolveOnFetch)resolved=true},()=>resolved?{sha:'original'}:null,app);
  api.run();api.run();await new Promise(r=>setImmediate(r));
  assert.equal(calls,1);assert.equal(api.state().deepRefreshNeeded,true);
  api.run();await new Promise(r=>setImmediate(r));assert.equal(calls,1);
- resolved=true;api.resetClock();api.run();await new Promise(r=>setImmediate(r));
+ resolveOnFetch=true;api.resetClock();api.run();await new Promise(r=>setImmediate(r));
  assert.equal(calls,2);assert.equal(api.state().deepRefreshNeeded,false);
+});
+test('large imports retain every pending public recording, beyond the 32-item shuffle priority sample',()=>{
+ const tracks=Array.from({length:80},(_,i)=>({id:'new-'+i,file:'songs/new-'+i+'.mp3'}));
+ tracks.push({id:'local-only',url:'blob:private-file'});
+ const pending=new Function('deepLookup',`let pendingDeepTrackIds=new Set(${JSON.stringify([...tracks.map(t=>t.id),'deleted'])});${snippet}return unresolvedDeepTracks;`)(()=>null);
+ const result=pending({allTracks:()=>tracks});assert.equal(result.size,80);
+ assert.equal(result.has('new-79'),true);assert.equal(result.has('local-only'),false);assert.equal(result.has('deleted'),false);
+});
+test('a local recording that becomes a public MP3 triggers analysis refresh without a new track ID; rotating blobs do not',()=>{
+ const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+ const begin=app.indexOf('  let _djCatalogoPrecedente=new Map();'),end=app.indexOf("  /* Canzoni gia' suonate",begin);
+ assert.ok(begin>0&&end>begin);
+ const fixture=new Function(`let list=[],profile='Ste',_posizionePlaylist=-1,_playlistSuona=[],shuffle=false,currentId='';
+ const _listaPerIlSeguito=()=>list,events=[],window={MusicBoxMix:{onLibraryChange:event=>events.push(event)}};
+ ${app.slice(begin,end)}
+ return {set:tracks=>{list=tracks;_controllaNuoviBraniMix()},events};`)();
+ fixture.set([{id:'import',url:'blob:first'}]);assert.deepEqual(fixture.events[0].addedIds,['import']);
+ fixture.set([{id:'import',url:'blob:rotated'}]);assert.equal(fixture.events.length,1);
+ fixture.set([{id:'import',url:'songs/import-ready.mp3',file:'songs/import-ready.mp3'}]);
+ assert.deepEqual(fixture.events[1].changedIds,['import']);assert.deepEqual(fixture.events[1].addedIds,[]);
 });

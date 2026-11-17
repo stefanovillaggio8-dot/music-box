@@ -40,14 +40,15 @@ for(const [from,to] of [['audio/songs/track-4.mp3','audio/songs/track-38.mp3'],[
 test('historical full pairs stay full unless exact rendered evidence independently disqualifies the entrance',()=>{
  const baseline=JSON.parse(fs.readFileSync(path.join(root,'audits/architecture-20261115/pairs-summary.json'),'utf8'));
  const full=baseline.verifiedPairs.filter(p=>p.full);assert.equal(full.length,11);
- let retired=0;
+ let retired=0;const retiredRecordings=new Set();
  for(const p of full){
-  const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration),record=a.structuralBeatPlans?.[b.sha];
+  const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration),record=a.structuralBeatPlans?.[b.sha]||a.pcmBeatPlans?.[b.sha];
   const masked=record&&[record.cue,...(record.cues||[])].every(c=>c.composite?.introductionExposure?.accepted===false);
-  if(masked){retired++;assert.notEqual(cue?.measuredFullBeat,true);assert.notEqual(engine.playbackTransition(a,b,a.duration)?.measuredFullBeat,true);}
+  if(masked){retired++;retiredRecordings.add(a.sha+'|'+b.sha);assert.notEqual(cue?.measuredFullBeat,true);assert.notEqual(engine.playbackTransition(a,b,a.duration)?.measuredFullBeat,true);}
   else{assert.equal(cue.measuredFullBeat,true,p.from+' -> '+p.to);assert.equal(engine.playbackTransition(a,b,a.duration).measuredFullBeat,true);}
  }
- assert.equal(retired,1,'The measured masking veto must explain the single retired full pair; no unrelated beat regression is permitted');
+ assert.equal(retired,1,'The old slow-entrance envelope fails actual band exposure; unrelated full pairs must remain usable');
+ assert.equal(retiredRecordings.size,1,'Aliases must not inflate the rejected recording count');
 });
 test('a later original attack cannot be hidden by shortening the rhythmic window',()=>{
  const {rhythmicTail}=require('../tools/pcm-rhythmic-tail.cjs'),onset=Array(501).fill(.01);
@@ -55,7 +56,7 @@ test('a later original attack cannot be hidden by shortening the rhythmic window
  const part={start:0,end:10,step:.02,onset};assert.ok(rhythmicTail(part,0,10,5.5));
  onset[490]=1;assert.equal(rhythmicTail(part,0,10,5.5),null,'a restarted phrase near EOF is not a quiet tail');
 });
-test('the actual Safari shuffle cannot promote a masked partial as an audible rhythmic transition',async()=>{
+test('the actual Safari shuffle promotes an exposed partial while keeping full counters separate',async()=>{
  const source=fs.readFileSync(path.join(root,'tools/simulate-library-listening.cjs'),'utf8').replace(/^#![^\n]*\n/,'');
  const {engine,members,lookup}=new Function('require','__dirname',source.slice(0,source.indexOf('(async()=>'))+'return {engine,members,lookup};')(require,path.join(root,'tools'));
  const list=members('Ste'),get=id=>list.find(t=>t.id==='b-track-'+id),from=get(4),target=get(38),other=get(2);let selected=null;
@@ -63,7 +64,7 @@ test('the actual Safari shuffle cannot promote a masked partial as an audible rh
   mixRunningContext:()=>({sampleRate:44100}),mixShuffleCandidates:()=>pool,mixShufflePool:()=>pool,
   mixSelectShuffle:r=>{assert.ok(pool.some(t=>t.id===r.pickId));selected=r;return true}};
  await engine.intelligentShuffle(app,{duration:lookup(from).duration,currentTime:0},from.id);
- assert.equal(selected,null);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,0);
+ assert.equal(selected.pickId,target.id);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,1);
 });
 
 test('the listening audit uses the actual live fallback resolver, including quiet filtered introductions',()=>{

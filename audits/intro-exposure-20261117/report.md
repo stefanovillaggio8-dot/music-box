@@ -1,105 +1,123 @@
-# Rendered introduction exposure and future-recording metadata
+# Original-audio introduction correction and future-track metadata
 
-Baseline: PR #59 f536ee72; public Music Box 6.735. This is a new investigation,
-not a repeat of the previous decoder API study. No video was supplied. The user
-tentatively recalled Modà, Passione maledetta → Non ti dimentico (166 → 181).
+Baseline: public Music Box 6.735, actual main files at 97bbc3e8. Candidate release
+6.736 is isolated from PR59's unfinished research. No screen video was supplied;
+the user tentatively recalled Modà 166 → 181. No physical iPhone was tested.
 
-## Reproduced cause and change
+## Actual cause and audio result
 
-The deployed Modà FLAC was reproduced byte for byte from SHA-checked original
-MP3s: SHA256 6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc.
-Its entry is zero, not a seek that skips the opening. It consumes 9.988 seconds
-under the still-loud outgoing recording at incoming gain .33. Actual isolated
-components, AFTER common gain, put the incoming recording 32.13 dB below the
-outgoing one at 4 seconds, and 16.87 dB below it at 6 seconds. Its rhythmic and
-native-splice receipts did not test this masking. A rhythm certificate alone
-was insufficient to establish a usable musical entrance.
+The deployed Modà FLAC was reproduced BYTE IDENTICAL from the SHA-checked
+original MP3s: 6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc.
+Entry was zero; no initial seek explains the problem. A 9.988-second overlap
+plays the incoming crescendo at gain .33 beneath the still-loud outgoing song.
+After actual shared gain, incoming/outgoing RMS is -32.13 dB at4s and -16.87dB
+at6s. Rhythm and native splice certificates alone did not check this loss.
 
-The offline renderer now measures actual component RMS in 250 ms windows over
-the first five original incoming seconds. A continuous 750 ms interval with
-original incoming RMS >= .001 and incoming/outgoing RMS below -18 dB fails a
-conservative masking screen. Attenuation relative to the original is reported
-separately. These are frozen engineering screening limits, not a certified
-psychoacoustic model or proof that a passing mix sounds good. Listening remains
-necessary. No beat, harmony, voice, clipping or content thresholds were relaxed.
+The new offline screen compares actual audible components in separate frequency
+bands, not just total loudness. Independent synthetic tests demonstrate why a
+quiet treble instrument can remain exposed over loud bass. The initial
+broadband-only prototype over-rejected music and WAS NEVER PUBLISHED. Its
+historical simulation is retained explicitly as a prototype, not final results.
 
-35 of 60 in-scope historical asset variants were reproduced exactly. Only
-exact-SHA matches receive exposure metadata; the other 25 are explicitly
-unresolved, not judged from a similar render. Some were old inactive variants.
-15 exact variants fail this screen. The runtime refuses their static cue and
-reopens the normal safe fallback; it cannot promote them just because entry=0.
-The builder also refuses to certify newly rendered, persistently masked intros.
-No source MP3 or stored user download was modified or removed.
+Protocol2: 250ms windows, first five original seconds, original RMS >= .001;
+bands40–250,250–2500,2500–12000Hz (upper limit adapts for the16k diagnostic).
+Only bands with >=10% of incoming original power and RMS>=.0005 are meaningful.
+A continuous750ms below -18dB relative to outgoing in EVERY meaningful band
+fails the screen. These frozen engineering checks do not establish perceptual
+quality; listening is still necessary. Beat/harmony/voice/peak limits unchanged.
 
-For the Modà pair both actual resolver functions now return no overlay: the
-old recording finishes and the new recording begins at original zero at native
-volume. The comparison audio is an offline reconstruction of that behavior,
-NOT a recording from the missing video or a physical iPhone. It preserves every
-outgoing sample and the new first five seconds have zero difference from the
-original PCM. The outgoing original itself decodes above unity (sample peak
-1.1184, 4x peak 1.1191); natural playback adds no overlap, but this does not certify
-that hot original master as clipping-free at full native gain. Local listening
-previews use the SAME .7 monitoring gain before/after (peak below .784).
+38/61 personal-scope asset variants were exactly reproduced; seven variants
+fail protocol2. The23 unmatched historical renders remain unresolved, not
+judged from similar audio. Only exact-asset, source/target-SHA-bound findings
+are attached to the index. Positive alternative windows are selected normally;
+an entirely failed pair cannot substitute another unverified quiet preview.
 
-## Personal libraries: actual planner, fixed seeds, no Gym
+For Modà the actual app now rejects overlap and starts the second ORIGINAL
+at zero after the first EOF, full requested volume, no tempo alteration.
+Actual Chromium MP3 playback verifies this, including the real manual queue.
+Native EOF is captured before the app's normal ended handler; no simulated
+clock, volume-only console assertion or rewind is used as proof.
 
-The baseline and changed runs use the same actual app membership and selector,
-227 Ste, 212 Diego, 621 Emanuele. Gym is excluded from these inventories and
-simulations; membership, playlists, favorites and user state are untouched.
-Historical unrelated Gym regression tests remain unchanged.
+The local after-audio is an offline reconstruction, not an iPhone recording.
+All old frames and the entire new opening are preserved. The first five new
+seconds have zero PCM difference from the original. The outgoing master itself
+decodes above unity (sample1.1184,4x peak1.1191); natural playback adds no overlap
+but does not fix that existing master. Before/after listening previews use the
+same .7 monitoring gain (peak<.784). No global clipping-free claim is made.
 
-| Personal library | Complete distinct pairs before → after | Partial distinct pairs before → after | Complete uses / 800 shuffle changes | Partial uses / 800 |
+## Real personal library comparison, no Gym
+
+Actual account scopes unchanged: Ste227, Diego212, Emanuele621. Public 6.735
+engine/app/index versus isolated6.736, same seeds and membership. Original
+recordings; synthetic fixed50% download manifest is not a phone-storage audit.
+Complete/partial uses are kept separate. Full classification follows the
+existing engine protocol, not a human DJ/structural-equivalence certification.
+
+| Account | Distinct full pairs | Distinct partial pairs | Uses full/partial,20×40 changes | Uses full/partial,continuous800 |
 |---|---:|---:|---:|---:|
-| Ste | 1 → 1 | 2 → 0 | 20 → 20 | 20 → 0 |
-| Diego | 2 → 2 | 0 → 0 | 21 → 21 | 0 → 0 |
-| Emanuele | 7 → 6 | 5 → 2 | 79 → 77 | 23 → 15 |
+| Ste | 1 → 1 | 2 → 1 | 20/20 → 20/0 | 4/7 → 4/3 |
+| Diego | 2 → 1 | 0 → 0 | 21/0 → 5/0 | 8/0 → 4/0 |
+| Emanuele | 7 → 7 | 5 → 5 | 79/23 → 79/23 | 9/4 → 9/4 |
 
-This is a quality correction and a reduction in previously over-counted
-availability, NOT a coverage improvement. The one retired historical full pair
-has independently failed rendered entrance evidence; all other historical full
-pairs remain full. Source-preservation certificates and rhythmic errors are
-unchanged: no audio was reprocessed for the accepted cues. Detailed ordered,
-manual queue, shuffle and synthetic downloaded-only runs are in the JSON files.
-No attempt escaped the personal account pool. The offline simulation uses a
-fixed synthetic 50% download manifest; it does not inventory a user's iPhone.
+This correction improves preservation/exposure, NOT full-pair availability.
+Ste retains705→50 full and4→38 partial;166→181 is now a natural handoff. Diego
+uses an already rendered, positively exposed353→135 alternative; the old
+451→315 slow entrance is withheld. Emanuele's seven full/five partial remain.
+No library, playlist, favorite or personal record was edited. No new benchmark
+or optimization targets Gym. Existing unrelated regression tests remain.
+Zero simulated selections escape the personal pool; manual queues are honored.
+All skipped original content remains zero. A short-session reset is explicitly
+different from continuous listening: Ste still has long gaps without full mix.
 
-## Future recordings: completed increment and remaining architecture
+## Automatic future-track increment
 
-New library notifications now schedule a throttled revalidation of the loaded
-server index, rather than leaving a running app permanently on the old metadata.
-Requests defer while hidden/offline, downloading, seeking, mixing, poorly buffered
-or within 45 seconds of EOF. Pending analysis is polled at most every 15 minutes;
-no heavy model is installed on phones. Changed recent-track measurements reopen
-selection. The existing hourly basic MP3 analyzer discovers new Git-hosted
-recordings automatically, independently of pair tables. It now verifies original
-Git blob SHA before analyzing, preventing a branch-update race from attaching
-the old identity to replacement bytes.
+New and changed-source notifications reopen selection and track ALL pending
+public IDs (not only the32-item shuffle priority sample). Rotating blob URLs
+do not reanalyze a recording; a local ID becoming a real MP3 does notify change.
+Local-only blobs do not cause endless server-index downloads. Polling is at
+most every15min, visible, not mixing/seeking/downloading, with10s buffer and
+>45s before EOF while playing. Already measured songs avoid redundant refresh.
 
-The incremental reconciler preserves same-SHA advanced musical extensions when
-a new basic analysis arrives. Replacement MP3s never inherit those certificates.
-Tests cover automatic unseen-source discovery/persistence, replacement races,
-index arrival and bidirectional generic PCM candidate discovery without a pair
-table. Synthetic candidates do not count as real certified audio transitions.
+Forced refresh reads generated public main-branch analysis directly, so the
+existing hourly basic analyzer's data updates require no Pages/app release.
+The service worker honors deliberate refresh instead of returning stale JSON.
+Compatible protocol2 metadata cannot be downgraded by a stale CDN response;
+older offline data retains basic analysis but defers static plans, without
+deleting saved music. The reconciler preserves same-SHA advanced extensions;
+replacement recordings do not inherit certificates. Original Git blob SHA is
+checked before server DSP to reject discovery/fetch races.
 
-NOT YET COMPLETE: the expensive Beat This/Spleeter structural snapshot and
-rendered common-PCM edge production are still not a durable automatic incremental
-pipeline for every future song. Local-only imports still rely on local analysis;
-blob-URL persistence, unattended per-song analysis scheduling and full structural
-certification need further work. The metadata fix alone does not meet that entire
-requirement and cannot guarantee full beatmatches for new music.
+Still unfinished: automatic durable BeatThis/Spleeter whole-structure evidence
+and certified common-audio edge generation for every future song, local-only
+blob analysis persistence/scheduling, and physical-phone import tests. Existing
+hourly basic analysis plus refreshed generic search is not the entire requested
+future-song certification pipeline. No heavier model is installed on phones.
 
-## Validation / limits
+## Verification and next work
 
-741/741 full Node tests passed, then the additional unseen-source bidirectional
-candidate test passed (3/3 in that file). Real DSP Python regressions and new
-discovery/identity fixtures passed. Initial test failures exposed expectations
-that masked historical pairs should remain usable; these now explicitly assert
-their rejection, with the old rhythm/native-clock guards tested separately.
-Two isolated index-loader fixtures gained the same recent-track state now used
-by the application. No safety assertion was weakened to accept a render.
+748/748 root Node tests,739/739 isolated-release tests, zero failed/skipped.
+Real DSP Python tests plus new import discovery/replacement-race fixtures pass.
+Actual WebKit worker6.735→6.736 preserves per-account and legacy saved audio,
+unrelated cache, IndexedDB/localStorage and serves the new player offline;
+it also proves deliberate DJ metadata refresh returns fresh data.
+New render-certification tests ensure a proposal failing any requested rate is
+reported/rejected, not exported as a complete plan; independent previous
+verified windows are retained. Missing/mismatched window/hash/unsafe-peak
+evidence still fails. Actual cue parameters are now bound into render reports.
+The old CI844→50 proposal failed16k stretch and must never be promoted.
 
-Browser and release verification are recorded separately when completed.
-No physical iPhone or video-specific verification has occurred. Karaoke acoustic
-coverage is unchanged (192/590, independent 9/96, additional holdout 0/78); no new
-timing accuracy is claimed. No storage cleanup or user-data migration is part of
-this increment. Spotify equivalence remains unproved.
+Exact-current Linux/macOS Chromium/WebKit release jobs are reported separately
+when complete. The matrix now includes real personal Diego playback in addition
+to Ste/Emanuele, with unchanged timing/seek/volume checks. Windows WebKit's
+original MP3 test reported unsupported media(code4), not an iPhone diagnosis.
+Karaoke remains192/590, independent9/96, additional holdout0/78; no acoustic
+accuracy improvement claimed. Phone slowdown remains unconfirmed; no cleanup
+or data deletion is included. Spotify equivalence remains unproved.
+
+Separate UNPUBLISHED experiment: a generic first-attack envelope reaches incoming
+gain .33 over8ms rather than fading away the beginning. The451→315 example
+renders with zero masked time, peak.9691,4x peak.9713, maximum gain reduction
+.8847dB and EOF change+2.856dB. SoundTouch timing is verified at-10ms lag, but
+this is not a new downbeat/phrase or physical-browser certificate. The candidate
+and core change are NOT in the stable release/index; native certification is
+required before activation. This is the next concrete musical improvement.

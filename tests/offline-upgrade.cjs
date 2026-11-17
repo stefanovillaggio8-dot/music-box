@@ -52,10 +52,19 @@ const server=http.createServer((req,res)=>{
    return {savedPerProfile:exact,legacyRetained,foreign,localUnchanged:localStorage.getItem('upgrade-personal-sentinel')===seed.personal,indexed,cacheNames:await caches.keys()};
   },{seed,prefix});
   assert.deepEqual(proof.savedPerProfile,[true,true,true]);assert.equal(proof.legacyRetained,true);assert.equal(proof.foreign,'keep-other-app');assert.equal(proof.localUnchanged,true);assert.equal(proof.indexed,'unchanged-user-data');
+  // A cache-first worker must not turn the app's deliberate index refresh
+  // into another response containing old measurements for imported music.
+  const refreshed=await page.evaluate(async prefix=>{
+   const url=new URL('/dj-deep-analysis.json?pcm=1&structure=18',location.href).href;
+   await(await caches.open(prefix+'-dj-index')).put(url,new Response(JSON.stringify({version:2,entries:{},fixture:'stale-index'}),{headers:{'Content-Type':'application/json'}}));
+   const r=await fetch(url,{headers:{'X-MusicBox-DJ-Revalidate':'1'}}),data=await r.json();
+   return r.status===200&&!data.fixture&&data.analyzed>0;
+  },prefix);
+  assert.equal(refreshed,true,'explicit new-recording analysis refresh must return the fresh network metadata');
   await context.setOffline(true);
   const offline=await page.evaluate(async revision=>{const r=await fetch('/app.js?v='+revision+'&words=16');return {status:r.status,body:await r.text()};},revision);
   assert.equal(offline.status,200);assert.ok(offline.body.includes('const APP_VERSION = "'+release+'";'));
-  console.log(JSON.stringify({method:'actual-webkit-service-worker-upgrade-v1',from:previousRevision[0]+'.'+previousRevision.slice(1),to:release,physicalIPhone:false,originalMediaDecoding:false,proof,offlineNewPlayer:true},null,2));
+  console.log(JSON.stringify({method:'actual-webkit-service-worker-upgrade-v1',from:previousRevision[0]+'.'+previousRevision.slice(1),to:release,physicalIPhone:false,originalMediaDecoding:false,proof,freshDJIndexRevalidated:refreshed,offlineNewPlayer:true},null,2));
   await context.close();
  }finally{await browser?.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});

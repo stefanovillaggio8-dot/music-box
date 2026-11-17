@@ -3,10 +3,9 @@
   "platform": "safari-logical-capability",
   "seed": 20261114,
   "runtimeEvidence": {
-    "engineSha256": "7165f922854894f7583596e81a4469b1ebbb882fffae3d0ab4f0913ff5778edb",
-    "indexSha256": "0a3b2b189227a89b2fa2b7772944eccc856aeeebff83c6cede8893e06741a719",
-    "compositeSha256": "1bcce94701948bf8f0a0f1bd532a3c187e6203c9a1c66a7366d834d9872e6ed5",
-    "applicationSha256": "67a23bc9e05a5ab8bceede152a47c76aae35ab9b7450776fba36278dfa6e69be"
+    "engineSha256": "4ee83e4328fce9729c18407cc461ace0999279de23ac406eb1cac15365c805af",
+    "indexSha256": "f52ea73d2e51430711714ed3810b77c6759a7dd27b71e669d861e449ec915c21",
+    "applicationSha256": "6f1f5ff91730238724b681d08e5322d7b016d1fa7a9f3b897d1e11625a258e5c"
   },
   "audioVariant": "original recordings; no loaded boost manifest",
   "sessionHistoryAssumption": "A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.",
@@ -14009,17 +14008,17 @@
       "seed": 20261214,
       "totals": {
         "attempts": 800,
-        "full": 21,
+        "full": 5,
         "partial": 0,
-        "crossfade": 47,
-        "normal": 245,
-        "postlude": 107,
-        "underlay": 380,
+        "crossfade": 49,
+        "normal": 250,
+        "postlude": 108,
+        "underlay": 388,
         "unavailable": 0,
         "early": 0,
-        "safariFull": 21,
-        "overlapSum": 2701.8984549574984,
-        "fullOverlapSum": 153.11104583292249,
+        "safariFull": 5,
+        "overlapSum": 2613.5711967358507,
+        "fullOverlapSum": 29.36078761127405,
         "skippedSum": 0,
         "maxSkipped": 0,
         "incomingOmittedSum": 0,
@@ -14027,10 +14026,10 @@
         "incomingAudibleUpperBoundSum": 0,
         "earlyOverlapStart": 64,
         "longestWithoutFull": 40,
-        "automaticChanges": 561,
+        "automaticChanges": 556,
         "manualQueueChanges": 0,
         "renderQualityPromotions": 0,
-        "futurePartnerReservations": 12,
+        "futurePartnerReservations": 3,
         "missingAnalysis": 0,
         "longestWithoutRhythmic": 40,
         "partialOverlapSum": 0,
@@ -14298,13 +14297,13 @@
           "from": "b-track-381",
           "to": "b-track-346",
           "kind": "postlude",
-          "uses": 18
+          "uses": 17
         },
         {
           "from": "b-track-346",
           "to": "b-track-300",
           "kind": "underlay",
-          "uses": 17
+          "uses": 16
         },
         {
           "from": "b-track-300",
@@ -14382,7 +14381,7 @@
           "from": "b-youtube-kopi-luwak",
           "to": "b-track-404",
           "kind": "crossfade",
-          "uses": 16
+          "uses": 15
         },
         {
           "from": "b-track-404",
@@ -14422,18 +14421,12 @@
         },
         {
           "from": "b-track-334",
-          "to": "b-track-451",
+          "to": "b-track-301",
           "kind": "postlude",
           "uses": 2
         },
         {
-          "from": "b-track-451",
-          "to": "b-track-315",
-          "kind": "full",
-          "uses": 16
-        },
-        {
-          "from": "b-track-315",
+          "from": "b-track-301",
           "to": "b-track-397",
           "kind": "normal",
           "uses": 1
@@ -14496,6 +14489,12 @@
           "from": "b-track-406",
           "to": "b-track-491",
           "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-491",
+          "to": "b-track-312",
+          "kind": "underlay",
           "uses": 1
         },
         {
@@ -14610,13 +14609,13 @@
           "from": "b-track-329",
           "to": "b-track-376",
           "kind": "underlay",
-          "uses": 6
+          "uses": 5
         },
         {
           "from": "b-track-376",
           "to": "b-track-297",
           "kind": "underlay",
-          "uses": 10
+          "uses": 12
         },
         {
           "from": "b-track-297",
@@ -14638,9 +14637,9 @@
         },
         {
           "from": "b-track-312",
-          "to": "b-track-451",
+          "to": "b-track-315",
           "kind": "normal",
-          "uses": 7
+          "uses": 9
         },
         {
           "from": "b-track-315",
@@ -14663,6 +14662,12 @@
         {
           "from": "b-track-452",
           "to": "b-track-359",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-359",
+          "to": "b-track-362",
           "kind": "underlay",
           "uses": 1
         },
@@ -14754,13 +14759,13 @@
           "from": "b-track-464",
           "to": "b-track-489",
           "kind": "underlay",
-          "uses": 4
+          "uses": 3
         },
         {
           "from": "b-track-478",
           "to": "b-track-391",
           "kind": "normal",
-          "uses": 2
+          "uses": 1
         },
         {
           "from": "b-track-391",
@@ -14788,36 +14793,36 @@
         },
         {
           "from": "b-track-288",
-          "to": "b-track-451",
+          "to": "b-track-270",
           "kind": "postlude",
           "uses": 1
         },
         {
-          "from": "b-track-315",
+          "from": "b-track-297",
           "to": "b-track-492",
           "kind": "normal",
           "uses": 1
         },
         {
           "from": "b-track-492",
-          "to": "b-track-270",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-297",
-          "to": "b-track-399",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-399",
           "to": "b-track-312",
           "kind": "underlay",
           "uses": 1
         },
         {
-          "from": "b-track-312",
+          "from": "b-track-315",
+          "to": "b-track-399",
+          "kind": "normal",
+          "uses": 2
+        },
+        {
+          "from": "b-track-399",
+          "to": "b-track-272",
+          "kind": "underlay",
+          "uses": 2
+        },
+        {
+          "from": "b-track-272",
           "to": "b-track-483",
           "kind": "normal",
           "uses": 1
@@ -14856,7 +14861,7 @@
           "from": "b-track-470",
           "to": "b-track-438",
           "kind": "underlay",
-          "uses": 4
+          "uses": 3
         },
         {
           "from": "b-track-300",
@@ -14979,28 +14984,34 @@
           "uses": 1
         },
         {
+          "from": "b-track-272",
+          "to": "b-track-326",
+          "kind": "crossfade",
+          "uses": 1
+        },
+        {
           "from": "b-youtube-kopi-luwak",
           "to": "b-track-346",
           "kind": "crossfade",
-          "uses": 1
+          "uses": 2
         },
         {
           "from": "b-track-346",
           "to": "b-track-449",
           "kind": "underlay",
-          "uses": 2
+          "uses": 3
         },
         {
           "from": "b-track-381",
           "to": "b-track-319",
           "kind": "postlude",
-          "uses": 2
+          "uses": 3
         },
         {
           "from": "b-track-319",
           "to": "b-track-300",
           "kind": "underlay",
-          "uses": 2
+          "uses": 3
         },
         {
           "from": "b-track-300",
@@ -15060,7 +15071,7 @@
           "from": "b-track-344",
           "to": "b-track-321",
           "kind": "underlay",
-          "uses": 3
+          "uses": 2
         },
         {
           "from": "b-track-321",
@@ -15102,7 +15113,7 @@
           "from": "b-track-329",
           "to": "b-track-404",
           "kind": "underlay",
-          "uses": 1
+          "uses": 2
         },
         {
           "from": "b-track-478",
@@ -15189,18 +15200,6 @@
           "uses": 1
         },
         {
-          "from": "b-track-315",
-          "to": "b-track-399",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-399",
-          "to": "b-track-272",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
           "from": "b-track-272",
           "to": "b-track-435",
           "kind": "normal",
@@ -15216,7 +15215,7 @@
           "from": "b-track-473",
           "to": "b-track-448",
           "kind": "normal",
-          "uses": 2
+          "uses": 3
         },
         {
           "from": "b-track-448",
@@ -15234,6 +15233,12 @@
           "from": "b-track-503",
           "to": "b-track-443",
           "kind": "postlude",
+          "uses": 1
+        },
+        {
+          "from": "b-track-443",
+          "to": "b-track-482",
+          "kind": "underlay",
           "uses": 1
         },
         {
@@ -15328,7 +15333,7 @@
         },
         {
           "from": "b-track-397",
-          "to": "b-track-451",
+          "to": "b-track-315",
           "kind": "crossfade",
           "uses": 1
         },
@@ -15360,7 +15365,7 @@
           "from": "b-track-470",
           "to": "b-track-376",
           "kind": "underlay",
-          "uses": 2
+          "uses": 4
         },
         {
           "from": "b-track-297",
@@ -15377,6 +15382,12 @@
         {
           "from": "b-track-312",
           "to": "b-track-323",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-323",
+          "to": "b-track-326",
           "kind": "normal",
           "uses": 1
         },
@@ -15456,7 +15467,7 @@
           "from": "b-track-329",
           "to": "b-track-378",
           "kind": "underlay",
-          "uses": 1
+          "uses": 3
         },
         {
           "from": "b-youtube-kopi-luwak",
@@ -15504,6 +15515,12 @@
           "from": "b-track-279",
           "to": "b-track-463",
           "kind": "postlude",
+          "uses": 1
+        },
+        {
+          "from": "b-track-463",
+          "to": "b-track-369",
+          "kind": "normal",
           "uses": 1
         },
         {
@@ -15576,7 +15593,7 @@
           "from": "b-track-482",
           "to": "b-track-321",
           "kind": "postlude",
-          "uses": 1
+          "uses": 2
         },
         {
           "from": "b-track-321",
@@ -15723,10 +15740,16 @@
           "uses": 1
         },
         {
+          "from": "b-track-389",
+          "to": "b-track-344",
+          "kind": "postlude",
+          "uses": 1
+        },
+        {
           "from": "b-track-485",
           "to": "b-track-352",
           "kind": "normal",
-          "uses": 3
+          "uses": 4
         },
         {
           "from": "b-track-352",
@@ -15886,14 +15909,14 @@
         },
         {
           "from": "b-track-296",
-          "to": "b-track-451",
+          "to": "b-youtube-kopi-luwak",
           "kind": "postlude",
           "uses": 2
         },
         {
-          "from": "b-track-315",
+          "from": "b-track-322",
           "to": "b-track-375",
-          "kind": "normal",
+          "kind": "crossfade",
           "uses": 1
         },
         {
@@ -15916,12 +15939,12 @@
         },
         {
           "from": "b-track-464",
-          "to": "b-track-449",
+          "to": "b-track-438",
           "kind": "underlay",
-          "uses": 2
+          "uses": 1
         },
         {
-          "from": "b-track-322",
+          "from": "b-track-300",
           "to": "b-track-292",
           "kind": "normal",
           "uses": 1
@@ -15933,19 +15956,25 @@
           "uses": 1
         },
         {
-          "from": "b-track-300",
-          "to": "b-track-403",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-403",
+          "from": "b-track-470",
           "to": "b-track-425",
           "kind": "underlay",
           "uses": 1
         },
         {
           "from": "b-track-425",
+          "to": "b-track-403",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-403",
+          "to": "b-track-314",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-314",
           "to": "b-track-479",
           "kind": "normal",
           "uses": 1
@@ -15958,18 +15987,12 @@
         },
         {
           "from": "b-track-308",
-          "to": "b-track-314",
+          "to": "b-track-321",
           "kind": "underlay",
           "uses": 1
         },
         {
-          "from": "b-track-314",
-          "to": "b-youtube-kopi-luwak",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-478",
+          "from": "b-track-321",
           "to": "b-track-330",
           "kind": "normal",
           "uses": 1
@@ -15987,13 +16010,7 @@
           "uses": 1
         },
         {
-          "from": "b-track-321",
-          "to": "b-track-274",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-274",
+          "from": "b-track-344",
           "to": "b-track-284",
           "kind": "underlay",
           "uses": 1
@@ -16001,6 +16018,18 @@
         {
           "from": "b-track-510",
           "to": "b-track-329",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-478",
+          "to": "b-track-274",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-274",
+          "to": "b-track-376",
           "kind": "underlay",
           "uses": 1
         },
@@ -16054,24 +16083,30 @@
         },
         {
           "from": "b-track-373",
-          "to": "b-track-451",
+          "to": "b-track-436",
           "kind": "postlude",
           "uses": 1
         },
         {
-          "from": "b-track-315",
-          "to": "b-track-402",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-402",
+          "from": "b-track-436",
           "to": "b-track-314",
           "kind": "underlay",
           "uses": 1
         },
         {
           "from": "b-track-314",
+          "to": "b-track-402",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-402",
+          "to": "b-track-321",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-321",
           "to": "b-track-455",
           "kind": "normal",
           "uses": 1
@@ -16083,15 +16118,9 @@
           "uses": 1
         },
         {
-          "from": "b-track-329",
-          "to": "b-track-321",
-          "kind": "underlay",
-          "uses": 3
-        },
-        {
-          "from": "b-track-321",
+          "from": "b-track-464",
           "to": "b-track-297",
-          "kind": "normal",
+          "kind": "underlay",
           "uses": 1
         },
         {
@@ -16102,7 +16131,7 @@
         },
         {
           "from": "b-track-452",
-          "to": "b-track-378",
+          "to": "b-track-489",
           "kind": "underlay",
           "uses": 1
         },
@@ -16414,9 +16443,9 @@
         },
         {
           "from": "b-track-478",
-          "to": "b-track-451",
+          "to": "b-track-315",
           "kind": "normal",
-          "uses": 1
+          "uses": 2
         },
         {
           "from": "b-track-315",
@@ -16469,6 +16498,12 @@
         {
           "from": "b-track-349",
           "to": "b-track-268",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-268",
+          "to": "b-track-313",
           "kind": "normal",
           "uses": 1
         },
@@ -16545,27 +16580,27 @@
           "uses": 1
         },
         {
-          "from": "b-track-482",
-          "to": "b-track-451",
-          "kind": "postlude",
-          "uses": 1
-        },
-        {
-          "from": "b-track-315",
+          "from": "b-track-321",
           "to": "b-track-485",
           "kind": "normal",
           "uses": 1
         },
         {
-          "from": "b-track-321",
+          "from": "b-track-315",
           "to": "b-track-467",
           "kind": "normal",
           "uses": 1
         },
         {
           "from": "b-track-467",
-          "to": "b-track-378",
+          "to": "b-track-270",
           "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-297",
+          "to": "b-track-391",
+          "kind": "normal",
           "uses": 1
         },
         {
@@ -16579,18 +16614,6 @@
           "to": "b-track-268",
           "kind": "postlude",
           "uses": 1
-        },
-        {
-          "from": "b-track-268",
-          "to": "b-track-461",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-461",
-          "to": "b-track-270",
-          "kind": "underlay",
-          "uses": 2
         },
         {
           "from": "b-track-377",
@@ -16707,6 +16730,12 @@
           "uses": 1
         },
         {
+          "from": "b-track-463",
+          "to": "b-track-482",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
           "from": "b-track-280",
           "to": "b-track-449",
           "kind": "underlay",
@@ -16737,6 +16766,12 @@
           "uses": 1
         },
         {
+          "from": "b-track-329",
+          "to": "b-track-321",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
           "from": "b-track-321",
           "to": "b-track-480",
           "kind": "normal",
@@ -16755,9 +16790,15 @@
           "uses": 1
         },
         {
-          "from": "b-track-315",
+          "from": "b-track-301",
           "to": "b-track-461",
           "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-461",
+          "to": "b-track-270",
+          "kind": "underlay",
           "uses": 1
         },
         {
@@ -16788,6 +16829,12 @@
           "from": "b-track-473",
           "to": "b-track-337",
           "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-464",
+          "to": "b-track-449",
+          "kind": "underlay",
           "uses": 1
         },
         {
@@ -16839,7 +16886,7 @@
           "uses": 1
         },
         {
-          "from": "b-track-315",
+          "from": "b-track-478",
           "to": "b-track-504",
           "kind": "normal",
           "uses": 1
@@ -16858,12 +16905,6 @@
         },
         {
           "from": "b-track-304",
-          "to": "b-youtube-kopi-luwak",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-478",
           "to": "b-track-501",
           "kind": "normal",
           "uses": 1
@@ -16909,24 +16950,29 @@
           "to": "b-track-510",
           "kind": "underlay",
           "uses": 1
+        },
+        {
+          "from": "b-track-297",
+          "to": "b-track-495",
+          "kind": "normal",
+          "uses": 1
         }
       ],
       "percent": {
-        "full": 2.625,
+        "full": 0.625,
         "partial": 0,
-        "crossfade": 5.875,
-        "normal": 30.625,
-        "postlude": 13.375,
-        "underlay": 47.5,
+        "crossfade": 6.125,
+        "normal": 31.25,
+        "postlude": 13.5,
+        "underlay": 48.5,
         "unavailable": 0,
         "early": 0,
-        "safariFull": 2.625
+        "safariFull": 0.625
       },
-      "averageOverlap": 4.868285504427925,
+      "averageOverlap": 4.75194763042882,
       "averagePartialOverlap": 0,
-      "averageFullOverlap": 7.291002182520119,
+      "averageFullOverlap": 5.87215752225481,
       "commonAssetUse": {
-        "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc": 16,
         "977070a8972bdbd9dfe2a9c9da87e47f030536eb70361b70fbbb887eee294b66": 5
       },
       "averageSkippedAudible": 0,
@@ -17404,7 +17450,7 @@
           "session": 0,
           "step": 27,
           "from": "b-track-334",
-          "to": "b-track-451",
+          "to": "b-track-301",
           "kind": "postlude",
           "overlap": 3.953600000000023,
           "commonAssetSha": null,
@@ -17423,27 +17469,7 @@
         {
           "session": 0,
           "step": 28,
-          "from": "b-track-451",
-          "to": "b-track-315",
-          "kind": "full",
-          "overlap": 7.734391138853027,
-          "commonAssetSha": "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc",
-          "skipped": 0,
-          "incomingOmitted": 0,
-          "outgoingReadThrough": 150.326,
-          "incomingAudibleUpperBound": 0,
-          "begin": 142.55660886114697,
-          "end": 150.291,
-          "earlyOverlapStart": false,
-          "early": false,
-          "safariFull": true,
-          "significantContentSkippedSeconds": null,
-          "semanticContentUnknown": true
-        },
-        {
-          "session": 0,
-          "step": 29,
-          "from": "b-track-315",
+          "from": "b-track-301",
           "to": "b-track-397",
           "kind": "normal",
           "overlap": 0,
@@ -17454,7 +17480,7 @@
         },
         {
           "session": 0,
-          "step": 30,
+          "step": 29,
           "from": "b-track-397",
           "to": "b-youtube-tRuyFtXGNQA",
           "kind": "normal",
@@ -17466,7 +17492,7 @@
         },
         {
           "session": 0,
-          "step": 31,
+          "step": 30,
           "from": "b-youtube-tRuyFtXGNQA",
           "to": "b-track-448",
           "kind": "crossfade",
@@ -17486,7 +17512,7 @@
         },
         {
           "session": 0,
-          "step": 32,
+          "step": 31,
           "from": "b-track-448",
           "to": "b-track-376",
           "kind": "underlay",
@@ -17506,7 +17532,7 @@
         },
         {
           "session": 0,
-          "step": 33,
+          "step": 32,
           "from": "b-track-376",
           "to": "b-track-329",
           "kind": "underlay",
@@ -17526,7 +17552,7 @@
         },
         {
           "session": 0,
-          "step": 34,
+          "step": 33,
           "from": "b-track-329",
           "to": "b-track-270",
           "kind": "underlay",
@@ -17546,7 +17572,7 @@
         },
         {
           "session": 0,
-          "step": 35,
+          "step": 34,
           "from": "b-track-270",
           "to": "b-track-510",
           "kind": "underlay",
@@ -17566,7 +17592,7 @@
         },
         {
           "session": 0,
-          "step": 36,
+          "step": 35,
           "from": "b-track-510",
           "to": "b-track-470",
           "kind": "underlay",
@@ -17586,7 +17612,7 @@
         },
         {
           "session": 0,
-          "step": 37,
+          "step": 36,
           "from": "b-track-470",
           "to": "b-track-297",
           "kind": "underlay",
@@ -17606,7 +17632,7 @@
         },
         {
           "session": 0,
-          "step": 38,
+          "step": 37,
           "from": "b-track-297",
           "to": "b-track-406",
           "kind": "normal",
@@ -17618,7 +17644,7 @@
         },
         {
           "session": 0,
-          "step": 39,
+          "step": 38,
           "from": "b-track-406",
           "to": "b-track-491",
           "kind": "normal",
@@ -17629,196 +17655,28 @@
           "incomingAudibleUpperBound": 0
         },
         {
-          "session": 1,
-          "step": 34,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 3,
-          "step": 36,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 5,
-          "step": 30,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 6,
-          "step": 27,
-          "from": "b-track-397",
-          "to": "b-track-451",
-          "kind": "crossfade",
-          "overlap": 1.55,
+          "session": 0,
+          "step": 39,
+          "from": "b-track-491",
+          "to": "b-track-312",
+          "kind": "underlay",
+          "overlap": 3.3499999999999943,
           "commonAssetSha": null,
           "skipped": 0,
           "incomingOmitted": 0,
-          "outgoingReadThrough": 209.43,
+          "outgoingReadThrough": 251.658,
           "incomingAudibleUpperBound": 0,
-          "begin": 207.88,
-          "end": 209.43,
+          "begin": 248.273,
+          "end": 251.623,
           "earlyOverlapStart": false,
           "early": false,
           "safariFull": false,
           "significantContentSkippedSeconds": null,
-          "semanticContentUnknown": true,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 1
-          }
-        },
-        {
-          "session": 7,
-          "step": 34,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 8,
-          "step": 5,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 9,
-          "step": 37,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
+          "semanticContentUnknown": true
         },
         {
           "session": 11,
-          "step": 5,
+          "step": 8,
           "from": "b-track-487",
           "to": "b-track-353",
           "kind": "normal",
@@ -17837,7 +17695,7 @@
             "chosen": "b-track-353",
             "maximumRelativeCurrentScoreLoss": null,
             "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 1
+            "checkedLinks": 2
           }
         },
         {
@@ -17883,56 +17741,6 @@
             ],
             "protectedRank": 2,
             "chosen": "b-track-353",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 2
-          }
-        },
-        {
-          "session": 15,
-          "step": 24,
-          "from": "b-track-478",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
-            "maximumRelativeCurrentScoreLoss": null,
-            "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 1
-          }
-        },
-        {
-          "session": 17,
-          "step": 34,
-          "from": "b-track-312",
-          "to": "b-track-451",
-          "kind": "normal",
-          "overlap": 0,
-          "skipped": 0,
-          "missingAnalysis": false,
-          "incomingOmitted": 0,
-          "incomingAudibleUpperBound": 0,
-          "begin": 202.37,
-          "end": 202.37,
-          "futurePartnerReservation": {
-            "method": "fresh-certified-partner-preservation-v1",
-            "protectedSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-            "futureSources": [
-              "b-track-451"
-            ],
-            "protectedRank": 2,
-            "chosen": "b-track-451",
             "maximumRelativeCurrentScoreLoss": null,
             "currentTransition": "natural-or-quiet-underlay",
             "checkedLinks": 2
@@ -28170,31 +27978,31 @@
       "seed": 20261314,
       "totals": {
         "attempts": 800,
-        "full": 77,
-        "partial": 15,
+        "full": 79,
+        "partial": 23,
         "crossfade": 53,
-        "normal": 205,
-        "postlude": 75,
-        "underlay": 375,
+        "normal": 209,
+        "postlude": 73,
+        "underlay": 363,
         "unavailable": 0,
         "early": 0,
-        "safariFull": 77,
-        "overlapSum": 4159.789996113048,
-        "fullOverlapSum": 718.127746938422,
+        "safariFull": 79,
+        "overlapSum": 4132.163865437097,
+        "fullOverlapSum": 730.0232693264818,
         "skippedSum": 0,
         "maxSkipped": 0,
         "incomingOmittedSum": 0,
         "maxIncomingOmitted": 0,
         "incomingAudibleUpperBoundSum": 0,
-        "earlyOverlapStart": 242,
+        "earlyOverlapStart": 237,
         "longestWithoutFull": 30,
-        "automaticChanges": 708,
+        "automaticChanges": 706,
         "manualQueueChanges": 0,
         "renderQualityPromotions": 0,
-        "futurePartnerReservations": 18,
+        "futurePartnerReservations": 20,
         "missingAnalysis": 0,
-        "longestWithoutRhythmic": 29,
-        "partialOverlapSum": 194.84999999999843,
+        "longestWithoutRhythmic": 30,
+        "partialOverlapSum": 245.70999999999833,
         "outsideLibraryAttempts": 0
       },
       "scopeAudit": {
@@ -29060,7 +28868,7 @@
           "from": "b-track-1183",
           "to": "b-track-1070",
           "kind": "full",
-          "uses": 17
+          "uses": 19
         },
         {
           "from": "b-track-1070",
@@ -29114,13 +28922,13 @@
           "from": "b-track-579",
           "to": "b-track-1058",
           "kind": "underlay",
-          "uses": 5
+          "uses": 3
         },
         {
           "from": "b-track-1058",
           "to": "b-track-687",
           "kind": "underlay",
-          "uses": 5
+          "uses": 3
         },
         {
           "from": "b-track-687",
@@ -29352,32 +29160,32 @@
         },
         {
           "from": "b-track-825",
-          "to": "b-track-1012",
+          "to": "b-track-626",
           "kind": "underlay",
           "uses": 1
+        },
+        {
+          "from": "b-track-626",
+          "to": "b-track-1195",
+          "kind": "partial",
+          "uses": 8
+        },
+        {
+          "from": "b-track-1195",
+          "to": "b-track-1012",
+          "kind": "underlay",
+          "uses": 2
         },
         {
           "from": "b-track-1012",
           "to": "b-track-990",
           "kind": "underlay",
-          "uses": 3
+          "uses": 1
         },
         {
           "from": "b-track-990",
           "to": "b-track-596",
           "kind": "postlude",
-          "uses": 1
-        },
-        {
-          "from": "b-track-596",
-          "to": "b-track-1128",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1128",
-          "to": "b-track-1063",
-          "kind": "underlay",
           "uses": 1
         },
         {
@@ -29480,22 +29288,16 @@
           "from": "b-track-947",
           "to": "b-track-1184",
           "kind": "underlay",
-          "uses": 4
+          "uses": 3
         },
         {
           "from": "b-track-1184",
-          "to": "b-track-605",
+          "to": "b-track-626",
           "kind": "postlude",
           "uses": 3
         },
         {
-          "from": "b-track-605",
-          "to": "b-track-1061",
-          "kind": "underlay",
-          "uses": 4
-        },
-        {
-          "from": "b-track-1061",
+          "from": "b-track-1195",
           "to": "b-track-817",
           "kind": "underlay",
           "uses": 1
@@ -29669,19 +29471,7 @@
           "uses": 1
         },
         {
-          "from": "b-track-626",
-          "to": "b-track-578",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-578",
-          "to": "b-track-579",
-          "kind": "underlay",
-          "uses": 3
-        },
-        {
-          "from": "b-track-687",
+          "from": "b-track-1195",
           "to": "b-track-745",
           "kind": "underlay",
           "uses": 1
@@ -29759,6 +29549,18 @@
           "uses": 1
         },
         {
+          "from": "b-track-1150",
+          "to": "b-track-1183",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-1070",
+          "to": "b-track-825",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
           "from": "b-track-755",
           "to": "b-track-75",
           "kind": "normal",
@@ -29784,24 +29586,12 @@
         },
         {
           "from": "b-track-1153",
-          "to": "b-track-605",
+          "to": "b-track-626",
           "kind": "postlude",
           "uses": 1
         },
         {
-          "from": "b-track-1061",
-          "to": "b-track-947",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1184",
-          "to": "b-track-579",
-          "kind": "postlude",
-          "uses": 1
-        },
-        {
-          "from": "b-track-687",
+          "from": "b-track-1195",
           "to": "b-track-858",
           "kind": "underlay",
           "uses": 1
@@ -29829,6 +29619,30 @@
           "to": "b-track-1120",
           "kind": "postlude",
           "uses": 2
+        },
+        {
+          "from": "b-track-1120",
+          "to": "b-track-1183",
+          "kind": "normal",
+          "uses": 2
+        },
+        {
+          "from": "b-track-1070",
+          "to": "b-track-45",
+          "kind": "normal",
+          "uses": 1
+        },
+        {
+          "from": "b-track-45",
+          "to": "b-track-1053",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-1053",
+          "to": "b-track-1200",
+          "kind": "normal",
+          "uses": 1
         },
         {
           "from": "b-track-974",
@@ -30048,12 +29862,18 @@
         },
         {
           "from": "b-track-752",
-          "to": "b-track-742",
+          "to": "b-track-626",
           "kind": "postlude",
           "uses": 1
         },
         {
-          "from": "b-track-742",
+          "from": "b-track-1195",
+          "to": "b-track-449",
+          "kind": "underlay",
+          "uses": 2
+        },
+        {
+          "from": "b-track-1070",
           "to": "b-track-731",
           "kind": "normal",
           "uses": 1
@@ -30066,25 +29886,13 @@
         },
         {
           "from": "b-track-1094",
-          "to": "b-track-449",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1070",
-          "to": "b-track-1137",
-          "kind": "normal",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1137",
           "to": "b-track-1053",
           "kind": "underlay",
           "uses": 1
         },
         {
           "from": "b-track-1053",
-          "to": "b-track-553",
+          "to": "b-track-1137",
           "kind": "normal",
           "uses": 1
         },
@@ -30128,12 +29936,6 @@
           "from": "b-track-603",
           "to": "b-track-449",
           "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1120",
-          "to": "b-track-1183",
-          "kind": "normal",
           "uses": 1
         },
         {
@@ -30183,6 +29985,12 @@
           "to": "b-track-578",
           "kind": "underlay",
           "uses": 1
+        },
+        {
+          "from": "b-track-578",
+          "to": "b-track-579",
+          "kind": "underlay",
+          "uses": 2
         },
         {
           "from": "b-track-684",
@@ -30306,7 +30114,7 @@
         },
         {
           "from": "b-track-587",
-          "to": "b-track-1012",
+          "to": "b-track-626",
           "kind": "underlay",
           "uses": 1
         },
@@ -30384,14 +30192,8 @@
         },
         {
           "from": "b-track-931",
-          "to": "b-track-1012",
+          "to": "b-track-626",
           "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-990",
-          "to": "b-track-571",
-          "kind": "postlude",
           "uses": 1
         },
         {
@@ -30433,12 +30235,6 @@
         {
           "from": "b-track-523",
           "to": "b-track-947",
-          "kind": "underlay",
-          "uses": 1
-        },
-        {
-          "from": "b-track-1061",
-          "to": "b-track-449",
           "kind": "underlay",
           "uses": 1
         },
@@ -30534,13 +30330,19 @@
         },
         {
           "from": "b-track-1017",
-          "to": "b-track-1012",
+          "to": "b-track-626",
           "kind": "underlay",
           "uses": 1
         },
         {
           "from": "b-track-509",
           "to": "b-track-605",
+          "kind": "underlay",
+          "uses": 1
+        },
+        {
+          "from": "b-track-605",
+          "to": "b-track-1061",
           "kind": "underlay",
           "uses": 1
         },
@@ -30588,25 +30390,26 @@
         }
       ],
       "percent": {
-        "full": 9.625,
-        "partial": 1.875,
+        "full": 9.875,
+        "partial": 2.875,
         "crossfade": 6.625,
-        "normal": 25.625,
-        "postlude": 9.375,
-        "underlay": 46.875,
+        "normal": 26.125,
+        "postlude": 9.125,
+        "underlay": 45.375,
         "unavailable": 0,
         "early": 0,
-        "safariFull": 9.625
+        "safariFull": 9.875
       },
-      "averageOverlap": 6.991243690946299,
-      "averagePartialOverlap": 12.989999999999895,
-      "averageFullOverlap": 9.326334375823661,
+      "averageOverlap": 6.991817031196442,
+      "averagePartialOverlap": 10.683043478260798,
+      "averageFullOverlap": 9.240800877550402,
       "commonAssetUse": {
         "2188057c318a4c72c35ef9ea1ecea53e904efe400c7db00ae4bbf1465341098e": 19,
         "2946cdafd2b1f6b07bb825d12f387c40eea077867e23431e94c13d5421670ab0": 20,
         "21f030cc52e0dea58bce03eb625046a0221fb92e53c5a20bacf2b1af2eab4dbe": 20,
         "0f8004366ec0bb81d728ebfec212459f38f96d5667ec60bcb6f5459f47cca55c": 15,
-        "7e3ecf5cb9c570439c9f9af35bf180209b75aac95b7177022290ea1b670052e3": 17,
+        "7e3ecf5cb9c570439c9f9af35bf180209b75aac95b7177022290ea1b670052e3": 19,
+        "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876": 8,
         "feaf70bcb3b4f627c6501e20975d2baac6035ae2f3fa222b64dac5525c100073": 1
       },
       "averageSkippedAudible": 0,
@@ -31457,7 +31260,7 @@
             "chosen": "b-track-1183",
             "maximumRelativeCurrentScoreLoss": null,
             "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 8
+            "checkedLinks": 7
           }
         },
         {
@@ -31509,6 +31312,54 @@
           }
         },
         {
+          "session": 8,
+          "step": 37,
+          "from": "b-track-1150",
+          "to": "b-track-1183",
+          "kind": "normal",
+          "overlap": 0,
+          "skipped": 0,
+          "missingAnalysis": false,
+          "incomingOmitted": 0,
+          "incomingAudibleUpperBound": 0,
+          "futurePartnerReservation": {
+            "method": "fresh-certified-partner-preservation-v1",
+            "protectedSha": "63d905bf275f07db788558e8880fc9f9e5e493a5",
+            "futureSources": [
+              "b-track-1183"
+            ],
+            "protectedRank": 2,
+            "chosen": "b-track-1183",
+            "maximumRelativeCurrentScoreLoss": null,
+            "currentTransition": "natural-or-quiet-underlay",
+            "checkedLinks": 8
+          }
+        },
+        {
+          "session": 9,
+          "step": 35,
+          "from": "b-track-1120",
+          "to": "b-track-1183",
+          "kind": "normal",
+          "overlap": 0,
+          "skipped": 0,
+          "missingAnalysis": false,
+          "incomingOmitted": 0,
+          "incomingAudibleUpperBound": 0,
+          "futurePartnerReservation": {
+            "method": "fresh-certified-partner-preservation-v1",
+            "protectedSha": "63d905bf275f07db788558e8880fc9f9e5e493a5",
+            "futureSources": [
+              "b-track-1183"
+            ],
+            "protectedRank": 2,
+            "chosen": "b-track-1183",
+            "maximumRelativeCurrentScoreLoss": null,
+            "currentTransition": "natural-or-quiet-underlay",
+            "checkedLinks": 7
+          }
+        },
+        {
           "session": 10,
           "step": 33,
           "from": "b-track-603",
@@ -31534,7 +31385,7 @@
         },
         {
           "session": 12,
-          "step": 35,
+          "step": 34,
           "from": "b-track-603",
           "to": "b-track-1183",
           "kind": "normal",
@@ -31553,7 +31404,7 @@
             "chosen": "b-track-1183",
             "maximumRelativeCurrentScoreLoss": null,
             "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 8
+            "checkedLinks": 7
           }
         },
         {
@@ -31705,7 +31556,7 @@
             "chosen": "b-track-1183",
             "maximumRelativeCurrentScoreLoss": null,
             "currentTransition": "natural-or-quiet-underlay",
-            "checkedLinks": 8
+            "checkedLinks": 7
           }
         },
         {
@@ -34866,8 +34717,8 @@
       "members": 227,
       "completePairs": 1,
       "uniqueRecordingPairs": 1,
-      "partialPairs": 0,
-      "uniquePartialRecordingPairs": 0,
+      "partialPairs": 1,
+      "uniquePartialRecordingPairs": 1,
       "full": [
         {
           "from": "b-track-705",
@@ -34892,13 +34743,36 @@
           "semanticContentUnknown": true
         }
       ],
-      "partial": []
+      "partial": [
+        {
+          "from": "b-track-4",
+          "to": "b-track-38",
+          "fromTitle": "Sono Ok",
+          "toTitle": "Gilgamesh",
+          "fromSha": "004e594c10688869197f21e31e748c1dd82901b4",
+          "toSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+          "kind": "partial",
+          "overlap": 7.250282685512346,
+          "commonAssetSha": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 126.877,
+          "incomingAudibleUpperBound": 0,
+          "begin": 119.62671731448765,
+          "end": 126.877,
+          "earlyOverlapStart": false,
+          "early": false,
+          "safariFull": false,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        }
+      ]
     },
     {
       "profile": "Diego",
       "members": 212,
-      "completePairs": 2,
-      "uniqueRecordingPairs": 2,
+      "completePairs": 1,
+      "uniqueRecordingPairs": 1,
       "partialPairs": 0,
       "uniquePartialRecordingPairs": 0,
       "full": [
@@ -34923,28 +34797,6 @@
           "safariFull": true,
           "significantContentSkippedSeconds": null,
           "semanticContentUnknown": true
-        },
-        {
-          "from": "b-track-451",
-          "to": "b-track-315",
-          "fromTitle": "Problem Solver",
-          "toTitle": "Futuri Possibili",
-          "fromSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
-          "toSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
-          "kind": "full",
-          "overlap": 7.734391138853027,
-          "commonAssetSha": "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc",
-          "skipped": 0,
-          "incomingOmitted": 0,
-          "outgoingReadThrough": 150.326,
-          "incomingAudibleUpperBound": 0,
-          "begin": 142.55660886114697,
-          "end": 150.291,
-          "earlyOverlapStart": false,
-          "early": false,
-          "safariFull": true,
-          "significantContentSkippedSeconds": null,
-          "semanticContentUnknown": true
         }
       ],
       "partial": []
@@ -34952,10 +34804,10 @@
     {
       "profile": "Emanuele",
       "members": 621,
-      "completePairs": 6,
-      "uniqueRecordingPairs": 6,
-      "partialPairs": 2,
-      "uniquePartialRecordingPairs": 2,
+      "completePairs": 7,
+      "uniqueRecordingPairs": 7,
+      "partialPairs": 5,
+      "uniquePartialRecordingPairs": 5,
       "full": [
         {
           "from": "b-track-1183",
@@ -35088,9 +34940,75 @@
           "safariFull": true,
           "significantContentSkippedSeconds": null,
           "semanticContentUnknown": true
+        },
+        {
+          "from": "b-track-934",
+          "to": "b-track-1124",
+          "fromTitle": "Body (Remix) [feat. Capo Plaza & Rondodasosa]",
+          "toTitle": "Gli occhi della tigre",
+          "fromSha": "8121969f748bc539d4a33b1f660ac2fe9bfcc223",
+          "toSha": "a1f4c25773e7f7a5873e078b387abf0f01c67d42",
+          "kind": "full",
+          "overlap": 13.88620921984716,
+          "commonAssetSha": "68364e66183ce4c5555bf78d9b3fbbdf6d9f5e21a0a2afca7df2ce57243d4d19",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 204.545,
+          "incomingAudibleUpperBound": 0,
+          "begin": 190.65879078015283,
+          "end": 204.545,
+          "earlyOverlapStart": true,
+          "early": false,
+          "safariFull": true,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
         }
       ],
       "partial": [
+        {
+          "from": "b-track-1104",
+          "to": "b-track-745",
+          "fromTitle": "Buonanotte Amò",
+          "toTitle": "Un nuovo bacio",
+          "fromSha": "b9eed93f1616c59659d04abdd187cd8a2583a388",
+          "toSha": "f9146d91c776a2de72a173d538978e0dc8f93535",
+          "kind": "partial",
+          "overlap": 13.073418274920897,
+          "commonAssetSha": "68cbec7e1539103a315d75b773c931fa4866e758323d94d8a6136dd57b467b62",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 161.727,
+          "incomingAudibleUpperBound": 0,
+          "begin": 148.6535817250791,
+          "end": 161.727,
+          "earlyOverlapStart": true,
+          "early": false,
+          "safariFull": false,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        },
+        {
+          "from": "b-track-626",
+          "to": "b-track-1195",
+          "fromTitle": "NULLA ACCADE (feat. Capo Plaza)",
+          "toTitle": "Fenomeno",
+          "fromSha": "5823a801066b6822c279cfb438d7fd7d23d2daba",
+          "toSha": "d9d823b42ff5a72288b6701f6d3edaea8aa266d6",
+          "kind": "partial",
+          "overlap": 6.3574999999999875,
+          "commonAssetSha": "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 174.405,
+          "incomingAudibleUpperBound": 0,
+          "begin": 168.0475,
+          "end": 174.405,
+          "earlyOverlapStart": false,
+          "early": false,
+          "safariFull": false,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        },
         {
           "from": "b-track-636",
           "to": "b-track-603",
@@ -35130,6 +35048,28 @@
           "begin": 282.4417551020408,
           "end": 295.834,
           "earlyOverlapStart": true,
+          "early": false,
+          "safariFull": false,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        },
+        {
+          "from": "b-track-830",
+          "to": "b-track-1198",
+          "fromTitle": "Wild Bandana (feat. Tedua & Vaz Tè)",
+          "toTitle": "Con il nastro rosa - Remastered",
+          "fromSha": "552d183f7096aaa7a6ee79b4188bd7d623b8ec77",
+          "toSha": "48b318f5e13e59ad44e58b925466f8ec9751134d",
+          "kind": "partial",
+          "overlap": 7.425700000000006,
+          "commonAssetSha": "8be58c6c39a0737a6f07e784b363eb4ac693cb8ddc22accef1d88a107ad1396e",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 308.442,
+          "incomingAudibleUpperBound": 0,
+          "begin": 301.0163,
+          "end": 308.442,
+          "earlyOverlapStart": false,
           "early": false,
           "safariFull": false,
           "significantContentSkippedSeconds": null,
