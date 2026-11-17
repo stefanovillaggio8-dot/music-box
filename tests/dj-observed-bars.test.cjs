@@ -3,21 +3,28 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root=path.resolve(__dirname,'..'),source=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
 const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks}')(require,path.join(root,'tools'));
 const entries=new Map(tracks);
-test('the installed original-source pair is usable through its actual native receipts and stays partial',()=>{
- const a=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3'),p=engine.transition(a,b,a.duration);
+test('the original-source Modà rhythm receipts cannot override a persistently masked entrance',()=>{
+ const a=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3'),p=a.structuralBeatPlans[b.sha].cue;
  assert.equal(p?.metricalPickupWindow,true);assert.equal(p.nativeOriginalReturn,true);assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,true);
- assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
+ assert.equal(p.composite.introductionExposure.accepted,false);
+ assert.ok(p.composite.introductionExposure.longestMaskedSeconds>=4);
+ assert.equal(engine.transition(a,b,a.duration),null);
+ assert.equal(engine.playbackTransition(a,b,a.duration),null,'no attenuated substitute may consume the same crescendo');
  assert.equal(p.composite.nativeDecoderProof.assetSha256,p.composite.sha256);
  for(const rate of [44100,48000])assert.deepEqual(p.composite.nativeDecoderProof.rates[rate].browsers,['chromium','webkit']);
 });
 function fixture(){
  const originalA=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3');
  const original=originalA.structuralBeatPlans[b.sha],p=structuredClone(original.cue);
+ // Counterfactual previous protocol, for testing the INDEPENDENT rhythm,
+ // native-clock and content guards below. The real installed cue above
+ // remains vetoed; this fixture is never written to the app index.
+ delete p.composite.introductionExposure;
  // Clone actual installed receipts, then mutate one safety condition per case.
  const record={...original,cue:p,cues:[p]},a={...originalA,structuralBeatPlans:{...originalA.structuralBeatPlans,[b.sha]:record}};
  return {a,b,p,record,validate:q=>engine.validatePreservedFileTailCue(record,q,a,b,a.duration)};
 }
-test('late instrumental rhythm uses observed bars and remains explicitly partial with both recordings intact',()=>{
+test('the previous rhythmic certificate remains explicitly partial, independently of the entrance veto',()=>{
  const {a,b,p,validate}=fixture();assert.ok(validate(p));
  const plan=engine.transition(a,b,a.duration);assert.equal(plan.metricalPickupWindow,true);
  assert.equal(plan.measuredFullBeat,false);assert.equal(plan.metricalRhythmic,true);

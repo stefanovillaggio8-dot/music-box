@@ -84,6 +84,7 @@ def main():
                 wav.setnchannels(2);wav.setsampwidth(2);wav.setframerate(SR)
                 wav.writeframes((np.clip(mixed*headroom,-1,1)*32767).astype('<i2').tobytes())
             result={'from':p['from'],'to':p['to'],'seconds':count/SR,'sourceShaVerified':True,
+                'cueParameters':{k:cue[k] for k in ('begin','entry','fade','tempo')},
                 'sourceSha':cue['sourceSha'],'targetSha':cue['targetSha'],'sampleRate':SR,
                 'timing':timing,'stretchAccepted':run.returncode==0,'onsets':rhythm(original,processed),
                 'samplePeak':peak,'samplesOverFullScale':int(np.count_nonzero(np.abs(mixed)>1)),

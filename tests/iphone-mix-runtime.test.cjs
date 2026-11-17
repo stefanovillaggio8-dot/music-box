@@ -149,11 +149,12 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
  assert.ok(begin>=0&&end>begin);
  const code=source.slice(begin,end);
  const clock={now:100000},queued=[];
- let requests=0;
- const fetch=async()=>{
+ let requests=0;const urls=[];
+ const fetch=async url=>{
+  urls.push(url);
   requests++;
   if(requests===1)throw Error("slow network");
-  return {ok:true,json:async()=>({version:2,entries:{}})};
+  return {ok:true,json:async()=>({version:2,introExposureRevision:requests<=2?2:undefined,entries:{}})};
  };
  const api=new Function("fetch","clock","queued",
   "const isIOS=true,document={hidden:false};"+
@@ -164,7 +165,7 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
   "const bridge=()=>null;const iosIndexCanLoadNow=()=>true;let offlineTransferPriority=false,deepTransferController=null;"+
   "let enabled=true,mixing=false,plannedFor='',plan=null,"+
   "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
-  "const $=()=>null;"+
+  "const $=()=>null;const recentLibraryIds=[];"+
   code+
   "return {loadDeepIndex,stat:()=>({retryAfter:deepRetryAfter,loaded:!!deepIndex})};"
  )(fetch,clock,queued);
@@ -179,6 +180,8 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
  assert.equal(api.stat().loaded,true);
  assert.equal((await api.loadDeepIndex()).version,2);
  assert.equal(requests,2,"successful index is reused");
+ assert.equal((await api.loadDeepIndex(true)).introExposureRevision,2,'a stale CDN index cannot downgrade the compatible measurements');
+ assert.match(urls.at(-1),/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box\/main\/dj-deep-analysis\.json\?mb-dj-refresh=1$/);
 });
 test("continue button never cancels playback intention while audio already plays",()=>{
  assert.ok(app.includes("if (audio && !audio.paused) { _nascondiAiuto(); return; }"));

@@ -226,6 +226,11 @@ def main():
                     'pitchPreserved':True,'timingVerified':True,'renderedFromOriginals':True,
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
                 composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
+                exposure=proof['introductionExposure']
+                composite['introductionExposure']={**exposure,'sourceSha':cue['sourceSha'],
+                    'targetSha':cue['targetSha'],'assetSha256':sha}
+                if not exposure['accepted']:
+                    raise ValueError('Rendered incoming introduction is persistently masked')
                 if cue.get('metricalPickupWindow'):
                     if args.release_seconds!=1.5:raise ValueError('Metrical pickup requires the verified slow native reveal')
                     composite['renderedEntrance']=cue['preservedEntrance']
