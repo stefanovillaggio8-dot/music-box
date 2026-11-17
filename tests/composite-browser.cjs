@@ -177,7 +177,7 @@ const server=http.createServer(async(req,res)=>{
     });
     if(injectProvisionalMetadata)await shell.addInitScript(nativeMetadataFault);
     await shell.addInitScript(profile=>{
-     localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];
+     localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];window.__nativeActions=[];
      window.__nativeSeekWrites=[];
      const seek=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
      Object.defineProperty(HTMLMediaElement.prototype,'currentTime',{...seek,set(value){
@@ -186,8 +186,10 @@ const server=http.createServer(async(req,res)=>{
       if(__nativeSeekWrites.length<64)__nativeSeekWrites.push(item);
       try{return seek.set.call(this,value)}catch(error){item.error=String(error);throw error}
      }});
-     const play=HTMLMediaElement.prototype.play;
-     HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
+     const play=HTMLMediaElement.prototype.play,pause=HTMLMediaElement.prototype.pause;
+     const trace=(a,event,error)=>{if(__nativeActions.length<80)__nativeActions.push({event,error:error||null,time:a.currentTime,paused:a.paused,seeking:a.seeking,source:a.currentSrc,stack:new Error().stack?.split('\n').slice(2,7).join('\n')});};
+     HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);trace(this,'play');const p=play.apply(this,arguments);p?.catch(e=>trace(this,'play-rejection',String(e)));return p};
+     HTMLMediaElement.prototype.pause=function(){trace(this,'pause');return pause.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     const bridgeSource=playbackProfile==='Ste'?(cadenceSte?'b-track-6':pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-934';
@@ -211,7 +213,7 @@ const server=http.createServer(async(req,res)=>{
     // starting a different decoder/clock test on the same recording.
     try{await shell.waitForFunction(()=>{
      const a=MusicBoxBridge.audio();return a?.readyState>=2&&!a.paused&&!a.seeking&&
-      !a._mbInitialSeekCleanup&&Number(a.duration)>2.5&&a.currentTime>=1.8;
+      !a._mbInitialSeekCleanup&&Number(a.duration)>2.5&&a.currentTime>=2.2; // Require genuine clock progress after the 2s initial seek.
     },null,{timeout:30000});}
     catch(error){console.error(name,'initial native bridge',JSON.stringify(await shell.evaluate(()=>{
      const a=MusicBoxBridge.audio();return {trace:__silentBridgeTrace,currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
@@ -273,7 +275,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     setup:window.__plannedSetup,media:window.__plannedMedia,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     setup:window.__plannedSetup,media:window.__plannedMedia,nativeActions:window.__nativeActions,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     assert.equal(await shell.evaluate(()=>MusicBoxBridge.currentId()),actualPlan.fromId,'Queued lyrics/track ownership must remain outgoing during its intact ending');
     const muteDuringOverlap=await shell.evaluate(()=>{
