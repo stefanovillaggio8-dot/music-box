@@ -20,6 +20,9 @@ const metadataFixture=metadataProbe||process.env.MUSICBOX_METADATA_FIXTURE_TRANS
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
 if(!plans.length)throw Error('No actual composite plans to test');
 const catalog=new Map(Object.entries(data.entries).map(([k,e])=>[e.sha,k])),sourceCache=new Map();
+const catalogAliases=new Map();for(const [key,entry] of Object.entries(data.entries)){
+ if(!catalogAliases.has(entry.sha))catalogAliases.set(entry.sha,[]);catalogAliases.get(entry.sha).push(key);
+}
 async function original(sha){
  if(sourceCache.has(sha))return sourceCache.get(sha);
  const key=catalog.get(sha);if(!key)throw Error('Unknown original');
@@ -227,7 +230,9 @@ const server=http.createServer(async(req,res)=>{
      const tracks=MusicBoxBridge.playable(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
-      const a=find(p.from),b=find(p.to);
+      const preferred=profile==='Diego'?'b-track-135':profile==='Emanuele'?'b-track-1043':
+       pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
+      const a=find(p.from),b=tracks.find(t=>t.id===preferred&&p.toAliases.includes('audio/'+t.file));
       if(!a||!b)continue;
       if(profile==='Diego'&&!(a.id==='b-track-353'&&b.id==='b-track-135'&&p.cue.measuredFullBeat))continue;
       if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
@@ -238,7 +243,7 @@ const server=http.createServer(async(req,res)=>{
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
-    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
+    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha),toAliases:catalogAliases.get(p.toSha)||[]})).sort((a,b)=>
      Number(b.from==='audio/songs/track-884.mp3'&&b.to==='audio/songs/track-1043.mp3')-
      Number(a.from==='audio/songs/track-884.mp3'&&a.to==='audio/songs/track-1043.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
