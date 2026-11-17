@@ -2,6 +2,13 @@ name: DJ Mix regression tests
 on:
   push:
     paths:
+      - '.github/workflows/dj-mix-tests.yml'
+      - 'tests/new-track-index-refresh.test.cjs'
+      - 'tests/introduction-exposure.test.cjs'
+      - 'tests/deep-reconcile.test.cjs'
+      - 'tests/offline-upgrade.cjs'
+      - 'tools/introduction-exposure.mjs'
+      - 'tools/dj-deep-reconcile.py'
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
       - 'dj-vocal-stem-runtime.js'
@@ -75,6 +82,13 @@ on:
       - '.github/workflows/dj-mix-tests.yml'
   pull_request:
     paths:
+      - '.github/workflows/dj-mix-tests.yml'
+      - 'tests/new-track-index-refresh.test.cjs'
+      - 'tests/introduction-exposure.test.cjs'
+      - 'tests/deep-reconcile.test.cjs'
+      - 'tests/offline-upgrade.cjs'
+      - 'tools/introduction-exposure.mjs'
+      - 'tools/dj-deep-reconcile.py'
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
       - 'dj-vocal-stem-runtime.js'
@@ -173,3 +187,5 @@ jobs:
           node --check immersive.js
       - name: Test DJ transition safety
         run: node --test tests/*.test.cjs
+      - name: Preserve saved music and personal data through a real worker update
+        run: node tests/offline-upgrade.cjs
