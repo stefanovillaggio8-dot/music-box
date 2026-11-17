@@ -195,11 +195,14 @@ const server=http.createServer(async(req,res)=>{
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     const bridgeSource=playbackProfile==='Diego'?'b-track-353':playbackProfile==='Ste'?(pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
+    const bridgeTarget=playbackProfile==='Diego'?'b-track-135':playbackProfile==='Emanuele'?'b-track-1043':
+     pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
-    await shell.waitForFunction(({profile,id})=>window.MusicBoxBridge?.profile?.()===profile&&
-     MusicBoxBridge.playable().some(t=>t.id===id),{profile:playbackProfile,id:bridgeSource},{timeout:20000});
+    await shell.waitForFunction(({profile,ids})=>window.MusicBoxBridge?.profile?.()===profile&&
+     ids.every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),
+     {profile:playbackProfile,ids:[bridgeSource,bridgeTarget]},{timeout:20000});
     await shell.evaluate(id=>{
      const track=MusicBoxBridge.playable().find(t=>t.id===id);if(!track)throw Error('Native bridge reference not available');
      const button=document.createElement('button');button.id='silent-handoff';button.textContent='test';
@@ -246,6 +249,11 @@ const server=http.createServer(async(req,res)=>{
     },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha),toAliases:catalogAliases.get(p.toSha)||[]})).sort((a,b)=>
      Number(b.from==='audio/songs/track-884.mp3'&&b.to==='audio/songs/track-1043.mp3')-
      Number(a.from==='audio/songs/track-884.mp3'&&a.to==='audio/songs/track-1043.mp3'))});
+    if(!actualPlan)console.error(name,'personal pair inspection',JSON.stringify(await shell.evaluate(({from,to})=>({
+     inspection:MusicBoxMix.inspectPair(from,to),profile:MusicBoxBridge.profile(),
+     duration:MusicBoxBridge.audio()?.duration,time:MusicBoxBridge.audio()?.currentTime,
+     permitted:[from,to].map(id=>MusicBoxBridge.playable().some(t=>t.id===id)),diagnostics:MusicBoxMix.diagnostics()
+    }),{from:bridgeSource,to:bridgeTarget})));
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
     if(pickupSte&&playbackProfile==='Ste')assert.equal(actualPlan.cue.nativeOriginalReturn,true,'Exercise the waveform-coherent rendition, never the earlier prototype');
     // Network latency retrieving the external original must not consume the
