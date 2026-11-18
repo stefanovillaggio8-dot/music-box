@@ -1750,13 +1750,13 @@
     "a": "Andrea Bocelli"
    },
    "[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 1,
+    "v": 2,
     "s": 0,
     "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
     "a": "Kaskade"
    },
    "m:2026-11|[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 1,
+    "v": 2,
     "s": 0,
     "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
     "a": "Kaskade"
@@ -6075,6 +6075,18 @@
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"all i wanted\",\"paramore\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "All I Wanted",
+    "a": "Paramore"
+   },
+   "m:2026-11|[\"all i wanted\",\"paramore\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "All I Wanted",
+    "a": "Paramore"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
     "s": 448,
@@ -6878,18 +6890,6 @@
     "s": 229,
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"all i wanted\",\"paramore\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "All I Wanted",
-    "a": "Paramore"
-   },
-   "m:2026-11|[\"all i wanted\",\"paramore\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "All I Wanted",
-    "a": "Paramore"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
@@ -8511,6 +8511,18 @@
     "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"faint\",\"linkin park\"]": {
+    "v": 1,
+    "s": 37,
+    "t": "Faint",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"faint\",\"linkin park\"]": {
+    "v": 1,
+    "s": 37,
+    "t": "Faint",
+    "a": "Linkin Park"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 3,
     "s": 448,
@@ -9320,18 +9332,6 @@
     "s": 229,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"faint\",\"linkin park\"]": {
-    "v": 1,
-    "s": 24,
-    "t": "Faint",
-    "a": "Linkin Park"
-   },
-   "m:2026-11|[\"faint\",\"linkin park\"]": {
-    "v": 1,
-    "s": 24,
-    "t": "Faint",
-    "a": "Linkin Park"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 3,
@@ -10952,6 +10952,18 @@
     "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"what i've done\",\"linkin park\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "What I've Done",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"what i've done\",\"linkin park\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "What I've Done",
+    "a": "Linkin Park"
    }
   },
   "Diego": {
