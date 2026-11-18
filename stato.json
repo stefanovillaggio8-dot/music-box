@@ -1637,13 +1637,13 @@
    },
    "[\"stupido\",\"massimo pericolo\"]": {
     "v": 1,
-    "s": 322,
+    "s": 333,
     "t": "stupido",
     "a": "massimo pericolo"
    },
    "m:2026-11|[\"stupido\",\"massimo pericolo\"]": {
     "v": 1,
-    "s": 322,
+    "s": 333,
     "t": "stupido",
     "a": "massimo pericolo"
    },
@@ -5307,6 +5307,18 @@
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"judas (hardstyle remix)\",\"lady gaga\"]": {
+    "v": 1,
+    "s": 14,
+    "t": "Judas (Hardstyle Remix)",
+    "a": "Lady Gaga"
+   },
+   "m:2026-11|[\"judas (hardstyle remix)\",\"lady gaga\"]": {
+    "v": 1,
+    "s": 14,
+    "t": "Judas (Hardstyle Remix)",
+    "a": "Lady Gaga"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
     "s": 448,
@@ -6110,18 +6122,6 @@
     "s": 229,
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"judas (hardstyle remix)\",\"lady gaga\"]": {
-    "v": 1,
-    "s": 14,
-    "t": "Judas (Hardstyle Remix)",
-    "a": "Lady Gaga"
-   },
-   "m:2026-11|[\"judas (hardstyle remix)\",\"lady gaga\"]": {
-    "v": 1,
-    "s": 14,
-    "t": "Judas (Hardstyle Remix)",
-    "a": "Lady Gaga"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
