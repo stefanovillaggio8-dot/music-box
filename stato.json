@@ -2405,13 +2405,13 @@
    },
    "[\"paraguai\",\"nayt, canova\"]": {
     "v": 4,
-    "s": 322,
+    "s": 350,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
    "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
     "v": 4,
-    "s": 322,
+    "s": 350,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
@@ -3323,13 +3323,13 @@
    },
    "[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 280,
+    "s": 351,
     "t": "Striscia",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 280,
+    "s": 351,
     "t": "Striscia",
     "a": "TonyPitony"
    },
@@ -8332,14 +8332,14 @@
     "a": "Coez"
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -9143,13 +9143,13 @@
    },
    "[\"che dio mi benedica\",\"luchÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
