@@ -3803,13 +3803,13 @@
    },
    "[\"terr1\",\"kid yugi, geology\"]": {
     "v": 2,
-    "s": 544,
+    "s": 547,
     "t": "Terr1",
     "a": "Kid Yugi, Geology"
    },
    "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
     "v": 2,
-    "s": 544,
+    "s": 547,
     "t": "Terr1",
     "a": "Kid Yugi, Geology"
    },
@@ -10930,14 +10930,14 @@
     "a": "Måneskin"
    },
    "[\"nessuna\",\"luchè\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "Luchè"
    },
    "m:2026-11|[\"nessuna\",\"luchè\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "Luchè"
    },
