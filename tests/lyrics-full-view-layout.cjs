@@ -113,6 +113,46 @@ async function run() {
           assert.ok(metrics.pageOverflow <= 2,
             `${engine} ${screen.name}: no horizontal page overflow`);
           console.log("[LYRICS FULL VIEW]", engine, screen.name, "OK");
+          // Regression: switching back to karaoke and centering a lyric row
+          // must not scroll the hidden full-screen overlay itself. That used
+          // to shift the header out of view on both desktop and iPhone.
+          const karaoke = await page.evaluate(() => {
+            const panel = document.querySelector("#lyricsPanel");
+            const body = document.querySelector("#lyricsBody");
+            panel.classList.remove("lyrics-full-view");
+            body.classList.remove("lyrics-plain");
+            document.querySelector("#lyricsReadingTools").hidden = true;
+            document.querySelector("#lyricsSyncControls").hidden = false;
+            body.replaceChildren();
+            for (let i = 0; i < 72; i++) {
+              const line = document.createElement("p");
+              line.className = "lyr-line";
+              line.textContent = `Riga karaoke sincronizzata ${i + 1}`;
+              body.appendChild(line);
+            }
+            body.children[48].scrollIntoView({ block: "center", behavior: "instant" });
+            const bounds = element => {
+              const { top, bottom } = element.getBoundingClientRect();
+              return { top, bottom };
+            };
+            return {
+              panelScrollTop: panel.scrollTop,
+              panelOverflow: getComputedStyle(panel).overflowY,
+              bodyScrollTop: body.scrollTop,
+              card: bounds(panel.querySelector(".lyrics-card")),
+              header: bounds(panel.querySelector(".lyrics-head")),
+              footer: bounds(panel.querySelector(".lyrics-pie")),
+              viewportHeight: innerHeight
+            };
+          });
+          assert.equal(karaoke.panelOverflow, "clip", `${engine} ${screen.name}: modal cannot be scrollable`);
+          assert.equal(karaoke.panelScrollTop, 0, `${engine} ${screen.name}: modal remains anchored`);
+          assert.ok(karaoke.bodyScrollTop > 0, `${engine} ${screen.name}: lines still follow the playback`);
+          assert.ok(karaoke.card.top >= -2 && karaoke.card.bottom <= karaoke.viewportHeight + 2,
+            `${engine} ${screen.name}: karaoke card fits the viewport`);
+          assert.ok(karaoke.header.top >= -2 && karaoke.footer.bottom <= karaoke.viewportHeight + 2,
+            `${engine} ${screen.name}: karaoke title and player controls remain visible`);
+          console.log("[LYRICS KARAOKE VIEW]", engine, screen.name, "OK");
           await context.close();
         }
       } finally {

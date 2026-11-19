@@ -3975,6 +3975,7 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 /* Lyrics must stay above Immersive Mode (21000), player controls and other
    overlays. The old forced z-index:100 could put the reader behind them. */
 .lyrics-overlay{z-index:22005!important;isolation:isolate;contain:layout paint}
+.lyrics-overlay{overflow:clip} /* Prevent scrollIntoView/focus from shifting the whole dialog. */
 .lyrics-overlay[hidden]{display:none!important;pointer-events:none!important;visibility:hidden!important}
 .lyrics-overlay::after{pointer-events:none!important}
 .lyrics-sfondo{pointer-events:none!important}

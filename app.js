@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.737";
+  const APP_VERSION = "6.738";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9626,7 +9626,15 @@ function openProfile() {
     if (idx >= 0) {
       lyricLines[idx].classList.add("on");
       if (Date.now() - lyricsUserScrollAt >= 4000) {
-        try { lyricLines[idx].scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { /* noop */ }
+        // Scroll only the lyric lines. scrollIntoView() also scrolls hidden
+        // ancestors, which pushed the entire karaoke dialog above the screen.
+        const scroller=$("lyricsBody");
+        if(scroller){
+          const row=lyricLines[idx].getBoundingClientRect();
+          const box=scroller.getBoundingClientRect();
+          const top=scroller.scrollTop+row.top-box.top-(scroller.clientHeight-row.height)/2;
+          scroller.scrollTo({top:Math.max(0,top),behavior:"smooth"});
+        }
       }
     }
     lyricActive = idx;
@@ -9848,6 +9856,8 @@ function openProfile() {
     }
     $("lyricsBody").classList.toggle("lyrics-plain",!useSynced);
     $("lyricsPanel").classList.toggle("lyrics-full-view",!useSynced);
+    // A previously scrolled, overflow-hidden modal must never reopen cropped.
+    $("lyricsPanel").scrollTop=0;
     if($("lyricsReadingTools"))$("lyricsReadingTools").hidden=!!useSynced;
     if(!useSynced){
       _applicaDimensioneLettura(_scalaLetturaTesti);
