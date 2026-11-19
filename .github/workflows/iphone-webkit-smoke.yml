@@ -14,6 +14,7 @@ on:
       - 'sw.js'
       - 'tests/iphone-webkit-smoke.cjs'
       - 'tests/iphone-offline-shell.test.cjs'
+      - 'tests/lyrics-full-view-layout.cjs'
       - '.github/workflows/iphone-webkit-smoke.yml'
   pull_request:
     paths:
@@ -29,6 +30,7 @@ on:
       - 'tests/iphone-webkit-smoke.cjs'
       - 'tests/iphone-offline-shell.test.cjs'
       - 'tests/iphone-handoff-stress.test.cjs'
+      - 'tests/lyrics-full-view-layout.cjs'
       - '.github/workflows/iphone-webkit-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -46,6 +48,10 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps webkit
+      - name: Verify full lyrics reader in Safari WebKit
+        env:
+          LYRICS_ENGINE: webkit
+        run: node tests/lyrics-full-view-layout.cjs
       - name: Run live DOM and iPhone path regression in WebKit
         run: |
           node tests/iphone-webkit-smoke.cjs

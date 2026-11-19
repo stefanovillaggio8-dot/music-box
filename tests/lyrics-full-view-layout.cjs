@@ -5,6 +5,9 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const { chromium, webkit } = require("playwright");
+const requestedEngine = process.env.LYRICS_ENGINE;
+assert.ok(!requestedEngine || ["chromium", "webkit"].includes(requestedEngine),
+  "LYRICS_ENGINE must be chromium or webkit");
 
 const root = path.resolve(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
@@ -32,7 +35,7 @@ const server = http.createServer((req, res) => {
 async function run() {
   await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
   try {
-    for (const engine of ["chromium", "webkit"]) {
+    for (const engine of requestedEngine ? [requestedEngine] : ["chromium", "webkit"]) {
       if (engine === "webkit" && !fs.existsSync(webkit.executablePath())) {
         console.log("[LYRICS FULL VIEW] WebKit not installed; skipping browser engine");
         continue;
