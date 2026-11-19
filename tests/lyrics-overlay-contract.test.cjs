@@ -15,6 +15,9 @@ const enforcedLayer = [...style.matchAll(/\.lyrics-overlay\s*\{[^}]*z-index:\s*(
   .map(match => Number(match[1])).at(-1);
 assert.ok(enforcedLayer > 21000,
   "Lyrics dialog must stack above the Immersive Mode layer (21000)");
+const confirmLayer = Number(style.match(/\.confirm-overlay\s*\{[^}]*z-index:\s*(\d+)/)?.[1]);
+assert.ok(confirmLayer > enforcedLayer,
+  "Confirmation dialogs must remain above the lyrics reader");
 
 const reader = /\.lyrics-full-view \.lyrics-body\.lyrics-plain\s*\{([^}]+)\}/g;
 const readerRules = [...style.matchAll(reader)].map(match => match[1]).join("\n");
