@@ -2525,13 +2525,13 @@
    },
    "[\"guerra dentro\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 290,
+    "s": 342,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"guerra dentro\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 290,
+    "s": 342,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
@@ -3874,14 +3874,14 @@
     "a": "Izi"
    },
    "[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
-    "v": 2,
-    "s": 425,
+    "v": 3,
+    "s": 441,
     "t": "Oroscopo",
     "a": "Calcutta, Takagi & Ketra"
    },
    "m:2026-11|[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
-    "v": 2,
-    "s": 425,
+    "v": 3,
+    "s": 441,
     "t": "Oroscopo",
     "a": "Calcutta, Takagi & Ketra"
    },
@@ -7030,14 +7030,14 @@
     "a": "thasup"
    },
    "[\"ÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
-    "v": 2,
-    "s": 445,
+    "v": 3,
+    "s": 483,
     "t": "ÃÂÃÂÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
-    "v": 2,
-    "s": 445,
+    "v": 3,
+    "s": 483,
     "t": "ÃÂÃÂÃÂÃÂ sempre bello",
     "a": "Coez"
    },
@@ -7841,13 +7841,13 @@
    },
    "[\"ÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 483,
+    "s": 546,
     "t": "ÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 483,
+    "s": 546,
     "t": "ÃÂÃÂ sempre bello",
     "a": "Coez"
    },
