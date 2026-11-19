@@ -4180,14 +4180,14 @@
     "a": "Jovanotti"
    },
    "[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 5,
-    "s": 542,
+    "v": 6,
+    "s": 617,
     "t": "Hai visto mai",
     "a": "Frah Quintale"
    },
    "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 5,
-    "s": 542,
+    "v": 6,
+    "s": 617,
     "t": "Hai visto mai",
     "a": "Frah Quintale"
    },
@@ -4636,14 +4636,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 581,
+    "v": 3,
+    "s": 619,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 581,
+    "v": 3,
+    "s": 619,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -5441,13 +5441,13 @@
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 619,
+    "s": 667,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 619,
+    "s": 667,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -9334,14 +9334,14 @@
     "a": "Fabrizio De AndrÃÂ©"
    },
    "[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 229,
+    "v": 2,
+    "s": 261,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 229,
+    "v": 2,
+    "s": 261,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
@@ -10145,13 +10145,13 @@
    },
    "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
-    "s": 261,
+    "s": 335,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
-    "s": 261,
+    "s": 335,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
@@ -10955,13 +10955,13 @@
    },
    "[\"il più grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
-    "s": 335,
+    "s": 337,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il più grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
-    "s": 335,
+    "s": 337,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
