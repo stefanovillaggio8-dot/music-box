@@ -12,7 +12,10 @@ on:
     paths:
       - 'immersive.js'
       - 'word-karaoke.js'
+      - 'style.css'
+      - 'index.html'
       - 'tests/immersive-ui-smoke.cjs'
+      - 'tests/lyrics-full-view-layout.cjs'
       - '.github/workflows/immersive-ui-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -27,16 +30,20 @@ jobs:
         with:
           node-version: '22'
       - name: Validate Immersive JavaScript syntax
-        run: node --check immersive.js && node --check tests/immersive-ui-smoke.cjs
+        run: node --check immersive.js && node --check tests/immersive-ui-smoke.cjs && node --check tests/lyrics-full-view-layout.cjs
       - name: Install Chromium browser test
         run: |
           npm install --no-save --no-package-lock playwright@1.64.1
           test -x /usr/bin/google-chrome
       - name: Test desktop and mobile viewport karaoke, controls and scrolling
         run: node tests/immersive-ui-smoke.cjs
+      - name: Test full lyrics reader in Chromium before installing WebKit
+        run: node tests/lyrics-full-view-layout.cjs
       - name: Install WebKit for Safari-style layout verification
         run: npx playwright install --with-deps webkit
       - name: Test immersive karaoke and controls in WebKit
         env:
           IMMERSIVE_ENGINE: webkit
         run: node tests/immersive-ui-smoke.cjs
+      - name: Test full lyrics reader in Chromium and WebKit
+        run: node tests/lyrics-full-view-layout.cjs

@@ -88,7 +88,9 @@ test("karaoke timing changes persist locally and sync to the dedicated cloud end
  assert.match(html,/id="lyricsSyncStatus"/);
  // A confirmation must remain above a lyrics overlay, and the sheet
  // must have a keyboard path out even when the mouse is unavailable.
- assert.match(css,/\.lyrics-overlay\{z-index:100!important/);
+ // Keep lyrics above Immersive Mode, but confirmation above both.
+ assert.match(css,/\.lyrics-overlay\{z-index:22005!important/);
+ assert.match(css,/\.confirm-overlay\s*\{[\s\S]{0,280}z-index:\s*22020/);
  assert.match(app,/e\.key==="Escape"&&!\$\("lyricsPanel"\)\.hidden/);
  assert.match(app,/function closeLyrics\(\) \{[\s\S]{0,160}syncNoScroll\(\)/);
 });
@@ -661,10 +663,12 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  for(const file of ["app.js","word-karaoke.js","immersive.js","style.css"]){
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
-  const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
-  const wordCache=file==="word-karaoke.js"?"13":file==="immersive.js"?"9":file==="app.js"?"16":"2";
-  assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
-  assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
+  const revision=file==="app.js"||file==="style.css"?release:"6734";
+  const cacheSuffix=file==="style.css"?"lyrics=3":
+    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"9":"16");
+  const assetUrl=file+"?v="+revision+"&"+cacheSuffix;
+  assert.ok(html.includes(assetUrl.replace("&","&amp;")));
+  assert.equal(sw.split(assetUrl).length-1,2);
  }
 });
 
