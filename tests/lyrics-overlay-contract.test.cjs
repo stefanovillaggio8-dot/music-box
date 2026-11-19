@@ -18,6 +18,14 @@ assert.ok(enforcedLayer > 21000,
 const confirmLayer = Number(style.match(/\.confirm-overlay\s*\{[^}]*z-index:\s*(\d+)/)?.[1]);
 assert.ok(confirmLayer > enforcedLayer,
   "Confirmation dialogs must remain above the lyrics reader");
+assert.match(style, /\.lyrics-overlay\s*\{\s*overflow:\s*clip\s*\}/,
+  "The whole lyrics overlay must never become a programmatically scrollable ancestor");
+const tickSource = app.slice(app.indexOf("function tickLyrics()"),
+  app.indexOf("/* Traduzione", app.indexOf("function tickLyrics()")));
+assert.doesNotMatch(tickSource, /\.scrollIntoView\(/,
+  "Karaoke auto-follow must scroll only lyricsBody, not all ancestors");
+assert.match(tickSource, /scroller\.scrollTo\(/,
+  "Karaoke must retain automatic lyric-line tracking");
 
 const reader = /\.lyrics-full-view \.lyrics-body\.lyrics-plain\s*\{([^}]+)\}/g;
 const readerRules = [...style.matchAll(reader)].map(match => match[1]).join("\n");
