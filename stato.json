@@ -3635,13 +3635,13 @@
    },
    "[\"di abbattere le mura (18 donne)\",\"nayt\"]": {
     "v": 1,
-    "s": 359,
+    "s": 403,
     "t": "Di abbattere le mura (18 Donne)",
     "a": "nayt"
    },
    "m:2026-11|[\"di abbattere le mura (18 donne)\",\"nayt\"]": {
     "v": 1,
-    "s": 359,
+    "s": 403,
     "t": "Di abbattere le mura (18 Donne)",
     "a": "nayt"
    },
@@ -6712,14 +6712,14 @@
     "a": "Coez"
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -7523,13 +7523,13 @@
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -9755,13 +9755,13 @@
    },
    "[\"sono giÃ  solo\",\"modÃ \"]": {
     "v": 1,
-    "s": 157,
+    "s": 222,
     "t": "Sono giÃ  solo",
     "a": "ModÃ "
    },
    "m:2026-11|[\"sono giÃ  solo\",\"modÃ \"]": {
     "v": 1,
-    "s": 157,
+    "s": 222,
     "t": "Sono giÃ  solo",
     "a": "ModÃ "
    },
@@ -10565,13 +10565,13 @@
    },
    "[\"sono già solo\",\"modà\"]": {
     "v": 1,
-    "s": 222,
+    "s": 255,
     "t": "Sono già solo",
     "a": "Modà"
    },
    "m:2026-11|[\"sono già solo\",\"modà\"]": {
     "v": 1,
-    "s": 222,
+    "s": 255,
     "t": "Sono già solo",
     "a": "Modà"
    },
