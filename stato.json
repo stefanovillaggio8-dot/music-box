@@ -1349,7 +1349,7 @@
    },
    "[\"8 miliardi di persone\",\"frah quintale\"]": {
     "v": 3,
-    "s": 349,
+    "s": 389,
     "t": "8 miliardi di persone",
     "a": "Frah Quintale"
    },
@@ -4127,7 +4127,7 @@
    },
    "m:2026-11|[\"8 miliardi di persone\",\"frah quintale\"]": {
     "v": 2,
-    "s": 265,
+    "s": 305,
     "t": "8 miliardi di persone",
     "a": "Frah Quintale"
    },
@@ -10294,14 +10294,14 @@
     "a": "Modà"
    },
    "[\"lasciami\",\"modà\"]": {
-    "v": 2,
-    "s": 581,
+    "v": 3,
+    "s": 619,
     "t": "Lasciami",
     "a": "Modà"
    },
    "m:2026-11|[\"lasciami\",\"modà\"]": {
-    "v": 2,
-    "s": 581,
+    "v": 3,
+    "s": 619,
     "t": "Lasciami",
     "a": "Modà"
    },
