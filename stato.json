@@ -2417,13 +2417,13 @@
    },
    "[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 606,
+    "s": 651,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 606,
+    "s": 651,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
@@ -8500,14 +8500,14 @@
     "a": "MÃÂÃÂ¥neskin"
    },
    "[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -9311,13 +9311,13 @@
    },
    "[\"nessuna\",\"luchÃÂ¨\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃÂ¨\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
@@ -10823,13 +10823,13 @@
    },
    "[\"fragile\",\"modà\"]": {
     "v": 0,
-    "s": 112,
+    "s": 139,
     "t": "fragile",
     "a": "Modà"
    },
    "m:2026-11|[\"fragile\",\"modà\"]": {
     "v": 0,
-    "s": 112,
+    "s": 139,
     "t": "fragile",
     "a": "Modà"
    },
