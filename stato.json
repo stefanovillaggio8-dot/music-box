@@ -1660,14 +1660,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
-    "v": 4,
-    "s": 536,
+    "v": 5,
+    "s": 609,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
-    "v": 4,
-    "s": 536,
+    "v": 5,
+    "s": 609,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
@@ -2255,13 +2255,13 @@
    },
    "[\"solo 3 min\",\"negromaro\"]": {
     "v": 3,
-    "s": 664,
+    "s": 686,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
    "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
     "v": 3,
-    "s": 664,
+    "s": 686,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
