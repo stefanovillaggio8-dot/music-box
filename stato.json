@@ -1871,13 +1871,13 @@
    },
    "[\"her\",\"jvke\"]": {
     "v": 3,
-    "s": 377,
+    "s": 395,
     "t": "her",
     "a": "JVKE"
    },
    "m:2026-11|[\"her\",\"jvke\"]": {
     "v": 3,
-    "s": 377,
+    "s": 395,
     "t": "her",
     "a": "JVKE"
    },
@@ -2405,13 +2405,13 @@
    },
    "[\"paraguai\",\"nayt, canova\"]": {
     "v": 4,
-    "s": 287,
+    "s": 322,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
    "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
     "v": 4,
-    "s": 287,
+    "s": 322,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
@@ -9142,14 +9142,14 @@
     "a": "Coez"
    },
    "[\"che dio mi benedica\",\"luchÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
@@ -9953,13 +9953,13 @@
    },
    "[\"che dio mi benedica\",\"luchÃ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
