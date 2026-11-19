@@ -3076,14 +3076,14 @@
     "a": "Negromaro"
    },
    "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
-    "v": 0,
-    "s": 480,
+    "v": 1,
+    "s": 537,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
    "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
-    "v": 0,
-    "s": 480,
+    "v": 1,
+    "s": 537,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
@@ -10120,14 +10120,14 @@
     "a": "MÃ¥neskin"
    },
    "[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
@@ -10931,13 +10931,13 @@
    },
    "[\"nessuna\",\"luchè\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "Luchè"
    },
    "m:2026-11|[\"nessuna\",\"luchè\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "Luchè"
    },
