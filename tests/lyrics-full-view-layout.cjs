@@ -13,6 +13,9 @@ const start = html.indexOf('<div class="lyrics-overlay"');
 const end = html.indexOf('<div class="import-overlay" id="spotifyPanel"', start);
 assert.ok(start !== -1 && end > start, "lyrics dialog markup must be present");
 const lyricsFragment = html.slice(start, end);
+const chromiumExecutable = fs.existsSync("/usr/bin/google-chrome")
+  ? "/usr/bin/google-chrome"
+  : fs.existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : null;
 const fixture = `<!doctype html><html lang="it"><head>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <link rel="stylesheet" href="/style.css"></head><body>
@@ -36,8 +39,8 @@ async function run() {
       }
       const browser = await (engine === "webkit" ? webkit : chromium).launch({
         headless: true,
-        ...(engine === "chromium" && fs.existsSync("/usr/bin/chromium")
-          ? { executablePath: "/usr/bin/chromium" } : {})
+        ...(engine === "chromium" && chromiumExecutable
+          ? { executablePath: chromiumExecutable } : {})
       });
       try {
         for (const screen of [
