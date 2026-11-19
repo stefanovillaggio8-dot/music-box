@@ -3323,13 +3323,13 @@
    },
    "[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 351,
+    "s": 366,
     "t": "Striscia",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 351,
+    "s": 366,
     "t": "Striscia",
     "a": "TonyPitony"
    },
@@ -7522,14 +7522,14 @@
     "a": "Coez"
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 620,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -8333,13 +8333,13 @@
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂ¨\"]": {
     "v": 3,
-    "s": 620,
+    "s": 643,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -10565,13 +10565,13 @@
    },
    "[\"sono già solo\",\"modà\"]": {
     "v": 1,
-    "s": 157,
+    "s": 222,
     "t": "Sono già solo",
     "a": "Modà"
    },
    "m:2026-11|[\"sono già solo\",\"modà\"]": {
     "v": 1,
-    "s": 157,
+    "s": 222,
     "t": "Sono già solo",
     "a": "Modà"
    },
