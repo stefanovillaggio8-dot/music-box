@@ -2417,13 +2417,13 @@
    },
    "[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 554,
+    "s": 606,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 554,
+    "s": 606,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
@@ -3077,13 +3077,13 @@
    },
    "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 1,
-    "s": 537,
+    "s": 565,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
    "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 1,
-    "s": 537,
+    "s": 565,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
@@ -9310,14 +9310,14 @@
     "a": "MÃÂ¥neskin"
    },
    "[\"nessuna\",\"luchÃÂ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃÂ¨\"]": {
-    "v": 2,
-    "s": 357,
+    "v": 3,
+    "s": 430,
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
@@ -10121,13 +10121,13 @@
    },
    "[\"nessuna\",\"luchÃ¨\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
     "v": 3,
-    "s": 430,
+    "s": 447,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
