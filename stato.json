@@ -1906,7 +1906,7 @@
     "a": "Calcutta"
    },
    "[\"alta marea\",\"antonello venditti\"]": {
-    "v": 14,
+    "v": 15,
     "s": 923,
     "t": "Alta marea",
     "a": "Antonello Venditti"
@@ -2560,7 +2560,7 @@
     "a": "Jovanotti"
    },
    "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
-    "v": 8,
+    "v": 9,
     "s": 893,
     "t": "Alta marea",
     "a": "Antonello Venditti"
@@ -4216,13 +4216,13 @@
     "a": "thasup"
    },
    "[\"favola (live)\",\"moda\"]": {
-    "v": 2,
+    "v": 3,
     "s": 127,
     "t": "Favola (Live)",
     "a": "Moda"
    },
    "m:2026-11|[\"favola (live)\",\"moda\"]": {
-    "v": 2,
+    "v": 3,
     "s": 127,
     "t": "Favola (Live)",
     "a": "Moda"
