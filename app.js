@@ -6127,7 +6127,8 @@ const playFromRow = () => {
 
   function savePos() {
     if (!currentId || !audio || !isFinite(audio.currentTime)) return;
-    if(_ripresaAvvioCheckpoint?.id===currentId&&
+    if(typeof _ripresaAvvioCheckpoint!=="undefined"&&
+       _ripresaAvvioCheckpoint?.id===currentId&&
        Math.abs(Number(audio.currentTime)-_ripresaAvvioCheckpoint.target)>.65)return;
     const checkpoint=_pausaSalvata();
     const actual=Number(audio.currentTime);
@@ -6196,9 +6197,10 @@ function handleTime() {
        successo, e l'app ci credeva e non riprovava piu'. Qui guardo il tempo
        che passa davvero, e se non passa riparo. */
     _registraAvanzamentoAudio(audio);
-    if(_ripresaAvvioCheckpoint?.id===currentId){
+    if(typeof _ripresaAvvioCheckpoint!=="undefined"&&
+       _ripresaAvvioCheckpoint?.id===currentId){
       _ripresaAvvioCheckpoint.progressObserved=true;
-      _verificaRipresaAvvio();
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
     }
     if (!scrubbing) {
     const t = audio.currentTime;
@@ -6224,7 +6226,8 @@ function handleMetadata() {
       const at=d>0?Math.min(want,Math.max(0,d-(wasPaused?.04:3))):want;
       try{
         audio.currentTime=at;
-        if(Math.abs(Number(audio.currentTime)-at)<.65&&!_ripresaAvvioCheckpoint)
+        if(Math.abs(Number(audio.currentTime)-at)<.65&&
+           (typeof _ripresaAvvioCheckpoint==="undefined"||!_ripresaAvvioCheckpoint))
           resumeAt=0;
       }catch(_){
         // Retain resumeAt for canplay; a failed early Safari seek must
@@ -6234,7 +6237,7 @@ function handleMetadata() {
     if((audio?.paused&&!_vuoleSuonare)||_bloccoRipresaAudio)
       _riallineaPausaReale();
     _confermaRipresaAudio();
-    _verificaRipresaAvvio();
+    if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
     updateProgressUI(audio?Number(audio.currentTime)||0:0,totalDuration());
   }
 
@@ -6562,7 +6565,7 @@ a.addEventListener("pause", () => {
   });
     a.addEventListener("playing", () => {
       _confermaRipresaAudio();
-      _verificaRipresaAvvio();
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
       /* Un successo effettivo resetta i contatori dei tentativi falliti. */
       if (a !== audio) return;
       if(!a.seeking&&a.readyState>=3)a._mbCambioBrano=false;
@@ -6601,7 +6604,7 @@ a.addEventListener("pause", () => {
         savePos();
       }
       _confermaRipresaAudio();
-      _verificaRipresaAvvio();
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
@@ -8874,7 +8877,7 @@ function playNext() {
       if (currentId) return playById(currentId, true,
         Number(checkpoint?.time) || 0);
     }
-    if (audio.paused) { _verificaRipresaAvvio(); return _riproduciVolontaria(); }
+    if (audio.paused) { if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio(); return _riproduciVolontaria(); }
     return _pausaVolontaria();
   }
 
