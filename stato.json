@@ -1114,7 +1114,7 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 79,
+    "v": 80,
     "s": 1938,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -1738,7 +1738,7 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 78,
+    "v": 79,
     "s": 1930,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -1798,13 +1798,13 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"estate\",\"negromaro\"]": {
-    "v": 3,
+    "v": 4,
     "s": 663,
     "t": "Estate",
     "a": "Negromaro"
    },
    "m:2026-11|[\"estate\",\"negromaro\"]": {
-    "v": 3,
+    "v": 4,
     "s": 663,
     "t": "Estate",
     "a": "Negromaro"
@@ -4205,13 +4205,13 @@
    },
    "[\"s!r!\",\"thasup\"]": {
     "v": 3,
-    "s": 396,
+    "s": 415,
     "t": "s!r!",
     "a": "thasup"
    },
    "m:2026-11|[\"s!r!\",\"thasup\"]": {
     "v": 3,
-    "s": 396,
+    "s": 415,
     "t": "s!r!",
     "a": "thasup"
    },
@@ -10396,13 +10396,13 @@
     "a": "Måneskin"
    },
    "[\"labirinto\",\"luchè\"]": {
-    "v": 0,
+    "v": 1,
     "s": 206,
     "t": "Labirinto",
     "a": "Luchè"
    },
    "m:2026-11|[\"labirinto\",\"luchè\"]": {
-    "v": 0,
+    "v": 1,
     "s": 206,
     "t": "Labirinto",
     "a": "Luchè"
