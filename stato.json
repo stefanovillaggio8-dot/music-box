@@ -1589,13 +1589,13 @@
    },
    "[\"marte\",\"thasup\"]": {
     "v": 3,
-    "s": 348,
+    "s": 414,
     "t": "marte",
     "a": "thasup"
    },
    "m:2026-11|[\"marte\",\"thasup\"]": {
     "v": 3,
-    "s": 348,
+    "s": 414,
     "t": "marte",
     "a": "thasup"
    },
@@ -10396,13 +10396,13 @@
     "a": "Måneskin"
    },
    "[\"labirinto\",\"luchè\"]": {
-    "v": 1,
+    "v": 0,
     "s": 206,
     "t": "Labirinto",
     "a": "Luchè"
    },
    "m:2026-11|[\"labirinto\",\"luchè\"]": {
-    "v": 1,
+    "v": 0,
     "s": 206,
     "t": "Labirinto",
     "a": "Luchè"
