@@ -8785,6 +8785,50 @@ function playNext() {
     // button or headphone command has its own user-activated path.
   }
 
+  // If iOS keeps the same page alive for hours instead of reloading it,
+  // apply the same rule as a cold launch: after two hours away no track
+  // remains selected. Continuous real playback in background is not idle.
+  let _uscitaDallAppIl=0;
+  function _controllaLungaAssenza(){
+    const away=_uscitaDallAppIl?Date.now()-_uscitaDallAppIl:0;
+    if(away<LIMITE_RIPRESA_SESSIONE||!currentId||
+       window.MusicBoxRoom?.isActive?.())return;
+    const audioAvanza=audio&&!audio.paused&&
+      Date.now()-_ultimoAvanzamentoReale<30000;
+    if(audioAvanza)return;
+    try{window.MusicBoxMix?.cancel?.()}catch(_){}
+    try{audio?.pause()}catch(_){}
+    try{audio?.removeAttribute("src");audio?.load()}catch(_){}
+    currentId=null;resumeAt=0;_ripresaAvvioCheckpoint=null;
+    _pausaCheckpoint=null;_ripristinoPausaAtteso=null;
+    _vuoleSuonare=false;_pausaEsplicita=true;
+    _segnaIntenzioneSono(false);
+    try{
+      if("mediaSession" in navigator){
+        navigator.mediaSession.metadata=null;
+        navigator.mediaSession.playbackState="none";
+      }
+    }catch(_){}
+    _mediaSessionTrackId="";
+    updateProgressUI(0,0);
+    _segnaRigaAttiva();syncPlayUI();
+    _segna("sessione scaduta","dopo due ore fuori dall'app: nessun brano selezionato");
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){
+      _uscitaDallAppIl=Date.now();
+      if(shuffle&&_casualeChiaveAttiva)_salvaCicloCasuale();
+    }else{
+      _controllaLungaAssenza();
+      _uscitaDallAppIl=0;
+    }
+  });
+  window.addEventListener("pagehide",()=>{
+    _uscitaDallAppIl=Date.now();
+    if(shuffle&&_casualeChiaveAttiva)_salvaCicloCasuale();
+  });
+  window.addEventListener("pageshow",()=>{_controllaLungaAssenza();});
+
   function _riproduciVolontaria(daControlloEsterno=false) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("play");return;
