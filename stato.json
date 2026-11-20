@@ -1193,7 +1193,7 @@
    },
    "[\"middle of the night (dom livez remix)\",\"elley duhe\"]": {
     "v": 7,
-    "s": 202,
+    "s": 224,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
@@ -1204,8 +1204,8 @@
     "a": "Elley Duhe"
    },
    "[\"bring me to life\",\"evanescence\"]": {
-    "v": 6,
-    "s": 329,
+    "v": 7,
+    "s": 330,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -3736,14 +3736,14 @@
     "a": "Tommaso Paradiso"
    },
    "m:2026-11|[\"bring me to life\",\"evanescence\"]": {
-    "v": 6,
-    "s": 313,
+    "v": 7,
+    "s": 314,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
    "m:2026-11|[\"middle of the night (dom livez remix)\",\"elley duhe\"]": {
     "v": 7,
-    "s": 201,
+    "s": 223,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
