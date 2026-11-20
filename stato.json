@@ -2441,13 +2441,13 @@
    },
    "[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 458,
+    "s": 462,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 458,
+    "s": 462,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
@@ -9532,14 +9532,14 @@
     "a": "ModÃ "
    },
    "[\"la musica non c'Ã¨\",\"coez\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 573,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'Ã¨\",\"coez\"]": {
-    "v": 2,
-    "s": 554,
+    "v": 3,
+    "s": 573,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
    },
@@ -10343,13 +10343,13 @@
    },
    "[\"la musica non c'è\",\"coez\"]": {
     "v": 3,
-    "s": 573,
+    "s": 652,
     "t": "La musica non c'è",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'è\",\"coez\"]": {
     "v": 3,
-    "s": 573,
+    "s": 652,
     "t": "La musica non c'è",
     "a": "Coez"
    },
