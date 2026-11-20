@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.738";
+  const APP_VERSION = "6.739";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1457,6 +1457,8 @@ let playlists = [];
   let pendingSeek = null;
   let lastSave = 0;
   let resumeAt = 0;
+  let _ripresaAvvioCheckpoint = null;
+  const LIMITE_RIPRESA_SESSIONE=2*60*60*1000;
   let queue = [];
   /* Ste: "quando c'e' la riproduzione casuale e torno indietro non mi torna
      alla canzone precedente ma ad un'altra canzone casuale".
@@ -6098,8 +6100,36 @@ const playFromRow = () => {
       return true;
     }catch(_){return false}
   }
+  // Retry the real decoder seek on native media events, not only in the UI.
+  function _verificaRipresaAvvio() {
+    const cp=_ripresaAvvioCheckpoint;
+    if(!cp||cp.id!==currentId||!audio)return false;
+    const d=Number(audio.duration);
+    if(audio.readyState<1||!Number.isFinite(d)||d<=.5)return false;
+    const target=Math.min(cp.target,Math.max(0,d-.25));
+    if(!audio.seeking&&audio.readyState>=2&&
+       Math.abs(Number(audio.currentTime)-target)<.65){
+      if(cp.progressObserved&&!audio.paused){
+        _ripresaAvvioCheckpoint=null;resumeAt=0;return true;
+      }
+      return false;
+    }
+    if(audio.seeking)return false;
+    if(cp.attempts>=8||(cp.firstTry&&!audio.paused&&Date.now()-cp.firstTry>8000)){
+      console.warn("[Music Box] Ripresa al secondo salvato non confermata",cp.id);
+      _ripresaAvvioCheckpoint=null;resumeAt=0;return false;
+    }
+    if(Date.now()-cp.lastTry<250)return false;
+    cp.lastTry=Date.now();cp.firstTry ||= cp.lastTry;cp.attempts++;
+    try{audio.currentTime=target}catch(_){}
+    return false;
+  }
+
   function savePos() {
     if (!currentId || !audio || !isFinite(audio.currentTime)) return;
+    if(typeof _ripresaAvvioCheckpoint!=="undefined"&&
+       _ripresaAvvioCheckpoint?.id===currentId&&
+       Math.abs(Number(audio.currentTime)-_ripresaAvvioCheckpoint.target)>.65)return;
     const checkpoint=_pausaSalvata();
     const actual=Number(audio.currentTime);
     // A suspended iPhone audio decoder can report 0 while the paused
@@ -6167,6 +6197,11 @@ function handleTime() {
        successo, e l'app ci credeva e non riprovava piu'. Qui guardo il tempo
        che passa davvero, e se non passa riparo. */
     _registraAvanzamentoAudio(audio);
+    if(typeof _ripresaAvvioCheckpoint!=="undefined"&&
+       _ripresaAvvioCheckpoint?.id===currentId){
+      _ripresaAvvioCheckpoint.progressObserved=true;
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
+    }
     if (!scrubbing) {
     const t = audio.currentTime;
     updateProgressUI(t, totalDuration());
@@ -6191,7 +6226,8 @@ function handleMetadata() {
       const at=d>0?Math.min(want,Math.max(0,d-(wasPaused?.04:3))):want;
       try{
         audio.currentTime=at;
-        if(Math.abs(Number(audio.currentTime)-at)<.65)
+        if(Math.abs(Number(audio.currentTime)-at)<.65&&
+           (typeof _ripresaAvvioCheckpoint==="undefined"||!_ripresaAvvioCheckpoint))
           resumeAt=0;
       }catch(_){
         // Retain resumeAt for canplay; a failed early Safari seek must
@@ -6201,6 +6237,7 @@ function handleMetadata() {
     if((audio?.paused&&!_vuoleSuonare)||_bloccoRipresaAudio)
       _riallineaPausaReale();
     _confermaRipresaAudio();
+    if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
     updateProgressUI(audio?Number(audio.currentTime)||0:0,totalDuration());
   }
 
@@ -6528,6 +6565,7 @@ a.addEventListener("pause", () => {
   });
     a.addEventListener("playing", () => {
       _confermaRipresaAudio();
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
       /* Un successo effettivo resetta i contatori dei tentativi falliti. */
       if (a !== audio) return;
       if(!a.seeking&&a.readyState>=3)a._mbCambioBrano=false;
@@ -6566,6 +6604,7 @@ a.addEventListener("pause", () => {
         savePos();
       }
       _confermaRipresaAudio();
+      if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
@@ -8125,6 +8164,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId || Number.isFinite(startAt)&&startAt>0) resumeAt = 0;
+       _ripresaAvvioCheckpoint=null;
       try { window.MusicBoxAudioAlign?.cancel?.(); } catch (_) {}
       currentId = id;
       // An explicit new selection must not inherit the old song's
@@ -8383,6 +8423,8 @@ let _casualeEscluse = new Set();
 let _casualeModificaUtente = false;
 let _casualeChiaveAttiva = "";
 let _casualeAscoltate = new Set();
+const LIMITE_INATTIVITA_CASUALE=5*60*60*1000;
+let _casualeUltimoAscoltoAt=0;
 
 // A single durable shuffle/Smart Mix cycle per profile and playlist/filter.
 function _chiaveContestoCasuale(){
@@ -8394,19 +8436,30 @@ function _salvaCicloCasuale(){
  const key="mb.shuffle.cicli.v1."+profile;
  const old=LS.get(key,{});
  const saved=old&&typeof old==="object"&&!Array.isArray(old)?old:{};
- saved[_casualeChiaveAttiva]={played:[..._casualeAscoltate],at:Date.now()};
+ _casualeUltimoAscoltoAt=Date.now();
+ saved[_casualeChiaveAttiva]={played:[..._casualeAscoltate],at:_casualeUltimoAscoltoAt};
  const recent=Object.entries(saved).sort((a,b)=>Number(b[1]?.at||0)-
   Number(a[1]?.at||0)).slice(0,40);
  LS.set(key,Object.fromEntries(recent));
 }
 function _preparaCicloCasuale(lista){
  const key=_chiaveContestoCasuale();
+ const now=Date.now();
+ if(_casualeChiaveAttiva===key&&_casualeUltimoAscoltoAt>0&&
+    now-_casualeUltimoAscoltoAt>=LIMITE_INATTIVITA_CASUALE)
+   _casualeChiaveAttiva="";
  if(_casualeChiaveAttiva!==key){
   const store=LS.get("mb.shuffle.cicli.v1."+profile,{});
-  const saved=store?.[key]?.played;
+  const record=store?.[key];
+  const at=Number(record?.at);
+  const fresh=Number.isFinite(at)&&at>0&&now>=at&&
+    now-at<LIMITE_INATTIVITA_CASUALE;
+  const saved=fresh?record?.played:[];
   _casualeAscoltate=new Set(Array.isArray(saved)?
    saved.filter(x=>typeof x==="string"&&x.length<=256):[]);
+  _casualeUltimoAscoltoAt=fresh?at:0;
   _casualeChiaveAttiva=key;
+  if(!fresh)_salvaCicloCasuale();
   _casualeProgrammate=[];_casualeScelto="";_casualeDa="";
   _casualeSceltaDJ="";
   _casualeFirma="";_casualeEscluse.clear();_casualeModificaUtente=false;
@@ -8461,6 +8514,7 @@ function _azzeraCasuale() {
   // Forget only the preview; visited songs remain saved for this profile.
   _casualeChiaveAttiva = "";
   _casualeAscoltate = new Set();
+  _casualeUltimoAscoltoAt=0;
   _casualeFresche = null;
   _casualeUniverso = null;
   _casualeScelto = "";
@@ -8734,6 +8788,50 @@ function playNext() {
     // button or headphone command has its own user-activated path.
   }
 
+  // If iOS keeps the same page alive for hours instead of reloading it,
+  // apply the same rule as a cold launch: after two hours away no track
+  // remains selected. Continuous real playback in background is not idle.
+  let _uscitaDallAppIl=0;
+  function _controllaLungaAssenza(){
+    const away=_uscitaDallAppIl?Date.now()-_uscitaDallAppIl:0;
+    if(away<LIMITE_RIPRESA_SESSIONE||!currentId||
+       window.MusicBoxRoom?.isActive?.())return;
+    const audioAvanza=audio&&!audio.paused&&
+      Date.now()-_ultimoAvanzamentoReale<30000;
+    if(audioAvanza)return;
+    try{window.MusicBoxMix?.cancel?.()}catch(_){}
+    try{audio?.pause()}catch(_){}
+    try{audio?.removeAttribute("src");audio?.load()}catch(_){}
+    currentId=null;resumeAt=0;_ripresaAvvioCheckpoint=null;
+    _pausaCheckpoint=null;_ripristinoPausaAtteso=null;
+    _vuoleSuonare=false;_pausaEsplicita=true;
+    _segnaIntenzioneSono(false);
+    try{
+      if("mediaSession" in navigator){
+        navigator.mediaSession.metadata=null;
+        navigator.mediaSession.playbackState="none";
+      }
+    }catch(_){}
+    _mediaSessionTrackId="";
+    updateProgressUI(0,0);
+    _segnaRigaAttiva();syncPlayUI();
+    _segna("sessione scaduta","dopo due ore fuori dall'app: nessun brano selezionato");
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){
+      _uscitaDallAppIl=Date.now();
+      if(shuffle&&_casualeChiaveAttiva)_salvaCicloCasuale();
+    }else{
+      _controllaLungaAssenza();
+      _uscitaDallAppIl=0;
+    }
+  });
+  window.addEventListener("pagehide",()=>{
+    _uscitaDallAppIl=Date.now();
+    if(shuffle&&_casualeChiaveAttiva)_salvaCicloCasuale();
+  });
+  window.addEventListener("pageshow",()=>{_controllaLungaAssenza();});
+
   function _riproduciVolontaria(daControlloEsterno=false) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("play");return;
@@ -8779,7 +8877,7 @@ function playNext() {
       if (currentId) return playById(currentId, true,
         Number(checkpoint?.time) || 0);
     }
-    if (audio.paused) return _riproduciVolontaria();
+    if (audio.paused) { if(typeof _verificaRipresaAvvio==="function")_verificaRipresaAvvio(); return _riproduciVolontaria(); }
     return _pausaVolontaria();
   }
 
@@ -19396,12 +19494,24 @@ function _ripristinaPuntoLibreria() {
     $("btnRepeat").classList.toggle("on", repeat);
 
 const precedente = LS.get("mb.playback." + profile, null);
-      const valido = precedente && typeof precedente.id === "string" &&
-        Number.isFinite(Number(precedente.quando)) &&
-        Date.now() >= Number(precedente.quando) &&
-        Date.now() - Number(precedente.quando) < 6 * 60 * 60 * 1000;
-      const idSalvato = valido && Number(precedente.quando) >= Number(st.quando || 0)
-        ? precedente.id : st.last;
+      const pausedAtStart=LS.get("mb.pausaPos."+profile,null);
+      const savedId=precedente?.id||st.last;
+      const times=[Number(precedente?.quando),Number(st.quando)];
+      if(pausedAtStart?.id===savedId)times.push(Number(pausedAtStart.quando));
+      const now=Date.now();
+      const latest=Math.max(0,...times.filter(t=>Number.isFinite(t)&&t>0&&t<=now));
+      const recent=latest>0&&now-latest<LIMITE_RIPRESA_SESSIONE;
+      const valido=recent&&precedente&&typeof precedente.id==="string"&&
+        Number.isFinite(Number(precedente.quando))&&now>=Number(precedente.quando)&&
+        now-Number(precedente.quando)<LIMITE_RIPRESA_SESSIONE;
+      // More than two hours away: no selected song, not even one at 0:00.
+      const idSalvato=recent?(valido&&Number(precedente.quando)>=Number(st.quando||0)?
+        precedente.id:st.last):null;
+      if(!recent){
+        currentId=null;resumeAt=0;_ripresaAvvioCheckpoint=null;_pausaCheckpoint=null;
+        _vuoleSuonare=false;_pausaEsplicita=true;_segnaIntenzioneSono(false);
+        updateProgressUI(0,0);
+      }
       let lastTrack = idSalvato ? tracks.find((t) => t.id === idSalvato) : null;
       // Un link YouTube che nel frattempo e' diventato un MP3 puo' cambiare
       // identificativo: ritrovalo tramite l'ID del video originale.
@@ -19425,19 +19535,9 @@ const precedente = LS.get("mb.playback." + profile, null);
         }
         if (!salvato && lastTrack.id === st.last)
           salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
-        /* Ste: "voglio che dopo 6 ore si resetti". Se l'ultima volta che ho
-           ascoltato questa canzone e' piu' vecchia di SEI ORE, non ti rimetto
-           a meta' di una canzone che hai lasciato sei ore fa: ricomincio
-           dall'inizio. Prima non c'era nessun orario, quindi la posizione
-           vecchia sembrava sempre appena salvata. */
-        const LIMITE_VECCHIA = 6 * 60 * 60 * 1000;
-        let quando = valido && precedente.id === idSalvato &&
-          Number(precedente.quando) >= Number(st.quando || 0)
-          ? Number(precedente.quando) : (Number(st.quando || 0) || 0);
-        if (!quando) quando = Number(LS.get("mb.pos.quando." + lastTrack.id, 0)) || 0;
-        const passate = quando ? (Date.now() - quando) : 0;
-        const troppoVecchia = quando > 0 && passate > LIMITE_VECCHIA;
-        if (troppoVecchia) salvato = 0;
+        // Restoring a track is allowed only inside the two-hour session.
+        const quando=latest;
+        const passate=now-quando;
         /* Uso resumeAt, che e' il meccanismo GIA' fatto per questo: se ne'
            accorgono handleMetadata, collegata all'elemento audio. Prima avevo
            aggiunto qui un listener mio che metteva la posizione a mano, e
@@ -19452,10 +19552,10 @@ const precedente = LS.get("mb.playback." + profile, null);
           _pausaCheckpoint=pausedStored;
         }
         resumeAt=salvato>.01?salvato:0;
-        _segna("ripresa all'avvio", "brano " + lastTrack.id +
-          ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
-          (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
-            (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
+        _ripresaAvvioCheckpoint=resumeAt>0?
+          {id:lastTrack.id,target:resumeAt,attempts:0,lastTry:0,firstTry:0,progressObserved:false}:null;
+        _segna("ripresa all'avvio","brano "+lastTrack.id+
+          ", posizione "+Math.round(salvato)+"s, inattiva da "+Math.round(passate/60000)+" minuti");
         _assegnaAudioSorgente(audio,_urlDelBrano(lastTrack));
         _segnaRigaAttiva();
         updateProgressUI(0, 0);

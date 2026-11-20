@@ -1,0 +1,26 @@
+name: Music Box session and shuffle resume regression
+on:
+  pull_request:
+    paths:
+      - app.js
+      - tests/playback-session-regression.test.cjs
+      - .github/workflows/playback-session-regression.yml
+  push:
+    paths:
+      - app.js
+      - tests/playback-session-regression.test.cjs
+      - .github/workflows/playback-session-regression.yml
+
+jobs:
+  session-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check app.js
+      - name: Verify 2-hour player and 5-hour shuffle sessions
+        run: node --test tests/playback-session-regression.test.cjs
