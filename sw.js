@@ -45,11 +45,11 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6738&lyrics=4",
+  "./style.css?v=6739&lyrics=4",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./karaoke-acoustic-proof.js?v=6738&proof=2",
-  "./audio-lyrics-align.js?v=6738&lang=21",
+  "./karaoke-acoustic-proof.js?v=6739&proof=2",
+  "./audio-lyrics-align.js?v=6739&lang=21",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
@@ -65,7 +65,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6738&dj=58", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6739&dj=58", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -96,11 +96,11 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6738&lyrics=4",
+  "./style.css?v=6739&lyrics=4",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./karaoke-acoustic-proof.js?v=6738&proof=2",
-  "./audio-lyrics-align.js?v=6738&lang=21",
+  "./karaoke-acoustic-proof.js?v=6739&proof=2",
+  "./audio-lyrics-align.js?v=6739&lang=21",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
@@ -116,7 +116,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6738&dj=58",
+  "./mix-intelligente.js?v=6739&dj=58",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=9"
 ];
