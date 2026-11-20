@@ -1240,7 +1240,7 @@
     "a": "Coldplay"
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 2,
+    "v": 3,
     "s": 442,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
@@ -1871,13 +1871,13 @@
    },
    "[\"her\",\"jvke\"]": {
     "v": 3,
-    "s": 395,
+    "s": 416,
     "t": "her",
     "a": "JVKE"
    },
    "m:2026-11|[\"her\",\"jvke\"]": {
     "v": 3,
-    "s": 395,
+    "s": 416,
     "t": "her",
     "a": "JVKE"
    },
@@ -2141,13 +2141,13 @@
    },
    "[\"so solo che la vita\",\"jovanotti\"]": {
     "v": 2,
-    "s": 706,
+    "s": 707,
     "t": "So solo che la vita",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"so solo che la vita\",\"jovanotti\"]": {
     "v": 2,
-    "s": 706,
+    "s": 707,
     "t": "So solo che la vita",
     "a": "Jovanotti"
    },
@@ -2590,7 +2590,7 @@
     "a": "glocky"
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 2,
+    "v": 3,
     "s": 441,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
