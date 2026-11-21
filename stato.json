@@ -4367,13 +4367,13 @@
    },
    "[\"carusi do sud\",\"l'elfo\"]": {
     "v": 3,
-    "s": 299,
+    "s": 333,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
    "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
     "v": 3,
-    "s": 299,
+    "s": 333,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
@@ -10517,13 +10517,13 @@
    },
    "[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 176,
+    "s": 220,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 176,
+    "s": 220,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
