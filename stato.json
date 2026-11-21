@@ -2519,13 +2519,13 @@
    },
    "[\"swag music\",\"artie 5ive\"]": {
     "v": 7,
-    "s": 624,
+    "s": 638,
     "t": "SWAG MUSIC",
     "a": "Artie 5ive"
    },
    "m:2026-11|[\"swag music\",\"artie 5ive\"]": {
     "v": 7,
-    "s": 624,
+    "s": 638,
     "t": "SWAG MUSIC",
     "a": "Artie 5ive"
    },
@@ -3821,13 +3821,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
-    "s": 248,
+    "s": 280,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 1,
-    "s": 248,
+    "s": 280,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
@@ -5261,13 +5261,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 280,
+    "s": 360,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 280,
+    "s": 360,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -6010,14 +6010,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
-    "v": 1,
-    "s": 294,
+    "v": 2,
+    "s": 368,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
    "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
-    "v": 1,
-    "s": 294,
+    "v": 2,
+    "s": 368,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
@@ -6065,13 +6065,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 360,
+    "s": 366,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 360,
+    "s": 366,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -6815,13 +6815,13 @@
    },
    "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 2,
-    "s": 368,
+    "s": 384,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
    "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 2,
-    "s": 368,
+    "s": 384,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
@@ -7779,6 +7779,18 @@
     "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
+   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 9,
+    "s": 380,
+    "t": "Con Te PartirÃÂÃÂ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 8,
+    "s": 378,
+    "t": "Con Te PartirÃÂÃÂ²",
+    "a": "Andrea Bocelli"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 3,
     "s": 448,
@@ -7803,12 +7815,6 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
-   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 9,
-    "s": 380,
-    "t": "Con Te PartirÃÂÃÂ²",
-    "a": "Andrea Bocelli"
-   },
    "m:2026-10|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 2,
@@ -7818,13 +7824,25 @@
    "[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 227,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 227,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂ \"]": {
@@ -7940,12 +7958,6 @@
     "s": 652,
     "t": "La musica non c'ÃÂÃÂ¨",
     "a": "Coez"
-   },
-   "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 8,
-    "s": 378,
-    "t": "Con Te PartirÃÂÃÂ²",
-    "a": "Andrea Bocelli"
    },
    "[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 2,
@@ -8085,18 +8097,6 @@
     "t": "Voglio di piÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 227,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 227,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 2,
     "s": 624,
@@ -8181,6 +8181,18 @@
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 6,
+    "s": 1074,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 6,
+    "s": 1074,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
    "[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
     "v": 1,
     "s": 334,
@@ -8215,18 +8227,6 @@
     "v": 0,
     "s": 301,
     "t": "ArriverÃÂÃÂ ",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 6,
-    "s": 1074,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 6,
-    "s": 1074,
-    "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
@@ -8412,7 +8412,7 @@
    "[\"fragile\",\"modÃÂÃÂ \"]": {
     "v": 0,
     "s": 211,
-    "t": "fragile",
+    "t": "Quello che non ti ho detto",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"fragile\",\"modÃÂÃÂ \"]": {
@@ -8487,6 +8487,30 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 3,
+    "s": 315,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 3,
+    "s": 315,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
+    "v": 9,
+    "s": 380,
+    "t": "Con Te PartirÃÂ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
+    "v": 8,
+    "s": 378,
+    "t": "Con Te PartirÃÂ²",
+    "a": "Andrea Bocelli"
+   },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
     "s": 366,
@@ -8529,18 +8553,6 @@
     "t": "Nessuna",
     "a": "LuchÃÂÃÂ¨"
    },
-   "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 315,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 315,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
    "[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
     "s": 337,
@@ -8564,42 +8576,6 @@
     "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 214,
-    "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 214,
-    "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 2,
-    "s": 301,
-    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 2,
-    "s": 301,
-    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
-    "v": 9,
-    "s": 380,
-    "t": "Con Te PartirÃÂ²",
-    "a": "Andrea Bocelli"
-   },
-   "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
-    "v": 8,
-    "s": 378,
-    "t": "Con Te PartirÃÂ²",
-    "a": "Andrea Bocelli"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 3,
@@ -9308,6 +9284,30 @@
     "s": 315,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 214,
+    "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 214,
+    "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 2,
+    "s": 301,
+    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 2,
+    "s": 301,
+    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 9,
