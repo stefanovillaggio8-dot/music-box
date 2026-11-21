@@ -1642,13 +1642,13 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"stupido\",\"massimo pericolo\"]": {
-    "v": 2,
+    "v": 3,
     "s": 422,
     "t": "stupido",
     "a": "massimo pericolo"
    },
    "m:2026-11|[\"stupido\",\"massimo pericolo\"]": {
-    "v": 2,
+    "v": 3,
     "s": 422,
     "t": "stupido",
     "a": "massimo pericolo"
@@ -2435,13 +2435,13 @@
    },
    "[\"occhi lucidi\",\"leon faun, duffy\"]": {
     "v": 5,
-    "s": 597,
+    "s": 600,
     "t": "Occhi Lucidi",
     "a": "Leon Faun, Duffy"
    },
    "m:2026-11|[\"occhi lucidi\",\"leon faun, duffy\"]": {
     "v": 5,
-    "s": 597,
+    "s": 600,
     "t": "Occhi Lucidi",
     "a": "Leon Faun, Duffy"
    },
@@ -3052,14 +3052,14 @@
     "a": "Kid Yugi"
    },
    "[\"mi manchi\",\"paky\"]": {
-    "v": 2,
-    "s": 378,
+    "v": 3,
+    "s": 380,
     "t": "mi manchi",
     "a": "paky"
    },
    "m:2026-11|[\"mi manchi\",\"paky\"]": {
-    "v": 2,
-    "s": 378,
+    "v": 3,
+    "s": 380,
     "t": "mi manchi",
     "a": "paky"
    },
@@ -3520,13 +3520,13 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"meraviglioso\",\"negromaro\"]": {
-    "v": 1,
+    "v": 2,
     "s": 408,
     "t": "Meraviglioso",
     "a": "Negromaro"
    },
    "m:2026-11|[\"meraviglioso\",\"negromaro\"]": {
-    "v": 1,
+    "v": 2,
     "s": 408,
     "t": "Meraviglioso",
     "a": "Negromaro"
@@ -3580,14 +3580,14 @@
     "a": "nayt, 3D"
    },
    "[\"mentre tutto score\",\"negromaro\"]": {
-    "v": 1,
-    "s": 299,
+    "v": 2,
+    "s": 321,
     "t": "Mentre Tutto Score",
     "a": "Negromaro"
    },
    "m:2026-11|[\"mentre tutto score\",\"negromaro\"]": {
-    "v": 1,
-    "s": 299,
+    "v": 2,
+    "s": 321,
     "t": "Mentre Tutto Score",
     "a": "Negromaro"
    },
@@ -3904,14 +3904,14 @@
     "a": "thasup, Lazza, Sfera Ebbasta"
    },
    "[\"l'anima\",\"madame\"]": {
-    "v": 2,
-    "s": 460,
+    "v": 3,
+    "s": 465,
     "t": "l'anima",
     "a": "madame"
    },
    "m:2026-11|[\"l'anima\",\"madame\"]": {
-    "v": 2,
-    "s": 460,
+    "v": 3,
+    "s": 465,
     "t": "l'anima",
     "a": "madame"
    },
@@ -8038,14 +8038,14 @@
     "a": "LuchÃÂÃÂ¨"
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
@@ -8477,13 +8477,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
@@ -8542,14 +8542,14 @@
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
@@ -8576,6 +8576,18 @@
     "s": 301,
     "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
     "a": "thasup"
+   },
+   "[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 3,
@@ -9076,13 +9088,13 @@
     "a": "ModÃÂ "
    },
    "[\"vibe\",\"guÃÂ¨\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "GuÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂ¨\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "GuÃÂ¨"
@@ -9386,18 +9398,6 @@
     "s": 301,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
-   },
-   "[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 3,
