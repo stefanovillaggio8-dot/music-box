@@ -1391,7 +1391,7 @@
    },
    "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
     "v": 3,
-    "s": 891,
+    "s": 931,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -3635,7 +3635,7 @@
    },
    "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
     "v": 3,
-    "s": 890,
+    "s": 930,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -6551,13 +6551,13 @@
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 541,
+    "s": 613,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 541,
+    "s": 613,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -7361,13 +7361,13 @@
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 613,
+    "s": 615,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 613,
+    "s": 615,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -10919,13 +10919,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 1,
-    "s": 248,
+    "s": 280,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 1,
-    "s": 248,
+    "s": 280,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
    },
