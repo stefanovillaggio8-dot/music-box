@@ -17,6 +17,7 @@
   "Ste.b-track-28",
   "Ste.b-track-287",
   "Ste.b-track-290",
+  "Ste.b-track-32",
   "Ste.b-track-42",
   "Ste.b-track-45",
   "Ste.b-track-511",
@@ -2065,13 +2066,13 @@
    },
    "[\"mostro (visual)\",\"kid yugi\"]": {
     "v": 2,
-    "s": 355,
+    "s": 356,
     "t": "Mostro (Visual)",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"mostro (visual)\",\"kid yugi\"]": {
     "v": 2,
-    "s": 355,
+    "s": 356,
     "t": "Mostro (Visual)",
     "a": "Kid Yugi"
    },
@@ -4411,13 +4412,13 @@
    },
    "[\"per il sangue versato\",\"kid yugi\"]": {
     "v": 0,
-    "s": 252,
+    "s": 307,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
     "v": 0,
-    "s": 252,
+    "s": 307,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
