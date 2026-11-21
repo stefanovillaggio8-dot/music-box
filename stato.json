@@ -4,6 +4,7 @@
   "Ste.b-track-1",
   "Ste.b-track-141",
   "Ste.b-track-162",
+  "Ste.b-track-174",
   "Ste.b-track-183",
   "Ste.b-track-219",
   "Ste.b-track-224",
@@ -1303,8 +1304,8 @@
     "a": "Oasis"
    },
    "[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 5,
-    "s": 727,
+    "v": 6,
+    "s": 728,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -2101,8 +2102,8 @@
     "a": "Antonello Venditti"
    },
    "m:2026-11|[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 4,
-    "s": 649,
+    "v": 5,
+    "s": 650,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -2551,14 +2552,14 @@
     "a": "Ultimo"
    },
    "[\"a te\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 522,
+    "v": 4,
+    "s": 527,
     "t": "A Te",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"a te\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 522,
+    "v": 4,
+    "s": 527,
     "t": "A Te",
     "a": "Jovanotti"
    },
@@ -2660,13 +2661,13 @@
    },
    "[\"sentire la musica\",\"kid yugi\"]": {
     "v": 9,
-    "s": 1002,
+    "s": 1003,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sentire la musica\",\"kid yugi\"]": {
     "v": 9,
-    "s": 1002,
+    "s": 1003,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
@@ -3104,13 +3105,13 @@
    },
    "[\"per te che lotto\",\"kid yugi\"]": {
     "v": 4,
-    "s": 454,
+    "s": 505,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
     "v": 4,
-    "s": 454,
+    "s": 505,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
@@ -4363,13 +4364,13 @@
     "a": "Kid Yugi"
    },
    "[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
+    "v": 2,
     "s": 249,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
    "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
+    "v": 2,
     "s": 249,
     "t": "carusi do sud",
     "a": "l'elfo"
@@ -4412,13 +4413,13 @@
    },
    "[\"per il sangue versato\",\"kid yugi\"]": {
     "v": 0,
-    "s": 307,
+    "s": 316,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
     "v": 0,
-    "s": 307,
+    "s": 316,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
