@@ -71,7 +71,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6734&phrases=1",
+  "./immersive.js?v=6734&words=10",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -118,7 +118,7 @@ const OFFLINE_SHELL = [
   "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6738&dj=58",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6734&phrases=1"
+  "./immersive.js?v=6734&words=10"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
