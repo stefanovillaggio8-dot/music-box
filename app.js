@@ -7900,8 +7900,8 @@ box.innerHTML = "";
         for(const i of changedRows){
           const p=lyricLines[i],row=joined[i];
           p.replaceChildren();
-          const elements=window.MusicBoxWordKaraoke?.spanWords(document,row,p)||[];
-          if(!elements.length)p.textContent=row.text;
+          const elements=[]; // Preserve phrase-only rendering after async lyric updates.
+          p.textContent=row.text;
           p.dataset.t=String(row.t);
           _lyricWordParts[i]={row,elements};
         }
