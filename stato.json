@@ -22,6 +22,7 @@
   "Ste.b-track-32",
   "Ste.b-track-42",
   "Ste.b-track-45",
+  "Ste.b-track-504",
   "Ste.b-track-511",
   "Ste.b-track-517",
   "Ste.b-track-64",
@@ -1174,7 +1175,7 @@
    },
    "[\"white keys\",\"dominic fike\"]": {
     "v": 7,
-    "s": 356,
+    "s": 360,
     "t": "WHITE KEYS",
     "a": "Dominic Fike"
    },
@@ -1233,8 +1234,8 @@
     "a": "Andrea Bocelli"
    },
    "[\"fix you\",\"coldplay\"]": {
-    "v": 2,
-    "s": 743,
+    "v": 3,
+    "s": 749,
     "t": "Fix You",
     "a": "Coldplay"
    },
@@ -1414,7 +1415,7 @@
    },
    "[\"futuri possibili\",\"franco126\"]": {
     "v": 4,
-    "s": 528,
+    "s": 530,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -1438,7 +1439,7 @@
    },
    "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
     "v": 4,
-    "s": 465,
+    "s": 467,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -1563,13 +1564,13 @@
     "a": "Coez"
    },
    "[\"baby mama\",\"don pero\"]": {
-    "v": 1,
+    "v": 2,
     "s": 283,
     "t": "Baby Mama",
     "a": "Don Pero"
    },
    "m:2026-11|[\"baby mama\",\"don pero\"]": {
-    "v": 1,
+    "v": 2,
     "s": 283,
     "t": "Baby Mama",
     "a": "Don Pero"
@@ -2343,13 +2344,13 @@
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "[\"babydoll\",\"dominic fike\"]": {
-    "v": 2,
+    "v": 3,
     "s": 316,
     "t": "Babydoll",
     "a": "Dominic Fike"
    },
    "m:2026-11|[\"babydoll\",\"dominic fike\"]": {
-    "v": 2,
+    "v": 3,
     "s": 316,
     "t": "Babydoll",
     "a": "Dominic Fike"
@@ -2746,7 +2747,7 @@
    },
    "m:2026-11|[\"white keys\",\"dominic fike\"]": {
     "v": 5,
-    "s": 346,
+    "s": 350,
     "t": "WHITE KEYS",
     "a": "Dominic Fike"
    },
@@ -2865,8 +2866,8 @@
     "a": "TonyPitony"
    },
    "m:2026-11|[\"fix you\",\"coldplay\"]": {
-    "v": 2,
-    "s": 743,
+    "v": 3,
+    "s": 749,
     "t": "Fix You",
     "a": "Coldplay"
    },
@@ -10467,14 +10468,14 @@
     "a": "Luchè"
    },
    "[\"la guerra di piero\",\"fabrizio de andré\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andré\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De André"
    },
@@ -10906,13 +10907,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
    },
@@ -10971,14 +10972,14 @@
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andré\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"bocca di rosa\",\"fabrizio de andré\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
    },
@@ -11005,6 +11006,18 @@
     "s": 301,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
+   },
+   "[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
    }
   },
   "Diego": {
