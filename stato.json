@@ -1390,8 +1390,8 @@
     "a": "Max Pezzali"
    },
    "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 2,
-    "s": 774,
+    "v": 3,
+    "s": 808,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -1415,7 +1415,7 @@
    },
    "[\"futuri possibili\",\"franco126\"]": {
     "v": 4,
-    "s": 530,
+    "s": 531,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -1439,7 +1439,7 @@
    },
    "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
     "v": 4,
-    "s": 467,
+    "s": 468,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -3634,8 +3634,8 @@
     "a": "nayt"
    },
    "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 2,
-    "s": 773,
+    "v": 3,
+    "s": 807,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -4174,14 +4174,14 @@
     "a": "Kid Yugi / Lil Peep"
    },
    "[\"baciami ancora - radio edit\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 448,
+    "v": 2,
+    "s": 451,
     "t": "Baciami Ancora - Radio Edit",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"baciami ancora - radio edit\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 448,
+    "v": 2,
+    "s": 451,
     "t": "Baciami Ancora - Radio Edit",
     "a": "Jovanotti"
    },
@@ -9658,14 +9658,14 @@
     "a": "LuchÃ¨"
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃ©"
    },
@@ -10097,13 +10097,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃ©"
    },
@@ -10162,14 +10162,14 @@
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
    },
    "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
    },
@@ -10196,6 +10196,18 @@
     "s": 301,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
+   },
+   "[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 3,
@@ -10696,13 +10708,13 @@
     "a": "Modà"
    },
    "[\"vibe\",\"guè\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "Guè"
    },
    "m:2026-11|[\"vibe\",\"guè\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "Guè"
@@ -11006,18 +11018,6 @@
     "s": 301,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
-   },
-   "[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
    }
   },
   "Diego": {
