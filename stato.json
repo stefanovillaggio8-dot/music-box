@@ -2146,14 +2146,14 @@
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "[\"so solo che la vita\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 707,
+    "v": 3,
+    "s": 723,
     "t": "So solo che la vita",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"so solo che la vita\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 707,
+    "v": 3,
+    "s": 723,
     "t": "So solo che la vita",
     "a": "Jovanotti"
    },
@@ -2434,14 +2434,14 @@
     "a": "Marracash"
    },
    "[\"occhi lucidi\",\"leon faun, duffy\"]": {
-    "v": 4,
-    "s": 593,
+    "v": 5,
+    "s": 597,
     "t": "Occhi Lucidi",
     "a": "Leon Faun, Duffy"
    },
    "m:2026-11|[\"occhi lucidi\",\"leon faun, duffy\"]": {
-    "v": 4,
-    "s": 593,
+    "v": 5,
+    "s": 597,
     "t": "Occhi Lucidi",
     "a": "Leon Faun, Duffy"
    },
@@ -4036,14 +4036,14 @@
     "a": "nayt"
    },
    "[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 3,
-    "s": 465,
+    "v": 4,
+    "s": 479,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 3,
-    "s": 465,
+    "v": 4,
+    "s": 479,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
@@ -4175,13 +4175,13 @@
    },
    "[\"baciami ancora - radio edit\",\"jovanotti\"]": {
     "v": 2,
-    "s": 451,
+    "s": 474,
     "t": "Baciami Ancora - Radio Edit",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"baciami ancora - radio edit\",\"jovanotti\"]": {
     "v": 2,
-    "s": 451,
+    "s": 474,
     "t": "Baciami Ancora - Radio Edit",
     "a": "Jovanotti"
    },
@@ -8848,14 +8848,14 @@
     "a": "LuchÃÂ¨"
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 416,
+    "v": 1,
+    "s": 418,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9287,13 +9287,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
     "v": 1,
-    "s": 246,
+    "s": 248,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9352,14 +9352,14 @@
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 2,
-    "s": 131,
+    "v": 3,
+    "s": 132,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9386,6 +9386,18 @@
     "s": 301,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
+   },
+   "[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
+    "v": 3,
+    "s": 641,
+    "t": "Autoritratto",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 3,
@@ -9886,13 +9898,13 @@
     "a": "ModÃ "
    },
    "[\"vibe\",\"guÃ¨\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "GuÃ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃ¨\"]": {
-    "v": 3,
+    "v": 4,
     "s": 200,
     "t": "Vibe",
     "a": "GuÃ¨"
@@ -10196,18 +10208,6 @@
     "s": 301,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
-   },
-   "[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"autoritratto\",\"nayt\"]": {
-    "v": 3,
-    "s": 641,
-    "t": "Autoritratto",
-    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 3,
