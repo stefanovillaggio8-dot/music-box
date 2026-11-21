@@ -2,6 +2,7 @@
  "eliminati": [
   "Diego.b-track-393",
   "Ste.b-track-1",
+  "Ste.b-track-123",
   "Ste.b-track-141",
   "Ste.b-track-162",
   "Ste.b-track-174",
@@ -1245,7 +1246,7 @@
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 3,
-    "s": 442,
+    "s": 484,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -2318,14 +2319,14 @@
     "a": "nayt, 3D"
    },
    "[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
-    "v": 2,
-    "s": 763,
+    "v": 3,
+    "s": 766,
     "t": "Buon Viaggio (Share The Love)",
     "a": "Cesare Cremonini"
    },
    "m:2026-11|[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
-    "v": 2,
-    "s": 763,
+    "v": 3,
+    "s": 766,
     "t": "Buon Viaggio (Share The Love)",
     "a": "Cesare Cremonini"
    },
@@ -2396,14 +2397,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"we fell in love in october\",\"girl in red\"]": {
-    "v": 3,
-    "s": 511,
+    "v": 4,
+    "s": 513,
     "t": "we fell in love in october",
     "a": "girl in red"
    },
    "m:2026-11|[\"we fell in love in october\",\"girl in red\"]": {
-    "v": 3,
-    "s": 511,
+    "v": 4,
+    "s": 513,
     "t": "we fell in love in october",
     "a": "girl in red"
    },
@@ -2504,14 +2505,14 @@
     "a": "nayt"
    },
    "[\"autoritratto\",\"charlie charles, nayt\"]": {
-    "v": 2,
-    "s": 631,
+    "v": 3,
+    "s": 632,
     "t": "Autoritratto",
     "a": "Charlie Charles, nayt"
    },
    "m:2026-11|[\"autoritratto\",\"charlie charles, nayt\"]": {
-    "v": 2,
-    "s": 631,
+    "v": 3,
+    "s": 632,
     "t": "Autoritratto",
     "a": "Charlie Charles, nayt"
    },
@@ -2595,7 +2596,7 @@
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 3,
-    "s": 441,
+    "s": 483,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
