@@ -21,13 +21,18 @@ test("timing coverage never calls estimated or lyric-line timestamps audio-certi
  assert.equal(c.wordTimed,2);
  assert.equal(c.percent,40);
 });
-test("both karaoke views display the number of verified word-synced lines",()=>{
+test("both karaoke views highlight full phrases without estimated word animation",()=>{
  const app=fs.readFileSync(path.join(root,"app.js"),"utf8");
  const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
- assert.match(app,/wordCoverage\.wordTimed\+"\/"\+wordCoverage\.total/);
- assert.match(immersive,/coverage\.wordTimed\+"\/"\+coverage\.total/);
- assert.match(immersive,/sourceT:Number\(row.sourceT\)/);
- assert.doesNotMatch(immersive,/PAROLA PER PAROLA · IA/);
+ assert.match(app,/KARAOKE · FRASI SINCRONIZZATE/);
+ assert.match(immersive,/SINCRONIZZATO PER FRASI/);
+ assert.match(app,/p\.textContent=line\.text/);
+ assert.match(immersive,/row\.textContent=data\.text/);
+ assert.doesNotMatch(app,/MusicBoxWordKaraoke\?\.spanWords/);
+ assert.doesNotMatch(immersive,/MusicBoxWordKaraoke\?\.spanWords/);
+ assert.doesNotMatch(app,/PAROLE STIMATE|PAROLE VERIFICATE/);
+ assert.doesNotMatch(immersive,/PAROLE STIMATE|PAROLE VERIFICATE/);
+ assert.doesNotMatch(app,/return e\?\.estimateRows/);
 });
 
 test("empty and boolean timestamps cannot fabricate trusted word timing",()=>{

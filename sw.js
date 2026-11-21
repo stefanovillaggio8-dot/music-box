@@ -54,7 +54,7 @@ const CORE = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6738&words=17",
+  "./app.js?v=6738&words=18",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -71,7 +71,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6734&words=9",
+  "./immersive.js?v=6734&words=10",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -105,7 +105,7 @@ const OFFLINE_SHELL = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6738&words=17",
+  "./app.js?v=6738&words=18",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -118,7 +118,7 @@ const OFFLINE_SHELL = [
   "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6738&dj=58",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6734&words=9"
+  "./immersive.js?v=6734&words=10"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",

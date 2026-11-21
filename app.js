@@ -5521,16 +5521,13 @@ function _riparaMetadatiTraccia(t){
 }
   function _statoKaraokeBrano(id){
     const records=[localLyrics[id],lyricsData[id]].filter(Boolean);
-    const verified=records.find(l=>Array.isArray(l.wordRows)&&
-      l.wordRows.some(row=>_haTempiParole(row)));
-    if(verified)return {label:verified.audioWordSynced?"PAROLE IA":"PAROLE",
-      title:verified.audioWordSynced?"Parole ricavate dall'analisi vocale sul dispositivo":"Tempi originali delle singole parole disponibili"};
-    if(records.some(l=>l.wordRows?.some(row=>window.MusicBoxWordKaraoke?.hasPartialTiming?.(row))))
-      return {label:"PAROLE IA PARZIALI",title:"Solo le sequenze riconosciute hanno tempi acustici; le parole restanti non sono allineate"};
-    if(records.some(l=>typeof l.synced==="string"&&
-      /\[\d{1,3}:\d{2}/.test(l.synced)))
-      return {label:"PAROLE STIMATE",title:"Progressione per parole stimata dai tempi delle frasi: non verificata sull'audio"};
-    if(karaokeIndex[id]?.synced)return {label:"KARAOKE",title:"Testi sincronizzati presenti nell'indice, ancora da caricare"};
+    const hasTimedLines=records.some(l=>typeof l.synced==="string"&&
+      /\[\d{1,3}:\d{2}/.test(l.synced));
+    if(hasTimedLines||records.some(l=>Array.isArray(l.wordRows)&&
+      l.wordRows.some(row=>_haTempiParole(row))))
+      return {label:"KARAOKE",title:"Testo sincronizzato per frasi"};
+    if(karaokeIndex[id]?.synced)
+      return {label:"KARAOKE",title:"Testi sincronizzati presenti nell'indice, ancora da caricare"};
     return null;
   }
   function render() {
@@ -7903,8 +7900,8 @@ box.innerHTML = "";
         for(const i of changedRows){
           const p=lyricLines[i],row=joined[i];
           p.replaceChildren();
-          const elements=window.MusicBoxWordKaraoke?.spanWords(document,row,p)||[];
-          if(!elements.length)p.textContent=row.text;
+          const elements=[]; // Preserve phrase-only rendering after async lyric updates.
+          p.textContent=row.text;
           p.dataset.t=String(row.t);
           _lyricWordParts[i]={row,elements};
         }
@@ -9370,7 +9367,7 @@ function openProfile() {
     const enhanced=e?.parseEnhancedLrc(l?.synced||"")||[];
     const baseline=(saved.some(_haTempiParole)||saved.some(row=>e?.hasPartialTiming?.(row)))?saved:
       (enhanced.some(_haTempiParole))?enhanced:parseSynced(l?.synced||"");
-    return e?.estimateRows?.(baseline)||baseline;
+    return baseline; // Never fabricate per-word display progress from line timestamps.
   }
   const _ritardiTesti=new Map();
   // Keep original LRC timestamp fidelity: an unconditional 250ms delay
@@ -9795,8 +9792,8 @@ function openProfile() {
       for (const line of synced) {
         const p = document.createElement("p");
         p.className = "lyr-line";
-        const elements=window.MusicBoxWordKaraoke?.spanWords(document,line,p)||[];
-        if(!elements.length)p.textContent=line.text;
+        const elements=[]; // Phrase-only karaoke: highlight the entire line.
+        p.textContent=line.text;
         p.dataset.t = String(line.t);
         body.appendChild(p);
         lyricLines.push(p);
@@ -9839,15 +9836,8 @@ function openProfile() {
     }
     $("lyricsPanel").hidden = false;
     $("lyricsSyncControls").hidden = !useSynced;
-    const wordCoverage=window.MusicBoxWordKaraoke?.timingCoverage?.(synced);
     $("lyricsMode").textContent=useSynced
-      ?wordCoverage?.wordTimed?
-        ("KARAOKE · PAROLE VERIFICATE "+wordCoverage.wordTimed+"/"+wordCoverage.total+
-         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:"")+(wordCoverage.partialWords?" · PARZIALI "+wordCoverage.partialWords+" PAROLE":""))
-        :wordCoverage?.partial?"KARAOKE · "+wordCoverage.partialWords+" PAROLE AUDIO, ALLINEAMENTO PARZIALE":
-         wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
-         "TESTO SINCRONIZZATO PER FRASI"
-      :"TESTO COMPLETO";
+      ?"KARAOKE · FRASI SINCRONIZZATE":"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
     if(switchView){
       switchView.hidden=!synced.length;
@@ -9879,8 +9869,7 @@ function openProfile() {
     _aggiornaComandiTesti();
     tickLyrics();
     _avviaKaraokePrecisione();
-    if(useSynced&&currentId)
-      window.MusicBoxBridge?.requestWordLyrics?.(currentId)?.catch?.(()=>{});
+    // Word-by-word analysis is no longer triggered by opening Karaoke.
   }
 
   /* Lo sfondo prende i colori della copertina, come in Liner: senza questo
