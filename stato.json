@@ -2543,13 +2543,13 @@
    },
    "[\"sogni appesi\",\"ultimo\"]": {
     "v": 2,
-    "s": 441,
+    "s": 461,
     "t": "Sogni Appesi",
     "a": "Ultimo"
    },
    "m:2026-11|[\"sogni appesi\",\"ultimo\"]": {
     "v": 2,
-    "s": 441,
+    "s": 461,
     "t": "Sogni Appesi",
     "a": "Ultimo"
    },
@@ -3730,14 +3730,14 @@
     "a": "thasup, Coez"
    },
    "[\"romantici\",\"tommaso paradiso\"]": {
-    "v": 1,
-    "s": 499,
+    "v": 2,
+    "s": 563,
     "t": "romantici",
     "a": "Tommaso Paradiso"
    },
    "m:2026-11|[\"romantici\",\"tommaso paradiso\"]": {
-    "v": 1,
-    "s": 499,
+    "v": 2,
+    "s": 563,
     "t": "romantici",
     "a": "Tommaso Paradiso"
    },
