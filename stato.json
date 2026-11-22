@@ -3155,13 +3155,13 @@
    },
    "[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 4,
-    "s": 532,
+    "s": 608,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
    "m:2026-11|[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 4,
-    "s": 532,
+    "s": 608,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
@@ -10612,13 +10612,13 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchè\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
    "m:2026-11|[\"torna da me\",\"luchè\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "Luchè"
