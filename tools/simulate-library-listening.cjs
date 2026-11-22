@@ -14,7 +14,7 @@ const a=appSource.indexOf('const BUILTIN = ['),b=appSource.indexOf('];',a);
 const embeddedCatalog=vm.runInNewContext(appSource.slice(a,b+2)+';BUILTIN');
 const importsFile=arg('imports',path.join(root,'online-imports.json'));
 const importBytes=read(importsFile),publishedImports=JSON.parse(importBytes);
-const {publishedCatalog}=require('./published-personal-catalog.cjs');
+const {publishedCatalog}=require(path.join(root,'tools/published-personal-catalog.cjs'));
 const rawCatalog=publishedCatalog(appSource,embeddedCatalog,publishedImports);
 const idStart=appSource.indexOf('function _idBranoStabile('),idEnd=appSource.indexOf('// Queste funzioni',idStart);
 const stableId=new Function('BUILTIN',appSource.slice(idStart,idEnd)+'return _idBranoStabile;')(rawCatalog);

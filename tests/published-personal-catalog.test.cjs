@@ -3,6 +3,15 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root=path.resolve(__dirname,'..'),app=fs.readFileSync(path.join(root,'app.js'),'utf8');
 const {publishedCatalog}=require('../tools/published-personal-catalog.cjs');
 const track=(id,profile)=>({title:id,artist:'unseen fixture',file:'songs/youtube-'+id+'.mp3',profile});
+test('the real selector audit prefix also loads correctly from external regression callers',()=>{
+ const file=path.join(root,'tools/simulate-library-listening.cjs'),source=fs.readFileSync(file,'utf8').replace(/^#![^\n]*\n/,'');
+ const previous=process.argv;
+ try{
+  process.argv=[process.execPath,file,'--personal-only=true','--exclude-playlists=Ste:gym'];
+  const helper=new Function('require','__dirname',source.slice(0,source.indexOf('(async()=>'))+'return {members};')(require,path.dirname(file));
+  assert.ok(helper.members('Ste').length>100);assert.ok(helper.members('Diego').length>100);
+ }finally{process.argv=previous}
+});
 test('published imports use actual app validation and merge by file AND owner, without changing inputs',()=>{
  const builtin=[track('FutureSte01','Ste')],imports=[track('FutureSte01','Ste'),track('FutureSte01','Diego'),track('FutureEma01','Emanuele'),
   {...track('Invalid0001','Ste'),file:'../private.mp3'},track('short','Ste'),{...track('Other000001','Ste'),profile:null}];
