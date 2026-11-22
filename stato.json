@@ -1913,7 +1913,7 @@
    },
    "[\"alta marea\",\"antonello venditti\"]": {
     "v": 16,
-    "s": 1160,
+    "s": 1218,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -2567,7 +2567,7 @@
    },
    "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
     "v": 10,
-    "s": 1130,
+    "s": 1188,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -10931,13 +10931,13 @@
    },
    "[\"non ti dimentico\",\"modà\"]": {
     "v": 2,
-    "s": 344,
+    "s": 368,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
    "m:2026-11|[\"non ti dimentico\",\"modà\"]": {
     "v": 2,
-    "s": 344,
+    "s": 368,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
