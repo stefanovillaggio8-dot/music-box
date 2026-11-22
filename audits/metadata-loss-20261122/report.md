@@ -95,3 +95,29 @@ indipendente della precisione delle frasi. La PR65 non viene rifatta.
 Il primo attacco sperimentale e le cadenze Ste non sufficientemente
 certificate restano nel ramo di ricerca, non nella versione pubblica.
 Nessuna equivalenza a Spotify e nessun miglioramento inventato.
+
+## Simulazioni confrontabili dopo il recupero
+
+Algoritmi effettivi del player e selettore, stesso scope personale,
+importazioni pubblicate validate, 20 sessioni da 40 cambi (800 per account),
+seed fisso. Confronto con il main 6.738 che aveva perso i dati, non con una
+libreria differente. Nessun ascolto umano dedotto dalla simulazione.
+
+| Profilo | Completi prima/dopo | Parziali prima/dopo | Massimo senza completo dopo |
+| --- | ---: | ---: | ---: |
+| Ste | 0 / 20 | 0 / 3 | 38 |
+| Diego | 0 / 2 | 0 / 0 | 40 |
+| Emanuele | 0 / 79 | 0 / 23 | 30 |
+
+Sono riutilizzi delle stesse coppie disponibili, non rispettivamente 20,
+2 o 79 coppie distinte. Nessun contenuto saltato e nessuna nuova uscita
+anticipata certificata. Ordine normale e campione di coda manuale non
+producono completi; la coda non viene riordinata. Nel modello offline con
+solo 50% MP3 e nessun buffer comune precaricato, completi zero: e' una
+assunzione esplicita del test, non misura dei download sui telefoni.
+
+La copertura rimane insufficiente e il ripristino non risolve da solo i
+limiti delle intro senza beat, della voce e dei confini di frase. I dati
+completi sono in recovered-final-personal-simulation.json. La riduzione
+rispetto ai vecchi inventari 6.735 riflette i controlli audio piu' severi,
+non deve essere nascosta cambiando il denominatore.
