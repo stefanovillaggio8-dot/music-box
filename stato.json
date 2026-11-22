@@ -1120,8 +1120,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 82,
-    "s": 1952,
+    "v": 83,
+    "s": 1959,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1744,8 +1744,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 81,
-    "s": 1944,
+    "v": 82,
+    "s": 1951,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -10199,13 +10199,13 @@
    },
    "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 301,
+    "s": 329,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 301,
+    "s": 329,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
@@ -11009,13 +11009,13 @@
    },
    "[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 329,
+    "s": 393,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 329,
+    "s": 393,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    }
