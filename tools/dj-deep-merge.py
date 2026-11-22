@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Merge independently verified DJ metadata; no MP3 or PCM is committed."""
 import argparse,datetime as dt,json,pathlib
+from dj_metadata_merge import merge_basic_entry
 p=argparse.ArgumentParser()
 p.add_argument("--directory",required=True,type=pathlib.Path)
+p.add_argument("--target",type=pathlib.Path,help="Explicit metadata target for isolated validation")
 args=p.parse_args()
 root=pathlib.Path(__file__).resolve().parents[1]
-target=root/"dj-deep-analysis.json"
+target=args.target or root/"dj-deep-analysis.json"
 index=json.loads(target.read_text(encoding="utf8")) if target.exists() else {}
 if index.get("version")!=2:index={"version":2,"entries":{}}
 entries=index.setdefault("entries",{})
@@ -23,10 +25,7 @@ for file in parts:
   if key in sources:raise SystemExit("duplicate track "+key)
   sources.add(key)
   old=entries.get(key)
-  # Preserve a successful previous analysis if a transient CDN failure
-  # causes this run to fail for the exact same audio revision.
-  if old and old.get("sha")==value.get("sha") and old.get("status")=="ok" and value["status"]!="ok":continue
-  entries[key]=value
+  entries[key]=merge_basic_entry(old,value)
 if len(source_count)!=1:raise SystemExit("song catalogue changed during parallel run; use incremental reconciliation")
 total=source_count.pop()
 if len(sources)!=total:raise SystemExit("shard catalogue incomplete: "+str(len(sources))+" != "+str(total))

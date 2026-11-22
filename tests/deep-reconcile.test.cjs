@@ -23,3 +23,16 @@ test('replacement recordings never inherit old certificates; late jobs and failu
  assert.deepEqual(reconcile(old,{sha:'original',status:'failed',checkedAt:'2026-11-17'}),old);
  assert.deepEqual(reconcile(old,{sha:'original',status:'ok',checkedAt:'2026-11-15'}),old);
 });
+
+test('current proof revocations and newer render variants cannot be overwritten by a stale batch snapshot',()=>{
+ const stale={sha:'original',status:'ok',checkedAt:'2026-11-17',bpm:121,
+  structuralBeatPlans:{revoked:'old-render'},pcmIntroSeconds:22};
+ const revoked={sha:'original',status:'ok',checkedAt:'2026-11-16',bpm:120};
+ assert.equal(reconcile(revoked,stale).structuralBeatPlans,undefined);
+ const current={...old,pcmIntroSeconds:19};
+ const result=reconcile(current,stale);
+ assert.deepEqual(result.structuralBeatPlans,current.structuralBeatPlans);
+ assert.equal(result.pcmIntroSeconds,19);assert.equal(result.bpm,121);
+ const replacement=reconcile(current,{...stale,sha:'replacement'});
+ assert.equal(replacement.structuralBeatPlans,undefined);assert.equal(replacement.pcmIntroSeconds,undefined);
+});

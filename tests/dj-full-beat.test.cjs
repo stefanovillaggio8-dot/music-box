@@ -81,7 +81,10 @@ test('original MP3 pulse agreement cannot authorize a 2.38 second unverified ope
  const byKey=new Map(tracks),from='audio/songs/track-584.mp3',to='audio/songs/track-336.mp3';
  const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
  const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
- const saved=a.pcmBeatPlans[b.sha].cue;
+ // Unsafe historical cues belong in a negative fixture, never in the live
+ // index solely to make this regression test pass.
+ const saved=require('./fixtures/rejected-prefix-cues.json').cues[from+'|'+to];
+ assert.equal(saved.sourceSha,a.sha);assert.equal(saved.targetSha,b.sha);
  const fit=engine.pcmFullBeatFit(a.pcmTransition.outro,b.pcmTransition.intro,saved.begin,saved.entry,saved.tempo,saved.fade);
  assert.ok(fit);assert.equal(fit.beats,13);assert.ok(fit.rms<.025);
  assert.equal(saved.entry,2.38);assert.equal(engine.measuredFullBeatBridge(a,b,a.duration),null);
@@ -123,9 +126,11 @@ test('legacy extended and alternative-grid plans cannot discard an unverified in
  for(const [from,to] of [['audio/songs/track-1008.mp3','audio/songs/track-51.mp3'],['audio/songs/track-347.mp3','audio/songs/track-219.mp3']]){
   const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
   const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
-  assert.ok(a.pcmBeatPlans[b.sha].cue.entry>0);
+  const saved=require('./fixtures/rejected-prefix-cues.json').cues[from+'|'+to];
+  assert.equal(saved.sourceSha,a.sha);assert.equal(saved.targetSha,b.sha);
+  assert.ok(saved.entry>0);
   assert.equal(engine.measuredFullBeatBridge(a,b,a.duration),null);
-  assert.equal(engine.incomingContentDecision(b,a.pcmBeatPlans[b.sha].cue).allowed,false);
+  assert.equal(engine.incomingContentDecision(b,saved).allowed,false);
  }
  const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
  assert.match(source,/clamp\(info\.pcmIntroSeconds,14,24\)/);

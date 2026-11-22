@@ -1,0 +1,16 @@
+✔ actual twelve-shard publisher preserves same-source evidence, revocations, source replacement and concurrent updates (139.4151ms)
+✔ basic analysis refresh retains verified same-recording musical extensions and new measured BPM (59.654ms)
+✔ replacement recordings never inherit old certificates; late jobs and failures cannot destroy good analysis (158.9587ms)
+✔ current proof revocations and newer render variants cannot be overwritten by a stale batch snapshot (153.5803ms)
+✔ the original-source Modà rhythm receipts cannot override a persistently masked entrance (2.4657ms)
+✔ the previous rhythmic certificate remains explicitly partial, independently of the entrance veto (0.668ms)
+✔ missing native/44.1 kHz evidence, drift, weak bars, volume jumps and content cuts invalidate the new partial (2.1094ms)
+✔ recovery restores actual same-MP3 renders only in a shared personal scope, preserving new basic data and current proofs (275.9082ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 441.8138

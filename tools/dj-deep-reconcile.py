@@ -3,6 +3,7 @@
 Only metadata is merged; no MP3s are touched.
 """
 import json,pathlib,sys,datetime as dt
+from dj_metadata_merge import merge_basic_entry
 if len(sys.argv)!=3:
     raise SystemExit("usage: dj-deep-reconcile.py BATCH_JSON TARGET_JSON")
 incoming=json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf8"))
@@ -16,21 +17,7 @@ records=remote.setdefault("entries",{})
 changed=0
 for key,entry in incoming.get("entries",{}).items():
     old=records.get(key)
-    # Keep a successful analysis of the same file over a transient failure.
-    if old and old.get("sha")==entry.get("sha") and old.get("status")=="ok" and entry.get("status")!="ok":
-        continue
-    # Do not overwrite an updated/replaced audio file with stale metadata
-    # from an older runner.
-    if old and old.get("checkedAt","")>entry.get("checkedAt",""):
-        continue
-    # A new basic-analysis batch knows nothing about independently rendered
-    # plans. Retain those SAME-RECORDING extensions rather than silently
-    # removing inbound/outbound opportunities whenever the analyzer updates.
-    # Never inherit certificates across a replaced MP3 or a failed analysis.
-    if old and old.get("sha")==entry.get("sha") and entry.get("status")=="ok":
-        entry={**{name:old[name] for name in
-            ("musicalContent","structuralBeatPlans","pcmBeatPlans","pcmTransition")
-            if name in old},**entry}
+    entry=merge_basic_entry(old,entry)
     if old!=entry:
         records[key]=entry
         changed+=1
