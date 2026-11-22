@@ -7,6 +7,7 @@ const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.joi
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const completeSte=(process.env.MUSICBOX_STE_CASE||'complete-personal')==='complete-personal';
 const pickupSte=process.env.MUSICBOX_STE_CASE==='observed-bars-partial';
+const cadenceSte=process.env.MUSICBOX_STE_CASE==='cadence-partial';
 const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
 const injectProvisionalMetadata=process.env.MUSICBOX_INJECT_PROVISIONAL_METADATA==='true';
 function nativeMetadataFault(){
@@ -108,8 +109,8 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
     // Exercise pitch-preserving stretch AND intact decoded EOF together,
     // using an incoming recording from zero rather than a historical cut.
-    const plan=plans.filter(p=>p.from===(playbackProfile==='Ste'?'audio/songs/bassi/track-53.mp3':'audio/songs/track-700.mp3')&&p.toSha===data.entries[playbackProfile==='Ste'?'audio/songs/bassi/track-51.mp3':'audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
-     p.cue.preservedEntrance===(playbackProfile==='Ste'?'rhythmic-tail-foreground-v1':'vocal-handoff-foreground-v1')&&Math.abs(p.cue.tempo-1)>.001)
+    const plan=plans.filter(p=>p.from===(playbackProfile==='Ste'?'audio/songs/track-705.mp3':'audio/songs/track-700.mp3')&&p.toSha===data.entries[playbackProfile==='Ste'?'audio/songs/track-50.mp3':'audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
+     p.cue.preservedEntrance==='vocal-handoff-foreground-v1'&&Math.abs(p.cue.tempo-1)>.001)
      .sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     assert.ok(plan,'A rendered intact-file stretch must be available');
     await original(plan.fromSha);await original(plan.toSha);
@@ -194,12 +195,15 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.pause=function(){trace(this,'pause');return pause.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    const bridgeSource=playbackProfile==='Diego'?'b-track-353':playbackProfile==='Ste'?(pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
+    const bridgeSource=playbackProfile==='Diego'?'b-track-353':playbackProfile==='Ste'?(cadenceSte?'b-track-6':pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-884';
     const bridgeTarget=playbackProfile==='Diego'?'b-track-135':playbackProfile==='Emanuele'?'b-track-1043':
-     pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
+     cadenceSte?'b-track-233':pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
+    // A copied target is legitimately unavailable until the account's
+    // published membership arrives. Never borrow the foreign-only alias
+    // from the initial BUILTIN list or inspect a half-initialized account.
     await shell.waitForFunction(({profile,ids})=>window.MusicBoxBridge?.profile?.()===profile&&
      ids.every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),
      {profile:playbackProfile,ids:[bridgeSource,bridgeTarget]},{timeout:20000});
@@ -227,18 +231,18 @@ const server=http.createServer(async(req,res)=>{
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    const actualPlan=await shell.evaluate(({plans,profile,completeSte,pickupSte})=>{
+    const actualPlan=await shell.evaluate(({plans,profile,completeSte,pickupSte,cadenceSte})=>{
      // A published copy belongs to the active personal library although its
      // original recording retains the source profile in t.profile.
      const tracks=MusicBoxBridge.playable(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
       const preferred=profile==='Diego'?'b-track-135':profile==='Emanuele'?'b-track-1043':
-       pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
+       cadenceSte?'b-track-233':pickupSte?'b-track-181':completeSte?'b-track-50':'b-track-38';
       const a=find(p.from),b=tracks.find(t=>t.id===preferred&&p.toAliases.includes('audio/'+t.file));
       if(!a||!b)continue;
       if(profile==='Diego'&&!(a.id==='b-track-353'&&b.id==='b-track-135'&&p.cue.measuredFullBeat))continue;
-      if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
+      if(profile==='Ste'&&(cadenceSte?!(a.id==='b-track-6'&&b.id==='b-track-233'&&p.cue.metricalCadenceWindow&&p.cue.nativeOriginalReturn):pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(p.cue.composite?.introductionExposure?.accepted===false||
        !inspected.cue||['begin','fade','entry','tempo'].some(k=>Math.abs(inspected.cue[k]-p.cue[k])>.0001))continue;
@@ -246,7 +250,7 @@ const server=http.createServer(async(req,res)=>{
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
-    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha),toAliases:catalogAliases.get(p.toSha)||[]})).sort((a,b)=>
+    },{profile:playbackProfile,completeSte,pickupSte,cadenceSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha),toAliases:catalogAliases.get(p.toSha)||[]})).sort((a,b)=>
      Number(b.from==='audio/songs/track-884.mp3'&&b.to==='audio/songs/track-1043.mp3')-
      Number(a.from==='audio/songs/track-884.mp3'&&a.to==='audio/songs/track-1043.mp3'))});
     if(!actualPlan)console.error(name,'personal pair inspection',JSON.stringify(await shell.evaluate(({from,to})=>({
@@ -256,6 +260,11 @@ const server=http.createServer(async(req,res)=>{
     }),{from:bridgeSource,to:bridgeTarget})));
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
     if(pickupSte&&playbackProfile==='Ste')assert.equal(actualPlan.cue.nativeOriginalReturn,true,'Exercise the waveform-coherent rendition, never the earlier prototype');
+    if(cadenceSte&&playbackProfile==='Ste'){
+     assert.equal(actualPlan.cue.metricalCadenceWindow,true);
+     assert.equal(actualPlan.cue.nativeRecoveryCurve,'sine-1.2-v1');
+     assert.equal(actualPlan.cue.measuredFullBeat,false,'A preserved cadence with partial shared rhythm never becomes full');
+    }
     // Network latency retrieving the external original must not consume the
     // nine-second scheduling window. Only warm the Node fixture's SHA-checked
     // bytes: the app still fetches, decodes and prepares through its real path.
@@ -263,7 +272,7 @@ const server=http.createServer(async(req,res)=>{
     if(playbackProfile==='Emanuele'){
      assert.equal(actualPlan.fromId,'b-track-884');assert.equal(actualPlan.toId,'b-track-1043');
      assert.equal(actualPlan.cue.measuredFullBeat,true);
-     assert.equal(actualPlan.sourceBoundCue.composite.introductionExposure.accepted,true);
+     assert.equal(actualPlan.sourceBoundCue.composite.introductionExposure.accepted,true,'A rhythm certificate cannot override a masked introduction');
     }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{

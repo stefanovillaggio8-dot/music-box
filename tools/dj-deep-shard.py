@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Analyze a deterministic shard of real published MP3s in GitHub Actions."""
-import argparse, importlib.util, json, os, pathlib, tempfile, urllib.parse, datetime as dt
+import argparse, importlib.util, json, os, pathlib, tempfile, urllib.parse, datetime as dt, hashlib
 p=pathlib.Path(__file__).with_name("dj-deep-index.py")
 spec=importlib.util.spec_from_file_location("musicbox_deep",p)
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
@@ -24,6 +24,8 @@ for key,item in group:
  try:
   data=m.fetch(url,timeout=90)
   if len(data)<8192 or len(data)>24000000:raise ValueError("Invalid file size")
+  blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+  if blob!=item['sha']:raise ValueError("Original MP3 Git identity changed during shard analysis")
   with tempfile.NamedTemporaryFile(suffix=".mp3",delete=False) as f:
    temp=f.name;f.write(data)
   measured=m.analyze(temp)
