@@ -9802,13 +9802,13 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
@@ -10613,13 +10613,13 @@
    },
    "[\"torna da me\",\"luchè\"]": {
     "v": 2,
-    "s": 334,
+    "s": 410,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
    "m:2026-11|[\"torna da me\",\"luchè\"]": {
     "v": 2,
-    "s": 334,
+    "s": 410,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
