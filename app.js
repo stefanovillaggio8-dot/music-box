@@ -1457,6 +1457,97 @@ let playlists = [];
   let pendingSeek = null;
   let lastSave = 0;
   let resumeAt = 0;
+  // Session age is separate from the durable music library and statistics.
+  function _decisioneSessione(st,precedente,pausa,attivita,now=Date.now()) {
+    const candidates=[st&&{id:st.last,time:st.time,quando:st.quando},pausa,precedente]
+      .filter(p=>p&&typeof p.id==='string'&&p.id&&Number.isFinite(Number(p.quando))&&
+        Number(p.quando)>0&&Number(p.quando)<=now&&Number.isFinite(Number(p.time))&&Number(p.time)>=0)
+      .sort((a,b)=>Number(b.quando)-Number(a.quando));
+    const cleared=precedente?.cleared===true&&Number(precedente.quando)>0&&Number(precedente.quando)<=now;
+    const recent=cleared&&Number(precedente.quando)>=Number(candidates[0]?.quando||0)?null:candidates[0],stamp=Number(attivita?.at);
+    const last=Math.max(Number(recent?.quando)||0,cleared?Number(precedente.quando):0,
+      Number.isFinite(stamp)&&stamp>0&&stamp<=now?stamp:0);
+    const idle=last?now-last:null;
+    return {id:recent&&idle<2*60*60*1000?recent.id:null,
+      time:recent&&idle<2*60*60*1000?Number(recent.time):0,
+      idle,resetShuffle:idle!==null&&idle>=5*60*60*1000};
+  }
+  let _ripresaAvvio=null,_ultimoToccoSessione=0;
+  function _segnaAttivitaSessione(force=false) {
+    const now=Date.now();if(!force&&now-_ultimoToccoSessione<3000)return;
+    _ultimoToccoSessione=now;
+    LS.set('mb.sessione.attiva.v1.'+profile,{at:now});
+  }
+  function _decisioneSessioneCorrente() {
+    return _decisioneSessione(profileState(profile),LS.get('mb.playback.'+profile,null),
+      LS.get('mb.pausaPos.'+profile,null),LS.get('mb.sessione.attiva.v1.'+profile,null));
+  }
+  function _annullaRipresaAvvio() {
+    const saved=_ripresaAvvio;_ripresaAvvio=null;
+    if(!saved)return;
+    clearTimeout(saved.timer);if(saved.raf)cancelAnimationFrame(saved.raf);
+    if(saved.armed&&saved.player)try{saved.player.muted=saved.wasMuted}catch(_){}
+  }
+  function _tentaRipresaAvvio() {
+    const p=_ripresaAvvio;
+    if(!p)return false;
+    if(p.player!==audio||p.id!==currentId||p.profile!==profile){_annullaRipresaAvvio();return false}
+    const duration=Number(audio.duration);
+    const target=Number.isFinite(duration)&&duration>0?Math.min(p.target,Math.max(0,duration-.04)):p.target;
+    p.target=target;resumeAt=target;
+    const pos=Number(audio.currentTime);
+    if(audio.readyState>=1&&!audio.seeking&&Math.abs(pos-target)>.2){
+      try{audio.currentTime=target}catch(_){}
+      p.seekConfirmed=false;return false;
+    }
+    p.seekConfirmed=audio.readyState>=2&&!audio.seeking&&Number.isFinite(pos)&&pos>=target-.15&&pos<=target+2;
+    // Keep the startup checkpoint through Play: Safari can discard an early
+    // paused seek when it actually starts decoding. Confirm real advance.
+    if(p.seekConfirmed&&p.armed&&!audio.paused&&pos>=target+.04){
+      resumeAt=0;_annullaRipresaAvvio();return true;
+    }
+    return p.seekConfirmed;
+  }
+  function _proteggiPlayRipristinato() {
+    const p=_ripresaAvvio;if(!p||p.player!==audio||p.id!==currentId)return;
+    if(p.armed)return;
+    p.wasMuted=!!audio.muted;p.armed=true;audio.muted=true;
+    const frame=()=>{if(_ripresaAvvio!==p||!p.armed)return;_tentaRipresaAvvio();
+      if(_ripresaAvvio===p&&p.armed&&!document.hidden)p.raf=requestAnimationFrame(frame)};
+    if(!document.hidden)p.raf=requestAnimationFrame(frame);
+    p.timer=setTimeout(()=>{
+      if(_ripresaAvvio!==p||p.player!==audio||p.id!==currentId)return;
+      if(_tentaRipresaAvvio()&&_ripresaAvvio!==p)return;
+      // A failed restoration must not become audible playback from zero or
+      // an endless muted player. Leave the checkpoint available for retry.
+      p.armed=false;if(p.raf)cancelAnimationFrame(p.raf);
+      _vuoleSuonare=false;_pausaEsplicita=true;
+      try{audio.pause();audio.muted=p.wasMuted}catch(_){}
+      LS.set('mb.suonava','no');updateProgressUI(Number(audio.currentTime)||0,totalDuration());
+      syncPlayUI();toast('Posizione non ripristinata. Premi Play per riprovare.',6500);
+    },6500);
+  }
+  function _controllaScadenzaSessione() {
+    const previous=LS.get('mb.playback.'+profile,null),pos=Number(audio?.currentTime);
+    const live=currentId&&audio&&!audio.paused&&!audio.ended&&audio.readyState>=2&&
+      (Date.now()-Number(_ultimoAvanzamentoReale||0)<15000||pos>Number(previous?.time||0)+.13);
+    if(live){_segnaAttivitaSessione(true);return}
+    const decision=_decisioneSessioneCorrente();
+    if(decision.resetShuffle){LS.set('mb.shuffle.cicli.v1.'+profile,{});_azzeraCasuale()}
+    if(decision.id===null&&decision.idle!==null&&decision.idle>=2*60*60*1000){
+      // A later refresh must not resurrect st.last behind the new empty
+      // session's activity timestamp. This tombstone affects session only.
+      LS.set('mb.playback.'+profile,{id:null,time:0,quando:Date.now(),cleared:true});
+      LS.set('mb.pausaPos.'+profile,null);
+      if(!currentId)return;
+      try{window.MusicBoxMix?.cancel?.()}catch(_){}
+      _annullaRipresaAvvio();_annullaBloccoRipresaAudio();
+      currentId=null;resumeAt=0;pendingSeek=null;_pausaCheckpoint=null;
+      _vuoleSuonare=false;_pausaEsplicita=true;
+      try{audio.pause();audio.removeAttribute('src');audio.load()}catch(_){}
+      updateProgressUI(0,0);render();updateMediaSession();tickLyrics();
+    }
+  }
   let queue = [];
   /* Ste: "quando c'e' la riproduzione casuale e torno indietro non mi torna
      alla canzone precedente ma ad un'altra canzone casuale".
@@ -6096,6 +6187,7 @@ const playFromRow = () => {
     }catch(_){return false}
   }
   function savePos() {
+    if(_ripresaAvvio?.player===audio&&_ripresaAvvio.id===currentId&&!_ripresaAvvio.seekConfirmed)return;
     if (!currentId || !audio || !isFinite(audio.currentTime)) return;
     const checkpoint=_pausaSalvata();
     const actual=Number(audio.currentTime);
@@ -6118,6 +6210,7 @@ const playFromRow = () => {
     // Copia per profilo separata dallo stato generale: resiste anche
     // alla ricostruzione della libreria e agli aggiornamenti automatici.
     LS.set("mb.playback." + profile, { id: currentId, time: sec, quando });
+    _segnaAttivitaSessione();
   }
 
   function updatePlayerHeight() {
@@ -6155,6 +6248,7 @@ let _ultimoAvanzamentoReale=Date.now();
     return true;
   }
 function handleTime() {
+    if(_ripresaAvvio)_tentaRipresaAvvio();
     if(_bloccoRipresaAudio){
       if(!_confermaRipresaAudio()&&audio?.readyState>=1)
         _riallineaPausaReale();
@@ -6177,6 +6271,11 @@ function handleTime() {
   }
 
 function handleMetadata() {
+    if(_ripresaAvvio?.player===audio&&_ripresaAvvio.id===currentId){
+      _tentaRipresaAvvio();
+      updateProgressUI(_ripresaAvvio&&!_ripresaAvvio.seekConfirmed?0:Number(audio.currentTime)||0,totalDuration());
+      return;
+    }
     const want=Number(resumeAt)||0;
     if(want>.01&&audio){
       const d=totalDuration();
@@ -6555,13 +6654,14 @@ a.addEventListener("pause", () => {
         }
         _ripristinoPausaAtteso=null;
         updateProgressUI(a.currentTime,totalDuration());
-      }else if(a.paused&&!_vuoleSuonare&&a.readyState>=1){
+      }else if(!_ripresaAvvio&&a.paused&&!_vuoleSuonare&&a.readyState>=1){
         // A user seek while paused changes the saved pause position too.
         _pausaCheckpoint={id:currentId,
           time:Math.round(Number(a.currentTime)*1000)/1000,quando:Date.now()};
         LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
         savePos();
       }
+      if(_ripresaAvvio)_tentaRipresaAvvio();
       _confermaRipresaAudio();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
@@ -6665,6 +6765,7 @@ function rebuildAudio(autoplay) {
       /* iPhone Safari: play() deve partire nel gesto dell'utente.
          Attendere i metadata prima del play perde l'autorizzazione
          di Safari: il browser gestira' autonomamente il buffering. */
+      _proteggiPlayRipristinato();
       await requestedAudio.play();
       // A delayed play() resolution may belong to an obsolete player.
       // Do not report success or touch volume of the next song.
@@ -8121,6 +8222,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
+      _annullaRipresaAvvio();
       if (id !== currentId || Number.isFinite(startAt)&&startAt>0) resumeAt = 0;
       try { window.MusicBoxAudioAlign?.cancel?.(); } catch (_) {}
       currentId = id;
@@ -8740,7 +8842,7 @@ function playNext() {
     // can lose that activation on iPhone Safari and installed PWAs.
     if(!daControlloEsterno) {
       _segna("riproduzione VOLUTARIA");
-      if(audio?.paused&&!_vuoleSuonare){
+      if(!_ripresaAvvio&&audio?.paused&&!_vuoleSuonare){
         _preparaRipresaAudio();
         _riallineaPausaReale();
       }
@@ -16522,6 +16624,7 @@ $("btnProfile").addEventListener("click", openProfile);
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
+      _controllaScadenzaSessione();
       if (audio) {
         syncPlayUI();
         updateMediaSession();
@@ -16530,11 +16633,12 @@ $("btnProfile").addEventListener("click", openProfile);
       checkForNewSongs();
     }
     savePos();
+    _segnaAttivitaSessione(true);
   });
   setInterval(() => {
     if (!document.hidden) checkForNewSongs();
   }, 60000);
-  window.addEventListener("pagehide", savePos);
+  window.addEventListener("pagehide",()=>{savePos();_segnaAttivitaSessione(true)});
   window.addEventListener("resize", updatePlayerHeight);
   window.addEventListener("orientationchange", updatePlayerHeight);
   if (window.visualViewport) window.visualViewport.addEventListener("resize", updatePlayerHeight);
@@ -19384,71 +19488,24 @@ function _ripristinaPuntoLibreria() {
     $("btnShuffle").classList.toggle("on", shuffle);
     $("btnRepeat").classList.toggle("on", repeat);
 
-const precedente = LS.get("mb.playback." + profile, null);
-      const valido = precedente && typeof precedente.id === "string" &&
-        Number.isFinite(Number(precedente.quando)) &&
-        Date.now() >= Number(precedente.quando) &&
-        Date.now() - Number(precedente.quando) < 6 * 60 * 60 * 1000;
-      const idSalvato = valido && Number(precedente.quando) >= Number(st.quando || 0)
-        ? precedente.id : st.last;
-      let lastTrack = idSalvato ? tracks.find((t) => t.id === idSalvato) : null;
-      // Un link YouTube che nel frattempo e' diventato un MP3 puo' cambiare
-      // identificativo: ritrovalo tramite l'ID del video originale.
-      if (!lastTrack && /^yt-[A-Za-z0-9_-]{11}$/.test(idSalvato || "")) {
-        lastTrack = tracks.find(t => t.file === "songs/youtube-" + idSalvato.slice(3) + ".mp3") || null;
-      }
-      if (!lastTrack && st.last && st.last !== idSalvato) {
-        lastTrack = tracks.find(t => t.id === st.last) || null;
-      }
-      if (lastTrack) {
-        currentId = lastTrack.id;
-        /* Ste: "se la riapro mi riparte da zero la canzone". Qui la posizione
-           era fissata a 0 di proposito, quindi riaprendo l'app la canzone
-           ricominciava SEMPRE dall'inizio. Adesso riprendo davvero da dove
-           era rimasta. Se pero' era ferma nei primi secondi, o se il brano e'
-           gia' finito, meglio partire dall'inizio. */
-        let salvato = idSalvato === st.last ? (Number(st.time) || 0) : 0;
-        if (valido && precedente.id === idSalvato &&
-            Number(precedente.quando) >= Number(st.quando || 0)) {
-          salvato = Math.max(0, Number(precedente.time) || 0);
-        }
-        if (!salvato && lastTrack.id === st.last)
-          salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
-        /* Ste: "voglio che dopo 6 ore si resetti". Se l'ultima volta che ho
-           ascoltato questa canzone e' piu' vecchia di SEI ORE, non ti rimetto
-           a meta' di una canzone che hai lasciato sei ore fa: ricomincio
-           dall'inizio. Prima non c'era nessun orario, quindi la posizione
-           vecchia sembrava sempre appena salvata. */
-        const LIMITE_VECCHIA = 6 * 60 * 60 * 1000;
-        let quando = valido && precedente.id === idSalvato &&
-          Number(precedente.quando) >= Number(st.quando || 0)
-          ? Number(precedente.quando) : (Number(st.quando || 0) || 0);
-        if (!quando) quando = Number(LS.get("mb.pos.quando." + lastTrack.id, 0)) || 0;
-        const passate = quando ? (Date.now() - quando) : 0;
-        const troppoVecchia = quando > 0 && passate > LIMITE_VECCHIA;
-        if (troppoVecchia) salvato = 0;
-        /* Uso resumeAt, che e' il meccanismo GIA' fatto per questo: se ne'
-           accorgono handleMetadata, collegata all'elemento audio. Prima avevo
-           aggiunto qui un listener mio che metteva la posizione a mano, e
-           quello fermava la canzone quando si riapriva l'app. */
-        // Paused audio must survive even if it stopped at 0:02, and
-        // a voluntary pause remains exact even after the usual 6h limit.
-        const pausedStored=LS.get("mb.pausaPos."+profile,null);
-        if(pausedStored?.id===lastTrack.id&&
-           LS.get("mb.suonava","no")!=="si"&&
-           Number.isFinite(Number(pausedStored.time))){
-          salvato=Math.max(0,Number(pausedStored.time));
-          _pausaCheckpoint=pausedStored;
-        }
-        resumeAt=salvato>.01?salvato:0;
-        _segna("ripresa all'avvio", "brano " + lastTrack.id +
-          ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
-          (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
-            (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
-        _assegnaAudioSorgente(audio,_urlDelBrano(lastTrack));
-        _segnaRigaAttiva();
-        updateProgressUI(0, 0);
-      }
+    _controllaScadenzaSessione();
+    const ripresa=_decisioneSessioneCorrente();
+    let lastTrack=ripresa.id?tracks.find(t=>t.id===ripresa.id):null;
+    if(!lastTrack&&/^yt-[A-Za-z0-9_-]{11}$/.test(ripresa.id||''))
+      lastTrack=tracks.find(t=>t.file==='songs/youtube-'+ripresa.id.slice(3)+'.mp3')||null;
+    if(lastTrack){
+      currentId=lastTrack.id;
+      _pausaCheckpoint={id:currentId,time:ripresa.time,quando:Date.now()};
+      resumeAt=ripresa.time>.01?ripresa.time:0;
+      _vuoleSuonare=false;_pausaEsplicita=true;
+      LS.set('mb.suonava','no');
+      _ripresaAvvio=resumeAt>0?{id:currentId,profile,player:audio,target:resumeAt,armed:false,seekConfirmed:false}:null;
+      _assegnaAudioSorgente(audio,_urlDelBrano(lastTrack));
+      _segnaRigaAttiva();
+      // Show a restored position only after the native seek is confirmed.
+      updateProgressUI(0,0);
+    }
+    _segnaAttivitaSessione(true);
 
     updateMediaSession();
 

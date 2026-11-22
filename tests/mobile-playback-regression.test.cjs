@@ -259,7 +259,7 @@ test("background pause saves the precise decoder time, not just a painted progre
  const env={track,LS,writes};
  const make=new Function("env",
   "let audio=env.track,currentId='b-track-80',profile='Ste';"+
-  "let _pausaCheckpoint=null,_pausaEsplicita=true,_vuoleSuonare=false;"+
+  "let _pausaCheckpoint=null,_pausaEsplicita=true,_vuoleSuonare=false;let _ripresaAvvio=null;const _segnaAttivitaSessione=()=>{};"+
   "let _ultimoSeekUtente=0;"+
   "const LS=env.LS,writeProfileState=(p,v)=>env.writes.push(v);"+
   "const profileState=()=>({last:currentId,time:143.658});"+
@@ -307,7 +307,7 @@ test("the resume event keeps paused near-end timestamps, short positions and sta
  const env={audio:{paused:true,duration:200,currentTime:0},
   resumeAt:199.45,display:null};
  const metadataFn=new Function("env",
-  "let audio=env.audio,resumeAt=env.resumeAt,currentId='b-track-1';"+
+  "let audio=env.audio,resumeAt=env.resumeAt,currentId='b-track-1',_ripresaAvvio=null;"+
   "const totalDuration=()=>audio.duration;"+
   "const LS={get:()=> 'no'};const _pausaEsplicita=true;"+
   "const _pausaSalvata=()=>({id:'b-track-1',time:199.45});"+
@@ -321,7 +321,7 @@ test("the resume event keeps paused near-end timestamps, short positions and sta
   "a pause near the end must not restart from zero");
  assert.equal(metadataFn.resume(),0);
  assert.equal(env.display.p,env.audio.currentTime);
- assert.match(app,/resumeAt=salvato>\.01\?salvato:0/);
+ assert.match(app,/resumeAt=ripresa\.time>\.01\?ripresa\.time:0/);
  assert.match(app,/mb\.pausaPos\."\+profile/);
 });
 test("foreground recovery seeks the HTMLAudioElement and does not autoplay paused music",()=>{
@@ -344,7 +344,7 @@ test("resume-before-metadata: iOS does not go silent while waiting for decoder s
   seeking:false,muted:false},state};
  const run=new Function("e",
   "let audio=e.audio,currentId='b-track-55',profile='Ste';"+
-  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;let _ripresaAvvio=null;const _segnaAttivitaSessione=()=>{};"+
   "const LS={get:(k,d)=>e.state.has(k)?e.state.get(k):d,"+
    "set:(k,v)=>e.state.set(k,v)};"+
   "const _usaControlliNativiIos=()=>true;"+
@@ -374,7 +374,7 @@ test("iPhone pause during delayed decoder restore retains original timestamp",()
    seeking:false,muted:false,duration:180},map,writes:[]};
  const run=new Function("e",
   "let audio=e.audio,currentId='b-track-8',profile='Ste';"+
-  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;let _ripresaAvvio=null;const _segnaAttivitaSessione=()=>{};"+
   "const LS={get:(k,d)=>e.map.has(k)?e.map.get(k):d,"+
    "set:(k,v)=>e.map.set(k,v)};"+
   "const _usaControlliNativiIos=()=>true;"+
@@ -409,7 +409,7 @@ test("restoring a paused iPhone song never traps audio output muted",()=>{
  const context={player,state};
  const runtime=new Function("e",
   "let audio=e.player,currentId='b-track-22',profile='Ste',resumeAt=0;"+
-  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;let _ripresaAvvio=null;const _segnaAttivitaSessione=()=>{};"+
   "const LS={get:(k,d)=>e.state.has(k)?e.state.get(k):d,"+
    "set:(k,v)=>e.state.set(k,v)};"+
   "const _usaControlliNativiIos=()=>true;"+

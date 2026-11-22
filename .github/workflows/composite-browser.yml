@@ -186,6 +186,9 @@ jobs:
       - name: Verify native original entrance after rejecting a masked cue
         if: matrix.profile == 'Ste'
         run: node tests/composite-introduction.cjs > introduction-browser-result.json
+      - name: Verify real Kid Yugi session restore and separate two/five hour expiry
+        if: matrix.profile == 'Ste'
+        run: node tests/playback-session-browser.cjs > session-browser-result.json
       - name: Verify read-only offline inventory in real browser storage
         run: node tests/storage-browser.cjs > storage-browser-result.json
       - uses: actions/upload-artifact@v4
@@ -195,6 +198,7 @@ jobs:
           path: |
             composite-browser-result.json
             introduction-browser-result.json
+            session-browser-result.json
             storage-browser-result.json
             gstreamer-*.log
             linux-audio-output.txt
