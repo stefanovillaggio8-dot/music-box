@@ -82,8 +82,9 @@ test('a delayed background timeupdate confirms real progress instead of repeated
  assert.equal(f.api.pending(),null);assert.equal(f.audio.muted,false);
 });
 test('a deliberate pause during startup loading cancels the deadline and retains the requested real checkpoint for retry',()=>{
- const f=fixture(hour);f.api.prepare();f.api.arm();f.audio.currentTime=.4;
+ const f=fixture(hour);f.api.prepare();f.audio.readyState=4;f.api.trySeek();f.api.trySeek();f.api.arm();f.audio.currentTime=.6;
  f.api.cancel(true);f.api.savePause();
+ assert.equal(f.api.pending().seekConfirmed,false,'A decoder reset must not inherit the earlier paused-seek confirmation');
  assert.equal(f.store.get('mb.pausaPos.Ste').time,125);
  assert.equal(f.timers.size,0);assert.equal(f.audio.muted,false);assert.equal(f.api.pending().target,125);
  f.api.arm();assert.equal(f.api.pending().armed,true);assert.equal(f.timers.size,1);

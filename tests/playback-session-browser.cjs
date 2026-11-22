@@ -18,7 +18,10 @@ async function main(){
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
   const browser=await type.launch({headless:true});
   try{for(const [minutes,resetDecoder,noAnimationFrames] of [[119,false,false],[119,true,false],[119,false,true],[121,false,false],[299,false,false],[301,false,false]]){
-   const context=await browser.newContext({serviceWorkers:'block'}),page=await context.newPage();
+   const context=await browser.newContext({serviceWorkers:'block',...(name==='webkit'?{
+    viewport:{width:390,height:844},isMobile:true,hasTouch:true,
+    userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'
+   }:{})}),page=await context.newPage();
    await context.route('**/*',async route=>{
     const url=new URL(route.request().url());
     if(!/\/songs\/track-27\.mp3$/.test(url.pathname)){if(url.origin===origin)await route.continue();else await route.abort();return}
@@ -82,6 +85,6 @@ async function main(){
    await context.close();
   }}finally{await browser.close()}
  }}finally{server.close()}
- console.log(JSON.stringify({method:'actual-original-mp3-session-reopen-v1',physicalIPhone:false,results},null,2));
+ console.log(JSON.stringify({method:'actual-original-mp3-session-reopen-v1',physicalIPhone:false,webkitUsesIPhoneViewportAndUserAgent:true,results},null,2));
 }
 main().catch(e=>{console.error(e);process.exitCode=1});

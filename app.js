@@ -1490,6 +1490,8 @@ let playlists = [];
     clearTimeout(saved.timer);if(saved.raf)cancelAnimationFrame(saved.raf);
     if(saved.armed&&saved.player)try{saved.player.muted=saved.wasMuted}catch(_){}
     saved.armed=false;
+    if(keepCheckpoint)saved.seekConfirmed=saved.player?.readyState>=2&&!saved.player.seeking&&
+      Math.abs(Number(saved.player.currentTime)-saved.target)<=.2;
   }
   function _tentaRipresaAvvio(seekEvent=false) {
     const p=_ripresaAvvio;

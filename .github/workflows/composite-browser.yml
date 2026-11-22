@@ -236,3 +236,26 @@ jobs:
           name: forensic-source-${{ matrix.runner }}-${{ matrix.browser }}
           path: native-window/
           retention-days: 14
+
+
+  session-storage:
+    if: ${{ !inputs.forensic_source_capture }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps webkit
+          node tests/offline-upgrade.cjs > same-version-session-upgrade.json
+        env:
+          MUSICBOX_PREVIOUS_WORKER_FIXTURE: sw-6738-phrase.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: same-version-session-storage
+          path: same-version-session-upgrade.json
+          retention-days: 14
