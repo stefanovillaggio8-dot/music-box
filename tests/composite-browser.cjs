@@ -73,7 +73,7 @@ const server=http.createServer(async(req,res)=>{
   const file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
   const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.flac':'audio/flac'};
   res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file));
- }catch(e){res.writeHead(500);res.end(String(e.message));}
+ }catch(e){console.error('fixture-server-error',req.url,e.message);res.writeHead(500);res.end(String(e.message));}
 });
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -300,7 +300,13 @@ const server=http.createServer(async(req,res)=>{
      };document.body.append(button);
     },actualPlan);
     await shell.click('#planned-handoff');
-    await shell.waitForFunction(()=>window.__plannedSetup?.stage==='target-queued',null,{timeout:10000});
+    try{await shell.waitForFunction(()=>window.__plannedSetup?.stage==='target-queued',null,{timeout:10000});}
+    catch(error){console.error(name,'trusted planned input diagnostic',JSON.stringify(await shell.evaluate(()=>({
+     input:window.__plannedClickEvents,setup:window.__plannedSetup,media:window.__plannedMedia,
+     active:document.activeElement?.outerHTML?.slice(0,220),button:document.querySelector('#planned-handoff')?.outerHTML,
+     hit:document.elementFromPoint(135,22)?.outerHTML?.slice(0,220),visibility:document.visibilityState,
+     sourceTime:MusicBoxBridge.audio().currentTime,currentId:MusicBoxBridge.currentId()
+    }))));throw error;}
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
      setup:window.__plannedSetup,media:window.__plannedMedia,nativeActions:window.__nativeActions,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
@@ -336,6 +342,11 @@ const server=http.createServer(async(req,res)=>{
     if(injectProvisionalMetadata)await auto.addInitScript(nativeMetadataFault);
     await auto.addInitScript(profile=>{
      localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true');
+     window.__autoInputs=[];
+     for(const type of ['pointerdown','pointerup','click'])document.addEventListener(type,event=>{
+      if(__autoInputs.length<40)__autoInputs.push({type,trusted:event.isTrusted,target:event.target?.outerHTML?.slice(0,180),
+       row:event.target?.closest?.('.track')?.textContent?.slice(0,130),at:Date.now()});
+     },true);
      window.__autoNativeTrace=[];const observed=new WeakSet(),play=HTMLMediaElement.prototype.play;
      HTMLMediaElement.prototype.play=function(){
       if(!observed.has(this)){observed.add(this);for(const event of ['loadedmetadata','durationchange','playing','seeking','seeked','ended','pause','error'])this.addEventListener(event,()=>{
@@ -378,7 +389,7 @@ const server=http.createServer(async(req,res)=>{
      const a=MusicBoxBridge.audio();return {currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
       paused:a.paused,src:a.currentSrc,readyState:a.readyState,networkState:a.networkState,error:a.error?.message,
       toast:document.querySelector('#toast')?.textContent,search:document.querySelector('#search')?.value,
-      rows:[...document.querySelectorAll('.track')].map(x=>x.textContent),diagnostics:MusicBoxMix.diagnostics()};
+      input:window.__autoInputs,media:window.__autoNativeTrace,visibility:document.visibilityState,rows:[...document.querySelectorAll('.track')].map(x=>x.textContent),diagnostics:MusicBoxMix.diagnostics()};
     })));throw error;}
     await auto.locator('#search').fill('');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0||MusicBoxMix.diagnostics().shuffleSearch?.partialBeatCandidates>0,{timeout:20000});}
