@@ -88,7 +88,9 @@ test("karaoke timing changes persist locally and sync to the dedicated cloud end
  assert.match(html,/id="lyricsSyncStatus"/);
  // A confirmation must remain above a lyrics overlay, and the sheet
  // must have a keyboard path out even when the mouse is unavailable.
- assert.match(css,/\.lyrics-overlay\{z-index:100!important/);
+ // Keep lyrics above Immersive Mode, but confirmation above both.
+ assert.match(css,/\.lyrics-overlay\{z-index:22005!important/);
+ assert.match(css,/\.confirm-overlay\s*\{[\s\S]{0,280}z-index:\s*22020/);
  assert.match(app,/e\.key==="Escape"&&!\$\("lyricsPanel"\)\.hidden/);
  assert.match(app,/function closeLyrics\(\) \{[\s\S]{0,160}syncNoScroll\(\)/);
 });
@@ -289,9 +291,11 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/requestWordLyrics:\(id\)=>\{/);
  assert.match(app,/Promise\.resolve\(_verificaParoleKaraoke\(song\)\)/);
  assert.match(app,/engine\?\.fromRecord\(j\)/);
- assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
+ assert.doesNotMatch(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
+ assert.match(app,/p\.textContent=line\.text/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
- assert.match(immersive,/PAROLE VERIFICATE/);
+ assert.match(immersive,/SINCRONIZZATO PER FRASI/);
+ assert.doesNotMatch(immersive,/PAROLE VERIFICATE/);
  assert.match(html,/word-karaoke\.js\?v=\d+/);
  assert.match(sw,/word-karaoke\.js\?v=\d+/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
@@ -529,7 +533,8 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  assert.match(app,/wordRows:joined,audioWordSynced:true/);
  assert.match(app,/if\(_haTempiParole\(kept\)&&!kept\.estimated\)return kept/);
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
- assert.match(immersive,/coverage\.audio\?" · AUDIO "/);
+ assert.match(immersive,/SINCRONIZZATO PER FRASI/);
+ assert.doesNotMatch(immersive,/PAROLE VERIFICATE/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
  assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
@@ -646,13 +651,14 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  assert.match(app,/const baseline=\(saved\.some\(_haTempiParole\)/);
- assert.match(app,/return e\?\.estimateRows\?\.\(baseline\)\|\|baseline/);
+ assert.match(app,/return baseline; \/\/ Never fabricate per-word display progress/);
  assert.match(app,/return kept&&!kept\.estimated\?kept:original/);
  assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*_haTempiParole\(r\)&&!r\.estimated\)\)/);
  assert.match(align,/row\?\.estimated\?\{t:row\.t,text:row\.text\}:row/);
- assert.match(immersive,/PAROLE STIMATE · NON VERIFICATE/);
+ assert.doesNotMatch(immersive,/PAROLE STIMATE · NON VERIFICATE/);
  assert.match(immersive,/row\.estimated\?\{estimated:true\}/);
- assert.match(app,/KARAOKE · PAROLE STIMATE, NON VERIFICATE/);
+ assert.doesNotMatch(app,/KARAOKE · PAROLE STIMATE, NON VERIFICATE/);
+ assert.match(app,/KARAOKE · FRASI SINCRONIZZATE/);
  assert.match(app,/track-badge-karaoke/);
  assert.match(app,/_statoKaraokeBrano\(t\.id\)\?\.label\|\|""/);
  assert.match(app,/LS\.set\("mb\.lyricsFullView",_vistaTestiCompleta\)/);
@@ -661,10 +667,12 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  for(const file of ["app.js","word-karaoke.js","immersive.js","style.css"]){
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
-  const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
-  const wordCache=file==="word-karaoke.js"?"13":file==="immersive.js"?"9":file==="app.js"?"16":"2";
-  assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
-  assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
+  const revision=file==="app.js"||file==="style.css"?release:"6734";
+  const cacheSuffix=file==="style.css"?"lyrics=4":
+    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"10":"18");
+  const assetUrl=file+"?v="+revision+"&"+cacheSuffix;
+  assert.ok(html.includes(assetUrl.replace("&","&amp;")));
+  assert.equal(sw.split(assetUrl).length-1,2);
  }
 });
 

@@ -1098,7 +1098,7 @@ body.no-scroll { overflow: hidden; }
   /* Sopra tutto. Il riquadro "rimettili in lista" sta a 99 e finiva
      SOPRA questa finestra: copriva i bottoni e non si poteva ne' confermare
      ne' annullare (l'utente non poteva piu' premere nulla). */
-  z-index: 120;
+  z-index: 22020;
   background: rgba(8,8,12,.72);
   display: flex;
   align-items: center;
@@ -3972,7 +3972,10 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 
 /* Lyrics v6.693: calm, premium reading layout and safe modal stacking.
    Confirmation windows (z-index 120) MUST stay above the lyrics sheet. */
-.lyrics-overlay{z-index:100!important;isolation:isolate;contain:layout paint}
+/* Lyrics must stay above Immersive Mode (21000), player controls and other
+   overlays. The old forced z-index:100 could put the reader behind them. */
+.lyrics-overlay{z-index:22005!important;isolation:isolate;contain:layout paint}
+.lyrics-overlay{overflow:clip} /* Prevent scrollIntoView/focus from shifting the whole dialog. */
 .lyrics-overlay[hidden]{display:none!important;pointer-events:none!important;visibility:hidden!important}
 .lyrics-overlay::after{pointer-events:none!important}
 .lyrics-sfondo{pointer-events:none!important}
@@ -4052,6 +4055,7 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 #lyricsFontScale{font-size:11px;min-width:36px;color:#d6c5e8;text-align:center;font-variant-numeric:tabular-nums}
 .lyrics-full-view .lyrics-body.lyrics-plain{grid-column:2;grid-row:1/4;
  min-height:0;overflow-y:auto;overscroll-behavior:contain;
+ mask-image:none;-webkit-mask-image:none;scroll-behavior:auto;
  background:linear-gradient(160deg,#fbf8fc 0%,#f3eef8 100%);
  padding:69px clamp(22px,4vw,58px) 75px;
  color:#2f203c;font-size:calc(20px * var(--lyrics-read-scale,1));

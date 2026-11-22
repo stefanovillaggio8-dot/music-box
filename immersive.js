@@ -74,25 +74,16 @@ function renderLyrics(force){
    for(const data of lyricRows){
     const row=document.createElement("p");
     row.className="im-line";
-    data._elements=window.MusicBoxWordKaraoke?.spanWords(document,data,row)||[];
-    if(!data._elements.length)row.textContent=data.text;
+    data._elements=[]; // Display full phrases, never estimated word progress.
+    row.textContent=data.text;
     fragment.appendChild(row);
    }
    karaoke.replaceChildren(fragment);
    karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
    karaoke.classList.toggle("approximate",!lyricTimed);
    const status=$("imLyricModeLabel");
-   const coverage=window.MusicBoxWordKaraoke?.timingCoverage?.(lyricRows);
-   if(status)status.textContent=lyricTimed
-     ?coverage?.wordTimed?
-       ("PAROLE VERIFICATE "+coverage.wordTimed+"/"+coverage.total+
-        " FRASI"+(coverage.audio?" · AUDIO "+coverage.audio:"")+(coverage.partialWords?" · PARZIALI "+coverage.partialWords+" PAROLE":""))
-       :coverage?.partial?coverage.partialWords+" PAROLE AUDIO · ALLINEAMENTO PARZIALE":
-        coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
-        "SINCRONIZZATO PER FRASI"
-     :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
-   if(lyricTimed&&lyricRows.some(r=>r.estimated||r.partialAudio||r._elements?.length<1))
-     b?.requestWordLyrics?.(id)?.catch?.(()=>{});
+   if(status)status.textContent=lyricTimed?
+     "SINCRONIZZATO PER FRASI":next?.text?"TESTO NON SINCRONIZZATO":"SOLO MUSICA";
    karaoke.scrollTop=0;
   }
   lastLyricsRefreshAt=Date.now();
