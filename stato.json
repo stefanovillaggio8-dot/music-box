@@ -2872,14 +2872,14 @@
     "a": "Coldplay"
    },
    "[\"ci nasci, ci muori\",\"nayt\"]": {
-    "v": 2,
-    "s": 578,
+    "v": 3,
+    "s": 592,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
    "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
-    "v": 2,
-    "s": 578,
+    "v": 3,
+    "s": 592,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
@@ -10121,13 +10121,13 @@
    },
    "[\"non ti dimentico\",\"modÃ \"]": {
     "v": 2,
-    "s": 344,
+    "s": 368,
     "t": "Non ti dimentico",
     "a": "ModÃ "
    },
    "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
     "v": 2,
-    "s": 344,
+    "s": 368,
     "t": "Non ti dimentico",
     "a": "ModÃ "
    },
@@ -10931,13 +10931,13 @@
    },
    "[\"non ti dimentico\",\"modà\"]": {
     "v": 2,
-    "s": 368,
+    "s": 434,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
    "m:2026-11|[\"non ti dimentico\",\"modà\"]": {
     "v": 2,
-    "s": 368,
+    "s": 434,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
