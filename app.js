@@ -1482,13 +1482,16 @@ let playlists = [];
     return _decisioneSessione(profileState(profile),LS.get('mb.playback.'+profile,null),
       LS.get('mb.pausaPos.'+profile,null),LS.get('mb.sessione.attiva.v1.'+profile,null));
   }
-  function _annullaRipresaAvvio() {
-    const saved=_ripresaAvvio;_ripresaAvvio=null;
+  function _annullaRipresaAvvio(keepCheckpoint=false) {
+    const saved=_ripresaAvvio;
+    if(!keepCheckpoint)_ripresaAvvio=null;
     if(!saved)return;
+    resumeAt=keepCheckpoint?saved.target:0;
     clearTimeout(saved.timer);if(saved.raf)cancelAnimationFrame(saved.raf);
     if(saved.armed&&saved.player)try{saved.player.muted=saved.wasMuted}catch(_){}
+    saved.armed=false;
   }
-  function _tentaRipresaAvvio() {
+  function _tentaRipresaAvvio(seekEvent=false) {
     const p=_ripresaAvvio;
     if(!p)return false;
     if(p.player!==audio||p.id!==currentId||p.profile!==profile){_annullaRipresaAvvio();return false}
@@ -1496,6 +1499,15 @@ let playlists = [];
     const target=Number.isFinite(duration)&&duration>0?Math.min(p.target,Math.max(0,duration-.04)):p.target;
     p.target=target;resumeAt=target;
     const pos=Number(audio.currentTime);
+    // Background media events can arrive more than 200ms apart. Confirm
+    // coherent progress BEFORE considering another seek; otherwise each
+    // delayed timeupdate would rewind the same successfully restored audio.
+    const progressed=audio.readyState>=2&&!audio.seeking&&!audio.paused&&
+      Number.isFinite(pos)&&pos>=target+.04&&
+      pos<=target+Math.max(2,(Date.now()-Number(p.armedAt||Date.now()))/1000+1);
+    if(p.armed&&(p.seekConfirmed||seekEvent)&&progressed){
+      resumeAt=0;_annullaRipresaAvvio();return true;
+    }
     if(audio.readyState>=1&&!audio.seeking&&Math.abs(pos-target)>.2){
       try{audio.currentTime=target}catch(_){}
       p.seekConfirmed=false;return false;
@@ -1511,7 +1523,7 @@ let playlists = [];
   function _proteggiPlayRipristinato() {
     const p=_ripresaAvvio;if(!p||p.player!==audio||p.id!==currentId)return;
     if(p.armed)return;
-    p.wasMuted=!!audio.muted;p.armed=true;audio.muted=true;
+    p.wasMuted=!!audio.muted;p.armed=true;p.armedAt=Date.now();audio.muted=true;
     const frame=()=>{if(_ripresaAvvio!==p||!p.armed)return;_tentaRipresaAvvio();
       if(_ripresaAvvio===p&&p.armed&&!document.hidden)p.raf=requestAnimationFrame(frame)};
     if(!document.hidden)p.raf=requestAnimationFrame(frame);
@@ -6103,7 +6115,7 @@ const playFromRow = () => {
     // replace the real position with 0 on a late pause callback.
     // If the decoder is still seeking, the 0:00 preview is not the
     // point the user paused at. Never overwrite a good checkpoint.
-    const gate=_bloccoRipresaAudio;
+    const gate=_bloccoRipresaAudio||_ripresaAvvio;
     const target=gate?.player===audio&&gate.id===currentId?
       Number(gate.target):
       (Number.isFinite(real)&&real>.15?real:
@@ -6661,7 +6673,7 @@ a.addEventListener("pause", () => {
         LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
         savePos();
       }
-      if(_ripresaAvvio)_tentaRipresaAvvio();
+      if(_ripresaAvvio)_tentaRipresaAvvio(true);
       _confermaRipresaAudio();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
@@ -8753,6 +8765,7 @@ function playNext() {
     // Pause the native decoder first, before stats or local storage.
     // There is no second silent player: Safari owns this one media source.
     if (audio) { try { audio.pause(); } catch (_) {} }
+    _annullaRipresaAvvio(true);
     _chiudiAscolto(false);
     // Keep the paused song metadata, position and Play handler bound
     // while WebKit still allows the page to execute.
@@ -8911,6 +8924,7 @@ function playNext() {
             window.MusicBoxRoom.control("seek",{seconds:Number(detail.time)||0});break;
           }
           if (audio && isFinite(Number(detail.time)) && isFinite(audio.duration)) {
+            _annullaRipresaAvvio();resumeAt=0;
             _chiudiAscolto(false);
             audio.currentTime = Math.max(0, Math.min(Number(detail.time), audio.duration));
             updateProgressUI(audio.currentTime, audio.duration);
@@ -9086,6 +9100,7 @@ function _aggiornaPosizioneSchermo() {
           if(window.MusicBoxRoom?.isActive()){
             window.MusicBoxRoom.control("seek",{seconds:d.seekTime});return;
           }
+          _annullaRipresaAvvio();resumeAt=0;
           audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
           updateProgressUI(audio.currentTime, audio.duration);
         }
@@ -9174,6 +9189,7 @@ function _aggiornaPosizioneSchermo() {
 
   function seekBy(delta) {
     if (!audio) return;
+    _annullaRipresaAvvio();resumeAt=0;
     _ultimoSeekUtente=Date.now();
     try { window.MusicBoxMix?.onSeek?.("user"); } catch (_) {}
     _chiudiAscolto(false);
@@ -14188,6 +14204,7 @@ $("btnModalitaGym").addEventListener("click", () => {
     scrubRect=null;
     progressBar.classList.remove("scrubbing");
     if (pendingSeek != null && audio) {
+      _annullaRipresaAvvio();resumeAt=0;
       _ultimoSeekUtente=Date.now();
       try { window.MusicBoxMix?.onSeek?.("user"); } catch (_) {}
       _chiudiAscolto(false);

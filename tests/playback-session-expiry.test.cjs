@@ -2,6 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
 const start=app.indexOf('  function _decisioneSessione('),end=app.indexOf('  let queue = [];',start),source=app.slice(start,end);
+const pauseStart=app.indexOf('  function _memorizzaPausaCorrente()'),pauseEnd=app.indexOf('  // Safari can show',pauseStart),pauseSource=app.slice(pauseStart,pauseEnd);
 assert.ok(start>0&&end>start);
 const decision=new Function(source+'return _decisioneSessione;')();
 const now=1795350000000,hour=3600000;
@@ -36,11 +37,14 @@ function fixture(age=3*hour){
  _azzeraCasuale=()=>events.push('reset-shuffle'),_annullaBloccoRipresaAudio=()=>{},render=()=>events.push('render'),
  updateMediaSession=()=>{},tickLyrics=()=>{},syncPlayUI=()=>{},toast=t=>events.push(t),totalDuration=()=>audio.duration,
  updateProgressUI=t=>events.push({displayTime:t});
+ const _bloccoRipresaAudio=null,_pausaSalvata=()=>_pausaCheckpoint,savePos=()=>{};
  ${source}
+ ${pauseSource}
  return {check:_controllaScadenzaSessione,trySeek:_tentaRipresaAvvio,arm:_proteggiPlayRipristinato,cancel:_annullaRipresaAvvio,
+  savePause:_memorizzaPausaCorrente,
   pending:()=>_ripresaAvvio,id:()=>currentId,live:()=>{_ultimoAvanzamentoReale=${now};audio.paused=false;audio.readyState=4;audio.currentTime=200},
   prepare:()=>{_ripresaAvvio={id:currentId,profile,player:audio,target:125,armed:false,seekConfirmed:false}},
-  setId:id=>currentId=id};` )({audio,store,events,timers,next:()=>++serial});
+  hide:()=>document.hidden=true,setId:id=>currentId=id};` )({audio,store,events,timers,next:()=>++serial});
  return {api,audio,store,events,timers};
 }
 test('expiry clears selection at two hours but preserves shuffle, downloads, favorites, playlists and other accounts',()=>{
@@ -70,4 +74,17 @@ test('failed restoration pauses within the bounded deadline and leaves a real re
  assert.equal(f.audio.paused,true);assert.equal(f.audio.muted,false);assert.equal(f.api.pending().target,125);
  assert.equal(f.events.some(x=>typeof x==='string'&&x.includes('Premi Play')),true);
  f.api.setId('another');f.api.trySeek();assert.equal(f.api.pending(),null);
+});
+test('a delayed background timeupdate confirms real progress instead of repeatedly rewinding a restored song',()=>{
+ const f=fixture(hour);f.api.prepare();f.audio.readyState=4;f.api.trySeek();f.api.trySeek();
+ f.api.hide();f.api.arm();f.audio.paused=false;f.audio.currentTime=125.75;
+ assert.equal(f.api.trySeek(),true);assert.equal(f.audio.currentTime,125.75);
+ assert.equal(f.api.pending(),null);assert.equal(f.audio.muted,false);
+});
+test('a deliberate pause during startup loading cancels the deadline and retains the requested real checkpoint for retry',()=>{
+ const f=fixture(hour);f.api.prepare();f.api.arm();f.audio.currentTime=.4;
+ f.api.cancel(true);f.api.savePause();
+ assert.equal(f.store.get('mb.pausaPos.Ste').time,125);
+ assert.equal(f.timers.size,0);assert.equal(f.audio.muted,false);assert.equal(f.api.pending().target,125);
+ f.api.arm();assert.equal(f.api.pending().armed,true);assert.equal(f.timers.size,1);
 });

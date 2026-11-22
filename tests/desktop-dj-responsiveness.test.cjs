@@ -263,7 +263,7 @@ test("iPhone pause keeps Now Playing metadata and native player bound",()=>{
   "syncPlayUI=()=>events.push('ui'),"+
   "_memorizzaPausaCorrente=()=>events.push('checkpoint'),"+
   "_segnaIntenzioneSono=()=>events.push('storage'),"+
-  "_nascondiAiuto=()=>{},_segna=()=>{};"+
+  "_nascondiAiuto=()=>{},_segna=()=>{},_annullaRipresaAvvio=()=>{};"+
   body+"return {pause:_pausaVolontaria,flags:()=>({paused:_pausaEsplicita,wants:_vuoleSuonare})};")({audio:fakeAudio,events});
  pause.pause();
  assert.deepEqual(events.slice(0,4),["native-pause","stats","now-playing","state"],

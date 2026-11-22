@@ -216,7 +216,7 @@ test("headphone pause cancels all retry work and persists paused intent",()=>{
   "let _silenziDiFila=3,_timerRiprove=null,_timerAiuto=null;"+
   "const audio={pause:()=>{o.paused=true}};"+
   "const _segna=()=>{},_chiudiAscolto=()=>{o.stats++};"+
-  "const _memorizzaPausaCorrente=()=>{},_annullaBloccoRipresaAudio=()=>{};"+
+  "const _memorizzaPausaCorrente=()=>{},_annullaBloccoRipresaAudio=()=>{},_annullaRipresaAvvio=()=>{};"+
   "const _segnaIntenzioneSono=v=>{o.intent=v};"+
   "const setPlaybackState=()=>{},_nascondiAiuto=()=>{},"+
    "syncPlayUI=()=>{},_usaControlliNativiIos=()=>true,"+

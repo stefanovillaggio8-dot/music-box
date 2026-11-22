@@ -17,7 +17,7 @@ async function main(){
  try{for(const [name,type] of [['chromium',chromium],['webkit',webkit]]){
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
   const browser=await type.launch({headless:true});
-  try{for(const [minutes,resetDecoder] of [[119,false],[119,true],[121,false],[299,false],[301,false]]){
+  try{for(const [minutes,resetDecoder,noAnimationFrames] of [[119,false,false],[119,true,false],[119,false,true],[121,false,false],[299,false,false],[301,false,false]]){
    const context=await browser.newContext({serviceWorkers:'block'}),page=await context.newPage();
    await context.route('**/*',async route=>{
     const url=new URL(route.request().url());
@@ -58,6 +58,9 @@ async function main(){
    assert.deepEqual(initial.other.test.played,['other']);
    if(minutes<120){
     assert.equal(initial.id,id);assert.deepEqual(initial.shuffle.test.played,[id]);
+    // Separate scheduling fault: media timeupdate/seeked must complete the
+    // restore even when background-like conditions provide no RAF callbacks.
+    if(noAnimationFrames)await page.evaluate(()=>{window.requestAnimationFrame=()=>0});
     await page.click('#btnPlay',{force:true});
     try{await page.waitForFunction(t=>{const a=MusicBoxBridge.audio();return !a.paused&&!a.seeking&&!a.muted&&a.currentTime>=t+.04&&a.currentTime<t+2},target,{timeout:15000})}
     catch(e){console.error(name,minutes,await page.evaluate(()=>({id:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio()?.currentTime,ready:MusicBoxBridge.audio()?.readyState,muted:MusicBoxBridge.audio()?.muted,error:MusicBoxBridge.audio()?.error?.code,trace:__sessionTrace})));throw e}
@@ -68,7 +71,7 @@ async function main(){
     await page.click('#btnPlay',{force:true});const paused=await page.evaluate(()=>MusicBoxBridge.audio().currentTime);
     await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>MusicBoxBridge?.currentId()==='b-track-27',null,{timeout:30000});
     await page.click('#btnPlay',{force:true});await page.waitForFunction(t=>!MusicBoxBridge.audio().paused&&!MusicBoxBridge.audio().muted&&MusicBoxBridge.audio().currentTime>=t-.2,paused,{timeout:15000});
-    results.push({browser:name,minutes,resetDecoder,restoredTime:played.time,refreshPosition:paused,sourceSha:row.sha,noAutoplay:true});
+    results.push({browser:name,minutes,resetDecoder,noAnimationFrames:!!noAnimationFrames,restoredTime:played.time,refreshPosition:paused,sourceSha:row.sha,noAutoplay:true});
    }else{
     assert.equal(initial.id,null);assert.equal(initial.time,0);
     assert.equal(Object.keys(initial.shuffle).length===0,minutes>=300);
