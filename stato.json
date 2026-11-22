@@ -1247,7 +1247,7 @@
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 4,
-    "s": 521,
+    "s": 585,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -2597,7 +2597,7 @@
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 4,
-    "s": 520,
+    "s": 584,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -3016,14 +3016,14 @@
     "a": "Coez"
    },
    "[\"jolly\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 284,
+    "v": 1,
+    "s": 293,
     "t": "Jolly",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"jolly\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 284,
+    "v": 1,
+    "s": 293,
     "t": "Jolly",
     "a": "Kid Yugi"
    },
