@@ -1,0 +1,747 @@
+{
+  "orderedPairs": 10056,
+  "classification": "hierarchical first exclusions; remaining categories need inner-window diagnostics; not independent percentages",
+  "actualPCMTracks": 222,
+  "counts": {
+    "unknownIncomingVocalBoundary": 1215,
+    "noImmediateBeatBearingIntro": 6073,
+    "remainingWindowRhythmOrHarmony": 649,
+    "noCompatibleLocalTempoVariant": 1783,
+    "incomingVoiceBeforeMinimumFullWindow": 334,
+    "sameRecording": 2
+  },
+  "perTarget": {
+    "audio/songs/track-1187.mp3": {
+      "unknownIncomingVocalBoundary": 221
+    },
+    "audio/songs/track-134.mp3": {
+      "noImmediateBeatBearingIntro": 220,
+      "sameRecording": 1
+    },
+    "audio/songs/track-138.mp3": {
+      "remainingWindowRhythmOrHarmony": 108,
+      "noCompatibleLocalTempoVariant": 113
+    },
+    "audio/songs/track-205.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-206.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-207.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-208.mp3": {
+      "noCompatibleLocalTempoVariant": 163,
+      "remainingWindowRhythmOrHarmony": 58
+    },
+    "audio/songs/track-213.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-215.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-27.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-29.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-30.mp3": {
+      "remainingWindowRhythmOrHarmony": 98,
+      "noCompatibleLocalTempoVariant": 123
+    },
+    "audio/songs/track-33.mp3": {
+      "noCompatibleLocalTempoVariant": 165,
+      "remainingWindowRhythmOrHarmony": 56
+    },
+    "audio/songs/track-34.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-37.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-38.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-39.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-40.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "audio/songs/track-41.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 71,
+      "noCompatibleLocalTempoVariant": 150
+    },
+    "audio/songs/track-488.mp3": {
+      "noImmediateBeatBearingIntro": 220,
+      "sameRecording": 1
+    },
+    "audio/songs/track-49.mp3": {
+      "noCompatibleLocalTempoVariant": 172,
+      "remainingWindowRhythmOrHarmony": 49
+    },
+    "audio/songs/track-6.mp3": {
+      "unknownIncomingVocalBoundary": 221
+    },
+    "audio/songs/track-87.mp3": {
+      "noImmediateBeatBearingIntro": 221
+    },
+    "mobile/songs/youtube-S8oUoa0pwpo.mp3": {
+      "unknownIncomingVocalBoundary": 221
+    },
+    "audio/songs/track-10.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-100.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-101.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "incomingVoiceBeforeMinimumFullWindow": 10
+    },
+    "audio/songs/track-102.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-103.mp3": {
+      "noCompatibleLocalTempoVariant": 12,
+      "incomingVoiceBeforeMinimumFullWindow": 12
+    },
+    "audio/songs/track-105.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-106.mp3": {
+      "remainingWindowRhythmOrHarmony": 19,
+      "noCompatibleLocalTempoVariant": 5
+    },
+    "audio/songs/track-107.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 15,
+      "noCompatibleLocalTempoVariant": 9
+    },
+    "audio/songs/track-108.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-109.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-11.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-110.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-111.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-112.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "remainingWindowRhythmOrHarmony": 10
+    },
+    "audio/songs/track-113.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-114.mp3": {
+      "remainingWindowRhythmOrHarmony": 4,
+      "noCompatibleLocalTempoVariant": 20
+    },
+    "audio/songs/track-115.mp3": {
+      "noCompatibleLocalTempoVariant": 16,
+      "remainingWindowRhythmOrHarmony": 8
+    },
+    "audio/songs/track-116.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-117.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-118.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-119.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 13,
+      "noCompatibleLocalTempoVariant": 11
+    },
+    "audio/songs/track-1197.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-12.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-120.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "remainingWindowRhythmOrHarmony": 10
+    },
+    "audio/songs/track-121.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-122.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-124.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-125.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-126.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-127.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "remainingWindowRhythmOrHarmony": 10
+    },
+    "audio/songs/track-128.mp3": {
+      "noCompatibleLocalTempoVariant": 15,
+      "remainingWindowRhythmOrHarmony": 9
+    },
+    "audio/songs/track-129.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-13.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-130.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-131.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-133.mp3": {
+      "noCompatibleLocalTempoVariant": 20,
+      "remainingWindowRhythmOrHarmony": 4
+    },
+    "audio/songs/track-135.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "incomingVoiceBeforeMinimumFullWindow": 6
+    },
+    "audio/songs/track-136.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-139.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-14.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-140.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-143.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-144.mp3": {
+      "remainingWindowRhythmOrHarmony": 4,
+      "noCompatibleLocalTempoVariant": 20
+    },
+    "audio/songs/track-146.mp3": {
+      "noCompatibleLocalTempoVariant": 17,
+      "remainingWindowRhythmOrHarmony": 7
+    },
+    "audio/songs/track-147.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-148.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "remainingWindowRhythmOrHarmony": 6
+    },
+    "audio/songs/track-149.mp3": {
+      "remainingWindowRhythmOrHarmony": 4,
+      "noCompatibleLocalTempoVariant": 20
+    },
+    "audio/songs/track-15.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-150.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-152.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-153.mp3": {
+      "remainingWindowRhythmOrHarmony": 4,
+      "noCompatibleLocalTempoVariant": 20
+    },
+    "audio/songs/track-154.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-155.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-157.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-158.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-159.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-16.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-160.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-161.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-163.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-164.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-165.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-166.mp3": {
+      "remainingWindowRhythmOrHarmony": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-168.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-169.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-17.mp3": {
+      "noCompatibleLocalTempoVariant": 17,
+      "remainingWindowRhythmOrHarmony": 7
+    },
+    "audio/songs/track-170.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 4,
+      "noCompatibleLocalTempoVariant": 20
+    },
+    "audio/songs/track-171.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-173.mp3": {
+      "remainingWindowRhythmOrHarmony": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-175.mp3": {
+      "noCompatibleLocalTempoVariant": 19,
+      "incomingVoiceBeforeMinimumFullWindow": 5
+    },
+    "audio/songs/track-176.mp3": {
+      "remainingWindowRhythmOrHarmony": 12,
+      "noCompatibleLocalTempoVariant": 12
+    },
+    "audio/songs/track-178.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 18,
+      "noCompatibleLocalTempoVariant": 6
+    },
+    "audio/songs/track-179.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-18.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-180.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-181.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-182.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-184.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-185.mp3": {
+      "noCompatibleLocalTempoVariant": 16,
+      "incomingVoiceBeforeMinimumFullWindow": 8
+    },
+    "audio/songs/track-187.mp3": {
+      "remainingWindowRhythmOrHarmony": 12,
+      "noCompatibleLocalTempoVariant": 12
+    },
+    "audio/songs/track-188.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-189.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-19.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "remainingWindowRhythmOrHarmony": 10
+    },
+    "audio/songs/track-190.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-191.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 9,
+      "noCompatibleLocalTempoVariant": 15
+    },
+    "audio/songs/track-192.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-193.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-194.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-195.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "incomingVoiceBeforeMinimumFullWindow": 10
+    },
+    "audio/songs/track-196.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-198.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-2.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 9,
+      "noCompatibleLocalTempoVariant": 15
+    },
+    "audio/songs/track-20.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-200.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-201.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-203.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-209.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 11,
+      "noCompatibleLocalTempoVariant": 13
+    },
+    "audio/songs/track-210.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-211.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-212.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-216.mp3": {
+      "remainingWindowRhythmOrHarmony": 15,
+      "noCompatibleLocalTempoVariant": 9
+    },
+    "audio/songs/track-217.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-218.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-220.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-221.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-222.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-225.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "incomingVoiceBeforeMinimumFullWindow": 6
+    },
+    "audio/songs/track-226.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "incomingVoiceBeforeMinimumFullWindow": 10
+    },
+    "audio/songs/track-227.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-228.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-229.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-23.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-230.mp3": {
+      "noCompatibleLocalTempoVariant": 16,
+      "remainingWindowRhythmOrHarmony": 8
+    },
+    "audio/songs/track-232.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-233.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-234.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-236.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-237.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-239.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-240.mp3": {
+      "remainingWindowRhythmOrHarmony": 12,
+      "noCompatibleLocalTempoVariant": 12
+    },
+    "audio/songs/track-241.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-242.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-243.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-244.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-245.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-246.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-248.mp3": {
+      "noCompatibleLocalTempoVariant": 17,
+      "remainingWindowRhythmOrHarmony": 7
+    },
+    "audio/songs/track-249.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-25.mp3": {
+      "noCompatibleLocalTempoVariant": 24
+    },
+    "audio/songs/track-250.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-26.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-304.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-309.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-31.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-315.mp3": {
+      "remainingWindowRhythmOrHarmony": 10,
+      "noCompatibleLocalTempoVariant": 14
+    },
+    "audio/songs/track-349.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-35.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-36.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-390.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-4.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-406.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-43.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 11,
+      "noCompatibleLocalTempoVariant": 13
+    },
+    "audio/songs/track-44.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-440.mp3": {
+      "noCompatibleLocalTempoVariant": 13,
+      "incomingVoiceBeforeMinimumFullWindow": 11
+    },
+    "audio/songs/track-457.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-46.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-466.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "remainingWindowRhythmOrHarmony": 6
+    },
+    "audio/songs/track-47.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-478.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-48.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-483.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-485.mp3": {
+      "noCompatibleLocalTempoVariant": 17,
+      "remainingWindowRhythmOrHarmony": 7
+    },
+    "audio/songs/track-50.mp3": {
+      "noCompatibleLocalTempoVariant": 15,
+      "remainingWindowRhythmOrHarmony": 9
+    },
+    "audio/songs/track-509.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-513.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-514.mp3": {
+      "remainingWindowRhythmOrHarmony": 17,
+      "noCompatibleLocalTempoVariant": 7
+    },
+    "audio/songs/track-515.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-516.mp3": {
+      "noCompatibleLocalTempoVariant": 14,
+      "incomingVoiceBeforeMinimumFullWindow": 10
+    },
+    "audio/songs/track-518.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-520.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-574.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-627.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-658.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-664.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-67.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-670.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-68.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-69.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-7.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-705.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-72.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-724.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-73.mp3": {
+      "noCompatibleLocalTempoVariant": 24
+    },
+    "audio/songs/track-74.mp3": {
+      "noCompatibleLocalTempoVariant": 12,
+      "remainingWindowRhythmOrHarmony": 12
+    },
+    "audio/songs/track-75.mp3": {
+      "noCompatibleLocalTempoVariant": 16,
+      "incomingVoiceBeforeMinimumFullWindow": 8
+    },
+    "audio/songs/track-76.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-77.mp3": {
+      "noCompatibleLocalTempoVariant": 13,
+      "remainingWindowRhythmOrHarmony": 11
+    },
+    "audio/songs/track-78.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-79.mp3": {
+      "noCompatibleLocalTempoVariant": 15,
+      "incomingVoiceBeforeMinimumFullWindow": 9
+    },
+    "audio/songs/track-8.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-80.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-81.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-855.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-88.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-89.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-9.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-90.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-92.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "remainingWindowRhythmOrHarmony": 6
+    },
+    "audio/songs/track-93.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-94.mp3": {
+      "noCompatibleLocalTempoVariant": 18,
+      "incomingVoiceBeforeMinimumFullWindow": 6
+    },
+    "audio/songs/track-95.mp3": {
+      "unknownIncomingVocalBoundary": 24
+    },
+    "audio/songs/track-954.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-96.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-963.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-97.mp3": {
+      "incomingVoiceBeforeMinimumFullWindow": 12,
+      "noCompatibleLocalTempoVariant": 12
+    },
+    "audio/songs/track-977.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-98.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    },
+    "audio/songs/track-99.mp3": {
+      "noImmediateBeatBearingIntro": 24
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "lostAtCommit": "d47bfe722ecf3e9d317ebd8312ed9e48c6a3a009",
+  "baselineRenderedIndex": "7bf4331d320e750bd0af4bd9ffa3fce5aac497eb",
+  "currentMainBeforeFix": "9ae77d7fb3fbd8d532b992c9a42ff5a90c5aa0b2",
+  "publishedVersion": "6.738",
+  "preservedPR65": "9249185299eef213d6bbeeb80a09bb5524b480a8",
+  "filesUnchanged": {
+    "app.js": "0615fee5d95a918db7647ff0c017fb752e5c5f7c146da67950282e41154199d4",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "index.html": "c9028d91e660c10ca37465e5a4cfcabe1a927f73b66338dad287eb2efcfbeab5",
+    "style.css": "50135f42186b69fe0b59d3f68db616f731d12d57ced80b46bc5302c652b1c075",
+    "sw.js": "cb9d323cd9996b49af6577ff3c4c1f0edf40d681a254775a5afda4ce02588743",
+    "versione.json": "91a49311315faf3641b4692158a87153ceff71c42aa915812a673e6e28edf8dd",
+    "stato.json": "d6615590e18630aaef389a062e9264cc4d41c56284dce7e8a3644ce6ed5b3510",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  }
+}

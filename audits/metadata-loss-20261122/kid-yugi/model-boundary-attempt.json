@@ -1,0 +1,416 @@
+{
+  "notProduction": true,
+  "modelOutputNotCertifiedVoiceAbsence": true,
+  "changed": [
+    {
+      "key": "audio/songs/track-39.mp3",
+      "earliestModelVocal": 12.4,
+      "candidateBoundary": 11.9
+    },
+    {
+      "key": "audio/songs/track-20.mp3",
+      "earliestModelVocal": 10.3,
+      "candidateBoundary": 9.8
+    },
+    {
+      "key": "audio/songs/track-44.mp3",
+      "earliestModelVocal": 8.8,
+      "candidateBoundary": 8.3
+    },
+    {
+      "key": "audio/songs/track-73.mp3",
+      "earliestModelVocal": 8.1,
+      "candidateBoundary": 7.6
+    },
+    {
+      "key": "audio/songs/track-131.mp3",
+      "earliestModelVocal": 6.1,
+      "candidateBoundary": 5.6
+    },
+    {
+      "key": "audio/songs/track-190.mp3",
+      "earliestModelVocal": 7,
+      "candidateBoundary": 6.5
+    },
+    {
+      "key": "audio/songs/track-150.mp3",
+      "earliestModelVocal": 12.4,
+      "candidateBoundary": 11.9
+    },
+    {
+      "key": "audio/songs/track-228.mp3",
+      "earliestModelVocal": 14.4,
+      "candidateBoundary": 13.9
+    },
+    {
+      "key": "audio/songs/track-234.mp3",
+      "earliestModelVocal": 11.8,
+      "candidateBoundary": 11.3
+    },
+    {
+      "key": "audio/songs/track-182.mp3",
+      "earliestModelVocal": 10.4,
+      "candidateBoundary": 9.9
+    },
+    {
+      "key": "audio/songs/track-164.mp3",
+      "earliestModelVocal": 15.2,
+      "candidateBoundary": 14.7
+    },
+    {
+      "key": "audio/songs/track-108.mp3",
+      "earliestModelVocal": 8.1,
+      "candidateBoundary": 7.6
+    },
+    {
+      "key": "audio/songs/track-109.mp3",
+      "earliestModelVocal": 16,
+      "candidateBoundary": 15.5
+    },
+    {
+      "key": "audio/songs/track-127.mp3",
+      "earliestModelVocal": 9.3,
+      "candidateBoundary": 8.8
+    },
+    {
+      "key": "audio/songs/track-216.mp3",
+      "earliestModelVocal": 12.1,
+      "candidateBoundary": 11.6
+    },
+    {
+      "key": "audio/songs/track-50.mp3",
+      "earliestModelVocal": 11.8,
+      "candidateBoundary": 11.3
+    },
+    {
+      "key": "audio/songs/track-23.mp3",
+      "earliestModelVocal": 10.4,
+      "candidateBoundary": 9.9
+    },
+    {
+      "key": "audio/songs/track-159.mp3",
+      "earliestModelVocal": 6.9,
+      "candidateBoundary": 6.4
+    },
+    {
+      "key": "audio/songs/track-218.mp3",
+      "earliestModelVocal": 27.1,
+      "candidateBoundary": 26.6
+    },
+    {
+      "key": "audio/songs/track-2.mp3",
+      "earliestModelVocal": 7.7,
+      "candidateBoundary": 7.2
+    },
+    {
+      "key": "audio/songs/track-38.mp3",
+      "earliestModelVocal": 11.1,
+      "candidateBoundary": 10.6
+    },
+    {
+      "key": "audio/songs/track-19.mp3",
+      "earliestModelVocal": 16.3,
+      "candidateBoundary": 15.8
+    },
+    {
+      "key": "audio/songs/track-143.mp3",
+      "earliestModelVocal": 17.4,
+      "candidateBoundary": 16.9
+    },
+    {
+      "key": "audio/songs/track-478.mp3",
+      "earliestModelVocal": 16,
+      "candidateBoundary": 15.5
+    },
+    {
+      "key": "audio/songs/track-514.mp3",
+      "earliestModelVocal": 11.8,
+      "candidateBoundary": 11.3
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "earliestModelVocal": 10.3,
+      "candidateBoundary": 9.8
+    },
+    {
+      "key": "audio/songs/track-7.mp3",
+      "earliestModelVocal": 19.9,
+      "candidateBoundary": 19.4
+    },
+    {
+      "key": "audio/songs/track-89.mp3",
+      "earliestModelVocal": 13.3,
+      "candidateBoundary": 12.8
+    },
+    {
+      "key": "audio/songs/track-212.mp3",
+      "earliestModelVocal": 6.8,
+      "candidateBoundary": 6.3
+    },
+    {
+      "key": "audio/songs/track-49.mp3",
+      "earliestModelVocal": 12,
+      "candidateBoundary": 11.5
+    },
+    {
+      "key": "audio/songs/track-72.mp3",
+      "earliestModelVocal": 9,
+      "candidateBoundary": 8.5
+    },
+    {
+      "key": "audio/songs/track-237.mp3",
+      "earliestModelVocal": 22.9,
+      "candidateBoundary": 22.4
+    },
+    {
+      "key": "audio/songs/track-243.mp3",
+      "earliestModelVocal": 20.9,
+      "candidateBoundary": 20.4
+    },
+    {
+      "key": "audio/songs/track-488.mp3",
+      "earliestModelVocal": 6.9,
+      "candidateBoundary": 6.4
+    },
+    {
+      "key": "audio/songs/track-168.mp3",
+      "earliestModelVocal": 16.3,
+      "candidateBoundary": 15.8
+    },
+    {
+      "key": "audio/songs/track-68.mp3",
+      "earliestModelVocal": 7.2,
+      "candidateBoundary": 6.7
+    },
+    {
+      "key": "audio/songs/track-154.mp3",
+      "earliestModelVocal": 23.4,
+      "candidateBoundary": 22.9
+    },
+    {
+      "key": "audio/songs/track-114.mp3",
+      "earliestModelVocal": 13.2,
+      "candidateBoundary": 12.7
+    },
+    {
+      "key": "audio/songs/track-134.mp3",
+      "earliestModelVocal": 6.9,
+      "candidateBoundary": 6.4
+    },
+    {
+      "key": "audio/songs/track-102.mp3",
+      "earliestModelVocal": 11.6,
+      "candidateBoundary": 11.1
+    },
+    {
+      "key": "audio/songs/track-112.mp3",
+      "earliestModelVocal": 9.7,
+      "candidateBoundary": 9.2
+    },
+    {
+      "key": "audio/songs/track-78.mp3",
+      "earliestModelVocal": 7.1,
+      "candidateBoundary": 6.6
+    },
+    {
+      "key": "audio/songs/track-485.mp3",
+      "earliestModelVocal": 23.6,
+      "candidateBoundary": 23.1
+    },
+    {
+      "key": "audio/songs/track-47.mp3",
+      "earliestModelVocal": 8.3,
+      "candidateBoundary": 7.800000000000001
+    },
+    {
+      "key": "audio/songs/track-240.mp3",
+      "earliestModelVocal": 11.8,
+      "candidateBoundary": 11.3
+    },
+    {
+      "key": "audio/songs/track-171.mp3",
+      "earliestModelVocal": 16.1,
+      "candidateBoundary": 15.600000000000001
+    },
+    {
+      "key": "audio/songs/track-440.mp3",
+      "earliestModelVocal": 23.1,
+      "candidateBoundary": 22.6
+    },
+    {
+      "key": "audio/songs/track-520.mp3",
+      "earliestModelVocal": 10.5,
+      "candidateBoundary": 10.0
+    },
+    {
+      "key": "audio/songs/track-140.mp3",
+      "earliestModelVocal": 7.9,
+      "candidateBoundary": 7.4
+    },
+    {
+      "key": "audio/songs/track-115.mp3",
+      "earliestModelVocal": 16.4,
+      "candidateBoundary": 15.899999999999999
+    },
+    {
+      "key": "audio/songs/track-139.mp3",
+      "earliestModelVocal": 8.3,
+      "candidateBoundary": 7.800000000000001
+    },
+    {
+      "key": "audio/songs/track-232.mp3",
+      "earliestModelVocal": 21.3,
+      "candidateBoundary": 20.8
+    },
+    {
+      "key": "audio/songs/track-77.mp3",
+      "earliestModelVocal": 18,
+      "candidateBoundary": 17.5
+    },
+    {
+      "key": "audio/songs/track-15.mp3",
+      "earliestModelVocal": 15.6,
+      "candidateBoundary": 15.1
+    },
+    {
+      "key": "audio/songs/track-198.mp3",
+      "earliestModelVocal": 9.1,
+      "candidateBoundary": 8.6
+    },
+    {
+      "key": "audio/songs/track-35.mp3",
+      "earliestModelVocal": 18.6,
+      "candidateBoundary": 18.1
+    },
+    {
+      "key": "audio/songs/track-242.mp3",
+      "earliestModelVocal": 9,
+      "candidateBoundary": 8.5
+    },
+    {
+      "key": "audio/songs/track-36.mp3",
+      "earliestModelVocal": 10.6,
+      "candidateBoundary": 10.1
+    },
+    {
+      "key": "audio/songs/track-1197.mp3",
+      "earliestModelVocal": 11.1,
+      "candidateBoundary": 10.6
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "earliestModelVocal": 10,
+      "candidateBoundary": 9.5
+    },
+    {
+      "key": "audio/songs/track-250.mp3",
+      "earliestModelVocal": 18.2,
+      "candidateBoundary": 17.7
+    },
+    {
+      "key": "audio/songs/track-76.mp3",
+      "earliestModelVocal": 14.1,
+      "candidateBoundary": 13.6
+    },
+    {
+      "key": "audio/songs/track-205.mp3",
+      "earliestModelVocal": 9.8,
+      "candidateBoundary": 9.3
+    },
+    {
+      "key": "audio/songs/track-144.mp3",
+      "earliestModelVocal": 12.9,
+      "candidateBoundary": 12.4
+    },
+    {
+      "key": "audio/songs/track-670.mp3",
+      "earliestModelVocal": 16.3,
+      "candidateBoundary": 15.8
+    },
+    {
+      "key": "audio/songs/track-954.mp3",
+      "earliestModelVocal": 8.8,
+      "candidateBoundary": 8.3
+    },
+    {
+      "key": "audio/songs/track-99.mp3",
+      "earliestModelVocal": 12.5,
+      "candidateBoundary": 12.0
+    },
+    {
+      "key": "audio/songs/track-236.mp3",
+      "earliestModelVocal": 30.4,
+      "candidateBoundary": 29.9
+    },
+    {
+      "key": "audio/songs/track-201.mp3",
+      "earliestModelVocal": 33.8,
+      "candidateBoundary": 33.3
+    },
+    {
+      "key": "audio/songs/track-233.mp3",
+      "earliestModelVocal": 24,
+      "candidateBoundary": 23.5
+    },
+    {
+      "key": "audio/songs/track-17.mp3",
+      "earliestModelVocal": 23.6,
+      "candidateBoundary": 23.1
+    },
+    {
+      "key": "audio/songs/track-515.mp3",
+      "earliestModelVocal": 15,
+      "candidateBoundary": 14.5
+    },
+    {
+      "key": "audio/songs/track-176.mp3",
+      "earliestModelVocal": 8,
+      "candidateBoundary": 7.5
+    },
+    {
+      "key": "audio/songs/track-81.mp3",
+      "earliestModelVocal": 12.8,
+      "candidateBoundary": 12.3
+    },
+    {
+      "key": "audio/songs/track-149.mp3",
+      "earliestModelVocal": 15.3,
+      "candidateBoundary": 14.8
+    },
+    {
+      "key": "audio/songs/track-14.mp3",
+      "earliestModelVocal": 14.4,
+      "candidateBoundary": 13.9
+    },
+    {
+      "key": "audio/songs/track-160.mp3",
+      "earliestModelVocal": 7.6,
+      "candidateBoundary": 7.1
+    },
+    {
+      "key": "audio/songs/track-188.mp3",
+      "earliestModelVocal": 8.2,
+      "candidateBoundary": 7.699999999999999
+    },
+    {
+      "key": "audio/songs/track-181.mp3",
+      "earliestModelVocal": 14.9,
+      "candidateBoundary": 14.4
+    },
+    {
+      "key": "audio/songs/track-248.mp3",
+      "earliestModelVocal": 23.8,
+      "candidateBoundary": 23.3
+    },
+    {
+      "key": "audio/songs/track-107.mp3",
+      "earliestModelVocal": 6,
+      "candidateBoundary": 5.5
+    },
+    {
+      "key": "audio/songs/track-189.mp3",
+      "earliestModelVocal": 11.9,
+      "candidateBoundary": 11.4
+    }
+  ]
+}

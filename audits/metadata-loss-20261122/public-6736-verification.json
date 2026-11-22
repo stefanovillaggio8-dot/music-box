@@ -1,0 +1,61 @@
+{
+  "version": "6.736",
+  "mergeCommit": "7bf4331d320e750bd0af4bd9ffa3fce5aac497eb",
+  "verifiedAt": "2026-11-17T08:21:14.604234+00:00",
+  "publicUrl": "https://stefanovillaggio8-dot.github.io/music-box/",
+  "files": {
+    "app.js": {
+      "sha256": "6f1f5ff91730238724b681d08e5322d7b016d1fa7a9f3b897d1e11625a258e5c",
+      "matches": true
+    },
+    "mix-intelligente.js": {
+      "sha256": "4ee83e4328fce9729c18407cc461ace0999279de23ac406eb1cac15365c805af",
+      "matches": true
+    },
+    "audio-composite-mix.js": {
+      "sha256": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+      "matches": true
+    },
+    "audio-composite-core.mjs": {
+      "sha256": "129957b6215b44761756b1e18138fb0028a634ae4e6d81f0fd4dd8a5c9d9948c",
+      "matches": true
+    },
+    "audio-stretch-core.mjs": {
+      "sha256": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b",
+      "matches": true
+    },
+    "audio-lyrics-align.js": {
+      "sha256": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "matches": true
+    },
+    "word-karaoke.js": {
+      "sha256": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "matches": true
+    },
+    "karaoke-acoustic-proof.js": {
+      "sha256": "0b12f36d42dcc6608aa636dc7ef054ae90719b7a62523946cefb70a77fedcbca",
+      "matches": true
+    },
+    "immersive.js": {
+      "sha256": "e38e61410cb23c0be52169c57637a768de79ec2c3d3fb2f8daf98e08d6fe171e",
+      "matches": true
+    },
+    "index.html": {
+      "sha256": "4d93b1d7e3f97e3e47e76128ecbe6c013dd1a537965ff464c5a42a3d5d4826a2",
+      "matches": true
+    },
+    "sw.js": {
+      "sha256": "2fef5998f30664e0b04dc2351294a2057da5ee0924a838749fc0a203ac0d7d7e",
+      "matches": true
+    },
+    "versione.json": {
+      "sha256": "aa838be0e789e1395efef997c01451ad860fc6eb1379b6a527c4137bcd4302e4",
+      "matches": true
+    },
+    "dj-deep-analysis.json": {
+      "sha256": "287633c53909fa3428874e669daa966b6e196c50b27cf93abcc0ad44989c3cf6",
+      "matches": true
+    }
+  },
+  "physicalIPhoneTested": false
+}

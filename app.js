@@ -1482,13 +1482,17 @@ let playlists = [];
     return _decisioneSessione(profileState(profile),LS.get('mb.playback.'+profile,null),
       LS.get('mb.pausaPos.'+profile,null),LS.get('mb.sessione.attiva.v1.'+profile,null));
   }
+  function _mutoRichiestoDopoRipresa(saved) {
+    const requested=Number(volumePct);
+    return Number.isFinite(requested)?requested<=0||saved.player?._mbCommonMixMuted===true:!!saved.wasMuted;
+  }
   function _annullaRipresaAvvio(keepCheckpoint=false) {
     const saved=_ripresaAvvio;
     if(!keepCheckpoint)_ripresaAvvio=null;
     if(!saved)return;
     resumeAt=keepCheckpoint?saved.target:0;
     clearTimeout(saved.timer);if(saved.raf)cancelAnimationFrame(saved.raf);
-    if(saved.armed&&saved.player)try{saved.player.muted=saved.wasMuted}catch(_){}
+    if(saved.armed&&saved.player)try{saved.player.muted=_mutoRichiestoDopoRipresa(saved)}catch(_){}
     saved.armed=false;
     if(keepCheckpoint)saved.seekConfirmed=saved.player?.readyState>=2&&!saved.player.seeking&&
       Math.abs(Number(saved.player.currentTime)-saved.target)<=.2;
@@ -1536,7 +1540,7 @@ let playlists = [];
       // an endless muted player. Leave the checkpoint available for retry.
       p.armed=false;if(p.raf)cancelAnimationFrame(p.raf);
       _vuoleSuonare=false;_pausaEsplicita=true;
-      try{audio.pause();audio.muted=p.wasMuted}catch(_){}
+      try{audio.pause();audio.muted=_mutoRichiestoDopoRipresa(p)}catch(_){}
       LS.set('mb.suonava','no');updateProgressUI(Number(audio.currentTime)||0,totalDuration());
       syncPlayUI();toast('Posizione non ripristinata. Premi Play per riprovare.',6500);
     },6500);
@@ -1559,7 +1563,7 @@ let playlists = [];
       currentId=null;resumeAt=0;pendingSeek=null;_pausaCheckpoint=null;
       _vuoleSuonare=false;_pausaEsplicita=true;
       try{audio.pause();audio.removeAttribute('src');audio.load()}catch(_){}
-      updateProgressUI(0,0);render();updateMediaSession();tickLyrics();
+      updateProgressUI(0,0);_segnaRigaAttiva();updateMediaSession();tickLyrics();
     }
   }
   let queue = [];
@@ -19128,7 +19132,7 @@ for (const p of playlists) {
     try {
       const v = Number(volumePct) || 0;
       if (audio) audio.volume = Math.min(1, Math.max(0, v / 100));
-      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true;
+      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true||(_ripresaAvvio?.armed===true&&_ripresaAvvio.player===audio);
       if (_gain) _gain.gain.value = 1;
       if (_filtroBassi) _filtroBassi.gain.value = 0;
       return true;

@@ -1,0 +1,944 @@
+{
+  "baselineSha256": "287633c53909fa3428874e669daa966b6e196c50b27cf93abcc0ad44989c3cf6",
+  "profiles": [
+    "Ste"
+  ],
+  "restored": [
+    {
+      "key": "audio/songs/track-2.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "toSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+      "field": "structuralBeatPlans",
+      "assets": [
+        "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d"
+      ]
+    },
+    {
+      "key": "audio/songs/track-6.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-7.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-8.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-9.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-10.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-11.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-12.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-13.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-14.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-15.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-16.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-17.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-18.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-19.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-20.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-23.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-25.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-26.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-27.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-29.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-30.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-31.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-33.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-35.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-36.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-37.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-38.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-39.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-40.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-41.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-43.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-44.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-46.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-47.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-48.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-49.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-50.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-69.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-76.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-72.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-68.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-67.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-73.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-74.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-75.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-77.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-78.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-79.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-80.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-81.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-87.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-88.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-89.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-90.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-92.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-93.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-94.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-95.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-96.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-97.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-98.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-99.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-100.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-101.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-102.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-103.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-105.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-106.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-107.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-108.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-109.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-110.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-111.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-112.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-113.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-114.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-115.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-116.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-117.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-118.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-119.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-120.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-121.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-122.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-124.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-125.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-126.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-127.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-128.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-129.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-130.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-131.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-133.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-134.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-135.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-136.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-138.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-139.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-140.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-143.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-144.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-146.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-147.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-148.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-149.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-150.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-152.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-153.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-154.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-155.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-157.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-158.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-159.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-160.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-161.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-163.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-164.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-165.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-168.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-169.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-170.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-171.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-173.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-175.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-176.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-178.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-179.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-180.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-181.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-182.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-184.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-185.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-187.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-188.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-189.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-190.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-191.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-192.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-193.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-194.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-195.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-196.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-198.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-200.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-201.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-203.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-205.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-206.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-207.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-208.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-209.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-210.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-211.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-212.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-213.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-215.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-216.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-217.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-218.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-220.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-221.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-222.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-225.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-226.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-227.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-228.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-229.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-230.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-232.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-233.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-234.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-236.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-237.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-239.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-240.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-241.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-242.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-243.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-244.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-246.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-248.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-245.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-249.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-250.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-304.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-315.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-349.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-390.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-406.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-440.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-457.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-466.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-483.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-485.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-488.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-509.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-513.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-514.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-515.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-516.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-518.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-478.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-520.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-309.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-574.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-627.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-658.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-1197.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-664.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-670.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-705.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-705.mp3",
+      "toSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+      "field": "structuralBeatPlans",
+      "assets": [
+        "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311",
+        "015eaf13a1cefaacafc6f79c19c514153ea52caf5f2ebb5c41add8200c51bc97",
+        "a99ddf4a9dbd03171d7efda31dc6ceeb8ff578d7d0cbd04967e58e0f76afe57c",
+        "3924d63487ab800caabfd416e237ef58e0e6907419ebb1203525aef8b13dfe76",
+        "936d18c433c6be5a64450a136cb3a1a219fefcd77612a62032bcbafe21c8135f"
+      ]
+    },
+    {
+      "key": "audio/songs/track-724.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-855.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-954.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-963.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-977.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "field": "musicalContent"
+    },
+    {
+      "key": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "field": "musicalContent"
+    }
+  ],
+  "rejected": [
+    {
+      "key": "audio/songs/track-102.mp3",
+      "toSha": "1097b90206a5061375da4fd5a4bafb5a661dcba3",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-102.mp3",
+      "toSha": "27f89ce447b15bab428c8b83c78dd140e2b547e9",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "toSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-246.mp3",
+      "toSha": "74ea0669645e1c2b026b44eed6ef2b5ffca266d7",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    }
+  ],
+  "currentFieldsOverwritten": 0,
+  "downloadBytesModified": 0
+}

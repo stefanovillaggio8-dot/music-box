@@ -275,7 +275,14 @@ const server=http.createServer(async(req,res)=>{
      assert.equal(actualPlan.sourceBoundCue.composite.introductionExposure.accepted,true,'A rhythm certificate cannot override a masked introduction');
     }
     await shell.evaluate(p=>{
-     document.querySelector('#silent-handoff').onclick=async event=>{
+     // A fresh control gives this phase its own trusted gesture and proof.
+     // Reusing the warm-up control made a missed second dispatch look like
+     // an audio planner timeout, with the initial source still at 2 seconds.
+     const button=document.createElement('button');button.id='planned-handoff';button.textContent='Start planned original transition';
+     button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647;width:270px;height:44px';
+     window.__plannedClickEvents=[];
+     for(const type of ['pointerdown','pointerup','click'])button.addEventListener(type,event=>__plannedClickEvents.push({type,trusted:event.isTrusted}));
+     button.onclick=async event=>{
       window.__plannedSetup={stage:'handoff-requested'};
       MusicBoxBridge.mixEnableAudio(event);
       const pending=MusicBoxBridge.mixHandoff(p.fromId,Math.max(0,p.cue.begin-9));
@@ -290,9 +297,10 @@ const server=http.createServer(async(req,res)=>{
       window.__plannedHandoffs=0;
       const handoff=MusicBoxBridge.mixHandoff;
       MusicBoxBridge.mixHandoff=(...args)=>{__plannedHandoffs++;return handoff(...args)};
-     };
+     };document.body.append(button);
     },actualPlan);
-    await shell.click('#silent-handoff');
+    await shell.click('#planned-handoff');
+    await shell.waitForFunction(()=>window.__plannedSetup?.stage==='target-queued',null,{timeout:10000});
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
      setup:window.__plannedSetup,media:window.__plannedMedia,nativeActions:window.__nativeActions,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
