@@ -70,7 +70,7 @@ Le regioni dei modelli non certificano assenza di voce o frasi musicali.
 Il compilatore accetta ora un indice esplicito per esperimenti personali
 riproducibili senza confondere lo scope con il catalogo globale.
 
-## Ripristino sessione: candidata PR67
+## Ripristino sessione: PR67 pubblicata
 
 Due ore per la selezione, cinque ore per la sola cronologia casuale
 personale; coda manuale, download e altri account conservati. Ripresa reale
@@ -121,3 +121,35 @@ limiti delle intro senza beat, della voce e dei confini di frase. I dati
 completi sono in recovered-final-personal-simulation.json. La riduzione
 rispetto ai vecchi inventari 6.735 riflette i controlli audio piu' severi,
 non deve essere nascosta cambiando il denominatore.
+
+## Pubblicazione finale della sessione
+
+PR67 unita nel commit e67f3792cf33a7e6055d13216caa98eead87058a.
+Candidata esatta 6b2bfad009c57034f2beed5015c9975baa685f39: matrice Linux
+45074666518 10/10, macOS 45074664132 10/10. Suite isolata 754/756, ramo
+ricerca riallineato 767/769: gli stessi due test storici esclusi falliscono,
+nessuna nuova regressione nei rispettivi insiemi. Test Python vocal-stem
+6/6. Non si dichiara verde l'intero insieme di workflow: DJ e iPhone
+includono la suite con i due fallimenti, mentre i passi diretti del player,
+Karaoke layout, volume, storage e DOM risultano superati.
+
+Tentativi precedenti 45074082157 e 45074077112 hanno avuto timeout
+intermittenti WebKit Emanuele prima dell'avvio/della conferma del gesto.
+Aggiunta diagnostica degli eventi, nessun retry o criterio musicale ridotto.
+Entrambe le matrici finali passano; la causa dell'intermittenza non e'
+dimostrata ne' dichiarata risolta. Verifica fisica su iPhone ancora aperta.
+
+Pages 45075314041 ha distribuito il main successivo 3f60798e7c2994858b7eb96faceb9ed381770c9b,
+che conserva l'aggiornamento concorrente dei dati utente. Tutte le mappe di
+appartenenza, eliminati e solo-playlist sono invariate. Verifica HTTP con
+confronto byte per byte di sette file, incluso indice musicale: superata.
+Versione 6.738, player words=19; nessuna evidenziazione per parole riattivata.
+Rollback disponibile: music-box-v6.738-before-session-hotfix-20261122.
+
+L'analisi base delle future importazioni e la preservazione delle prove
+sono automatiche; la certificazione strutturale/render completa di ogni
+nuovo brano non e' ancora automatizzata integralmente e non viene promessa.
+La precisione delle frasi Karaoke non riceve un nuovo numero inventato.
+Su iPhone verificare ripresa da pausa, riapertura senza autoplay, sfondo,
+seek e cambio brano, modalita' aereo con un download e Karaoke normale/
+Immersive. Non cancellare cache, librerie o download per aggiornare.
