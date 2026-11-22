@@ -3,7 +3,8 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
 const start=app.indexOf('  function _decisioneSessione('),end=app.indexOf('  let queue = [];',start),source=app.slice(start,end);
 const pauseStart=app.indexOf('  function _memorizzaPausaCorrente()'),pauseEnd=app.indexOf('  // Safari can show',pauseStart),pauseSource=app.slice(pauseStart,pauseEnd);
-assert.ok(start>0&&end>start);
+const volumeStart=app.indexOf('  function _applicaAudio() {'),volumeEnd=app.indexOf('  function updateVolumeUI()',volumeStart),volumeSource=app.slice(volumeStart,volumeEnd);
+assert.ok(start>0&&end>start&&volumeStart>0&&volumeEnd>volumeStart);
 const decision=new Function(source+'return _decisioneSessione;')();
 const now=1795350000000,hour=3600000;
 for(const [minutes,restore,reset] of [[119,true,false],[121,false,false],[299,false,false],[301,false,true]]){
@@ -29,7 +30,7 @@ function fixture(age=3*hour){
  const audio={currentTime:0,readyState:0,duration:300,seeking:false,paused:true,ended:false,muted:false,
   pause(){this.paused=true;events.push('pause')},removeAttribute(x){events.push('remove-'+x)},load(){events.push('load')}};
  const api=new Function('f',`let profile='Ste',currentId='b-ste',resumeAt=0,pendingSeek=null,_pausaCheckpoint=null,
- _vuoleSuonare=false,_pausaEsplicita=true,volumePct=70,_ultimoAvanzamentoReale=${now-age};
+ _vuoleSuonare=false,_pausaEsplicita=true,volumePct=70,_gain=null,_filtroBassi=null,_ultimoAvanzamentoReale=${now-age};
  const {audio,store,events,timers}=f,LS={get:(k,d)=>store.has(k)?store.get(k):d,set:(k,v)=>store.set(k,v)},
  Date={now:()=>${now}},profileState=()=>({last:'b-ste',time:125,quando:${now-age}}),window={MusicBoxMix:{cancel:()=>events.push('cancel')}},
  document={hidden:false},setTimeout=cb=>{const id=f.next();timers.set(id,cb);return id},clearTimeout=id=>timers.delete(id),
@@ -39,12 +40,13 @@ function fixture(age=3*hour){
  updateProgressUI=t=>events.push({displayTime:t});
  const _bloccoRipresaAudio=null,_pausaSalvata=()=>_pausaCheckpoint,savePos=()=>{};
  ${source}
+${volumeSource}
  ${pauseSource}
  return {check:_controllaScadenzaSessione,trySeek:_tentaRipresaAvvio,arm:_proteggiPlayRipristinato,cancel:_annullaRipresaAvvio,
   savePause:_memorizzaPausaCorrente,
   pending:()=>_ripresaAvvio,id:()=>currentId,live:()=>{_ultimoAvanzamentoReale=${now};audio.paused=false;audio.readyState=4;audio.currentTime=200},
   prepare:()=>{_ripresaAvvio={id:currentId,profile,player:audio,target:125,armed:false,seekConfirmed:false}},
-  setVolume:v=>volumePct=v,hide:()=>document.hidden=true,setId:id=>currentId=id};` )({audio,store,events,timers,next:()=>++serial});
+  setVolume:v=>volumePct=v,applyVolume:_applicaAudio,hide:()=>document.hidden=true,setId:id=>currentId=id};` )({audio,store,events,timers,next:()=>++serial});
  return {api,audio,store,events,timers};
 }
 test('expiry clears selection at two hours but preserves shuffle, downloads, favorites, playlists and other accounts',()=>{
@@ -96,4 +98,14 @@ test('a mute or unmute requested during startup remains authoritative when the d
   f.audio.paused=false;f.audio.currentTime=125.1;f.api.trySeek();
   assert.equal(f.api.pending(),null);assert.equal(f.audio.muted,wanted===0);
  }
+});
+
+test('volume controls cannot unmute unconfirmed startup audio or an active common-mix owner',()=>{
+ const f=fixture(hour);f.api.prepare();f.api.arm();f.audio.currentTime=0;
+ f.api.setVolume(37);assert.equal(f.api.applyVolume(),true);
+ assert.equal(f.audio.muted,true,'Changing volume must not reveal the reset decoder before seek confirmation');
+ f.audio.readyState=4;f.audio.currentTime=125;f.api.trySeek();
+ f.audio.paused=false;f.audio.currentTime=125.1;f.api.trySeek();
+ assert.equal(f.api.pending(),null);assert.equal(f.audio.muted,false);assert.equal(f.audio.volume,.37);
+ f.audio._mbCommonMixMuted=true;f.api.applyVolume();assert.equal(f.audio.muted,true);
 });

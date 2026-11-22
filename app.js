@@ -1484,7 +1484,7 @@ let playlists = [];
   }
   function _mutoRichiestoDopoRipresa(saved) {
     const requested=Number(volumePct);
-    return Number.isFinite(requested)?requested<=0:!!saved.wasMuted;
+    return Number.isFinite(requested)?requested<=0||saved.player?._mbCommonMixMuted===true:!!saved.wasMuted;
   }
   function _annullaRipresaAvvio(keepCheckpoint=false) {
     const saved=_ripresaAvvio;
@@ -19132,7 +19132,7 @@ for (const p of playlists) {
     try {
       const v = Number(volumePct) || 0;
       if (audio) audio.volume = Math.min(1, Math.max(0, v / 100));
-      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true;
+      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true||(_ripresaAvvio?.armed===true&&_ripresaAvvio.player===audio);
       if (_gain) _gain.gain.value = 1;
       if (_filtroBassi) _filtroBassi.gain.value = 0;
       return true;

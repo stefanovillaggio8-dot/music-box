@@ -23,7 +23,7 @@ Gli eventi media tardivi confermano l'avanzamento prima di tentare un altro
 seek. Una pausa durante il caricamento sospende il controllo mantenendo il
 checkpoint; un seek volontario o una nuova traccia lo annullano.
 
-Prove: 12 test nuovi delle soglie e dei callback, più regressioni player,
+Prove: 13 test nuovi delle soglie e dei callback, più regressioni player,
 Karaoke e coerenza delle revisioni. Il test browser usa Il Filmografo di
 Kid Yugi, realmente appartenente a Ste, con originale SHA
 `42cb3593ee9e81e557b34aa9cb3f331d40976a7a`. Sono coperti 1h59, 2h01,
@@ -55,9 +55,14 @@ stesso aggiornamento azzera anche titolo e copertina, preservando la coda
 manuale. Una richiesta di mute/unmute durante la ripresa resta autorevole
 quando il decoder diventa udibile.
 
-Prova locale finale: 12/12 test mirati, sei scenari Chromium e aggiornamento
-WebKit del worker alla stessa versione superati. Suite completa: 753/755;
+Prova locale finale: 13/13 test mirati, sei scenari Chromium e aggiornamento
+WebKit del worker alla stessa versione superati. Suite completa: 754/756;
 i due fallimenti preesistenti riguardano esclusivamente vecchi raccordi
 Gym privi dei relativi metadati. Non vengono nascosti o aggirati e Gym non
 viene modificata. Le matrici native Linux/macOS vengono rieseguite sul
 commit finale prima del merge.
+
+Una prova aggiuntiva ha riprodotto lo smascheramento prematuro del decoder
+con un cambio volume durante il ripristino. Il controllo volume mantiene
+ora la protezione fino alla conferma del seek, rispettando anche il mute
+del buffer comune. La richiesta dell’utente viene applicata al rilascio.
