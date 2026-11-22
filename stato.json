@@ -1067,7 +1067,7 @@
    },
    "[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 7,
-    "s": 354,
+    "s": 398,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1246,8 +1246,8 @@
     "a": "Coldplay"
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 3,
-    "s": 484,
+    "v": 4,
+    "s": 521,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -1589,7 +1589,7 @@
    },
    "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 5,
-    "s": 328,
+    "s": 372,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -2596,8 +2596,8 @@
     "a": "glocky"
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 3,
-    "s": 483,
+    "v": 4,
+    "s": 520,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
