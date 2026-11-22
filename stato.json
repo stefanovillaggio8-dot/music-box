@@ -8992,13 +8992,13 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃÂ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 334,
     "t": "Torna Da Me",
     "a": "LuchÃÂ¨"
@@ -9803,13 +9803,13 @@
    },
    "[\"torna da me\",\"luchÃ¨\"]": {
     "v": 2,
-    "s": 334,
+    "s": 410,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃ¨\"]": {
     "v": 2,
-    "s": 334,
+    "s": 410,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
    },
@@ -10222,8 +10222,8 @@
     "a": "Måneskin"
    },
    "[\"la città\",\"mostro\"]": {
-    "v": 4,
-    "s": 512,
+    "v": 5,
+    "s": 587,
     "t": "LA CITTÀ",
     "a": "MOSTRO"
    },
@@ -10613,13 +10613,13 @@
    },
    "[\"torna da me\",\"luchè\"]": {
     "v": 2,
-    "s": 410,
+    "s": 423,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
    "m:2026-11|[\"torna da me\",\"luchè\"]": {
     "v": 2,
-    "s": 410,
+    "s": 423,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
@@ -10912,8 +10912,8 @@
     "a": "Modà"
    },
    "m:2026-11|[\"la città\",\"mostro\"]": {
-    "v": 3,
-    "s": 512,
+    "v": 4,
+    "s": 587,
     "t": "LA CITTÀ",
     "a": "MOSTRO"
    },
