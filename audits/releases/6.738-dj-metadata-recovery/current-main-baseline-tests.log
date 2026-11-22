@@ -935,10 +935,10 @@ test at tests\dj-partner-reservation.test.cjs:51:1
 ✖ equal validated personal postludes prepare a full successor instead of consuming its follower (118.6599ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + undefined
   - 'b-track-705'
-  
+
       at TestContext.<anonymous> (C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-recovery6738\tests\dj-partner-reservation.test.cjs:52:50)
       at async Test.run (node:internal/test_runner/test:1409:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
@@ -1009,9 +1009,9 @@ test at tests\dj-rhythmic-tail.test.cjs:75:1
 test at tests\dj-shorter-real-window.test.cjs:3:1
 ✖ the actual player planner selects the shorter four-bar intact cue and retains its historical alternative (135.6683ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   false !== true
-  
+
       at TestContext.<anonymous> (C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-recovery6738\tests\dj-shorter-real-window.test.cjs:7:53)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1402:25)
@@ -1035,9 +1035,9 @@ test at tests\dj-shorter-real-window.test.cjs:13:1
 test at tests\dj-vocal-handoff.test.cjs:6:47
 ✖ real original 934 to 1124 uses separated vocals with both recordings intact (5.9282ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   false !== true
-  
+
       at TestContext.<anonymous> (C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-recovery6738\tests\dj-vocal-handoff.test.cjs:8:9)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1402:25)
@@ -1054,9 +1054,9 @@ test at tests\dj-vocal-handoff.test.cjs:6:47
 test at tests\dj-vocal-handoff.test.cjs:6:47
 ✖ real original 700 to 521 uses separated vocals with both recordings intact (0.3242ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   false !== true
-  
+
       at TestContext.<anonymous> (C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-recovery6738\tests\dj-vocal-handoff.test.cjs:8:9)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1402:25)
@@ -1075,9 +1075,9 @@ test at tests\dj-vocal-handoff.test.cjs:6:47
 test at tests\exact-silent-suffix.test.cjs:19:1
 ✖ player requires exact raw suffix evidence and independently rendered evidence at both rates (223.934ms)
   AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
-  
+
     assert.ok(validate(fixture.cue))
-  
+
       at TestContext.<anonymous> (C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-recovery6738\tests\exact-silent-suffix.test.cjs:25:9)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1402:25)
