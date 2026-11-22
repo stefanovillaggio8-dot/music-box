@@ -2764,14 +2764,14 @@
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"il ferro di echov\",\"kid yugi\"]": {
-    "v": 2,
-    "s": 303,
+    "v": 3,
+    "s": 341,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
-    "v": 2,
-    "s": 303,
+    "v": 3,
+    "s": 341,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
@@ -3239,13 +3239,13 @@
    },
    "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 4,
-    "s": 344,
+    "s": 391,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 4,
-    "s": 344,
+    "s": 391,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
