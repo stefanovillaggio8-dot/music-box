@@ -2159,13 +2159,13 @@
    },
    "[\"intro (la bella vita)\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 595,
+    "s": 619,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
    "m:2026-11|[\"intro (la bella vita)\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 595,
+    "s": 619,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
@@ -5999,13 +5999,13 @@
    },
    "[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 345,
+    "s": 424,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 345,
+    "s": 424,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6803,13 +6803,13 @@
    },
    "[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 424,
+    "s": 438,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 3,
-    "s": 424,
+    "s": 438,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -10552,14 +10552,14 @@
     "a": "Måneskin"
    },
    "[\"ti amo ma non posso dirlo\",\"modà, bianca atzei\"]": {
-    "v": 1,
-    "s": 551,
+    "v": 2,
+    "s": 608,
     "t": "Ti amo ma non posso dirlo",
     "a": "Modà, Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modà, bianca atzei\"]": {
-    "v": 1,
-    "s": 551,
+    "v": 2,
+    "s": 608,
     "t": "Ti amo ma non posso dirlo",
     "a": "Modà, Bianca Atzei"
    },
