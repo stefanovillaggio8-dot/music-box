@@ -177,6 +177,9 @@ jobs:
       - name: Verify native original entrance after rejecting a masked cue
         if: matrix.profile == 'Ste'
         run: node tests/composite-introduction.cjs > introduction-browser-result.json
+      - name: Verify Kid Yugi session resume and separate two/five hour expiry
+        if: matrix.profile == 'Ste'
+        run: node tests/playback-session-browser.cjs > session-browser-result.json
       - name: Verify read-only offline inventory in real browser storage
         run: node tests/storage-browser.cjs > storage-browser-result.json
       - uses: actions/upload-artifact@v4
@@ -186,7 +189,31 @@ jobs:
           path: |
             composite-browser-result.json
             introduction-browser-result.json
+            session-browser-result.json
             storage-browser-result.json
             gstreamer-*.log
             linux-audio-output.txt
+          retention-days: 14
+
+
+  session-storage:
+    if: ${{ !inputs.forensic_source_capture }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps webkit
+          node tests/offline-upgrade.cjs > same-version-session-upgrade.json
+        env:
+          MUSICBOX_PREVIOUS_WORKER_FIXTURE: sw-6738-phrase.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: same-version-session-storage
+          path: same-version-session-upgrade.json
           retention-days: 14

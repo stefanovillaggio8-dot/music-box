@@ -2,9 +2,14 @@
 // Real WebKit update/activation. Synthetic bytes test persistence, not audio decoding.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),{webkit}=require('playwright');
 const root=path.resolve(__dirname,'..'),release=require('../versione.json').versione,revision=release.replace(/\./g,''),prefix='spotifynonavraiimieisoldi';
-const previousRevision=process.env.MUSICBOX_PREVIOUS_REVISION||String(Number(revision)-1);
-if(!/^\d{4,5}$/.test(previousRevision)||Number(previousRevision)>=Number(revision))throw Error('Explicit older worker revision required');
-const previous=fs.readFileSync(path.join(__dirname,'fixtures/sw-'+previousRevision+'.js'));let updated=false;
+const previousFixture=process.env.MUSICBOX_PREVIOUS_WORKER_FIXTURE;
+if(previousFixture&&!/^sw-\d{4,5}-[a-z0-9-]+\.js$/.test(previousFixture))throw Error('Explicit local worker fixture required');
+const previousRevision=previousFixture?/^sw-(\d+)/.exec(previousFixture)[1]:process.env.MUSICBOX_PREVIOUS_REVISION||String(Number(revision)-1);
+if(!/^\d{4,5}$/.test(previousRevision)||Number(previousRevision)>Number(revision)||Number(previousRevision)===Number(revision)&&!previousFixture)throw Error('Explicit previous worker revision required');
+const previous=fs.readFileSync(path.join(__dirname,'fixtures',previousFixture||'sw-'+previousRevision+'.js'));
+if(!previous.toString().includes('const CACHE = "'+prefix+'-v'+previousRevision+'"'))throw Error('Worker fixture version does not match');
+const appAsset=/<script src="(app\.js\?[^\"]+)"/.exec(fs.readFileSync(path.join(root,'index.html'),'utf8'))[1].replaceAll('&amp;','&');
+let updated=false;
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');res.setHeader('Cache-Control','no-store');
  if(url.pathname==='/upgrade.html'){res.setHeader('Content-Type','text/html');res.end('<!doctype html><title>Isolated storage upgrade</title>');return;}
@@ -42,7 +47,12 @@ const server=http.createServer((req,res)=>{
   // cannot activate over a listening session.
   await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();const next=r.waiting||r.installing;if(next)next.postMessage({type:'SKIP_WAITING'});});
   // Wait for the new worker to activate and finish its migration, not just install.
-  await page.waitForFunction(async({prefix,revision,previousRevision})=>{const r=await navigator.serviceWorker.getRegistration();return !r.installing&&!r.waiting&&r.active?.state==='activated'&&!(await caches.keys()).includes(prefix+'-v'+previousRevision);},{prefix,revision,previousRevision},{timeout:60000});
+  await page.waitForFunction(async({prefix,revision,previousRevision,appAsset})=>{
+   const r=await navigator.serviceWorker.getRegistration(),names=await caches.keys();
+   if(r.installing||r.waiting||r.active?.state!=='activated')return false;
+   if(previousRevision===revision)return !!await(await caches.open(prefix+'-v'+revision)).match(new URL(appAsset,location.href));
+   return !names.includes(prefix+'-v'+previousRevision);
+  },{prefix,revision,previousRevision,appAsset},{timeout:60000});
   const proof=await page.evaluate(async({seed,prefix})=>{
    const exact=[];for(const s of seed.sentinels)exact.push((await(await(await caches.open(s.name)).match(s.url))?.text())===s.body);
    let legacyRetained=false;for(const name of await caches.keys()){const r=await(await caches.open(name)).match(seed.legacyUrl);if(r&&await r.text()==='legacy-original-download')legacyRetained=true;}
@@ -62,8 +72,9 @@ const server=http.createServer((req,res)=>{
   },prefix);
   assert.equal(refreshed,true,'explicit new-recording analysis refresh must return the fresh network metadata');
   await context.setOffline(true);
-  const offline=await page.evaluate(async revision=>{const r=await fetch('/app.js?v='+revision+'&words=16');return {status:r.status,body:await r.text()};},revision);
+  const offline=await page.evaluate(async appAsset=>{const r=await fetch('/'+appAsset);return {status:r.status,body:await r.text()};},appAsset);
   assert.equal(offline.status,200);assert.ok(offline.body.includes('const APP_VERSION = "'+release+'";'));
+  assert.equal(offline.body,fs.readFileSync(path.join(root,'app.js'),'utf8'),'Offline response must be the actual NEW player, even when the release number is unchanged');
   console.log(JSON.stringify({method:'actual-webkit-service-worker-upgrade-v1',from:previousRevision[0]+'.'+previousRevision.slice(1),to:release,physicalIPhone:false,originalMediaDecoding:false,proof,freshDJIndexRevalidated:refreshed,offlineNewPlayer:true},null,2));
   await context.close();
  }finally{await browser?.close();server.close();}
