@@ -27,7 +27,7 @@ const checked=new Map(),report={baselineSha256:crypto.createHash('sha256').updat
 function valid(cue,source,target){
  const c=cue?.composite,e=c?.introductionExposure;
  if(cue?.sourceSha!==source||cue?.targetSha!==target||!context.MusicBoxCompositeMix.supports(cue)||
-  e?.method!=='rendered-introduction-band-masking-screen-v2'||e.accepted!==true||
+  e?.method!=='rendered-introduction-band-masking-screen-v2'||typeof e.accepted!=='boolean'||
   e.sourceSha!==source||e.targetSha!==target||e.assetSha256!==c.sha256)return false;
  if(!checked.has(c.sha256)){
   const file=path.join(root,c.path);
@@ -48,7 +48,10 @@ for(const [key,profilesHere] of owners){
   if(!cues.length){report.rejected.push({key,toSha:sha,field,reason:'no-current-render-and-exposure-proof'});continue;}
   const recovered={...record,cue:cues[0]};if(record.cues)recovered.cues=cues;
   dest[field]??={};dest[field][sha]=recovered;
-  report.restored.push({key,toSha:sha,field,assets:cues.map(c=>c.composite.sha256)});
+  // Negative receipts are essential too: losing one would let the planner
+  // retry the same masked opening as a quiet, unverified underlay.
+  report.restored.push({key,toSha:sha,field,acceptedCues:cues.filter(c=>c.composite.introductionExposure.accepted).length,
+   vetoedCues:cues.filter(c=>!c.composite.introductionExposure.accepted).length,assets:cues.map(c=>c.composite.sha256)});
  }
  if(dest.pcmIntroSeconds==null&&Object.keys(dest.pcmBeatPlans||{}).length&&Number.isFinite(old.pcmIntroSeconds)&&old.pcmIntroSeconds>0&&old.pcmIntroSeconds<=24)
   dest.pcmIntroSeconds=old.pcmIntroSeconds;
