@@ -215,7 +215,7 @@ test("headphone Play starts native media before seek and storage",()=>{
  const code=section(app,"function _riproduciVolontaria(","async function togglePlay()");
  const trace=[];
  const make=()=>new Function("env",
-  'const {window,audio,trace}=env;'+
+  'const {window,audio,trace}=env;const _ripresaAvvio=null;'+
   'let _pausaEsplicita=true,_vuoleSuonare=false,_ultimoScorrimento=0,'+
   '_silenziDiFila=0,_timerRiprove=null,_timerAiuto=null;'+
   'const _segna=()=>trace.push("log"),'+
@@ -263,7 +263,7 @@ test("iPhone pause keeps Now Playing metadata and native player bound",()=>{
   "syncPlayUI=()=>events.push('ui'),"+
   "_memorizzaPausaCorrente=()=>events.push('checkpoint'),"+
   "_segnaIntenzioneSono=()=>events.push('storage'),"+
-  "_nascondiAiuto=()=>{},_segna=()=>{};"+
+  "_nascondiAiuto=()=>{},_segna=()=>{},_annullaRipresaAvvio=()=>{};"+
   body+"return {pause:_pausaVolontaria,flags:()=>({paused:_pausaEsplicita,wants:_vuoleSuonare})};")({audio:fakeAudio,events});
  pause.pause();
  assert.deepEqual(events.slice(0,4),["native-pause","stats","now-playing","state"],
