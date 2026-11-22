@@ -1066,8 +1066,8 @@
     "a": "Coez"
    },
    "[\"davverodavvero\",\"artie 5ive\"]": {
-    "v": 6,
-    "s": 327,
+    "v": 7,
+    "s": 354,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1588,8 +1588,8 @@
     "a": "Gemitaiz, nayt"
    },
    "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
-    "v": 4,
-    "s": 301,
+    "v": 5,
+    "s": 328,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -3083,13 +3083,13 @@
    },
    "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 2,
-    "s": 591,
+    "s": 638,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
    "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 2,
-    "s": 591,
+    "s": 638,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
