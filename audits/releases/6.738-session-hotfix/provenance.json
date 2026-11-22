@@ -9,15 +9,16 @@
     "mix-intelligente.js": "29ee23c5809f415390929b1a7bbf2dd6a2853ed23235c6b2671e56e075deb9aa",
     "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
     "audio-composite-core.mjs": "129957b6215b44761756b1e18138fb0028a634ae4e6d81f0fd4dd8a5c9d9948c",
-    "dj-deep-analysis.json": "e9157f716bad01173b297b99d22bd08c3d28c6ed74e2cdbe3927c312132e23a7",
+    "dj-deep-analysis.json": "0b7f54be44b97114af7a1ecaa2a6267cc19c75c33bfa58eaa018098d33dc7c46",
     "versione.json": "91a49311315faf3641b4692158a87153ceff71c42aa915812a673e6e28edf8dd",
-    "stato.json": "d6615590e18630aaef389a062e9264cc4d41c56284dce7e8a3644ce6ed5b3510",
+    "stato.json": "d5b664ed8d5db249e70498e352d44328763ce764053416e9711bfbb997c8b2fc",
     "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
     "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
   },
   "newFiles": {
-    "app.js": "d3bb5c4c0d928df099a5f777b46eb985e151ba6894ad3d4d3747b58637ce8bf7",
+    "app.js": "dcdceccb2b3ba4c36dd24cdadcd905d08928b3ce53357ff4e5df5a18241a6aaf",
     "index.html": "64071fb7f570c7fd9d30e0958cc5419a2e2fad01986c162af94cae71a38ecbd2",
     "sw.js": "1c66cade751d8a12eb4a49dbcaa13d0f30c31e36d6c552f23feea946220c71d6"
-  }
+  },
+  "synchronizedMain": "3e920d94ef63a74a6fef50fc8445fb7282c3a686"
 }

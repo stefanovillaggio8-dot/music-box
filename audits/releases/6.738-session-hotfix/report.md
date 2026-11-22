@@ -23,7 +23,7 @@ Gli eventi media tardivi confermano l'avanzamento prima di tentare un altro
 seek. Una pausa durante il caricamento sospende il controllo mantenendo il
 checkpoint; un seek volontario o una nuova traccia lo annullano.
 
-Prove: 11 test nuovi delle soglie e dei callback, più regressioni player,
+Prove: 12 test nuovi delle soglie e dei callback, più regressioni player,
 Karaoke e coerenza delle revisioni. Il test browser usa Il Filmografo di
 Kid Yugi, realmente appartenente a Ste, con originale SHA
 `42cb3593ee9e81e557b34aa9cb3f331d40976a7a`. Sono coperti 1h59, 2h01,
@@ -46,3 +46,18 @@ La matrice nativa della candidata e i risultati definitivi vengono registrati
 prima della pubblicazione. WebKit usa anche viewport e user agent iPhone,
 ma nessun iPhone fisico è certificato. La precisione vocale delle frasi e la
 copertura musicale di Smart Mix restano obiettivi separati e non completati.
+
+## Ultima verifica prima della pubblicazione
+
+Il test di rientro in primo piano ha riprodotto un difetto concreto: la
+selezione era scaduta ma il titolo Il Filmografo restava visibile. Ora lo
+stesso aggiornamento azzera anche titolo e copertina, preservando la coda
+manuale. Una richiesta di mute/unmute durante la ripresa resta autorevole
+quando il decoder diventa udibile.
+
+Prova locale finale: 12/12 test mirati, sei scenari Chromium e aggiornamento
+WebKit del worker alla stessa versione superati. Suite completa: 753/755;
+i due fallimenti preesistenti riguardano esclusivamente vecchi raccordi
+Gym privi dei relativi metadati. Non vengono nascosti o aggirati e Gym non
+viene modificata. Le matrici native Linux/macOS vengono rieseguite sul
+commit finale prima del merge.

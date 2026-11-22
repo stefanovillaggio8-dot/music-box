@@ -74,7 +74,22 @@ async function main(){
     await page.click('#btnPlay',{force:true});const paused=await page.evaluate(()=>MusicBoxBridge.audio().currentTime);
     await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>MusicBoxBridge?.currentId()==='b-track-27',null,{timeout:30000});
     await page.click('#btnPlay',{force:true});await page.waitForFunction(t=>!MusicBoxBridge.audio().paused&&!MusicBoxBridge.audio().muted&&MusicBoxBridge.audio().currentTime>=t-.2,paused,{timeout:15000});
-    results.push({browser:name,minutes,resetDecoder,noAnimationFrames:!!noAnimationFrames,restoredTime:played.time,refreshPosition:paused,sourceSha:row.sha,noAutoplay:true});
+    let foregroundExpiry=null;
+    if(!resetDecoder&&!noAnimationFrames){
+     await page.click('#btnPlay',{force:true});
+     foregroundExpiry=await page.evaluate(()=>{
+      if(MusicBoxBridge.mixEnqueue(['b-track-50'])!==1)throw Error('Current Ste manual queue not prepared');
+      const queue=localStorage.getItem('mb.queue'),realNow=Date.now.bind(Date);
+      Date.now=()=>realNow()+121*60000;
+      document.dispatchEvent(new Event('visibilitychange'));
+      return {id:MusicBoxBridge.currentId(),title:document.querySelector('#playerTitle').textContent,
+       cover:document.querySelector('#playerArt').style.backgroundImage,queuePreserved:queue===localStorage.getItem('mb.queue')};
+     });
+     assert.equal(foregroundExpiry.id,null,'Foreground restoration expires before other visibility callbacks refresh the old saved time');
+     assert.equal(foregroundExpiry.title.trim(),'—','No ghost song title may remain after expiry');
+     assert.equal(foregroundExpiry.cover.includes('url('),false);assert.equal(foregroundExpiry.queuePreserved,true);
+    }
+    results.push({browser:name,minutes,resetDecoder,noAnimationFrames:!!noAnimationFrames,restoredTime:played.time,refreshPosition:paused,foregroundExpiry,sourceSha:row.sha,noAutoplay:true});
    }else{
     assert.equal(initial.id,null);assert.equal(initial.time,0);
     assert.equal(Object.keys(initial.shuffle).length===0,minutes>=300);
