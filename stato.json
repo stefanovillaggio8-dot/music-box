@@ -3437,13 +3437,13 @@
    },
    "[\"victoria\",\"tony boy\"]": {
     "v": 6,
-    "s": 350,
+    "s": 420,
     "t": "Victoria",
     "a": "Tony Boy"
    },
    "m:2026-11|[\"victoria\",\"tony boy\"]": {
     "v": 6,
-    "s": 350,
+    "s": 420,
     "t": "Victoria",
     "a": "Tony Boy"
    },
@@ -4186,14 +4186,14 @@
     "a": "Jovanotti"
    },
    "[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 6,
-    "s": 723,
+    "v": 7,
+    "s": 734,
     "t": "Hai visto mai",
     "a": "Frah Quintale"
    },
    "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 6,
-    "s": 723,
+    "v": 7,
+    "s": 734,
     "t": "Hai visto mai",
     "a": "Frah Quintale"
    },
