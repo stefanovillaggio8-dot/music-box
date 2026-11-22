@@ -2297,13 +2297,13 @@
    },
    "[\"la prima volta\",\"negromaro\"]": {
     "v": 4,
-    "s": 554,
+    "s": 610,
     "t": "La prima volta",
     "a": "Negromaro"
    },
    "m:2026-11|[\"la prima volta\",\"negromaro\"]": {
     "v": 4,
-    "s": 554,
+    "s": 610,
     "t": "La prima volta",
     "a": "Negromaro"
    },
@@ -3808,14 +3808,14 @@
     "a": "Katy Perry"
    },
    "[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 3,
-    "s": 551,
+    "v": 4,
+    "s": 573,
     "t": "Terr1",
     "a": "Kid Yugi, Geology"
    },
    "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 3,
-    "s": 551,
+    "v": 4,
+    "s": 573,
     "t": "Terr1",
     "a": "Kid Yugi, Geology"
    },
