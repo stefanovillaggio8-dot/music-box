@@ -20,9 +20,47 @@ on:
       - '.github/workflows/dj-structural-integration.yml'
       - '.github/workflows/dj-real-audio-audit.yml'
   workflow_dispatch:
+    inputs:
+      native_clean_evaluation:
+        description: 'Read-only Ste clean-tail native decode experiment; never installs playback plans'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
+  native-clean-evaluation:
+    if: github.event_name == 'workflow_dispatch' && inputs.native_clean_evaluation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser backends
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Provide Linux native media output
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=musicbox_eval rate=48000 channels=2
+          pactl set-default-sink musicbox_eval
+      - name: Fetch only the two current Ste originals with Git identity checks
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json
+      - name: Measure nominal clocks and original waveform at both sample rates
+        run: node tools/ste-native-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json native-clean-evaluation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-native-clean-evaluation-${{ runner.os }}
+          path: native-clean-evaluation.json
   personal-scope:
     runs-on: ubuntu-latest
     timeout-minutes: 3
