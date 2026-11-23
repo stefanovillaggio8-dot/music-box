@@ -3695,13 +3695,13 @@
    },
    "[\"solo per te\",\"negromaro\"]": {
     "v": 2,
-    "s": 399,
+    "s": 479,
     "t": "Solo Per Te",
     "a": "Negromaro"
    },
    "m:2026-11|[\"solo per te\",\"negromaro\"]": {
     "v": 2,
-    "s": 399,
+    "s": 479,
     "t": "Solo Per Te",
     "a": "Negromaro"
    },
@@ -5626,14 +5626,14 @@
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
-    "s": 418,
+    "v": 2,
+    "s": 485,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
-    "s": 418,
+    "v": 2,
+    "s": 485,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -6431,13 +6431,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 2,
-    "s": 485,
+    "s": 502,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 2,
-    "s": 485,
+    "s": 502,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -7505,13 +7505,13 @@
    },
    "[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 623,
+    "s": 675,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 623,
+    "s": 675,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
@@ -8315,13 +8315,13 @@
    },
    "[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 675,
+    "s": 707,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 675,
+    "s": 707,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
@@ -8669,13 +8669,13 @@
    },
    "[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 546,
+    "s": 548,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 546,
+    "s": 548,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
@@ -9479,13 +9479,13 @@
    },
    "[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 548,
+    "s": 629,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 548,
+    "s": 629,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
@@ -10289,13 +10289,13 @@
    },
    "[\"è sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 629,
+    "s": 637,
     "t": "È sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"è sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 629,
+    "s": 637,
     "t": "È sempre bello",
     "a": "Coez"
    },
