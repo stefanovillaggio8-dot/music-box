@@ -16,6 +16,9 @@ assert.ok(lyricsBegin>0&&lyricsEnd>lyricsBegin,"full lyrics markup must exist");
 const lyricsFragment=html.slice(lyricsBegin,lyricsEnd);
 assert.match(css,/\.im-root\.im-focus \.im-karaoke/);
 assert.match(css,/env\(safe-area-inset-top\)/);
+assert.match(fragment,/class="im-aura"/,"album artwork has its animated halo");
+assert.match(fragment,/class="im-mini-spectrum"/,"decorative mini spectrum exists");
+assert.match(css,/@keyframes im-orbit/,"cinematic orbit has a keyframe");
 assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
  "Immersive cannot create a second audio engine");
 const fixture=[
@@ -28,10 +31,16 @@ const fixture=[
  'window.fakeAudio={currentTime:12,duration:240,paused:false};',
  'window.fakeSong={id:"track-a",title:"Notte stellata",artist:"Artista di prova",cover:""};',
  'window.fakeCalls={toggle:0,next:0,prev:0};',
+ 'window.fakeLyricsOffset=0;',
+ 'window.fakeDelaySaves=[];',
  'window.fakeLyrics={text:"",synced:Array.from({length:26},(_,i)=>({t:i*8,text:"Riga karaoke originale di prova "+(i+1)}))};',
  'window.MusicBoxBridge={',
  ' audio:()=>fakeAudio,currentId:()=>fakeSong.id,',
  ' allTracks:()=>[fakeSong],lyricsData:()=>fakeLyrics,',
+ ' lyricsDelay:()=>fakeLyricsOffset,',
+ ' setLyricsDelay:(id,value)=>{if(id!==fakeSong.id||!Number.isFinite(value))return false;',
+ '   fakeLyricsOffset=Math.max(-8,Math.min(8,Math.round(value*10)/10));',
+ '   fakeDelaySaves.push({id,value:fakeLyricsOffset});return true;},',
  ' togglePlayback:()=>{fakeAudio.paused=!fakeAudio.paused;fakeCalls.toggle++},',
  ' next:()=>{fakeCalls.next++;fakeSong.id="track-b";fakeSong.title="Secondo brano"},',
  ' previous:()=>{fakeCalls.prev++;fakeSong.id="track-c";fakeSong.title="Primo brano"}',
@@ -84,6 +93,24 @@ async function run(){
      overflow:root.scrollWidth-root.clientWidth};
    });
    assert.equal(state.title,"Notte stellata");
+   const atmosphere=await page.evaluate(()=>({
+    hue:getComputedStyle(document.getElementById("immersivePanel")).getPropertyValue("--im-hue").trim(),
+    halo:!!document.querySelector(".im-aura"),
+    satellites:document.querySelectorAll(".im-aura i").length,
+    glowDisplay:getComputedStyle(document.querySelector(".im-ambient-bloom")).display,
+    glowOpacity:parseFloat(getComputedStyle(document.querySelector(".im-ambient-bloom")).opacity),
+    spectrumWidth:document.querySelector(".im-mini-spectrum").getBoundingClientRect().width,
+    spectrum:document.querySelectorAll(".im-mini-spectrum span").length,
+    entering:document.getElementById("immersivePanel").classList.contains("im-track-enter")
+   }));
+   assert.match(atmosphere.hue,/^\d+$/,"track has a themed color");
+   assert.equal(atmosphere.halo,true);
+   assert.equal(atmosphere.satellites,2,"orbit dots are included in stage");
+   assert.equal(atmosphere.glowDisplay,"block","glow must actually render on phones");
+   assert.ok(atmosphere.glowOpacity>=.5,"glow must not be almost transparent");
+   assert.ok(atmosphere.spectrumWidth>=65,"decorative spectrum must be noticeable");
+   assert.equal(atmosphere.spectrum,9);
+   assert.equal(atmosphere.entering,true);
    assert.equal(state.lyricMode,"SINCRONIZZATO PER FRASI");
    assert.match(state.active,/prova 2/);
    assert.ok(state.coverWidth>120,"album cover remains visible");
@@ -94,9 +121,23 @@ async function run(){
    assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),true,
     "Playing state must show the pause bars");
    assert.ok(state.overflow<=3,"no horizontal overflow: "+size.name);
+   assert.equal(await page.locator("#imSyncToggle").isVisible(),true,
+    "timed lyrics show an accessible sync control");
+   await page.locator("#imSyncToggle").click();
+   assert.equal(await page.locator("#imSyncToggle").getAttribute("aria-expanded"),"true");
+   assert.equal(await page.locator("#imSyncValue").textContent(),"0,0 s");
+   await page.locator("#imSyncEarlier").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),-.2,"earlier adjusts the existing saved delay");
+   assert.equal(await page.locator("#imSyncValue").textContent(),"-0,2 s");
+   await page.locator("#imSyncLater").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),0);
+   await page.locator("#imSyncEarlier").click();
+   await page.locator("#imSyncReset").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),0,"reset restores the baseline");
+   await page.locator("#imSyncToggle").click();
+   assert.equal(await page.locator("#imSyncPanel").isHidden(),true);
    await page.evaluate(()=>{
-     fakeAudio.currentTime=8.1;
-     MusicBoxBridge.lyricsDelay=()=>.25;
+     fakeAudio.currentTime=8.1;fakeLyricsOffset=.25;
    });
    await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 1"));
    await page.evaluate(()=>{fakeAudio.currentTime=8.4;});
@@ -154,6 +195,56 @@ async function run(){
    assert.equal(await page.locator("#imFocusToggle").getAttribute("aria-pressed"),"true");
    await page.waitForFunction(()=>document.getElementById("imKaraoke").clientHeight>=220,null,{timeout:4000});
    assert.ok(await page.locator("#imKaraoke").evaluate(el=>el.clientHeight)>=220,"focus lyric stage should expand");
+   // Tap a timed phrase: jump to its LRC onset plus the user's delay,
+   // never change the playback state and keep the original phrase intact.
+   const phrase=page.locator("#imKaraoke .im-line").nth(5);
+   assert.equal(await phrase.getAttribute("role"),"button");
+   assert.equal(await phrase.getAttribute("tabindex"),"0");
+   assert.match(await phrase.getAttribute("aria-label"),/Vai a 0:40/);
+   await page.evaluate(()=>{fakeAudio.currentTime=12;});
+   await phrase.evaluate(row=>row.click());
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),40.25,
+    "clicking a synced phrase jumps to its true media-clock cue plus lyric delay");
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 6"));
+   assert.equal(await page.evaluate(()=>fakeAudio.paused),false,"seeking must not pause playback");
+   // Keyboard users can navigate the same synced lines.
+   await page.locator("#imKaraoke .im-line").nth(3).press("Enter");
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),24.25);
+   await page.locator("#imKaraoke .im-line").nth(4).press("Space");
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25);
+   // In a shared listening room a local time assignment is forbidden.
+   await page.evaluate(()=>{
+    window.fakeRoomSeeks=[];
+    window.MusicBoxRoom={isActive:()=>true,shouldPlay:()=>true,
+     control:(name,payload)=>fakeRoomSeeks.push({name,payload})};
+    document.querySelectorAll("#imKaraoke .im-line")[8].click();
+   });
+   const roomSeek=await page.evaluate(()=>window.fakeRoomSeeks);
+   assert.deepEqual(roomSeek,[{name:"seek",payload:{seconds:64.25}}]);
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25,
+    "shared room routes seek to room owner instead of changing local audio");
+   await page.evaluate(()=>{delete window.MusicBoxRoom;});
+   // An unseekable audio source should fail closed, not set invalid time.
+   await page.evaluate(()=>{
+    fakeAudio.duration=NaN;
+    document.querySelectorAll("#imKaraoke .im-line")[6].click();
+   });
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25);
+   await page.evaluate(()=>{fakeAudio.duration=240;});
+   // Dragging a lyric to scroll must not accidentally jump playback
+   // even if Safari synthesizes a click after pointer/touch movement.
+   const afterDrag=await page.evaluate(()=>{
+    const row=document.querySelectorAll("#imKaraoke .im-line")[9],
+      before=fakeAudio.currentTime;
+    const opts={bubbles:true,clientX:110,clientY:220,button:0};
+    row.dispatchEvent(new PointerEvent("pointerdown",opts));
+    row.dispatchEvent(new PointerEvent("pointermove",{...opts,clientY:275}));
+    row.dispatchEvent(new PointerEvent("pointerup",{...opts,clientY:275}));
+    row.click();
+    return {before,after:fakeAudio.currentTime};
+   });
+   assert.equal(afterDrag.after,afterDrag.before,
+    "a drag across a lyric must not seek");
    await page.locator("#imToggle").click();
    await page.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
    assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),1);
@@ -172,6 +263,21 @@ async function run(){
    await page.locator("#imNext").click();
    await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Secondo brano");
    assert.equal(await page.evaluate(()=>window.fakeCalls.next),1);
+   // Untimed lyrics do not have an acoustic onset; they must remain readable
+   // but not clickable and must never fabricate a seek position.
+   await page.evaluate(()=>{
+    window.fakeLyrics={text:"Testo non sincronizzato\\nSeconda frase",synced:[]};
+    fakeAudio.currentTime=27;
+   });
+   await page.waitForFunction(()=>document.getElementById("imLyricModeLabel").textContent==="TESTO NON SINCRONIZZATO");
+   const plain=page.locator("#imKaraoke .im-line").first();
+   assert.equal(await plain.getAttribute("role"),null);
+   assert.equal(await page.locator("#imSyncToggle").isHidden(),true,
+    "untimed text cannot be edited as synchronized phrases");
+   await plain.evaluate(row=>row.click());
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),27,
+    "untimed text must never seek");
+
    await page.evaluate(()=>{
     const el=document.getElementById("imKaraoke");
     // Touch() is not directly constructible on some desktop WebKit builds.
@@ -243,6 +349,34 @@ async function run(){
     karaokeScrolled:karaoke,focus:true,controls:true,errors:errors.length}));
    await context.close();
   }
+  // Non-reduced-motion mode must actually animate, while pause halts the
+  // decorative movement without creating a second audio engine.
+  const motionContext=await browser.newContext({viewport:{width:390,height:844},
+   isMobile:true,hasTouch:true,reducedMotion:"no-preference"});
+  try{
+   const motionPage=await motionContext.newPage();
+   await motionPage.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"load"});
+   await motionPage.locator("#btnImmersive").click();
+   await motionPage.waitForFunction(()=>document.querySelector(".im-aura")&&
+    document.getElementById("immersivePanel").classList.contains("im-track-enter"));
+   const animation=await motionPage.evaluate(()=>({
+    orbit:getComputedStyle(document.querySelector(".im-aura"),"::before").animationName,
+    satellite:getComputedStyle(document.querySelector(".im-aura i")).animationName,
+    ambient:getComputedStyle(document.querySelector(".im-ambient-bloom")).animationName,
+    art:getComputedStyle(document.querySelector(".im-cover")).animationName,
+    rootOverflow:document.querySelector(".im-root").scrollWidth-document.querySelector(".im-root").clientWidth
+   }));
+   assert.match(animation.orbit,/im-orbit/,"mobile halo rotates in normal motion");
+   assert.match(animation.satellite,/im-orbit/,"mobile orbiting light rotates");
+   assert.match(animation.ambient,/im-aurora-alive/,"mobile ambient scene actually moves");
+   assert.match(animation.art,/im-album-breathe-visible/,"mobile cover motion must be visible");
+   assert.ok(animation.rootOverflow<=3,"motion layers do not widen mobile page");
+   await motionPage.locator("#imToggle").click();
+   await motionPage.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
+   const state=await motionPage.evaluate(()=>
+    getComputedStyle(document.querySelector(".im-aura"),"::before").animationPlayState);
+   assert.equal(state,"paused","ambient animation pauses with playback");
+  }finally{await motionContext.close()}
  }finally{await browser.close()}
 }
 run().then(()=>server.close(),e=>{

@@ -2,6 +2,30 @@
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");
 const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
 const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+test("mismatched historical lyrics cannot override the actual thasup recording",()=>{
+ const start=app.indexOf("  const _titoliOriginaliTesti=new Map();");
+ const stop=app.indexOf("  function _statoKaraokeBrano(id){",start);
+ assert.ok(start>0&&stop>start,"player has a bounded lyric identity guard");
+ const builtin=[
+  {title:"dimmi che ce'",file:"songs/track-64.mp3"},
+  {title:"Dimmi Che C''",file:"songs/track-74.mp3"}
+ ];
+ const norm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .toLowerCase().replace(/[^a-z0-9]+/g,"");
+ const belongs=new Function("BUILTIN","_idBranoStabile","titleCompatible",
+  app.slice(start,stop)+"return _testoCoerenteConBrano;"
+ )(builtin,b=>"b-"+b.file.split("/").pop().replace(/\.mp3$/i,""),
+  (a,b)=>norm(a)===norm(b));
+ const lyrics=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ assert.equal(lyrics["b-track-64"]?.title,"Albachiara");
+ assert.equal(belongs("b-track-64",lyrics["b-track-64"]),false,
+  "stale Albachiara must not display for Dimmi che c'è");
+ assert.equal(belongs("b-track-74",lyrics["b-track-74"]),true,
+  "the second recording still uses its correctly titled source");
+ assert.equal(belongs("b-track-64",{title:"dimmi che c'è",synced:"[00:02.00] Testo"}),true,
+  "a corrected source remains eligible");
+ assert.match(app,/setLyricsDelay:\(id,value\)=>/);
+});
 test("LRCLIB search uses first artist and never exact-get after successful empty search",()=>{
  const from=app.indexOf('const endpoint = "https://lrclib.net"'),to=app.indexOf("if (options.syncedOnly) return null;",from);
  const block=app.slice(from,to);
@@ -668,8 +692,8 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"||file==="style.css"?release:"6734";
-  const cacheSuffix=file==="style.css"?"lyrics=4":
-    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"10":"20");
+  const cacheSuffix=file==="style.css"?"lyrics=8":
+    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"13":"22");
   const assetUrl=file+"?v="+revision+"&"+cacheSuffix;
   assert.ok(html.includes(assetUrl.replace("&","&amp;")));
   assert.equal(sw.split(assetUrl).length-1,2);
@@ -714,7 +738,7 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
  const first=app.indexOf("const _testoIdentitaCache=new WeakMap()");
  const end=app.indexOf("// A foreground, rate-limited upgrade",first);
  assert.ok(first>0&&end>first,"read the actual lyric identity and selection code");
- const code=app.slice(first,end);
+ const code="const _testoCoerenteConBrano=()=>true;\n"+app.slice(first,end);
  const am=builtin["b-track-205"],pa=builtin["b-track-28"],jo=builtin["b-track-213"];
  assert.equal(am.title,"Amelie");
  assert.equal(pa.title,"Paganini");
@@ -1334,4 +1358,28 @@ test("real word ASR starts before slow LRCLIB fallback, and verified words survi
   app.indexOf("async function _salvaParoleDallAudio("));
  assert.match(provider,/const newest=_testoLocaleVerificato\(id\);/);
  assert.match(provider,/if\(newest\?\.audioWordSynced&&newest\.wordRows\?\.some/);
+});
+
+
+test("empty timed LRC lines preserve the next phrase's original timestamp",()=>{
+ const start=app.indexOf("  function parseSynced(synced) {");
+ const end=app.indexOf("  function _righeTestoConParole(",start);
+ assert.ok(start>=0&&end>start);
+ const parse=new Function("window",app.slice(start,end)+"return parseSynced;")({});
+ for(const newline of ["\n","\r\n"]){
+  assert.deepEqual(parse(["[00:01.20] Prima","[00:04.00]  ","[00:08.10] Seconda","[00:12.00]"].join(newline)),[
+   {t:1.2,text:"Prima"},{t:4,text:""},{t:8.1,text:"Seconda"},{t:12,text:""}
+  ]);
+ }
+ const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ let checked=0;
+ for(const entry of Object.values(catalog)){
+  const synced=entry.synced||"";
+  if(!/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\][ \t]*\r?\n[ \t]*\[\d{1,3}:\d{2}/.test(synced)||/<\d{1,3}:\d{2}/.test(synced))continue;
+  const rows=parse(synced);
+  assert.equal(rows.length,[...synced.matchAll(/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]/g)].length);
+  assert.ok(rows.every(row=>!/^\[\d{1,3}:\d{2}/.test(row.text)));
+  checked++;
+ }
+ assert.ok(checked>0,"catalog contains real blank-cue regression examples");
 });

@@ -4,6 +4,7 @@
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
 let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
 let lastLyricsSignature="",lyricRows=[],lyricTimed=false,lastLyricScrollAt=0;
+let lyricPointer=null,suppressLyricTapUntil=0;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
  const value=t?.cover;
@@ -13,6 +14,58 @@ function safeCover(t){
   if(uri.protocol==="https:"||uri.protocol==="http:"||uri.protocol==="blob:"||uri.protocol==="data:")return uri.href;
  }catch(e){}
  return "";
+}
+// The atmosphere follows the track identity without reading artwork pixels,
+// touching the audio pipeline, or requesting a second decoder on iOS.
+function atmosphereForTrack(id,title,artist){
+ const root=$("immersivePanel");if(!root)return;
+ const key=String(id||"")+"|"+String(title||"")+"|"+String(artist||"");
+ let hash=2166136261;
+ for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619)>>>0;
+ // A restrained set of cinematic hues; the real artwork remains the background.
+ const palette=[206,224,248,267,290,319,348,176];
+ const hue=palette[hash%palette.length];
+ root.style.setProperty("--im-hue",String(hue));
+ root.style.setProperty("--im-hue-alt",String((hue+56)%360));
+ root.classList.remove("im-track-enter");
+ // Restart a short entrance animation only when the actual recording changes.
+ // This is one layout read per track change, never per audio frame.
+ void root.offsetWidth;
+ root.classList.add("im-track-enter");
+}
+
+function closeSyncControls(){
+ const panel=$("imSyncPanel"),button=$("imSyncToggle");
+ if(panel)panel.hidden=true;
+ button?.setAttribute("aria-expanded","false");
+}
+function updateSyncValue(){
+ const id=api()?.currentId?.();
+ const value=Number(api()?.lyricsDelay?.(id));
+ const seconds=Number.isFinite(value)?value:0;
+ const label=$("imSyncValue");
+ if(label)label.textContent=(seconds>0?"+":"")+seconds.toFixed(1).replace(".",",")+" s";
+}
+function changeSyncDelay(amount){
+ if(!opened||!lyricTimed)return;
+ const bridge=api(),id=bridge?.currentId?.();
+ if(!id||String(id)!==String(lastLyricsId))return;
+ const current=Number(bridge?.lyricsDelay?.(id));
+ const previous=Number.isFinite(current)?current:0;
+ const value=Math.max(-8,Math.min(8,Math.round((previous+amount)*10)/10));
+ if(bridge?.setLyricsDelay?.(id,value)!==true)return;
+ updateSyncValue();
+ // Refresh the position of the phrase using the corrected media clock.
+ renderLyrics(false);
+}
+function toggleSyncControls(){
+ if(!opened||!lyricTimed||$("imSyncToggle")?.hidden)return;
+ const panel=$("imSyncPanel"),button=$("imSyncToggle");
+ if(!panel||!button)return;
+ const show=panel.hidden;
+ panel.hidden=!show;
+ button.setAttribute("aria-expanded",String(show));
+ if(show)updateSyncValue();
 }
 function fillCurrent(){
  const b=api(),id=b?.currentId?.(),t=b?.allTracks?.()?.find(x=>x.id===id);
@@ -25,10 +78,13 @@ function fillCurrent(){
  $("imCover").classList.toggle("im-no-cover",!img);
  $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
+ atmosphereForTrack(id,title,artist);
+ closeSyncControls();
  lastLyricsId="";
  lastLyrics=null;
  lastLine=-1;
  lastLyricsSignature="";lyricRows=[];lyricTimed=false;lastLyricScrollAt=0;
+ lyricPointer=null;suppressLyricTapUntil=0;
  $("imKaraoke").textContent="";
  $("imKaraoke").classList.remove("has-lines");
  renderLyrics(true);
@@ -71,11 +127,23 @@ function renderLyrics(force){
     plainRows.map(text=>({text}))).slice(0,500);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
    const fragment=document.createDocumentFragment();
-   for(const data of lyricRows){
-    const row=document.createElement("p");
+   for(let i=0;i<lyricRows.length;i++){
+    const data=lyricRows[i],row=document.createElement("p");
     row.className="im-line";
     data._elements=[]; // Display full phrases, never estimated word progress.
     row.textContent=data.text;
+    // Only timed cues can seek; never guess locations from plain lyrics.
+    if(lyricTimed&&Number.isFinite(data.t)&&data.t>=0){
+     row.classList.add("im-seekable");
+     // Real DOM supplies dataset/attributes; older lyric test doubles
+     // expose only text and classList. Keep those simulations compatible.
+     if(row.dataset)row.dataset.seekIndex=String(i);
+     else row.setAttribute?.("data-seek-index",String(i));
+     row.tabIndex=0;
+     row.setAttribute?.("role","button");
+     row.setAttribute?.("aria-label","Vai a "+fmt(data.t)+": "+data.text);
+     row.title="Vai a "+fmt(data.t);
+    }
     fragment.appendChild(row);
    }
    karaoke.replaceChildren(fragment);
@@ -84,6 +152,10 @@ function renderLyrics(force){
    const status=$("imLyricModeLabel");
    if(status)status.textContent=lyricTimed?
      "SINCRONIZZATO PER FRASI":next?.text?"TESTO NON SINCRONIZZATO":"SOLO MUSICA";
+   const syncButton=$("imSyncToggle");
+   if(syncButton)syncButton.hidden=!lyricTimed;
+   if(!lyricTimed)closeSyncControls();
+   else updateSyncValue();
    karaoke.scrollTop=0;
   }
   lastLyricsRefreshAt=Date.now();
@@ -224,6 +296,8 @@ function paint(){
  toggle.setAttribute("aria-label",paused?"Riprendi":"Metti in pausa");
  toggle.setAttribute("aria-pressed",String(!paused));
  $("immersivePanel").classList.toggle("im-paused",paused);
+ $("immersivePanel").classList.toggle("im-away",document.hidden);
+ if(!$("imSyncPanel")?.hidden)updateSyncValue();
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
@@ -237,6 +311,7 @@ function open(){
  const root=$("immersivePanel");if(!root)return;
  focusBefore=document.activeElement;
  opened=true;lastId="";lastLyricsId="";
+ closeSyncControls();
  root.classList.remove("im-focus");
  $("imFocusToggle").setAttribute("aria-pressed","false");
  $("imFocusToggle").innerHTML='Focus testo <span aria-hidden="true">⤢</span>';
@@ -250,6 +325,8 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
+ closeSyncControls();
+ lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
  if(lyricAnimation)cancelAnimationFrame(lyricAnimation);
  lyricAnimation=0;
@@ -267,6 +344,27 @@ function toggleFocus(){
  button.innerHTML=enabled?'Mostra copertina <span aria-hidden="true">⤡</span>':
   'Focus testo <span aria-hidden="true">⤢</span>';
  lastLine=-1;renderLyrics(false);
+}
+function seekToPhrase(target){
+ if(!opened||!lyricTimed)return;
+ const karaoke=$("imKaraoke"),line=target?.closest?.(".im-line[data-seek-index]");
+ if(!line||line.parentElement!==karaoke)return;
+ const index=Number(line.dataset.seekIndex),id=api()?.currentId?.();
+ if(!Number.isSafeInteger(index)||index<0||index>=lyricRows.length||
+    String(id)!==String(lastLyricsId))return; // Handoff or stale text.
+ const cue=lyricRows[index],b=api(),a=b?.audio?.();
+ const start=Number(cue?.t),duration=Number(a?.duration);
+ if(!a||!Number.isFinite(start)||start<0||!Number.isFinite(duration)||duration<=0)return;
+ // Positive lyric delay means a phrase is shown later than the raw LRC onset.
+ const delay=Number(b?.lyricsDelay?.(id));
+ const seconds=Math.max(0,Math.min(duration,start+(Number.isFinite(delay)?delay:0)));
+ const room=window.MusicBoxRoom;
+ if(room?.isActive?.())room.control("seek",{seconds});
+ else{try{a.currentTime=seconds}catch(e){return}}
+ // Keep the same paused/playing state. Room seeks become visible when
+ // the room's authoritative media clock catches up.
+ $("imCurrent").textContent=fmt(seconds);
+ if(!room?.isActive?.())renderLyrics(false);
 }
 function seekTo(){
  const b=api(),a=b?.audio?.();if(!a||!Number.isFinite(a.duration)||a.duration<=0)return;
@@ -298,7 +396,73 @@ function start(){
  $("imNext")?.addEventListener("click",goNext);
  $("imLyrics")?.addEventListener("click",textPanel);
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
+ $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
+ $("imSyncEarlier")?.addEventListener("click",()=>changeSyncDelay(-.2));
+ $("imSyncLater")?.addEventListener("click",()=>changeSyncDelay(.2));
+ $("imSyncReset")?.addEventListener("click",()=>{
+  if(!opened||!lyricTimed)return;
+  const id=api()?.currentId?.();
+  if(id&&String(id)===String(lastLyricsId)&&api()?.setLyricsDelay?.(id,0)===true){
+   updateSyncValue();renderLyrics(false);
+  }
+ });
  $("imSeek")?.addEventListener("change",seekTo);
+ const karaoke=$("imKaraoke");
+ // Use event delegation because lyric rows are replaced when the track changes.
+ // Pointer movement protects manual scrolling from becoming accidental seeks.
+ karaoke?.addEventListener("pointerdown",e=>{
+  if(!e.target?.closest?.(".im-seekable")||e.button!==0)return;
+  lyricPointer={x:e.clientX,y:e.clientY,scroll:karaoke.scrollTop};
+ });
+ karaoke?.addEventListener("pointermove",e=>{
+  if(lyricPointer&&(Math.abs(e.clientX-lyricPointer.x)>12||
+      Math.abs(e.clientY-lyricPointer.y)>12))
+   suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("pointerup",e=>{
+  if(lyricPointer&&(Math.abs(e.clientX-lyricPointer.x)>12||
+      Math.abs(e.clientY-lyricPointer.y)>12||
+      Math.abs(karaoke.scrollTop-lyricPointer.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+  lyricPointer=null;
+ });
+ karaoke?.addEventListener("pointercancel",()=>{
+  lyricPointer=null;suppressLyricTapUntil=performance.now()+600;
+ });
+ // Safari may issue touch events even when pointer events are coalesced.
+ let touchStart=null;
+ karaoke?.addEventListener("touchstart",e=>{
+  const t=e.touches?.[0];
+  touchStart=t?{x:t.clientX,y:t.clientY,scroll:karaoke.scrollTop}:null;
+ },{passive:true});
+ karaoke?.addEventListener("touchmove",e=>{
+  const t=e.touches?.[0];
+  if(touchStart&&(Math.abs(t.clientX-touchStart.x)>12||
+      Math.abs(t.clientY-touchStart.y)>12||
+      Math.abs(karaoke.scrollTop-touchStart.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("touchend",e=>{
+  const t=e.changedTouches?.[0];
+  if(t&&touchStart&&(Math.abs(t.clientX-touchStart.x)>12||
+      Math.abs(t.clientY-touchStart.y)>12||
+      Math.abs(karaoke.scrollTop-touchStart.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+  touchStart=null;
+ },{passive:true});
+ karaoke?.addEventListener("touchcancel",()=>{
+  touchStart=null;suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("click",e=>{
+  if(performance.now()<suppressLyricTapUntil)return;
+  seekToPhrase(e.target);
+ });
+ karaoke?.addEventListener("keydown",e=>{
+  if(e.key!=="Enter"&&e.key!==" ")return;
+  if(!e.target?.matches?.(".im-seekable"))return;
+  e.preventDefault();
+  seekToPhrase(e.target);
+ });
  $("imSeek")?.addEventListener("input",()=>{
   const a=api()?.audio?.(),seek=$("imSeek");
   $("imCurrent").textContent=fmt((Number(a?.duration)||0)*Number(seek.value)/1000);
@@ -316,7 +480,13 @@ function start(){
   if(gestureY!=null&&e.changedTouches?.[0]?.clientY-gestureY>140)close();
   gestureY=null;
  },{passive:true});
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&opened){e.preventDefault();close()}});
+ document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&opened){
+   e.preventDefault();
+   if(!$("imSyncPanel")?.hidden)closeSyncControls();
+   else close();
+  }
+ });
  window.addEventListener("popstate",()=>{if(opened)close()});
  const btn=$("btnImmersive");
  if(btn){btn.hidden=false;btn.disabled=false;btn.setAttribute("aria-expanded","false")}

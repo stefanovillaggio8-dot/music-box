@@ -4346,3 +4346,393 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
     transition:none;
   }
 }
+
+
+/* Music Box · Aurora immersive motion. Visual only: no WebAudio, no artwork
+   fetch, no layout animation on iOS. Artwork and typography remain primary. */
+.im-root{
+  --im-hue:267;--im-hue-alt:319;
+  background:radial-gradient(ellipse 85% 65% at 12% 8%,hsl(var(--im-hue) 55% 21% / .52),transparent 75%),#060914;
+}
+.im-root::before{
+  background:linear-gradient(110deg,rgba(4,7,19,.72),rgba(7,10,25,.37) 51%,rgba(5,7,19,.76)),
+    radial-gradient(ellipse at 50% 110%,rgba(1,4,15,.9),transparent 67%);
+}
+.im-root::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.13;background-image:radial-gradient(#fff7 0.6px,transparent 0.8px);
+  background-size:34px 34px;mask-image:linear-gradient(110deg,transparent 10%,#000 65%,transparent);
+  -webkit-mask-image:linear-gradient(110deg,transparent 10%,#000 65%,transparent);
+}
+.im-backdrop{opacity:.76;filter:blur(77px) saturate(1.4) brightness(.51);}
+.im-ambient-bloom{
+  position:absolute;inset:6% 9%;z-index:-1;pointer-events:none;border-radius:50%;
+  opacity:.62;filter:blur(35px);
+  background:radial-gradient(ellipse at 28% 33%,hsl(var(--im-hue) 86% 58% / .32),transparent 49%),
+             radial-gradient(ellipse at 78% 71%,hsl(var(--im-hue-alt) 82% 55% / .21),transparent 55%);
+  animation:im-bloom-drift 20s ease-in-out infinite alternate;will-change:transform;
+}
+.im-art-zone{isolation:isolate;}
+.im-art-zone::before{
+  content:"";position:absolute;z-index:0;inset:-2% -8%;pointer-events:none;opacity:.55;
+  background-image:radial-gradient(circle,#fff 1px,transparent 1.8px),
+                   radial-gradient(circle,hsl(var(--im-hue) 100% 84% / .85) 1px,transparent 2px);
+  background-size:87px 103px,141px 113px;background-position:11px 18px,44px 65px;
+  mask-image:radial-gradient(ellipse,#000 5%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse,#000 5%,transparent 75%);
+  animation:im-starlight 21s linear infinite;
+}
+.im-aura{
+  position:absolute;z-index:0;pointer-events:none;
+  width:min(104%,510px);aspect-ratio:1;top:50%;left:50%;
+  transform:translate(-50%,-52%);border-radius:50%;
+  background:radial-gradient(circle at center,transparent 39%,
+      hsl(var(--im-hue) 90% 68% / .13) 56%,transparent 71%),
+    radial-gradient(circle at 48% 50%,hsl(var(--im-hue-alt) 80% 60% / .12),transparent 68%);
+}
+.im-aura::before,.im-aura::after{
+  content:"";position:absolute;inset:3%;border-radius:50%;
+}
+.im-aura::before{
+  background:conic-gradient(from 35deg,transparent 0 16%,hsl(var(--im-hue) 95% 82% / .62) 24%,
+    transparent 32% 51%,hsl(var(--im-hue-alt) 96% 75% / .44) 65%,transparent 74% 100%);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));
+  animation:im-orbit 22s linear infinite;
+}
+.im-aura::after{
+  inset:12%;border:1px solid hsl(var(--im-hue) 85% 80% / .16);
+  box-shadow:0 0 80px hsl(var(--im-hue) 85% 54% / .18);
+  animation:im-ring-breathe 7s ease-in-out infinite;
+}
+.im-cover-wrap{z-index:2;}
+.im-cover-wrap::before{
+  background:linear-gradient(140deg,hsl(var(--im-hue) 80% 90% / .62),#ffffff18 35%,
+    hsl(var(--im-hue-alt) 83% 74% / .44) 76%,#fff4c961);
+  box-shadow:0 15px 65px #03020c7a,0 0 70px hsl(var(--im-hue) 95% 66% / .14);
+}
+.im-cover{
+  box-shadow:0 26px 90px #000b,0 0 72px hsl(var(--im-hue) 80% 67% / .23);
+}
+.im-cover::before{
+  content:"";position:absolute;z-index:2;inset:-20%;pointer-events:none;
+  background:linear-gradient(108deg,transparent 30%,#ffffff1e 48%,transparent 66%);
+  transform:translateX(-150%) rotate(9deg);
+  animation:im-art-glint 15s ease-in-out infinite;
+}
+.im-art-reflection{background:radial-gradient(ellipse,hsl(var(--im-hue) 87% 63% / .54),transparent 70%);}
+.im-mini-spectrum{
+  position:absolute;right:2%;bottom:13%;z-index:3;
+  height:36px;min-width:65px;padding:9px 11px;
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  border:1px solid #ffffff28;border-radius:999px;
+  background:rgba(8,12,27,.68);box-shadow:0 10px 28px #0008;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:none;
+}
+.im-mini-spectrum span{
+  display:block;width:3px;height:16px;border-radius:99px;
+  background:linear-gradient(to top,hsl(var(--im-hue) 87% 65%),#f8f0ff);
+  transform:scaleY(.42);animation:im-mini-eq 1.15s ease-in-out infinite alternate;
+}
+.im-mini-spectrum span:nth-child(2n){animation-duration:.83s;animation-delay:-.44s}
+.im-mini-spectrum span:nth-child(3n){animation-duration:1.37s;animation-delay:-.83s}
+.im-mini-spectrum span:nth-child(5n){animation-duration:.98s;animation-delay:-.21s}
+.im-player{
+  background:linear-gradient(138deg,#ffffff1b,#ffffff07 50%,hsl(var(--im-hue) 80% 57% / .10));
+  border-color:hsl(var(--im-hue) 90% 86% / .22);
+}
+.im-mode{border-color:hsl(var(--im-hue) 75% 84% / .30);}
+.im-player h2{text-shadow:0 10px 35px #0008;}
+.im-karaoke-frame{
+  background:linear-gradient(108deg,hsl(var(--im-hue) 55% 16% / .55),rgba(8,11,27,.64));
+  border-color:hsl(var(--im-hue) 85% 82% / .13);
+  box-shadow:inset 0 1px #ffffff08;
+}
+.im-karaoke-frame::before{
+  background:linear-gradient(to bottom,hsl(var(--im-hue) 100% 79%),#ffcaac);
+  box-shadow:0 0 20px hsl(var(--im-hue) 91% 68% / .57);
+}
+.im-line.active{
+  color:#fff;opacity:1;
+  text-shadow:0 0 25px hsl(var(--im-hue) 91% 83% / .52),0 3px 16px #0008;
+  animation:im-phrase-arrive .42s ease-out both;
+}
+.im-line.past{color:#cfc4df;opacity:.43;}
+.im-root.im-track-enter .im-cover-wrap{animation:im-track-art-enter .72s cubic-bezier(.16,1,.3,1) both;}
+.im-root.im-track-enter .im-player h2,
+.im-root.im-track-enter .im-player .im-artist{
+  animation:im-track-text-enter .62s cubic-bezier(.16,1,.3,1) both;
+}
+.im-root.im-track-enter .im-player .im-artist{animation-delay:.08s;}
+.im-root.im-paused .im-ambient-bloom,
+.im-root.im-paused .im-aura::before,.im-root.im-paused .im-aura::after,
+.im-root.im-paused .im-art-zone::before,.im-root.im-paused .im-cover::before,
+.im-root.im-paused .im-mini-spectrum span,
+.im-root.im-away .im-ambient-bloom,.im-root.im-away .im-aura::before,
+.im-root.im-away .im-aura::after,.im-root.im-away .im-art-zone::before,
+.im-root.im-away .im-cover::before,.im-root.im-away .im-mini-spectrum span{
+  animation-play-state:paused;
+}
+@keyframes im-bloom-drift{
+  from{transform:translate3d(-2%,1%,0) scale(.98)}
+  to{transform:translate3d(3%,-3%,0) scale(1.05)}
+}
+@keyframes im-orbit{to{transform:rotate(360deg)}}
+@keyframes im-ring-breathe{0%,100%{opacity:.46;transform:scale(.98)}50%{opacity:.95;transform:scale(1.04)}}
+@keyframes im-starlight{to{background-position:98px -85px,185px -48px}}
+@keyframes im-art-glint{0%,67%,100%{transform:translateX(-150%) rotate(9deg)}77%{transform:translateX(150%) rotate(9deg)}}
+@keyframes im-mini-eq{from{transform:scaleY(.26)}to{transform:scaleY(1)}}
+@keyframes im-track-art-enter{
+  from{opacity:.3;transform:translateY(18px) scale(.955) rotate(-3deg)}
+  to{opacity:1;transform:translateY(0) scale(1) rotate(-2deg)}
+}
+@keyframes im-track-text-enter{from{opacity:.25;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@keyframes im-phrase-arrive{from{opacity:.6;filter:brightness(.8)}to{opacity:1;filter:brightness(1)}}
+
+@media(max-width:850px){
+  .im-root{background:#070913;}
+  .im-root::after{opacity:.07;}
+  .im-root::before{
+    background:linear-gradient(to bottom,rgba(4,7,18,.57),rgba(5,8,20,.26) 36%,
+      rgba(4,6,17,.83) 77%,rgba(3,5,15,.97));
+  }
+  .im-backdrop{filter:blur(49px) saturate(1.22) brightness(.58);opacity:.79;}
+  .im-ambient-bloom{display:none;}
+  .im-art-zone::before{inset:0;animation:none;opacity:.37;}
+  .im-aura{width:clamp(225px,78vw,340px);top:48%;transform:translate(-50%,-50%);}
+  .im-aura::before{animation-duration:28s;}
+  .im-aura::after{box-shadow:0 0 38px hsl(var(--im-hue) 75% 56% / .16);}
+  .im-cover{animation:im-art-breathe 9s ease-in-out infinite;will-change:auto;}
+  .im-cover::before{animation:none;}
+  .im-mini-spectrum{
+    right:max(3%,calc((100% - 302px)/2));bottom:clamp(11px,2.5vh,26px);
+    height:29px;min-width:56px;padding:7px 9px;gap:2px;
+    background:rgba(8,11,24,.70);backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+  .im-mini-spectrum span{width:2px;height:13px;}
+  .im-player{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+  .im-karaoke-frame{background:linear-gradient(110deg,hsl(var(--im-hue) 49% 15% / .43),#0a1020bb);}
+  .im-root.im-track-enter .im-cover-wrap{animation:im-track-art-mobile .56s cubic-bezier(.2,.9,.3,1) both;}
+  .im-root.im-paused .im-cover,.im-root.im-away .im-cover{animation-play-state:paused;}
+}
+@keyframes im-track-art-mobile{from{opacity:.45;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@media(max-height:740px) and (max-width:850px){
+  .im-mini-spectrum{bottom:7px;right:4%;height:24px;padding:5px 7px;}
+  .im-aura{width:clamp(180px,55vw,265px);}
+}
+@media(prefers-reduced-motion:reduce){
+  .im-root .im-ambient-bloom,.im-root .im-aura::before,.im-root .im-aura::after,
+  .im-root .im-art-zone::before,.im-root .im-cover,.im-root .im-cover::before,
+  .im-root .im-mini-spectrum span,.im-root.im-track-enter .im-cover-wrap,
+  .im-root.im-track-enter .im-player h2,.im-root.im-track-enter .im-player .im-artist,
+  .im-root .im-line.active{animation:none!important;transition:none!important;}
+  .im-root .im-ambient-bloom{will-change:auto;}
+}
+
+
+/* Immersive Aurora 2: visibility correction for genuine phone view.
+   Previously mobile set .im-ambient-bloom{display:none}, the album breathed
+   by only 1.3%, and the "spectrum" was often too small to notice.
+   Stay visual-only: do not touch the sound engine or source data. */
+.im-root .im-ambient-bloom{
+  display:block;inset:0;opacity:.82;border-radius:0;filter:none;will-change:auto;
+  background:
+    radial-gradient(ellipse 59% 50% at 23% 29%,hsl(var(--im-hue) 92% 62% / .42),transparent 78%),
+    radial-gradient(ellipse 63% 47% at 78% 64%,hsl(var(--im-hue-alt) 91% 61% / .33),transparent 77%),
+    radial-gradient(ellipse 72% 44% at 51% 4%,hsl(var(--im-hue) 96% 58% / .18),transparent 88%);
+  animation:im-aurora-alive 11s ease-in-out infinite alternate;
+}
+.im-root .im-art-zone .im-aura{
+  opacity:1;
+  background:
+    radial-gradient(circle,transparent 34%,hsl(var(--im-hue) 100% 72% / .19) 51%,transparent 72%),
+    radial-gradient(circle at 70% 28%,hsl(var(--im-hue-alt) 95% 68% / .24),transparent 64%);
+}
+.im-root .im-aura::before{
+  inset:0;
+  background:conic-gradient(from 20deg,
+    transparent 0deg 42deg,
+    hsl(var(--im-hue) 100% 80% / .98) 72deg,
+    transparent 105deg 177deg,
+    hsl(var(--im-hue-alt) 100% 78% / .91) 211deg,
+    transparent 242deg 302deg,
+    hsl(var(--im-hue) 100% 84% / .72) 331deg,
+    transparent 360deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));
+  filter:drop-shadow(0 0 7px hsl(var(--im-hue) 100% 73% / .54));
+  animation-duration:15s;
+}
+.im-root .im-aura::after{
+  inset:8%;border:2px solid hsl(var(--im-hue) 94% 83% / .37);
+  box-shadow:
+    inset 0 0 28px hsl(var(--im-hue-alt) 94% 70% / .13),
+    0 0 40px hsl(var(--im-hue) 95% 64% / .31);
+}
+.im-aura i{
+  position:absolute;inset:0;display:block;border-radius:50%;
+  animation:im-orbit 12s linear infinite;pointer-events:none;
+}
+.im-aura i::before{
+  content:"";position:absolute;top:4%;left:27%;width:10px;height:10px;
+  border-radius:50%;background:#fff;
+  box-shadow:0 0 5px #fff,0 0 15px hsl(var(--im-hue) 100% 79%),
+    0 0 27px hsl(var(--im-hue) 100% 68% / .85);
+}
+.im-aura i:nth-child(2){animation-duration:19s;animation-delay:-8s;animation-direction:reverse;}
+.im-aura i:nth-child(2)::before{
+  width:7px;height:7px;top:20%;left:6%;
+  background:hsl(var(--im-hue-alt) 100% 88%);
+  box-shadow:0 0 10px hsl(var(--im-hue-alt) 100% 73%),
+    0 0 24px hsl(var(--im-hue-alt) 100% 68% / .9);
+}
+.im-root .im-mini-spectrum{
+  min-width:86px;height:43px;padding:9px 12px;gap:4px;
+  border:1px solid hsl(var(--im-hue) 95% 85% / .47);
+  background:#0b1127e6;
+  box-shadow:0 9px 24px #000b,0 0 22px hsl(var(--im-hue) 100% 68% / .32);
+}
+.im-root .im-mini-spectrum span{width:4px;height:23px;opacity:1;}
+.im-root .im-cover{box-shadow:0 26px 86px #000b,0 0 85px hsl(var(--im-hue) 100% 70% / .30);}
+.im-root .im-karaoke-frame{
+  border-color:hsl(var(--im-hue) 90% 84% / .31);
+  box-shadow:0 0 35px hsl(var(--im-hue) 90% 55% / .11),inset 0 1px #ffffff12;
+}
+.im-root.im-track-enter .im-aura{animation:im-scene-pop .66s cubic-bezier(.19,1,.22,1) both;}
+@keyframes im-aurora-alive{from{opacity:.57}to{opacity:.96}}
+@keyframes im-scene-pop{from{opacity:.35;scale:.94}to{opacity:1;scale:1}}
+
+@media(max-width:850px){
+  /* A single slow opacity animation is cheaper than blurred full-screen
+     motion on Safari; two small orbits still animate using transforms. */
+  .im-root .im-ambient-bloom{
+    display:block;opacity:.85;filter:none;animation:im-aurora-alive 12s ease-in-out infinite alternate;
+  }
+  /* Rotating squares have corners outside the circular artwork.
+     Clip only horizontal ink overflow, not the artwork's vertical glow. */
+  .im-root .im-art-zone{overflow-x:clip;overflow-y:visible;}
+  .im-root .im-art-zone .im-aura{
+    width:clamp(266px,83vw,385px);top:48%;opacity:1;
+  }
+  .im-root .im-aura::before{filter:none;animation-duration:18s;}
+  .im-root .im-aura::after{box-shadow:0 0 28px hsl(var(--im-hue) 100% 66% / .32);}
+  .im-root .im-mini-spectrum{
+    right:max(2px,calc((100% - 330px)/2));bottom:8px;
+    min-width:82px;height:38px;padding:8px 10px;gap:3px;
+    border-width:1px;z-index:5;
+  }
+  .im-root .im-mini-spectrum span{height:19px;width:3px;}
+  .im-root .im-cover{
+    animation:im-album-breathe-visible 7.5s ease-in-out infinite;
+  }
+  /* The legacy mobile !important transform prevents a keyframe transform
+     on .im-cover-wrap. Use a visible opacity entrance instead. */
+  .im-root.im-track-enter .im-cover-wrap{
+    animation:im-track-art-appear .64s ease-out both;
+  }
+}
+@keyframes im-album-breathe-visible{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.028)}
+}
+@keyframes im-track-art-appear{
+  from{opacity:.28}to{opacity:1}
+}
+@media(max-height:740px) and (max-width:850px){
+  .im-root .im-art-zone .im-aura{width:clamp(196px,64vw,280px);}
+  .im-root .im-mini-spectrum{height:30px;min-width:67px;bottom:0;padding:5px 7px;}
+  .im-root .im-mini-spectrum span{height:15px;width:2px;}
+}
+/* Background tabs, pauses and reduced-motion accessibility must stop all
+   new movement along with the preexisting album/lyric effects. */
+.im-root.im-paused .im-ambient-bloom,
+.im-root.im-paused .im-aura i,
+.im-root.im-away .im-ambient-bloom,
+.im-root.im-away .im-aura i,
+.im-root.im-paused .im-aura,
+.im-root.im-away .im-aura{
+  animation-play-state:paused!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .im-root .im-ambient-bloom,.im-root .im-aura i,
+  .im-root .im-aura,.im-root .im-cover{
+    animation:none!important;transition:none!important;
+  }
+  .im-root .im-mini-spectrum span{animation:none!important;transform:scaleY(.8);}
+}
+
+
+/* Immersive phrase navigation: only verified-position synced lyric rows
+   behave like seek controls; unsynced reading stays normal scrollable text. */
+.im-karaoke .im-line.im-seekable{
+  cursor:pointer;
+  touch-action:pan-y;
+  -webkit-tap-highlight-color:transparent;
+  border-radius:8px;
+}
+@media(hover:hover) and (pointer:fine){
+ .im-karaoke .im-line.im-seekable:hover{
+   opacity:.84;
+   color:#fff;
+   text-shadow:0 0 20px hsl(var(--im-hue) 92% 76% / .38);
+ }
+}
+.im-karaoke .im-line.im-seekable:focus-visible{
+ outline:2px solid #e5c7ff;
+ outline-offset:4px;
+ opacity:1;
+}
+@media(prefers-reduced-motion:reduce){
+ .im-karaoke .im-line.im-seekable{transition:none}
+}
+
+
+/* Per-recording phrase sync in Immersive: uses the existing saved delay.
+   Popover overlays the lyrics instead of shifting playback controls on iPhone. */
+.im-lyrics-head{position:relative;z-index:12}
+.im-lyric-tools{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-shrink:0}
+.im-sync-toggle{
+ display:inline-flex;align-items:center;justify-content:center;gap:3px;
+ border-radius:999px;border:1px solid hsl(var(--im-hue) 90% 82% / .39);
+ background:#ffffff16;color:#f1e6ff;font-size:10px;font-weight:750;
+ padding:7px 9px;min-height:32px;white-space:nowrap;cursor:pointer;
+}
+.im-sync-toggle:hover,.im-sync-toggle[aria-expanded="true"]{
+ background:hsl(var(--im-hue) 80% 56% / .29);border-color:#e7cbff99;
+}
+.im-sync-panel{
+ position:absolute;right:0;top:calc(100% + 6px);
+ width:min(315px,calc(100vw - 34px));z-index:25;
+ padding:12px;border-radius:15px;
+ background:linear-gradient(135deg,#15182af7,#28213ef7);
+ border:1px solid #d6baff62;box-shadow:0 14px 44px #000c;
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ color:#fff;
+}
+.im-sync-title{
+ font-size:12px;font-weight:730;letter-spacing:.05px;
+ display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;
+}
+#imSyncValue{font-size:12px;font-weight:800;color:#f3d0ff;min-width:44px;text-align:right;}
+.im-sync-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;}
+.im-sync-actions button{
+ min-height:38px;padding:6px 10px;border-radius:10px;
+ color:#f9f3ff;background:#ffffff17;border:1px solid #ffffff32;
+ font-size:12px;font-weight:700;white-space:nowrap;
+}
+.im-sync-actions button:hover,.im-sync-actions button:focus-visible{
+ background:hsl(var(--im-hue) 70% 58% / .31);
+}
+.im-sync-actions button:focus-visible,.im-sync-toggle:focus-visible{
+ outline:2px solid #fff;outline-offset:2px;
+}
+@media(max-width:420px){
+ .im-lyrics-heading{gap:5px;min-width:0;}
+ .im-lyric-status{max-width:111px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ .im-lyric-tools{gap:4px;}
+ .im-sync-toggle{font-size:0;min-width:30px;padding:4px 6px;}
+ .im-sync-toggle::before{content:"⏱";font-size:16px;}
+}
+@media(prefers-reduced-motion:reduce){
+ .im-sync-toggle,.im-sync-actions button{transition:none!important;}
+}
