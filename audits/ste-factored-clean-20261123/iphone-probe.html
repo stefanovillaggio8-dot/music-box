@@ -4,12 +4,13 @@
 <h1>Prova isolata, non Music Box</h1>
 <p>Non modifica l'app, le librerie o i download. Il primo pulsante può emettere un frammento di 100 ms per autorizzare i due lettori. La prova si arresta intenzionalmente un secondo dopo il passaggio. Risultato browser diverso da certificazione su iPhone.</p>
 <label>Autorizzazione <select id="variant"><option value="audible">Con audio</option><option value="muted">Secondario muto (controllo)</option></select></label>
+<label>Ordine <select id="order"><option value="parallel">Parallelo (prova precedente)</option><option value="sequential">Secondario, pausa, poi sorgente (nuova prova)</option></select></label>
 <button id="prime" disabled>1. Autorizza i due lettori</button><button id="run" disabled>2. Esegui la prova</button><button id="stop">Arresta</button><button id="save">Salva resoconto</button>
 <pre id="status">Caricamento dei soli dati di prova…</pre>
 <script src="/audio-composite-mix.js"></script><script src="/dual-deck.js"></script><script>
 let probe=null;const el=id=>document.getElementById(id);
 fetch('/fixture.json').then(r=>r.json()).then(f=>{window.fixture=f;el('prime').disabled=false;el('status').textContent='Pronto. Chiudi prima eventuale altra riproduzione musicale.'});
-el('prime').onclick=e=>{probe?.dispose();window.probe=probe=createNativeDualDeckProbe(fixture,{bootstrap:el('variant').value,hidden:()=>window.__testHidden===true});probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{});};
+el('prime').onclick=e=>{el('run').disabled=true;probe?.dispose();window.probe=probe=createNativeDualDeckProbe(fixture,{bootstrap:el('variant').value,primingOrder:el('order').value,hidden:()=>window.__testHidden===true});probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{});};
 el('run').onclick=e=>{el('run').disabled=true;probe.run(e).catch(()=>{})};el('stop').onclick=()=>probe?.stop('user-stop');
 setInterval(()=>{if(probe)el('status').textContent=JSON.stringify(probe.snapshot(),null,2)},250);
 el('save').onclick=()=>{if(!probe)return;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify(probe.snapshot(),null,2)],{type:'application/json'}));a.href=url;a.download='ste-native-probe.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};

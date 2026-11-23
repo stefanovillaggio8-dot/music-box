@@ -7,8 +7,13 @@ root.createNativeDualDeckProbe=function(f,options={}){
  for(const a of [old,incoming]){a.preload='metadata';a.volume=1;a.load()}
  let timer=null,finishTimer=null,started=false,intentionalPause=false;
  const report={physicalIPhone:false,notApplicationIntegration:true,notPlaybackCertified:true,userAgent:navigator.userAgent,
-  sourceSha:f.sourceSha,targetSha:f.targetSha,phase:'unprimed',events:[],bootstrap:options.bootstrap||'audible',sourceClockOffset:null};
+  sourceSha:f.sourceSha,targetSha:f.targetSha,phase:'unprimed',events:[],bootstrap:options.bootstrap||'audible',
+  primingOrder:options.primingOrder||'parallel',sourceClockOffset:null};
  const log=(event,a)=>report.events.push({event,at:a?.currentTime,paused:a?.paused,ended:a?.ended,muted:a?.muted});
+ const listeners=[];
+ for(const [label,a] of [['source',old],['incoming',incoming]])for(const event of ['play','playing','pause','ended','error']){
+  const handler=()=>log(label+'-'+event,a);a.addEventListener(event,handler);listeners.push([a,event,handler]);
+ }
  const hidden=()=>document.hidden||options.hidden?.()===true;
  const clear=()=>{clearTimeout(timer);timer=null;clearTimeout(finishTimer);finishTimer=null};
  function stop(reason){clear();incoming.pause();report.phase='stopped';report.reason=reason;log(reason,old)}
@@ -23,9 +28,16 @@ root.createNativeDualDeckProbe=function(f,options={}){
  function prime(event){
   if(!event?.isTrusted||report.phase!=='unprimed')return Promise.reject(Error('trusted-prime-gesture-required'));
   report.phase='priming';incoming.muted=report.bootstrap==='muted';
-  // Both calls are synchronous children of the actual user gesture.
-  const a=old.play(),b=incoming.play();log('prime-request',incoming);
-  return Promise.all([a,b]).then(async()=>{
+  // Distinct experiment: authorize the second element while source is
+  // paused, then start the source. It tests whether parallel priming itself
+  // caused interruption; it does NOT assume simultaneous playback works.
+  const authorization=report.primingOrder==='sequential'?
+   Promise.resolve(incoming.play()).then(async()=>{
+    await wait(()=>incoming.currentTime>.02,3000);report.sequentialPrimerSeconds=incoming.currentTime;
+    incoming.pause();return old.play();
+   }):Promise.all([old.play(),incoming.play()]);
+  log('prime-request',incoming);
+  return authorization.then(async()=>{
    await new Promise(r=>setTimeout(r,100));
    report.primingSourceContinued=!old.paused&&old.currentTime>.02;
    report.primingIncomingSeconds=incoming.currentTime;
@@ -72,6 +84,7 @@ root.createNativeDualDeckProbe=function(f,options={}){
  function snapshot(){const {activeAudio,...rest}=report;return {...rest,sameIncomingElement:activeAudio===incoming,
   sourceTime:old.currentTime,incomingTime:incoming.currentTime,sourcePaused:old.paused,incomingPaused:incoming.paused};}
  function dispose(){intentionalPause=true;clear();old.pause();incoming.pause();for(const a of [old,incoming]){a.removeAttribute('src');a.load()}
+  for(const [a,event,handler] of listeners)a.removeEventListener(event,handler);
   old.removeEventListener('pause',sourcePause);document.removeEventListener('visibilitychange',visibility);report.phase='disposed'}
  return {prime,run,stop,snapshot,dispose,old,incoming};
 };
