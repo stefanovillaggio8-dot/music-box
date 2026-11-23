@@ -14,6 +14,24 @@ function safeCover(t){
  }catch(e){}
  return "";
 }
+// The atmosphere follows the track identity without reading artwork pixels,
+// touching the audio pipeline, or requesting a second decoder on iOS.
+function atmosphereForTrack(id,title,artist){
+ const root=$("immersivePanel");if(!root)return;
+ const key=String(id||"")+"|"+String(title||"")+"|"+String(artist||"");
+ let hash=2166136261;
+ for(let i=0;i<key.length;i++)hash=Math.imul(hash^key.charCodeAt(i),16777619)>>>0;
+ // A restrained set of cinematic hues; the real artwork remains the background.
+ const palette=[206,224,248,267,290,319,348,176];
+ const hue=palette[hash%palette.length];
+ root.style.setProperty("--im-hue",String(hue));
+ root.style.setProperty("--im-hue-alt",String((hue+56)%360));
+ root.classList.remove("im-track-enter");
+ // Restart a short entrance animation only when the actual recording changes.
+ // This is one layout read per track change, never per audio frame.
+ void root.offsetWidth;
+ root.classList.add("im-track-enter");
+}
 function fillCurrent(){
  const b=api(),id=b?.currentId?.(),t=b?.allTracks?.()?.find(x=>x.id===id);
  if(!opened)return;
@@ -25,6 +43,7 @@ function fillCurrent(){
  $("imCover").classList.toggle("im-no-cover",!img);
  $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
+ atmosphereForTrack(id,title,artist);
  lastLyricsId="";
  lastLyrics=null;
  lastLine=-1;
@@ -224,6 +243,7 @@ function paint(){
  toggle.setAttribute("aria-label",paused?"Riprendi":"Metti in pausa");
  toggle.setAttribute("aria-pressed",String(!paused));
  $("immersivePanel").classList.toggle("im-paused",paused);
+ $("immersivePanel").classList.toggle("im-away",document.hidden);
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);

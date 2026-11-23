@@ -16,6 +16,9 @@ assert.ok(lyricsBegin>0&&lyricsEnd>lyricsBegin,"full lyrics markup must exist");
 const lyricsFragment=html.slice(lyricsBegin,lyricsEnd);
 assert.match(css,/\.im-root\.im-focus \.im-karaoke/);
 assert.match(css,/env\(safe-area-inset-top\)/);
+assert.match(fragment,/class="im-aura"/,"album artwork has its animated halo");
+assert.match(fragment,/class="im-mini-spectrum"/,"decorative mini spectrum exists");
+assert.match(css,/@keyframes im-orbit/,"cinematic orbit has a keyframe");
 assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
  "Immersive cannot create a second audio engine");
 const fixture=[
@@ -84,6 +87,16 @@ async function run(){
      overflow:root.scrollWidth-root.clientWidth};
    });
    assert.equal(state.title,"Notte stellata");
+   const atmosphere=await page.evaluate(()=>({
+    hue:getComputedStyle(document.getElementById("immersivePanel")).getPropertyValue("--im-hue").trim(),
+    halo:!!document.querySelector(".im-aura"),
+    spectrum:document.querySelectorAll(".im-mini-spectrum span").length,
+    entering:document.getElementById("immersivePanel").classList.contains("im-track-enter")
+   }));
+   assert.match(atmosphere.hue,/^\d+$/,"track has a themed color");
+   assert.equal(atmosphere.halo,true);
+   assert.equal(atmosphere.spectrum,9);
+   assert.equal(atmosphere.entering,true);
    assert.equal(state.lyricMode,"SINCRONIZZATO PER FRASI");
    assert.match(state.active,/prova 2/);
    assert.ok(state.coverWidth>120,"album cover remains visible");
@@ -243,6 +256,30 @@ async function run(){
     karaokeScrolled:karaoke,focus:true,controls:true,errors:errors.length}));
    await context.close();
   }
+  // Non-reduced-motion mode must actually animate, while pause halts the
+  // decorative movement without creating a second audio engine.
+  const motionContext=await browser.newContext({viewport:{width:390,height:844},
+   isMobile:true,hasTouch:true,reducedMotion:"no-preference"});
+  try{
+   const motionPage=await motionContext.newPage();
+   await motionPage.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"load"});
+   await motionPage.locator("#btnImmersive").click();
+   await motionPage.waitForFunction(()=>document.querySelector(".im-aura")&&
+    document.getElementById("immersivePanel").classList.contains("im-track-enter"));
+   const animation=await motionPage.evaluate(()=>({
+    orbit:getComputedStyle(document.querySelector(".im-aura"),"::before").animationName,
+    art:getComputedStyle(document.querySelector(".im-cover")).animationName,
+    rootOverflow:document.querySelector(".im-root").scrollWidth-document.querySelector(".im-root").clientWidth
+   }));
+   assert.match(animation.orbit,/im-orbit/,"mobile halo rotates in normal motion");
+   assert.match(animation.art,/im-art-breathe/,"mobile cover breathes in normal motion");
+   assert.ok(animation.rootOverflow<=3,"motion layers do not widen mobile page");
+   await motionPage.locator("#imToggle").click();
+   await motionPage.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
+   const state=await motionPage.evaluate(()=>
+    getComputedStyle(document.querySelector(".im-aura"),"::before").animationPlayState);
+   assert.equal(state,"paused","ambient animation pauses with playback");
+  }finally{await motionContext.close()}
  }finally{await browser.close()}
 }
 run().then(()=>server.close(),e=>{
