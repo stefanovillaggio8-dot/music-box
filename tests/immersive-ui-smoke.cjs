@@ -31,10 +31,16 @@ const fixture=[
  'window.fakeAudio={currentTime:12,duration:240,paused:false};',
  'window.fakeSong={id:"track-a",title:"Notte stellata",artist:"Artista di prova",cover:""};',
  'window.fakeCalls={toggle:0,next:0,prev:0};',
+ 'window.fakeLyricsOffset=0;',
+ 'window.fakeDelaySaves=[];',
  'window.fakeLyrics={text:"",synced:Array.from({length:26},(_,i)=>({t:i*8,text:"Riga karaoke originale di prova "+(i+1)}))};',
  'window.MusicBoxBridge={',
  ' audio:()=>fakeAudio,currentId:()=>fakeSong.id,',
  ' allTracks:()=>[fakeSong],lyricsData:()=>fakeLyrics,',
+ ' lyricsDelay:()=>fakeLyricsOffset,',
+ ' setLyricsDelay:(id,value)=>{if(id!==fakeSong.id||!Number.isFinite(value))return false;',
+ '   fakeLyricsOffset=Math.max(-8,Math.min(8,Math.round(value*10)/10));',
+ '   fakeDelaySaves.push({id,value:fakeLyricsOffset});return true;},',
  ' togglePlayback:()=>{fakeAudio.paused=!fakeAudio.paused;fakeCalls.toggle++},',
  ' next:()=>{fakeCalls.next++;fakeSong.id="track-b";fakeSong.title="Secondo brano"},',
  ' previous:()=>{fakeCalls.prev++;fakeSong.id="track-c";fakeSong.title="Primo brano"}',
@@ -115,9 +121,23 @@ async function run(){
    assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),true,
     "Playing state must show the pause bars");
    assert.ok(state.overflow<=3,"no horizontal overflow: "+size.name);
+   assert.equal(await page.locator("#imSyncToggle").isVisible(),true,
+    "timed lyrics show an accessible sync control");
+   await page.locator("#imSyncToggle").click();
+   assert.equal(await page.locator("#imSyncToggle").getAttribute("aria-expanded"),"true");
+   assert.equal(await page.locator("#imSyncValue").textContent(),"0,0 s");
+   await page.locator("#imSyncEarlier").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),-.2,"earlier adjusts the existing saved delay");
+   assert.equal(await page.locator("#imSyncValue").textContent(),"-0,2 s");
+   await page.locator("#imSyncLater").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),0);
+   await page.locator("#imSyncEarlier").click();
+   await page.locator("#imSyncReset").click();
+   assert.equal(await page.evaluate(()=>fakeLyricsOffset),0,"reset restores the baseline");
+   await page.locator("#imSyncToggle").click();
+   assert.equal(await page.locator("#imSyncPanel").isHidden(),true);
    await page.evaluate(()=>{
-     fakeAudio.currentTime=8.1;
-     MusicBoxBridge.lyricsDelay=()=>.25;
+     fakeAudio.currentTime=8.1;fakeLyricsOffset=.25;
    });
    await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 1"));
    await page.evaluate(()=>{fakeAudio.currentTime=8.4;});
@@ -252,6 +272,8 @@ async function run(){
    await page.waitForFunction(()=>document.getElementById("imLyricModeLabel").textContent==="TESTO NON SINCRONIZZATO");
    const plain=page.locator("#imKaraoke .im-line").first();
    assert.equal(await plain.getAttribute("role"),null);
+   assert.equal(await page.locator("#imSyncToggle").isHidden(),true,
+    "untimed text cannot be edited as synchronized phrases");
    await plain.evaluate(row=>row.click());
    assert.equal(await page.evaluate(()=>fakeAudio.currentTime),27,
     "untimed text must never seek");
