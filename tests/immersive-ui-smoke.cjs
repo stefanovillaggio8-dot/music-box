@@ -93,7 +93,7 @@ async function run(){
     spectrum:document.querySelectorAll(".im-mini-spectrum span").length,
     entering:document.getElementById("immersivePanel").classList.contains("im-track-enter")
    }));
-   assert.match(atmosphere.hue,/^\\d+$/,"track has a themed color");
+   assert.match(atmosphere.hue,/^\d+$/,"track has a themed color");
    assert.equal(atmosphere.halo,true);
    assert.equal(atmosphere.spectrum,9);
    assert.equal(atmosphere.entering,true);
