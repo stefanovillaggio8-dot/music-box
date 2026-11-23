@@ -5628,8 +5628,24 @@ function _riparaMetadatiTraccia(t){
   t.title=_riparaTestoMetadati(t.title,_titoloOriginalePerSchermo(t));
  return t;
 }
+  /* An old file ID is not proof of the lyric's identity: some builtins
+     were renamed/reused, including b-track-64 (now thasup, bundled Albachiara).
+     Never show unrelated lyrics or block a correct provider refresh. */
+  const _titoliOriginaliTesti=new Map();
+  function _testoCoerenteConBrano(id,entry) {
+    if(!entry||typeof entry!=="object")return false;
+    const title=String(entry.title||"").trim();
+    if(!title)return true; // Untitled records need the existing text proof.
+    if(!_titoliOriginaliTesti.has(id)){
+      const original=BUILTIN.find(b=>_idBranoStabile(b)===id);
+      _titoliOriginaliTesti.set(id,original?.title||"");
+    }
+    const canonical=_titoliOriginaliTesti.get(id);
+    // Cloud imports are not catalog-builtin tracks.
+    return !canonical||titleCompatible(canonical,title);
+  }
   function _statoKaraokeBrano(id){
-    const records=[localLyrics[id],lyricsData[id]].filter(Boolean);
+    const records=[localLyrics[id],lyricsData[id]].filter(entry=>_testoCoerenteConBrano(id,entry));
     const hasTimedLines=records.some(l=>typeof l.synced==="string"&&
       /\[\d{1,3}:\d{2}/.test(l.synced));
     if(hasTimedLines||records.some(l=>Array.isArray(l.wordRows)&&
@@ -7840,8 +7856,11 @@ box.innerHTML = "";
   const _testoIdentitaCache=new WeakMap();
   function _testoAppartieneAlBrano(id,entry) {
     if(!entry||typeof entry!=="object"||
-       entry.id!=null&&String(entry.id)!==String(id))return false;
-    const original=lyricsData[id];
+       entry.id!=null&&String(entry.id)!==String(id)||
+       !_testoCoerenteConBrano(id,entry))return false;
+    const source=lyricsData[id];
+    const original=_testoCoerenteConBrano(id,source)?source:null;
+    // Wrong old builtin must never reject a newly fetched correct lyric.
     if(!original?.synced||!entry.synced)return true;
     if(entry===original||entry.synced===original.synced)return true;
     const stored=_testoIdentitaCache.get(entry);
@@ -7886,7 +7905,8 @@ box.innerHTML = "";
 
   function currentLyrics() {
     if (!currentId) return null;
-    const builtin = lyricsData[currentId];
+    const original=lyricsData[currentId];
+    const builtin=_testoCoerenteConBrano(currentId,original)?original:null;
     const saved = _testoLocaleVerificato(currentId);
     if(saved?.wordRows?.some?.(r=>_haTempiParole(r)))return saved;
     if (saved && saved.synced && parseSynced(saved.synced).length >= 3) return saved;
@@ -7901,8 +7921,9 @@ box.innerHTML = "";
   const _ricercheParoleInCorso=new Set();
   async function _verificaParoleKaraoke(id){
     const track=tracks.find(t=>t.id===id);
+    const builtin=lyricsData[id];
     const existing=id===currentId?currentLyrics():
-      _testoLocaleVerificato(id)||lyricsData[id];
+      _testoLocaleVerificato(id)||(_testoCoerenteConBrano(id,builtin)?builtin:null);
     if(!track?.title||!track.artist||!existing?.synced||
        (existing.wordRows?.some?.(row=>_haTempiParole(row))&&!existing.audioWordSynced)||
        _ricercheParoleInCorso.has(id)||document.hidden||
@@ -7955,7 +7976,9 @@ box.innerHTML = "";
     if(!id||id!==currentId||!Array.isArray(rows)||!rows.length)return 0;
     const engine=window.MusicBoxWordKaraoke;
     const incoming=engine?.normalizeRows(rows)||[];
-    const existing=_testoLocaleVerificato(id)||lyricsData[id];
+    const builtin=lyricsData[id];
+    const existing=_testoLocaleVerificato(id)||
+      (_testoCoerenteConBrano(id,builtin)?builtin:null);
     if(!existing?.synced||!incoming.length)return 0;
     const baseline=parseSynced(existing.synced);
     if(baseline.length<3)return 0;
@@ -8084,7 +8107,9 @@ box.innerHTML = "";
 
   async function _completaTestoInAscolto(t, syncedOnly = false) {
     if (!t || !t.id || !t.title || !t.artist) return;
-    const preesistente = _testoLocaleVerificato(t.id) || lyricsData[t.id] || null;
+    const builtin=lyricsData[t.id];
+    const preesistente=_testoLocaleVerificato(t.id)||
+      (_testoCoerenteConBrano(t.id,builtin)?builtin:null);
     if (preesistente && preesistente.synced &&
         parseSynced(preesistente.synced).length >= 3) return;
     /* Se e' gia' presente il testo normale, recupera esclusivamente
@@ -8158,7 +8183,9 @@ box.innerHTML = "";
           if (profile !== profiloIniziale || document.hidden || scansioni >= 2) break;
           if (!t || !t.id || !t.title || !t.artist) continue;
           const importato=_eAudioYouTubePerTesti(t);
-          const attuale = localLyrics[t.id] || lyricsData[t.id];
+          const builtin=lyricsData[t.id];
+          const attuale=_testoLocaleVerificato(t.id)||
+            (_testoCoerenteConBrano(t.id,builtin)?builtin:null);
           if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) continue;
           /* Prima recupera anche il testo semplice per i brani YouTube;
              appena c'e', il giro seguente tenta solo il karaoke. */
@@ -8182,7 +8209,9 @@ box.innerHTML = "";
       if (profile === profiloIniziale && !document.hidden &&
           elencoDaCompletare.some(t => {
             if (!t || !t.artist) return false;
-            const attuale = localLyrics[t.id] || lyricsData[t.id];
+            const builtin=lyricsData[t.id];
+            const attuale=_testoLocaleVerificato(t.id)||
+              (_testoCoerenteConBrano(t.id,builtin)?builtin:null);
             if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) return false;
             const syncedOnly = !_eAudioYouTubePerTesti(t) || !!(attuale && attuale.text);
             return !_ricercaTestoRecente(t.id, syncedOnly);
@@ -13405,7 +13434,9 @@ window.MusicBoxBridge = {
   // They help the DJ protect a final sung phrase when timed LRC exists.
   mixLyricCues:(id)=>{
     const local=_testoLocaleVerificato(id);
-    const candidate=(local?.synced?local:lyricsData[id])||null;
+    const builtin=lyricsData[id];
+    const candidate=(local?.synced?local:
+      _testoCoerenteConBrano(id,builtin)?builtin:null)||null;
     if(!candidate?.synced)return null;
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
@@ -13536,6 +13567,13 @@ window.MusicBoxBridge = {
   next:()=>playNext(),
   previous:()=>playById(idBranoA(prevIndex())),
   lyricsDelay:(id)=>_ritardoTesto(id||currentId),
+  // Use the existing per-profile, cross-device saved timing controls.
+  // Immersive cannot alter another recording or the playback state.
+  setLyricsDelay:(id,value)=>{
+    if(!currentId||id!==currentId||!Number.isFinite(Number(value)))return false;
+    _impostaRitardoTesto(id,Number(value));
+    return true;
+  },
   requestWordLyrics:(id)=>{
     const song=id||currentId;
     const startLocalAlignment=()=>{

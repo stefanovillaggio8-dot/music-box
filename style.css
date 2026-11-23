@@ -4685,3 +4685,54 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(prefers-reduced-motion:reduce){
  .im-karaoke .im-line.im-seekable{transition:none}
 }
+
+
+/* Per-recording phrase sync in Immersive: uses the existing saved delay.
+   Popover overlays the lyrics instead of shifting playback controls on iPhone. */
+.im-lyrics-head{position:relative;z-index:12}
+.im-lyric-tools{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-shrink:0}
+.im-sync-toggle{
+ display:inline-flex;align-items:center;justify-content:center;gap:3px;
+ border-radius:999px;border:1px solid hsl(var(--im-hue) 90% 82% / .39);
+ background:#ffffff16;color:#f1e6ff;font-size:10px;font-weight:750;
+ padding:7px 9px;min-height:32px;white-space:nowrap;cursor:pointer;
+}
+.im-sync-toggle:hover,.im-sync-toggle[aria-expanded="true"]{
+ background:hsl(var(--im-hue) 80% 56% / .29);border-color:#e7cbff99;
+}
+.im-sync-panel{
+ position:absolute;right:0;top:calc(100% + 6px);
+ width:min(315px,calc(100vw - 34px));z-index:25;
+ padding:12px;border-radius:15px;
+ background:linear-gradient(135deg,#15182af7,#28213ef7);
+ border:1px solid #d6baff62;box-shadow:0 14px 44px #000c;
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ color:#fff;
+}
+.im-sync-title{
+ font-size:12px;font-weight:730;letter-spacing:.05px;
+ display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;
+}
+#imSyncValue{font-size:12px;font-weight:800;color:#f3d0ff;min-width:44px;text-align:right;}
+.im-sync-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;}
+.im-sync-actions button{
+ min-height:38px;padding:6px 10px;border-radius:10px;
+ color:#f9f3ff;background:#ffffff17;border:1px solid #ffffff32;
+ font-size:12px;font-weight:700;white-space:nowrap;
+}
+.im-sync-actions button:hover,.im-sync-actions button:focus-visible{
+ background:hsl(var(--im-hue) 70% 58% / .31);
+}
+.im-sync-actions button:focus-visible,.im-sync-toggle:focus-visible{
+ outline:2px solid #fff;outline-offset:2px;
+}
+@media(max-width:420px){
+ .im-lyrics-heading{gap:5px;min-width:0;}
+ .im-lyric-status{max-width:111px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ .im-lyric-tools{gap:4px;}
+ .im-sync-toggle{font-size:0;min-width:30px;padding:4px 6px;}
+ .im-sync-toggle::before{content:"⏱";font-size:16px;}
+}
+@media(prefers-reduced-motion:reduce){
+ .im-sync-toggle,.im-sync-actions button{transition:none!important;}
+}
