@@ -1,12 +1,7 @@
 name: Music Box DJ independent raw-audio audit
 on:
-  push:
-    paths:
-      - 'mix-intelligente.js'
-      - 'dj-deep-analysis.json'
-      - 'tools/dj-audio-spotcheck.py'
-      - 'tests/dj-beat-audit.test.cjs'
-      - '.github/workflows/dj-audio-spotcheck.yml'
+  # Legacy 130k-pair sampling is research, not a bounded Ste regression.
+  # New pushes must never launch cross-library PCM sampling implicitly.
   workflow_dispatch:
 permissions:
   contents: read
