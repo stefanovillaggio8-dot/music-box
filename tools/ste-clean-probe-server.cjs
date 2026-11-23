@@ -34,9 +34,11 @@ function server(data){
    }else{res.setHeader('Content-Length',bytes.length);res.end(bytes);}return;
   }
   if(url.pathname==='/fixture.json'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(prepared.fixture));return;}
-  const files={'/audio-composite-mix.js':'audio-composite-mix.js','/dual-deck.js':'tools/ios-native-dual-deck-prototype.js','/':'audits/ste-factored-clean-20261123/iphone-probe.html'};
+  const files={'/audio-composite-mix.js':'audio-composite-mix.js','/dual-deck.js':'tools/ios-native-dual-deck-prototype.js',
+   '/observed-probe.js':'tools/ios-native-observed-probe.js','/observed':'audits/ste-factored-clean-20261123/iphone-observed-probe.html',
+   '/':'audits/ste-factored-clean-20261123/iphone-probe.html'};
   if(!files[url.pathname]){res.writeHead(404);res.end();return;}
-  res.setHeader('Content-Type',url.pathname==='/'?'text/html':'text/javascript');res.end(fs.readFileSync(path.join(root,files[url.pathname])));
+  res.setHeader('Content-Type',url.pathname==='/'||url.pathname==='/observed'?'text/html':'text/javascript');res.end(fs.readFileSync(path.join(root,files[url.pathname])));
  });
  return {server:s,...prepared};
 }

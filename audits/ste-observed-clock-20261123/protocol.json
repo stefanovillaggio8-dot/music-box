@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "source": "audio/songs/track-38.mp3",
+  "target": "audio/songs/track-4.mp3",
+  "begin": 158.75,
+  "end": 161.089,
+  "incomingEntry": 0,
+  "sourcePreRoll": 3,
+  "maximumLaunchLatenessSeconds": 0.08,
+  "sourceReadThrough": "native-ended-event",
+  "readinessDeadlineSeconds": 5,
+  "playbackDeadlineSeconds": 10,
+  "modes": [
+    "natural",
+    "seek",
+    "hidden"
+  ],
+  "prime": "incoming-only-under-first-gesture; source under second gesture",
+  "clockObserver": "starts immediately without awaiting play promise",
+  "sourceClock": "unchanged container-declared raw/gapless mapping",
+  "physicalIPhone": false,
+  "applicationIntegration": false,
+  "newPairCertification": false,
+  "noNewPCMInference": true,
+  "reusesPublishedOriginalPair": true
+}

@@ -1,0 +1,13 @@
+<!doctype html><html lang="it"><meta charset="utf-8"><title>Studio isolato clock nativo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font:17px system-ui;margin:1rem;max-width:46rem}button{font:inherit;padding:.8rem;margin:.4rem}pre{white-space:pre-wrap;font-size:12px}</style>
+<h1>Studio separato, non Music Box</h1>
+<p>Il primo pulsante emette un breve frammento della seconda canzone. Il secondo avvia la prova. Non modifica account, download o l'app pubblica; non certifica iPhone.</p>
+<button id="prime" disabled>1. Prepara secondo lettore</button><button id="run" disabled>2. Avvia sorgente</button><button id="stop">Arresta</button><pre id="status">Caricamento</pre>
+<script src="/audio-composite-mix.js"></script><script src="/observed-probe.js"></script><script>
+const el=id=>document.getElementById(id);let probe,fixture,timer;
+fetch('/fixture.json').then(r=>r.json()).then(f=>{fixture=f;el('prime').disabled=false});
+function show(){if(probe)el('status').textContent=JSON.stringify(probe.snapshot(),null,2);clearTimeout(timer);if(!document.hidden)timer=setTimeout(show,300)}
+el('prime').onclick=e=>{probe?.dispose();window.probe=probe=createObservedNativeProbe(fixture,{hidden:()=>window.__testHidden===true});el('run').disabled=true;show();probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{})};
+el('run').onclick=e=>{el('run').disabled=true;probe.run(e).catch(()=>{})};el('stop').onclick=()=>probe?.stop('user-stop');document.addEventListener('visibilitychange',show);
+</script></html>
