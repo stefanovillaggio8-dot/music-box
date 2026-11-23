@@ -1,0 +1,97 @@
+{
+  "evaluationOnly": true,
+  "playbackCertified": false,
+  "physicalIPhone": false,
+  "assetSha256": "f311d8aef215aa8f05efdf03c41696eb826faf3be99f7f7186c335e103e1a8e1",
+  "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+  "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+  "scopeRecordings": 222,
+  "platform": "darwin",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "measurements": [
+        {
+          "rate": 44100,
+          "peak": 0.9447730183601379,
+          "overlapPeak": 0.37293386459350586,
+          "sourceTailPeak": 0.0001379056047881022,
+          "sourceTailRmsMax": 0.00003630509369464485,
+          "correlation": 0.9999999989343904,
+          "relativeRms": 0.000046910130658405424,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "targetDecodedOffset": 0,
+          "targetMediaOffset": 0,
+          "sourceDecodedDuration": 161.08895691609976,
+          "sourceMediaDuration": 161.088979,
+          "targetDecodedDuration": 126.87673469387755,
+          "targetMediaDuration": 126.876708,
+          "accepted": true
+        },
+        {
+          "rate": 48000,
+          "peak": 0.962621808052063,
+          "overlapPeak": 0.3761146068572998,
+          "sourceTailPeak": 0.0001376281288685277,
+          "sourceTailRmsMax": 0.0000363607435796943,
+          "correlation": 0.9999999991321697,
+          "relativeRms": 0.00004216681092711117,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "targetDecodedOffset": 0,
+          "targetMediaOffset": 0,
+          "sourceDecodedDuration": 161.08897916666666,
+          "sourceMediaDuration": 161.088979,
+          "targetDecodedDuration": 126.87672916666666,
+          "targetMediaDuration": 126.876708,
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "measurements": [
+        {
+          "rate": 44100,
+          "peak": 0.9447871446609497,
+          "overlapPeak": 0.3729551136493683,
+          "sourceTailPeak": 0.00012865362805314362,
+          "sourceTailRmsMax": 0.0000367526913962822,
+          "correlation": 0.031624049846962266,
+          "relativeRms": 1.3936410838544535,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0.023020833333333334,
+          "targetDecodedOffset": 0,
+          "targetMediaOffset": 0,
+          "sourceDecodedDuration": 161.08897959183673,
+          "sourceMediaDuration": 161.136,
+          "targetDecodedDuration": 126.87673469387755,
+          "targetMediaDuration": 126.87673469387755,
+          "accepted": false
+        },
+        {
+          "rate": 48000,
+          "peak": 0.962621808052063,
+          "overlapPeak": 0.3761146068572998,
+          "sourceTailPeak": 0.0001220703125,
+          "sourceTailRmsMax": 0.00003704383357638615,
+          "correlation": 0.031624732894999265,
+          "relativeRms": 1.3936374725392018,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0.023020833333333334,
+          "targetDecodedOffset": 0,
+          "targetMediaOffset": 0,
+          "sourceDecodedDuration": 161.08897916666666,
+          "sourceMediaDuration": 161.136,
+          "targetDecodedDuration": 126.87672916666666,
+          "targetMediaDuration": 126.87673469387755,
+          "accepted": false
+        }
+      ]
+    }
+  ],
+  "decoderAccepted": false
+}

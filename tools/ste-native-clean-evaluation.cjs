@@ -52,17 +52,23 @@ async function evaluate(candidateFile,output){
        const sourceMediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeClocks.source,c.sourceSha,durations[c.sourceSha]);
        const targetDecodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeClocks.target,c.targetSha,target.duration);
        const targetMediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeClocks.target,c.targetSha,durations[c.targetSha]);
-       let peak=0,overlapPeak=0,sourceTailPeak=0,sourceTailRmsMax=0;
+       let peak=0,overlapPeak=0,sourceTailPeak=0,sourceTailRmsMax=0,targetNativeOverlapPeak=0;
        for(let ch=0;ch<mix.numberOfChannels;ch++){
         const a=mix.getChannelData(ch);
         for(let i=0;i<a.length;i++){peak=Math.max(peak,Math.abs(a[i]));if(i>=Math.round(c.preRoll*rate)&&i<Math.round((c.preRoll+c.nativeHandoffAt)*rate))overlapPeak=Math.max(overlapPeak,Math.abs(a[i]));}
        }
        if(sourceDecodedOffset!==null){
-        for(let i=Math.round((c.begin+sourceDecodedOffset)*rate);i<source.length;i+=Math.round(.02*rate)){
+        for(let i=Math.round((c.begin-c.preRoll+sourceDecodedOffset)*rate);i<source.length;i+=Math.round(.02*rate)){
          let energy=0,n=0;
          for(let ch=0;ch<source.numberOfChannels;ch++){const a=source.getChannelData(ch);for(let j=i;j<Math.min(a.length,i+Math.round(.02*rate));j++){energy+=a[j]*a[j];n++;sourceTailPeak=Math.max(sourceTailPeak,Math.abs(a[j]));}}
          sourceTailRmsMax=Math.max(sourceTailRmsMax,Math.sqrt(energy/Math.max(n,1)));
         }
+       }
+       // A distinct, non-spliced native-element experiment can use this
+       // bound without pretending the failed FLAC/MP3 return passed.
+       if(targetDecodedOffset!==null)for(let ch=0;ch<target.numberOfChannels;ch++){
+        const a=target.getChannelData(ch),start=Math.round(targetDecodedOffset*rate),end=Math.min(a.length,start+Math.ceil((c.fade+.1)*rate));
+        for(let i=start;i<end;i++)targetNativeOverlapPeak=Math.max(targetNativeOverlapPeak,Math.abs(a[i]));
        }
        // Compare the actual unmodified final 100ms at the nominal target clock.
        // No best-lag fit or correction is allowed in this acceptance criterion.
@@ -72,7 +78,7 @@ async function evaluate(candidateFile,output){
         const x=mix.getChannelData(ch)[at-count+i],y=target.getChannelData(ch)[to-count+i];xx+=x*x;yy+=y*y;xy+=x*y;error+=(x-y)**2;
        }
        const correlation=xy/Math.sqrt(xx*yy),relativeRms=Math.sqrt(error/Math.max(yy,1e-10));
-       results.push({rate,peak,overlapPeak,sourceTailPeak,sourceTailRmsMax,correlation,relativeRms,sourceDecodedOffset,sourceMediaOffset,targetDecodedOffset,targetMediaOffset,
+       results.push({rate,peak,overlapPeak,sourceTailPeak,sourceTailRmsMax,targetNativeOverlapPeak,correlation,relativeRms,sourceDecodedOffset,sourceMediaOffset,targetDecodedOffset,targetMediaOffset,
         sourceDecodedDuration:source.duration,sourceMediaDuration:durations[c.sourceSha],targetDecodedDuration:target.duration,targetMediaDuration:durations[c.targetSha],
         accepted:[sourceDecodedOffset,sourceMediaOffset,targetDecodedOffset,targetMediaOffset].every(x=>x!==null)&&peak<=.9992&&overlapPeak<=.962&&sourceTailPeak<=.001&&sourceTailRmsMax<=.0001&&correlation>=.99&&relativeRms<=.1});
       }finally{await ctx.close()}
