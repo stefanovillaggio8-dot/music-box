@@ -46,3 +46,23 @@ No new music research is performed for their profiles/playlist.
 Remaining: broader held-out Ste validation, truly new full beatmatches,
 musical listening, and a separately proven iPhone-compatible route. This
 release does not change Karaoke alignment or certify future unanalysed songs.
+
+## Release checks and hold
+
+152/152 targeted tests pass; full isolated suite 767/769 with the same two
+historical failures as baseline. Native-clean release workflow 45170406906
+passes Linux and macOS, both browsers, using the ACTUAL installed index.
+Windows Chromium actual release playback also passes. The main/PR59 broad
+browser matrices are regression checks only, not new music research.
+
+The first phrase/offline workflow correctly rejected the release because
+its previous-worker fixture sw-6739.js was missing. Added the EXACT published
+b0b4f34a worker (SHA256 2b89005957f395a3c1e76ff1360c77bb2fd60c73ee52740b6c7d74a8fa72c434),
+without modifying production storage logic. The independent real WebKit
+6.739->6.740 upgrade now retains all three saved-profile sentinels, legacy
+audio, foreign cache, localStorage and IndexedDB; the new player opens
+offline and the DJ index is revalidated. These are isolated synthetic
+storage sentinels, not an examination of anybody's physical iPhone data.
+
+PR71 remains a candidate, not a public 6.740 announcement. Do not claim the
+two historical failing tests are green or discard them to enable a release.
