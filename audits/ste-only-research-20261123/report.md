@@ -85,3 +85,16 @@ con gli stessi ingressi, e non promuovere un parziale a completo. Prima di
 altro rendering servono ritmo, battute, voce e armonia sufficientemente
 supportati. Le prove di clock nativo della cadenza Ste restano distinte e
 non vengono aggirate con offset adattati.
+
+## Pubblicazione dei soli controlli di ricerca
+
+PR69 unita nel commit 379830d5728846445005e42a840b5deced8ab9c9. Candidata
+d9a415828b357c2f10c8acbc920c3d5aa80a473b: 25/25 regressioni pertinenti
+nell'ambiente isolato e CI 45101049035 superata con sei contratti rapidi.
+Il workflow Ste-only risulta attivo su main. Tag di ripristino:
+music-box-v6.739-before-ste-research-policy-20261123.
+
+Tutti gli undici file del player, audio, Karaoke, indice e dati personali
+sono identici al main precedente, verificati prima del merge. La versione
+app resta 6.739: non e' un nuovo miglioramento musicale. I prototipi
+respinti restano soltanto archivio nella PR59, mantenuta in bozza.
