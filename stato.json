@@ -2273,13 +2273,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 4,
-    "s": 691,
+    "s": 722,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 4,
-    "s": 691,
+    "s": 722,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -11009,13 +11009,13 @@
    },
    "[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 3,
-    "s": 525,
+    "s": 562,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 3,
-    "s": 525,
+    "s": 562,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    }
