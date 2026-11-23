@@ -61,8 +61,9 @@ const server=http.createServer((req,res)=>{
     if(u.hostname==='raw.githubusercontent.com'&&[fixture.from,fixture.to].some(key=>u.pathname.endsWith('/'+key.slice(6))))return route.continue();
     return route.abort();
    });
-   await page.addInitScript(({targetFile,fromId,toId})=>{
+   await page.addInitScript(({targetFile,fromId,toId,translationMode})=>{
     window.__nativePair={targetFile,fromId,toId};
+    window.__nativeTranslationMode=translationMode;window.__nativeLyricSamples=[];
     localStorage.setItem('mb.profile',JSON.stringify('Ste'));localStorage.setItem('mb.djmix','on');
     window.__nativeCleanTrace=[];
     const play=HTMLMediaElement.prototype.play,seek=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
@@ -76,7 +77,7 @@ const server=http.createServer((req,res)=>{
      }
      return play.apply(this,arguments);
     };
-   },{targetFile,fromId,toId});
+   },{targetFile,fromId,toId,translationMode});
    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.MusicBoxMix?.diagnostics().deepIndexLoaded&&[__nativePair.fromId,__nativePair.toId].every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),null,{timeout:20000});
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
@@ -92,7 +93,11 @@ const server=http.createServer((req,res)=>{
     b.onclick=async event=>{
      try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,begin-7);window.__outgoingNative=MusicBoxBridge.audio();
       if(MusicBoxBridge.mixEnqueue([__nativePair.toId])!==1)throw Error('Actual manual queue rejected Ste target');window.__setupDone=true;
-      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics())},100);
+      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{
+       if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics());
+       if(__nativeTranslationMode&&__nativeLyricSamples.length<110)__nativeLyricSamples.push({beforeAdoption:!window.__beforeNativeAdoption,
+        readerOpen:!document.getElementById('lyricsPanel').hidden,id:MusicBoxBridge.currentId(),sourceAt:__outgoingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent});
+      },100);
      }catch(e){window.__setupError=e.message}
     };document.body.append(b);
    },fixture.record.cue.begin);
@@ -113,6 +118,8 @@ const server=http.createServer((req,res)=>{
      await page.waitForFunction(()=>document.getElementById('lyricsBody').textContent.includes('Native incoming phrase'),null,{timeout:5000});
      for(let i=0;i<50&&!translationAborted;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationAborted,true);
      assert.equal(await page.locator('#lyricsTraduci').textContent(),'Traduci');assert.equal(wordModels.length,0);
+     const samples=await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen));
+     assert.ok(samples.length>=8);assert.ok(samples.every(s=>s.id===fromId&&s.lyrics.includes('Native outgoing phrase')&&!s.lyrics.includes('Native incoming phrase')));
     }
     const adopted=await page.evaluate(()=>({sameElement:MusicBoxBridge.audio()===__incomingNative,beforeAdoption:window.__beforeNativeAdoption,
      targetTime:MusicBoxBridge.audio().currentTime,rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
@@ -127,7 +134,8 @@ const server=http.createServer((req,res)=>{
     assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,
-     ...(translationMode?{translation:{requestAbortedAtHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length}}:{}),logs});
+     ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
+      observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
   }finally{await browser.close()}

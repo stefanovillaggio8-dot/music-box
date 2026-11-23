@@ -3,11 +3,15 @@
 <style>body{font:17px system-ui;margin:1rem;max-width:46rem}button{font:inherit;padding:.8rem;margin:.4rem}pre{white-space:pre-wrap;font-size:12px}</style>
 <h1>Studio separato, non Music Box</h1>
 <p>Il primo pulsante emette un breve frammento della seconda canzone. Il secondo avvia la prova. Non modifica account, download o l'app pubblica; non certifica iPhone.</p>
-<button id="prime" disabled>1. Prepara secondo lettore</button><button id="run" disabled>2. Avvia sorgente</button><button id="stop">Arresta</button><pre id="status">Caricamento</pre>
+<button id="prime" disabled>1. Prepara secondo lettore</button><button id="run" disabled>2. Avvia sorgente</button><button id="stop">Arresta</button>
+<p><label>Dispositivo e versione iOS, se noti: <input id="device" maxlength="80"></label> <button id="save">Salva report</button></p>
+<pre id="status">Caricamento</pre>
 <script src="/audio-composite-mix.js"></script><script src="/observed-probe.js"></script><script>
 const el=id=>document.getElementById(id);let probe,fixture,timer;
 fetch('/fixture.json').then(r=>r.json()).then(f=>{fixture=f;el('prime').disabled=false});
 function show(){if(probe)el('status').textContent=JSON.stringify(probe.snapshot(),null,2);clearTimeout(timer);if(!document.hidden)timer=setTimeout(show,300)}
 el('prime').onclick=e=>{probe?.dispose();window.probe=probe=createObservedNativeProbe(fixture,{hidden:()=>window.__testHidden===true});el('run').disabled=true;show();probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{})};
 el('run').onclick=e=>{el('run').disabled=true;probe.run(e).catch(()=>{})};el('stop').onclick=()=>probe?.stop('user-stop');document.addEventListener('visibilitychange',show);
+el('save').onclick=()=>{if(!probe)return;const report={...probe.snapshot(),operatorDeclaredDevice:el('device').value,capturedAt:new Date().toISOString()};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='ste-observed-clock-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 </script></html>

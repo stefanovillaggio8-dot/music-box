@@ -43,3 +43,16 @@ test('a late incoming play resolution cannot resurrect a cancelled second deck',
  t.hide();t.incoming.paused=false;t.incoming.resolvePlay();await new Promise(setImmediate);
  assert.equal(t.incoming.paused,true);assert.equal(t.probe.snapshot().phase,'stopped');assert.equal(t.old.plays,1);t.probe.dispose();
 });
+test('hidden after adoption and deliberate completion also close the secondary lifetime',async()=>{
+ for(const action of ['hidden','complete']){
+  const t=fixture();await t.probe.prime({isTrusted:true});await t.probe.run({isTrusted:true});t.old.currentTime=t.f.begin;t.advance();
+  t.old.currentTime=t.old.duration;t.old.ended=true;t.old.paused=true;t.incoming.currentTime=2.2;t.advance();assert.equal(t.probe.snapshot().phase,'adopted');
+  if(action==='hidden')t.hide();else t.advance();
+  t.incoming.paused=false;t.incoming.resolvePlay();await new Promise(setImmediate);
+  assert.equal(t.incoming.paused,true);assert.equal(t.probe.snapshot().phase,action==='hidden'?'stopped':'complete');t.probe.dispose();
+ }
+});
+test('a cancelled primer cannot resume through its late play promise',async()=>{
+ const t=fixture();await t.probe.prime({isTrusted:true});t.hide();t.incoming.paused=false;t.incoming.resolvePlay();await new Promise(setImmediate);
+ assert.equal(t.incoming.paused,true);assert.equal(t.old.plays,0);assert.equal(t.probe.snapshot().phase,'stopped');t.probe.dispose();
+});

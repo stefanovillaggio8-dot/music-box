@@ -23,14 +23,14 @@ root.createObservedNativeProbe=function(f,options={}){
  for(const [name,a] of [['source',old],['incoming',incoming]])for(const event of ['play','playing','pause','ended','error'])on(a,event,()=>log(name+'-'+event,a));
  on(old,'pause',()=>{if(['waiting','overlap'].includes(r.phase)&&!old.ended)stop('source-paused-before-eof')});
  on(old,'seeking',()=>{if(['waiting','overlap'].includes(r.phase))stop('source-seek')});
- const visibility=()=>{if(hidden()&&['priming','primed','waiting','overlap'].includes(r.phase))stop('hidden')};
+ const visibility=()=>{if(hidden()&&['priming','primed','waiting','overlap','adopted'].includes(r.phase))stop('hidden')};
  document.addEventListener('visibilitychange',visibility);
  function prime(event){
   if(!event?.isTrusted||r.phase!=='unprimed')return Promise.reject(Error('trusted-prime-required'));
   r.phase='priming';const token=generation;log('incoming-prime-request',incoming);
   // Only the incoming element is primed. The original never plays here.
   let job;try{job=incoming.play()}catch(e){stop(e.message);return Promise.reject(e)}
-  Promise.resolve(job).then(()=>log('incoming-prime-promise',incoming)).catch(e=>{if(generation===token)stop('prime-play-rejected:'+e.name)});
+  Promise.resolve(job).then(()=>{if(generation!==token){incoming.pause();return}log('incoming-prime-promise',incoming)}).catch(e=>{if(generation===token)stop('prime-play-rejected:'+e.name)});
   return wait(()=>!incoming.paused&&incoming.currentTime>.02).then(async()=>{
    r.primerSeconds=incoming.currentTime;r.sourceNeverPlayedDuringPrime=old.paused&&old.currentTime===0;incoming.pause();
    await wait(()=>old.readyState>=2&&incoming.readyState>=2&&clock(old,f.sourceClock,f.sourceSha)!==null&&clock(incoming,f.targetClock,f.targetSha)!==null);
@@ -71,7 +71,7 @@ root.createObservedNativeProbe=function(f,options={}){
     if(old.ended){
      if(incoming.paused||incoming.currentTime<.1){stop('incoming-stopped-at-eof');return}
      r.beforeAdoption={sourceEnded:true,sourceAt:old.currentTime,sourceDuration:old.duration,incomingAt:incoming.currentTime};
-     r.phase='adopted';r.sameIncomingElement=true;clear();finish=setTimeout(()=>{incoming.pause();r.phase='complete'},1000);return;
+     r.phase='adopted';r.sameIncomingElement=true;clear();finish=setTimeout(()=>{generation++;incoming.pause();r.phase='complete'},1000);return;
     }
    }else if(old.ended){stop('source-ended-before-overlap');return}
    timer=setTimeout(advance,25);

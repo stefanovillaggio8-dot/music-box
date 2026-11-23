@@ -50,12 +50,18 @@ on:
         description: 'New isolated readiness/clock observer; never enables iPhone or installs a musical cue'
         type: boolean
         default: false
+      observed_native_modes:
+        description: 'Bounded isolated observer modes; no new musical search'
+        type: string
+        default: 'natural,seek,hidden'
 permissions:
   contents: read
 jobs:
   observed-native-study:
     if: github.event_name == 'workflow_dispatch' && inputs.observed_native_study
     uses: ./.github/workflows/ste-observed-native-study.yml
+    with:
+      modes: ${{ inputs.observed_native_modes }}
   factored-native-study:
     if: github.event_name == 'workflow_dispatch' && (inputs.factored_native_study || inputs.factored_player || inputs.ios_sequential_study)
     strategy:

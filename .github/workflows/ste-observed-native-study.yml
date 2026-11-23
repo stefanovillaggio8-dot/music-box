@@ -1,7 +1,16 @@
 name: Isolated Ste observed native clock study
 on:
   workflow_dispatch:
+    inputs:
+      modes:
+        description: 'Bounded observer modes'
+        type: string
+        default: 'natural,seek,hidden'
   workflow_call:
+    inputs:
+      modes:
+        type: string
+        default: 'natural,seek,hidden'
 permissions:
   contents: read
 jobs:
@@ -47,6 +56,8 @@ jobs:
       - name: Exactly the retained personal Ste source/target originals
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
       - name: Observed clock, original audio and real cancellation controls
+        env:
+          MUSICBOX_OBSERVED_MODES: ${{ inputs.modes || 'natural,seek,hidden' }}
         run: node tests/ste-ios-observed-browser.cjs audits/ste-factored-clean-20261123/recordings.json observed-native-clock.json
       - uses: actions/upload-artifact@v4
         if: always()
