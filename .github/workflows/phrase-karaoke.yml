@@ -1,7 +1,7 @@
 name: Phrase karaoke display and offline upgrade
 on:
   pull_request:
-    paths: ['app.js', 'immersive.js', 'word-karaoke.js', 'index.html', 'sw.js', 'versione.json', 'tests/karaoke-phrase*', '.github/workflows/phrase-karaoke.yml']
+    paths: ['app.js', 'immersive.js', 'word-karaoke.js', 'index.html', 'sw.js', 'versione.json', 'tests/karaoke-phrase*', 'tests/offline-upgrade.cjs', 'tests/fixtures/sw-*.js', '.github/workflows/phrase-karaoke.yml']
   workflow_dispatch:
 permissions:
   contents: read

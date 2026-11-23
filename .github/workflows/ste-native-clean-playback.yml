@@ -1,0 +1,55 @@
+name: Ste native clean tail playback regression
+on:
+  pull_request:
+    paths:
+      - 'mix-intelligente.js'
+      - 'dj-deep-analysis.json'
+      - 'tests/native-clean*'
+      - '.github/workflows/ste-native-clean-playback.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ste-native-clean-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  native-clean:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned browser backends within a bounded setup budget
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Provide Linux native media output
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=musicbox_clean rate=48000 channels=2
+          pactl set-default-sink musicbox_clean
+      - name: Verify only the two current personal Ste original fixtures
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
+      - name: Check class, queue, seek and preserved controls
+        run: node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+      - name: Exercise ACTUAL release index without shadow injection
+        env:
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
+        run: node tests/native-clean-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-native-clean-release-${{ runner.os }}
+          path: native-clean-release-player.json

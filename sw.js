@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6739";
+const CACHE = "spotifynonavraiimieisoldi-v6740";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6739&lyrics=4",
+  "./style.css?v=6740&lyrics=4",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -54,7 +54,7 @@ const CORE = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6739&words=20",
+  "./app.js?v=6740&words=20",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -65,7 +65,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=5",
   "./audio-stretch-core.mjs?v=5",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6739&dj=62", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6740&dj=63", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -96,7 +96,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6739&lyrics=4",
+  "./style.css?v=6740&lyrics=4",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -105,7 +105,7 @@ const OFFLINE_SHELL = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6739&words=20",
+  "./app.js?v=6740&words=20",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -116,7 +116,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=5",
   "./audio-stretch-core.mjs?v=5",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6739&dj=62",
+  "./mix-intelligente.js?v=6740&dj=63",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=10"
 ];
