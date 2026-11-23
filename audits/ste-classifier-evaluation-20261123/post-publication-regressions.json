@@ -1,0 +1,11 @@
+{
+  "afterMerge": "788a196797e5297b0fd6e0f934b049178a461a36",
+  "publicRelease": "2559a5c0532f89abc95c77a80178f56cd9f05135",
+  "counts": {
+    "tests": 788,
+    "pass": 786,
+    "fail": 2
+  },
+  "sameTwoHistoricalBaselineFailures": true,
+  "physicalIPhone": false
+}

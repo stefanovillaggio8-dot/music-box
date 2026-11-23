@@ -312,3 +312,13 @@ expectations. Do not repeat the failed global/CQT/timing experiments or
 reclassify the new clean junction as a complete beatmatch. A future iPhone
 route must respect the existing restriction on adopting native elements;
 the desktop fix is not permission to remove that restriction.
+
+PR59 has now incorporated the verified public main in merge 788a1967.
+The only conflicts were application-shell URLs: retained the research
+branch's stretch v6/common-audio v18 and combined them with release
+6.740 / DJ revision 63. No whole-file overwrite or loss of experimental
+code. The PUBLIC app continues using its independently tested v5/v14
+audio revisions; the research branch does not deploy itself.
+Post-merge full regression: 786/788, the same two baseline failures.
+Final native-release receipts are archived here as final-native-clean-
+player-*.json, rather than depending only on expiring CI artifacts.
