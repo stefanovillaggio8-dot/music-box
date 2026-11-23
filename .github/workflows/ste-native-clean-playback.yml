@@ -64,6 +64,7 @@ jobs:
       - name: Exercise ACTUAL release index without shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
+          MUSICBOX_NATIVE_TRANSLATION: 'true'
         run: node tests/native-clean-browser.cjs
       - name: New installed natural junction, no shadow injection
         env:

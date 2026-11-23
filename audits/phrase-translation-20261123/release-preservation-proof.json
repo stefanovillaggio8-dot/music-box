@@ -1,0 +1,21 @@
+{
+  "base": "da4d9c2fa9f309cfd7fc1bc6346f1cd90d74f57f",
+  "unchangedSha256": {
+    "dj-deep-analysis.json": "b3c7d0ecbbb9ddc09f53ed238cc60ba2b297a54a77ab4caefc8f990a29bd8a91",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "audio-lyrics-worker.js": "eff4366b7360732950676aaf395429275440193c1a3525dddaf6c08145dd5097",
+    "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+    "audio-stretch.js": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+    "audio-stretch-core.mjs": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b",
+    "stato.json": "b13e01bc3c349a027d3dccb2deca3c57ca52c889c07bd0a578f3403a62d55ce7",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "karaoke-index.json": "2935013c4a1cc2f92408e9472f2c62c9e077bb305118a2bf2d60706ed2697865"
+  },
+  "translationOnlyPlayerChange": true,
+  "noNewMusicCertification": true,
+  "iPhoneModeUnchanged": true,
+  "noUserDataMigration": true
+}

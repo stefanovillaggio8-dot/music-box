@@ -1,0 +1,38 @@
+{
+  "baselinePublicVersion": "6.741",
+  "newWordHighlighting": false,
+  "translationUnitBefore": {
+    "passed": 0,
+    "total": 6
+  },
+  "translationUnitAfter": {
+    "passed": 6,
+    "total": 6
+  },
+  "targetedAfter": {
+    "passed": 24,
+    "total": 24
+  },
+  "mockedService": true,
+  "actualExternalServiceCalls": 0,
+  "browsers": [
+    "Chromium Windows",
+    "WebKit Windows"
+  ],
+  "cappedRepeatRequests": {
+    "before": 60,
+    "after": 0
+  },
+  "repeatedPhraseRequests": {
+    "before": 3,
+    "after": 2
+  },
+  "originalAudioHandoffRegression": {
+    "browser": "Chromium Windows",
+    "passed": true,
+    "controlledLyrics": true
+  },
+  "newAcousticAccuracyMeasured": false,
+  "physicalIPhone": false,
+  "published": false
+}
