@@ -175,6 +175,56 @@ async function run(){
    assert.equal(await page.locator("#imFocusToggle").getAttribute("aria-pressed"),"true");
    await page.waitForFunction(()=>document.getElementById("imKaraoke").clientHeight>=220,null,{timeout:4000});
    assert.ok(await page.locator("#imKaraoke").evaluate(el=>el.clientHeight)>=220,"focus lyric stage should expand");
+   // Tap a timed phrase: jump to its LRC onset plus the user's delay,
+   // never change the playback state and keep the original phrase intact.
+   const phrase=page.locator("#imKaraoke .im-line").nth(5);
+   assert.equal(await phrase.getAttribute("role"),"button");
+   assert.equal(await phrase.getAttribute("tabindex"),"0");
+   assert.match(await phrase.getAttribute("aria-label"),/Vai a 0:40/);
+   await page.evaluate(()=>{fakeAudio.currentTime=12;});
+   await phrase.evaluate(row=>row.click());
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),40.25,
+    "clicking a synced phrase jumps to its true media-clock cue plus lyric delay");
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 6"));
+   assert.equal(await page.evaluate(()=>fakeAudio.paused),false,"seeking must not pause playback");
+   // Keyboard users can navigate the same synced lines.
+   await page.locator("#imKaraoke .im-line").nth(3).press("Enter");
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),24.25);
+   await page.locator("#imKaraoke .im-line").nth(4).press("Space");
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25);
+   // In a shared listening room a local time assignment is forbidden.
+   await page.evaluate(()=>{
+    window.fakeRoomSeeks=[];
+    window.MusicBoxRoom={isActive:()=>true,shouldPlay:()=>true,
+     control:(name,payload)=>fakeRoomSeeks.push({name,payload})};
+    document.querySelectorAll("#imKaraoke .im-line")[8].click();
+   });
+   const roomSeek=await page.evaluate(()=>window.fakeRoomSeeks);
+   assert.deepEqual(roomSeek,[{name:"seek",payload:{seconds:64.25}}]);
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25,
+    "shared room routes seek to room owner instead of changing local audio");
+   await page.evaluate(()=>{delete window.MusicBoxRoom;});
+   // An unseekable audio source should fail closed, not set invalid time.
+   await page.evaluate(()=>{
+    fakeAudio.duration=NaN;
+    document.querySelectorAll("#imKaraoke .im-line")[6].click();
+   });
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),32.25);
+   await page.evaluate(()=>{fakeAudio.duration=240;});
+   // Dragging a lyric to scroll must not accidentally jump playback
+   // even if Safari synthesizes a click after pointer/touch movement.
+   const afterDrag=await page.evaluate(()=>{
+    const row=document.querySelectorAll("#imKaraoke .im-line")[9],
+      before=fakeAudio.currentTime;
+    const opts={bubbles:true,clientX:110,clientY:220,button:0};
+    row.dispatchEvent(new PointerEvent("pointerdown",opts));
+    row.dispatchEvent(new PointerEvent("pointermove",{...opts,clientY:275}));
+    row.dispatchEvent(new PointerEvent("pointerup",{...opts,clientY:275}));
+    row.click();
+    return {before,after:fakeAudio.currentTime};
+   });
+   assert.equal(afterDrag.after,afterDrag.before,
+    "a drag across a lyric must not seek");
    await page.locator("#imToggle").click();
    await page.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
    assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),1);
@@ -193,6 +243,19 @@ async function run(){
    await page.locator("#imNext").click();
    await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Secondo brano");
    assert.equal(await page.evaluate(()=>window.fakeCalls.next),1);
+   // Untimed lyrics do not have an acoustic onset; they must remain readable
+   // but not clickable and must never fabricate a seek position.
+   await page.evaluate(()=>{
+    window.fakeLyrics={text:"Testo non sincronizzato\\nSeconda frase",synced:[]};
+    fakeAudio.currentTime=27;
+   });
+   await page.waitForFunction(()=>document.getElementById("imLyricModeLabel").textContent==="TESTO NON SINCRONIZZATO");
+   const plain=page.locator("#imKaraoke .im-line").first();
+   assert.equal(await plain.getAttribute("role"),null);
+   await plain.evaluate(row=>row.click());
+   assert.equal(await page.evaluate(()=>fakeAudio.currentTime),27,
+    "untimed text must never seek");
+
    await page.evaluate(()=>{
     const el=document.getElementById("imKaraoke");
     // Touch() is not directly constructible on some desktop WebKit builds.

@@ -4660,3 +4660,28 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
   }
   .im-root .im-mini-spectrum span{animation:none!important;transform:scaleY(.8);}
 }
+
+
+/* Immersive phrase navigation: only verified-position synced lyric rows
+   behave like seek controls; unsynced reading stays normal scrollable text. */
+.im-karaoke .im-line.im-seekable{
+  cursor:pointer;
+  touch-action:pan-y;
+  -webkit-tap-highlight-color:transparent;
+  border-radius:8px;
+}
+@media(hover:hover) and (pointer:fine){
+ .im-karaoke .im-line.im-seekable:hover{
+   opacity:.84;
+   color:#fff;
+   text-shadow:0 0 20px hsl(var(--im-hue) 92% 76% / .38);
+ }
+}
+.im-karaoke .im-line.im-seekable:focus-visible{
+ outline:2px solid #e5c7ff;
+ outline-offset:4px;
+ opacity:1;
+}
+@media(prefers-reduced-motion:reduce){
+ .im-karaoke .im-line.im-seekable{transition:none}
+}
