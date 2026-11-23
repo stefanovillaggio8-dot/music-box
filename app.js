@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.741";
+  const APP_VERSION = "6.742";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9781,8 +9781,11 @@ function openProfile() {
   const _testiTradotti = new Map();
   let _traduzioneInCorso = false;
   let _traduzioneRichiesta = 0;
+  let _traduzioneController = null;
   function _azzeraVistaTraduzione() {
     _traduzioneRichiesta++;
+    _traduzioneController?.abort();
+    _traduzioneController = null;
     const btn = $("lyricsTraduci");
     if (btn) {
       btn.disabled = false;
@@ -9793,6 +9796,14 @@ function openProfile() {
     if (body) for (const el of body.querySelectorAll(".lyr-traduzione"))
       el.remove();
     _traduzioneInCorso = false;
+  }
+  function _testoTraduzioneSicuro(value) {
+    const named={amp:"&",lt:"<",gt:">",quot:'"',apos:"'",nbsp:"\u00a0"};
+    return String(value).replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi,(whole,entity)=>{
+      if(entity[0]!=="#")return named[entity.toLowerCase()]||whole;
+      const n=entity[1].toLowerCase()==="x"?parseInt(entity.slice(2),16):Number(entity.slice(1));
+      return Number.isInteger(n)&&n>0&&n<=0x10ffff&&!(n>=0xd800&&n<=0xdfff)?String.fromCodePoint(n):whole;
+    });
   }
   async function _traduciTestiSuRichiesta() {
     const btn = $("lyricsTraduci"), body = $("lyricsBody");
@@ -9810,39 +9821,52 @@ function openProfile() {
     const blocchi = source.filter(el => String(el.textContent || "").trim() &&
        !el.classList.contains("lyr-traduzione"));
     if (!blocchi.length) { toast("Nessun testo da tradurre"); return; }
+    // Snapshot the exact requested phrases. A corrected lyric with the same
+    // line count is a different translation; a capped result is still reusable.
+    const richieste=[];let budget=4700;
+    for(const el of blocchi.slice(0,60)){
+      const line=String(el.textContent||"").trim();
+      if(budget<line.length||line.length>450)break;
+      budget-=line.length;richieste.push(line);
+    }
     const generation = ++_traduzioneRichiesta;
-    const key = t.id + "|" + ling + "|it";
+    const key = JSON.stringify([t.id,ling,"it",richieste]);
+    const controller=new AbortController();
+    _traduzioneController=controller;
+    const isCurrent=()=>generation===_traduzioneRichiesta&&t.id===currentId&&
+      !$("lyricsPanel").hidden&&!controller.signal.aborted;
     _traduzioneInCorso = true;
     btn.disabled = true;
     btn.textContent = "Traduco...";
     let done = 0;
     try {
       let results = _testiTradotti.get(key);
-      if (!results || results.length !== blocchi.length) {
+      if (!results || results.length !== richieste.length) {
         results = [];
         /* Il servizio pubblico ha limiti: per evitare spam non piu' di
            60 righe o 4700 caratteri per richiesta. */
-        let budget = 4700;
-        for (const el of blocchi.slice(0,60)) {
-          if (generation !== _traduzioneRichiesta || t.id !== currentId) return;
-          const line = String(el.textContent || "").trim();
-          if (budget < line.length || line.length > 450) break;
-          budget -= line.length;
+        const repeated=new Map();
+        for (const line of richieste) {
+          if (!isCurrent()) return;
+          if(repeated.has(line)){results.push(repeated.get(line));done++;continue;}
           const url = "https://api.mymemory.translated.net/get?q=" +
             encodeURIComponent(line) + "&langpair=" + encodeURIComponent(ling + "|it");
-          const response = await fetch(url, {cache:"no-store"});
+          const response = await fetch(url, {cache:"no-store",signal:controller.signal});
+          if(!isCurrent())return;
           if (!response.ok) throw new Error("Servizio non disponibile");
           const json = await response.json();
+          if(!isCurrent())return;
           if (Number(json.responseStatus || 200) >= 400 || !json.responseData ||
               !json.responseData.translatedText) throw new Error("Traduzione non disponibile");
-          const value = String(json.responseData.translatedText);
+          const value = _testoTraduzioneSicuro(json.responseData.translatedText);
           results.push(value);
+          repeated.set(line,value);
           done++;
-          btn.textContent = "Traduco " + done + "/" + blocchi.length;
+          btn.textContent = "Traduco " + done + "/" + richieste.length;
         }
         if (results.length) _testiTradotti.set(key,results);
       }
-      if (generation !== _traduzioneRichiesta || t.id !== currentId) return;
+      if (!isCurrent()) return;
       for (let i=0;i<results.length;i++) {
         const sub = document.createElement("span");
         sub.className = "lyr-traduzione";
@@ -9857,9 +9881,11 @@ function openProfile() {
       if (results.length < blocchi.length)
         toast("Tradotte " + results.length + " righe: limite del servizio gratuito.",6000);
     } catch(e) {
+      if(!isCurrent())return;
       toast("Traduzione non riuscita: " + String(e && e.message || e),6000);
       btn.textContent = "Riprova traduzione";
     } finally {
+      if(_traduzioneController===controller)_traduzioneController=null;
       if (generation === _traduzioneRichiesta) {
         _traduzioneInCorso = false;
         btn.disabled = false;
@@ -9888,6 +9914,7 @@ function openProfile() {
   }
 
   function openLyrics() {
+    _azzeraVistaTraduzione();
     const l = currentLyrics();
     if (!l) {
       // A DJ handoff or rapid previous/next tap can select a song before its
@@ -9913,7 +9940,6 @@ function openProfile() {
     $("lyricsTitle").textContent = l.title;
     $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
-    _azzeraVistaTraduzione();
     body.innerHTML = "";
     _fermaKaraokePrecisione();
     lyricLines = [];
@@ -10034,6 +10060,7 @@ function openProfile() {
   }
 
   function closeLyrics() {
+    _azzeraVistaTraduzione();
     _fermaKaraokePrecisione();
     $("lyricsPanel").hidden = true;
     syncNoScroll();

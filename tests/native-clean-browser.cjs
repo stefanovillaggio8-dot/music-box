@@ -4,6 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium,webkit}=require('playwright'),{currentSteScope,validateSteCases}=require('../tools/ste-research-scope.cjs');
 const root=path.resolve(__dirname,'..'),fixture=JSON.parse(fs.readFileSync(process.env.MUSICBOX_NATIVE_CLEAN_FIXTURE||path.join(root,'audits/ste-classifier-evaluation-20261123/native-element-shadow.json')));
 const fromId='b-'+path.basename(fixture.from,'.mp3'),toId='b-'+path.basename(fixture.to,'.mp3'),targetFile='/'+path.basename(fixture.to);
+const translationMode=process.env.MUSICBOX_NATIVE_TRANSLATION==='true';
 const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 validateSteCases([fixture],currentSteScope(),index);
 for(const key of [fixture.from,fixture.to]){
@@ -28,6 +29,14 @@ const server=http.createServer((req,res)=>{
    }else{res.setHeader('Content-Length',bytes.length);res.end(bytes);}return;
   }
   if(name==='/dj-deep-analysis.json'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(index));return;}
+  if(name==='/app.js'&&translationMode){
+   let code=fs.readFileSync(path.join(root,'app.js'),'utf8');
+   for(const [marker,extra] of [
+    ['  function currentLyrics() {','\n    return {title:"Controlled phrase fixture",artist:"UI regression",text:currentId===window.__nativePair.fromId?"Native outgoing phrase":"Native incoming phrase",synced:""};'],
+    ['  function _righeTestoConParole(l){','\n    return [{t:0,text:currentId===window.__nativePair.fromId?"Native outgoing phrase":"Native incoming phrase"}];']
+   ]){assert.equal(code.split(marker).length,2);code=code.replace(marker,marker+extra)}
+   res.setHeader('Content-Type','text/javascript');res.end(code);return;
+  }
   const file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
   if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
   if(!fs.existsSync(file)){res.writeHead(404);res.end();return;}
@@ -35,22 +44,26 @@ const server=http.createServer((req,res)=>{
  }catch(e){res.writeHead(500);res.end(e.message)}
 });
 (async()=>{
- await new Promise(r=>server.listen(0,'127.0.0.1',r));const report={shadowIndex:shadow,published:false,physicalIPhone:false,results:[]};
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const report={shadowIndex:shadow,published:false,physicalIPhone:false,controlledPhraseFixture:translationMode,results:[]};
  try{for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]){
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
   const browser=await engine.launch({headless:true});
   try{
    const context=await browser.newContext({serviceWorkers:'block'}),page=await context.newPage();
-   const logs=[];page.on('console',m=>{if(m.text().includes('Music Box DJ'))logs.push(m.text())});page.on('pageerror',e=>logs.push(e.message));
-   page.on('requestfailed',r=>{if(r.url().includes('.mp3'))logs.push({failed:r.url(),error:r.failure()})});
+   const logs=[];let translationRequested=false,translationAborted=false;const wordModels=[];
+   page.on('console',m=>{if(m.text().includes('Music Box DJ'))logs.push(m.text())});page.on('pageerror',e=>logs.push(e.message));
+   page.on('request',r=>{if(/audio-lyrics-worker|\.onnx(?:\?|$)|huggingface/.test(r.url()))wordModels.push(r.url())});
+   page.on('requestfailed',r=>{if(r.url().includes('.mp3'))logs.push({failed:r.url(),error:r.failure()});if(r.url().includes('mymemory.translated.net'))translationAborted=true});
    await page.route('**/*',route=>{
     const u=new URL(route.request().url());
+    if(translationMode&&u.hostname==='api.mymemory.translated.net'){translationRequested=true;return;}
     if(u.origin==='http://127.0.0.1:'+server.address().port)return route.continue();
     if(u.hostname==='raw.githubusercontent.com'&&[fixture.from,fixture.to].some(key=>u.pathname.endsWith('/'+key.slice(6))))return route.continue();
     return route.abort();
    });
-   await page.addInitScript(({targetFile,fromId,toId})=>{
+   await page.addInitScript(({targetFile,fromId,toId,translationMode})=>{
     window.__nativePair={targetFile,fromId,toId};
+    window.__nativeTranslationMode=translationMode;window.__nativeLyricSamples=[];
     localStorage.setItem('mb.profile',JSON.stringify('Ste'));localStorage.setItem('mb.djmix','on');
     window.__nativeCleanTrace=[];
     const play=HTMLMediaElement.prototype.play,seek=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
@@ -64,7 +77,7 @@ const server=http.createServer((req,res)=>{
      }
      return play.apply(this,arguments);
     };
-   },{targetFile,fromId,toId});
+   },{targetFile,fromId,toId,translationMode});
    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.MusicBoxMix?.diagnostics().deepIndexLoaded&&[__nativePair.fromId,__nativePair.toId].every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),null,{timeout:20000});
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
@@ -80,7 +93,11 @@ const server=http.createServer((req,res)=>{
     b.onclick=async event=>{
      try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,begin-7);window.__outgoingNative=MusicBoxBridge.audio();
       if(MusicBoxBridge.mixEnqueue([__nativePair.toId])!==1)throw Error('Actual manual queue rejected Ste target');window.__setupDone=true;
-      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics())},100);
+      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{
+       if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics());
+       if(__nativeTranslationMode&&__nativeLyricSamples.length<110)__nativeLyricSamples.push({beforeAdoption:!window.__beforeNativeAdoption,
+        readerOpen:!document.getElementById('lyricsPanel').hidden,id:MusicBoxBridge.currentId(),sourceAt:__outgoingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent});
+      },100);
      }catch(e){window.__setupError=e.message}
     };document.body.append(b);
    },fixture.record.cue.begin);
@@ -88,10 +105,22 @@ const server=http.createServer((req,res)=>{
    try{
     await page.waitForFunction(()=>window.__setupDone||window.__setupError,null,{timeout:15000});
     assert.equal(await page.evaluate(()=>window.__setupError||null),null);
+    if(translationMode){
+     await page.click('#btnLyrics');await page.click('#lyricsTraduci');
+     for(let i=0;i<50&&!translationRequested;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationRequested,true);
+    }
     await page.waitForFunction(()=>window.__incomingNative&&!__incomingNative.paused&&__incomingNative.currentTime>.1,null,{timeout:20000});
-    const overlap=await page.evaluate(()=>({id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:__incomingNative.volume,sourceTime:__outgoingNative.currentTime,targetTime:__incomingNative.currentTime,diagnostics:MusicBoxMix.diagnostics()}));
+    const overlap=await page.evaluate(()=>({id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:__incomingNative.volume,sourceTime:__outgoingNative.currentTime,targetTime:__incomingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent,diagnostics:MusicBoxMix.diagnostics()}));
     assert.equal(overlap.id,fromId);assert.equal(overlap.sourceEnded,false);assert.equal(overlap.newVolume,overlap.oldVolume);
+    if(translationMode){assert.ok(overlap.lyrics.includes('Native outgoing phrase'));assert.ok(!overlap.lyrics.includes('Native incoming phrase'))}
     await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId,null,{timeout:10000});
+    if(translationMode){
+     await page.waitForFunction(()=>document.getElementById('lyricsBody').textContent.includes('Native incoming phrase'),null,{timeout:5000});
+     for(let i=0;i<50&&!translationAborted;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationAborted,true);
+     assert.equal(await page.locator('#lyricsTraduci').textContent(),'Traduci');assert.equal(wordModels.length,0);
+     const samples=await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen));
+     assert.ok(samples.length>=8);assert.ok(samples.every(s=>s.id===fromId&&s.lyrics.includes('Native outgoing phrase')&&!s.lyrics.includes('Native incoming phrase')));
+    }
     const adopted=await page.evaluate(()=>({sameElement:MusicBoxBridge.audio()===__incomingNative,beforeAdoption:window.__beforeNativeAdoption,
      targetTime:MusicBoxBridge.audio().currentTime,rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
      isPlaying:!MusicBoxBridge.audio().paused,sourceEndedAt:__outgoingNative.currentTime}));
@@ -104,7 +133,9 @@ const server=http.createServer((req,res)=>{
     const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,c.duration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha,duration:start.sourceDuration});
     assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
-    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,logs});
+    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,
+     ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
+      observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
   }finally{await browser.close()}

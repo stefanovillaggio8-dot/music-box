@@ -18,11 +18,11 @@ function fixture(visible){
  };
  const script="let lyricLines=['old'],_lyricWordParts=['old'],lyricActive=1;\n"+
   app.slice(from,to)+"\nreturn {openLyrics,state:()=>({lyricLines,_lyricWordParts,lyricActive})};";
- const run=new Function("$","currentLyrics","current","document","_fermaKaraokePrecisione",script);
- let stop=0;
+ const run=new Function("$","currentLyrics","current","document","_fermaKaraokePrecisione","_azzeraVistaTraduzione",script);
+ let stop=0,translationResets=0;
  const api=run(node,()=>null,()=>({title:"New song",artist:"New artist"}),
-  {createElement:()=>({className:"",textContent:""})},()=>{stop++});
- return {node,api,stops:()=>stop};
+  {createElement:()=>({className:"",textContent:""})},()=>{stop++},()=>{translationResets++});
+ return {node,api,stops:()=>stop,translationResets:()=>translationResets};
 }
 test("rapid DJ handoff with missing lyrics never displays the previous song",()=>{
  const f=fixture(true);f.api.openLyrics();
@@ -35,9 +35,11 @@ test("rapid DJ handoff with missing lyrics never displays the previous song",()=
  assert.equal(f.api.state()._lyricWordParts.length,0);
  assert.equal(f.api.state().lyricActive,-1);
  assert.equal(f.stops(),1);
+ assert.equal(f.translationResets(),1,'Missing lyrics invalidate the old translation request too');
 });
 test("a hidden lyric panel is not forced open when next song lacks lyrics",()=>{
  const f=fixture(false);f.api.openLyrics();
  assert.equal(f.node("lyricsPanel").hidden,true);
  assert.equal(f.stops(),0);
+ assert.equal(f.translationResets(),1);
 });
