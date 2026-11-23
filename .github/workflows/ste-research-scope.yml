@@ -1,0 +1,24 @@
+name: Ste research membership and budget contract
+on:
+  pull_request:
+    paths:
+      - 'tools/ste-research-scope.cjs'
+      - 'tools/simulate-library-listening.cjs'
+      - 'tests/ste-research-scope.test.cjs'
+      - '.github/workflows/ste-research-scope.yml'
+      - '.github/workflows/dj-equivalence-audit.yml'
+      - '.github/workflows/dj-pcm-transition-features.yml'
+      - '.github/workflows/dj-structural-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  personal-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/ste-research-scope.test.cjs tests/published-personal-catalog.test.cjs

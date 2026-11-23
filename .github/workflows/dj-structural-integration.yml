@@ -1,18 +1,8 @@
 name: Internal musical windows and common PCM rendering
 on:
-  pull_request:
-    paths:
-      - 'tools/refine-structure-windows.py'
-      - 'tools/dj-structure-core.py'
-      - 'tools/build-structural-beat-plans.cjs'
-      - 'tools/build-musical-content.py'
-      - 'audio-composite-core.mjs'
-      - 'audio-stretch-core.mjs'
-      - 'tools/dj-rendered-rhythm.py'
-      - 'tools/render-composite-mix.mjs'
-      - 'tools/introduction-exposure.mjs'
-      - 'tools/build-composite-assets.py'
-      - '.github/workflows/dj-structural-integration.yml'
+  # Full-catalog research is never an automatic PR regression. Current
+  # research is Ste-only and must use a validated personal snapshot and
+  # a bounded case list; do not dispatch the legacy global pipeline.
   workflow_dispatch:
     inputs:
       profile_edges:
