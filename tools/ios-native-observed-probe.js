@@ -9,7 +9,7 @@ root.createObservedNativeProbe=function(f,options={}){
  const r={method:'observed-native-clock-before-play-promise-v2',phase:'unprimed',physicalIPhone:false,
   notApplicationIntegration:true,notPlaybackCertified:true,sourceSha:f.sourceSha,targetSha:f.targetSha,
   events:[],samples:[],userAgent:navigator.userAgent,silentPrimer:options.silentPrimer===true,
-  observeSourceAfterPlay:options.observeSourceAfterPlay===true,sourcePlayRequests:0};
+  observeSourceAfterPlay:options.observeSourceAfterPlay===true,sourcePlayRequests:0,probeRevision:'positioning-progress-v2'};
  let timer=null,finish=null,generation=0,started=false;
  const log=(event,a)=>r.events.push({event,wall:performance.now(),time:a?.currentTime,duration:a?.duration,paused:a?.paused,readyState:a?.readyState});
  const clear=()=>{clearTimeout(timer);clearTimeout(finish);timer=finish=null};
@@ -21,7 +21,7 @@ root.createObservedNativeProbe=function(f,options={}){
  }}
  const handlers=[];
  const on=(a,event,handler)=>{a.addEventListener(event,handler);handlers.push([a,event,handler])};
- for(const [name,a] of [['source',old],['incoming',incoming]])for(const event of ['play','playing','pause','ended','error'])on(a,event,()=>log(name+'-'+event,a));
+ for(const [name,a] of [['source',old],['incoming',incoming]])for(const event of ['play','playing','pause','ended','error','seeking','seeked','durationchange'])on(a,event,()=>log(name+'-'+event,a));
  on(old,'pause',()=>{if(['waiting','overlap'].includes(r.phase)&&!old.ended)stop('source-paused-before-eof')});
  on(old,'seeking',()=>{if(['waiting','overlap'].includes(r.phase))stop('source-seek')});
  const visibility=()=>{if(hidden()&&['priming','primed','positioning','waiting','overlap','adopted'].includes(r.phase))stop('hidden')};
@@ -56,7 +56,7 @@ root.createObservedNativeProbe=function(f,options={}){
   function advance(){
    if(generation!==token||!['positioning','waiting','overlap'].includes(r.phase))return;
    const elapsed=performance.now()-at;
-   if(r.samples.length<420)r.samples.push({wall:elapsed,sourceAt:old.currentTime,incomingAt:incoming.currentTime,sourcePaused:old.paused,incomingPaused:incoming.paused});
+   if(r.samples.length<420)r.samples.push({wall:elapsed,sourceAt:old.currentTime,incomingAt:incoming.currentTime,sourcePaused:old.paused,incomingPaused:incoming.paused,sourceSeeking:old.seeking});
    if(hidden()){stop('hidden');return}
    if(elapsed>10000){stop('bounded-study-timeout');return}
    if(old.error||incoming.error){stop('native-media-error');return}
@@ -68,8 +68,15 @@ root.createObservedNativeProbe=function(f,options={}){
      const offset=clock(old,f.sourceClock,f.sourceSha);
      if(offset!==null){r.sourceClockOffset=offset;r.positioning={duration:old.duration,offset,sourceAt:old.currentTime,at:elapsed};old.currentTime=f.begin-3+offset;}
     }
-    if(r.positioning&&!old.seeking&&Math.abs(old.currentTime-(f.begin-3+r.sourceClockOffset))<.08){r.phase='waiting';log('declared-source-clock-ready-after-play',old);}
-    else {if(elapsed>5000){stop('bounded-source-clock-refinement-timeout');return}timer=setTimeout(advance,25);return;}
+    if(r.positioning&&!old.seeking){
+     const expected=f.begin-3+r.sourceClockOffset,advanced=old.currentTime-expected,wall=(elapsed-r.positioning.at)/1000;
+     // Safari can finish a seek AFTER playback has already advanced. Requiring
+     // the old initial timestamp here strands a valid stream in positioning.
+     // Bound forward motion by real elapsed time; final cue keeps its 80ms gate.
+     if(advanced<-.08||advanced>wall+.08){stop('source-positioning-moved');return}
+     r.positioning.readySourceAt=old.currentTime;r.positioning.readyAfterMs=elapsed-r.positioning.at;
+     r.phase='waiting';log('declared-source-clock-ready-after-play',old);
+    }else {if(elapsed>5000){stop(r.positioning?'bounded-source-positioning-timeout':'bounded-source-clock-refinement-timeout');return}timer=setTimeout(advance,25);return;}
    }
    if(!started&&old.currentTime>=f.begin+r.sourceClockOffset){
     if(old.currentTime>f.begin+r.sourceClockOffset+.08){stop('missed-window');return}

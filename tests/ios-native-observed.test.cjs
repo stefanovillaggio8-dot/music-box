@@ -77,3 +77,14 @@ test('source clock which stays unsupported never launches the incoming; hiding w
   assert.equal(t.incoming.plays,1);assert.equal(t.old.plays,1);assert.equal(t.old.paused,false);assert.equal(t.incoming.paused,true);t.probe.dispose();
  }
 });
+test('physical Safari delayed seek completion with natural progress cannot strand a recognized source clock',async()=>{
+ const t=fixture({observeSourceAfterPlay:true});await t.probe.prime({isTrusted:true});t.old.seeking=true;await t.probe.run({isTrusted:true});
+ assert.equal(t.probe.snapshot().phase,'positioning');for(let i=0;i<9;i++)t.advance();
+ t.old.currentTime=t.f.begin-3+.11;t.old.seeking=false;t.advance();
+ assert.equal(t.probe.snapshot().phase,'waiting');assert.ok(t.probe.snapshot().positioning.readySourceAt>t.f.begin-3+.08);
+ t.old.currentTime=t.f.begin+.02;t.advance();assert.equal(t.probe.snapshot().phase,'overlap');assert.equal(t.incoming.plays,2);t.probe.dispose();
+});
+test('pre-positioning still rejects an impossible clock jump instead of widening cue accuracy',async()=>{
+ const t=fixture({observeSourceAfterPlay:true});await t.probe.prime({isTrusted:true});t.old.seeking=true;await t.probe.run({isTrusted:true});
+ t.old.currentTime=t.f.begin-1;t.old.seeking=false;t.advance();assert.equal(t.probe.snapshot().reason,'source-positioning-moved');assert.equal(t.incoming.plays,1);t.probe.dispose();
+});

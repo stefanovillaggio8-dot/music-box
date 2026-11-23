@@ -62,8 +62,8 @@ const server=http.createServer((req,res)=>{
     if(u.hostname==='raw.githubusercontent.com'&&[fixture.from,fixture.to].some(key=>u.pathname.endsWith('/'+key.slice(6))))return route.continue();
     return route.abort();
    });
-   await page.addInitScript(({targetFile,fromId,toId,translationMode})=>{
-    window.__nativePair={targetFile,fromId,toId};
+   await page.addInitScript(({targetFile,fromId,toId,translationMode,eventTrace})=>{
+    window.__nativePair={targetFile,fromId,toId};window.__nativeEventTrace=eventTrace;
     window.__nativeTranslationMode=translationMode;window.__nativeLyricSamples=[];
     localStorage.setItem('mb.profile',JSON.stringify('Ste'));localStorage.setItem('mb.djmix','on');
     window.__nativeCleanTrace=[];
@@ -72,13 +72,16 @@ const server=http.createServer((req,res)=>{
      if(new URL(this.src,location.href).pathname.endsWith(targetFile))__nativeCleanTrace.push({event:'target-seek',at:seek.get.call(this),value});
      return seek.set.call(this,value);
     }});
+    if(window.__nativeEventTrace){const pause=HTMLMediaElement.prototype.pause;
+     HTMLMediaElement.prototype.pause=function(){if(new URL(this.src,location.href).pathname.endsWith(targetFile))__nativeCleanTrace.push({event:'target-pause',at:this.currentTime,ended:this.ended,stack:new Error().stack});return pause.apply(this,arguments)};
+    }
     HTMLMediaElement.prototype.play=function(){
      if(new URL(this.src,location.href).pathname.endsWith(targetFile)){
       window.__incomingNative=this;__nativeCleanTrace.push({event:'target-play',at:this.currentTime,volume:this.volume,rate:this.playbackRate,sourceAt:window.__outgoingNative?.currentTime,sourceDuration:window.__outgoingNative?.duration});
      }
      return play.apply(this,arguments);
     };
-   },{targetFile,fromId,toId,translationMode});
+   },{targetFile,fromId,toId,translationMode,eventTrace:process.env.MUSICBOX_NATIVE_EVENT_TRACE==='true'});
    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.MusicBoxMix?.diagnostics().deepIndexLoaded&&[__nativePair.fromId,__nativePair.toId].every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),null,{timeout:20000});
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
@@ -87,6 +90,9 @@ const server=http.createServer((req,res)=>{
    await page.evaluate(begin=>{
     window.__phoneHandoffs=[];window.__overlapEvents=[];
     addEventListener('musicbox:mix-overlap',e=>__overlapEvents.push(e.detail));
+    window.__eofChecks=[];const natural=MusicBoxMix.naturalEndHandoff;
+    MusicBoxMix.naturalEndHandoff=(...args)=>{const before={ended:MusicBoxBridge.audio().ended,paused:MusicBoxBridge.audio().paused,at:MusicBoxBridge.audio().currentTime,live:MusicBoxMix.diagnostics().liveTransition,
+     incomingPaused:window.__incomingNative?.paused,incomingAt:window.__incomingNative?.currentTime,incomingReady:window.__incomingNative?.readyState};const result=natural(...args);__eofChecks.push({...before,result});return result};
     const normal=MusicBoxBridge.mixHandoff;
     MusicBoxBridge.mixHandoff=(id,entry,options)=>{
      if(id===__nativePair.toId)__phoneHandoffs.push({sourceId:MusicBoxBridge.currentId(),sourceAt:MusicBoxBridge.audio().currentTime,sourceDuration:MusicBoxBridge.audio().duration,entry});
@@ -117,14 +123,14 @@ const server=http.createServer((req,res)=>{
     if(phoneNaturalMode){
      await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId&&!MusicBoxBridge.audio().paused&&MusicBoxBridge.audio().currentTime>.25,null,{timeout:20000});
      const state=await page.evaluate(()=>({calls:__phoneHandoffs,trace:__nativeCleanTrace,overlapEvents:__overlapEvents,
-      current:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime,volume:MusicBoxBridge.audio().volume,muted:MusicBoxBridge.audio().muted,rate:MusicBoxBridge.audio().playbackRate}));
+      current:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime,sameNativeElement:MusicBoxBridge.audio()===__outgoingNative,volume:MusicBoxBridge.audio().volume,muted:MusicBoxBridge.audio().muted,rate:MusicBoxBridge.audio().playbackRate}));
      assert.equal(state.calls.length,1);assert.equal(state.calls[0].entry,0);assert.equal(state.overlapEvents.length,0);
      const call=state.calls[0],clock=fixture.record.cue.nativeCleanEvidence.sourceClock;
      const offset=await page.evaluate(({clock,sha,duration})=>MusicBoxCompositeMix.nativeClockOffset(clock,sha,duration),{clock,sha:fixture.record.fromSha,duration:call.sourceDuration});
      assert.notEqual(offset,null);assert.ok(call.sourceAt-offset>=fixture.record.cue.begin-.3,'complete independently quiet suffix');
      assert.ok(call.sourceAt<call.sourceDuration-1.5,'audible native successor before encoded EOF');
      assert.ok(state.trace.find(t=>t.event==='target-play').at<=.02);assert.ok(state.trace.filter(t=>t.event==='target-seek').every(t=>t.value===0));
-     assert.equal(state.muted,false);assert.equal(state.volume,1);assert.equal(state.rate,1);
+     assert.equal(state.sameNativeElement,true);assert.equal(state.muted,false);assert.equal(state.volume,1);assert.equal(state.rate,1);
      report.results.push({browser:name,platform:process.platform,phoneNativeIntro:true,physicalIPhone:false,state,logs});
      await page.evaluate(()=>MusicBoxBridge.audio().pause());await context.close();continue;
     }
@@ -159,7 +165,7 @@ const server=http.createServer((req,res)=>{
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
-   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
+   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
   }finally{await browser.close()}
  }}finally{server.close();if(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT)fs.writeFileSync(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT,JSON.stringify(report,null,2)+'\n')}

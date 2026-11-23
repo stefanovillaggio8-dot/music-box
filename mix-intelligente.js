@@ -6275,6 +6275,45 @@ function mixCurve(kind,t,softTail=false){
  const guard=kind==="beat"?1-.12*Math.sin(Math.PI*time):kind==="phrase"?.93:1;
  return {outGain:outGain*guard,inGain:inGain*guard};
 }
+function continueQuietNative(app,audio,id,next,entry){
+ if(!isIOS||entry!==0)return app.mixHandoff(next.id,entry);
+ // This is a SINGLE native player, not the disabled dual-player adoption.
+ // Drain the old pause event before replacing src, so its delayed event
+ // cannot be mistaken for a headphone pause of the successor. Never seek.
+ const owns=()=>app.audio?.()===audio&&app.currentId?.()===id;
+ if(!owns()||audio.paused||app.wantsPlayback?.()===false)return Promise.resolve(false);
+ return new Promise((resolve,reject)=>{
+  const previousGuard=audio._mbCambioBrano;let closed=false,timer;
+  const finish=ack=>{
+   if(closed)return;closed=true;clearTimeout(timer);audio.removeEventListener('pause',onPause);
+   if(!owns()){resolve(false);return}
+   if(ack&&audio.paused&&app.wantsPlayback?.()!==false&&app.mixNext?.()?.id===next.id){
+    const token={fromId:id,toId:next.id,at:audio.currentTime,url:audio.currentSrc||audio.src};
+    audio._mbQuietNativeContinuation=token;
+    Promise.resolve().then(()=>{
+     if(!owns())return false;
+     if(app.wantsPlayback?.()===false||app.mixNext?.()?.id!==next.id){
+      audio._mbCambioBrano=previousGuard;
+      if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)Promise.resolve(app.playCurrent?.()).catch(()=>{});
+      return false;
+     }
+     return app.mixHandoff(next.id,0);
+    }).then(resolve,reject).finally(()=>{if(audio._mbQuietNativeContinuation===token)delete audio._mbQuietNativeContinuation});
+    return;
+   }
+   audio._mbCambioBrano=previousGuard;
+   // Queue changes retain the original decoder and playhead. Explicit Pause
+   // wins; no stale candidate can consume the manual queue or restart music.
+   if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)
+    Promise.resolve(app.playCurrent?.()).catch(()=>{});
+   resolve(false);
+  };
+  const onPause=()=>finish(true);
+  audio.addEventListener('pause',onPause,{once:true});timer=setTimeout(()=>finish(false),750);
+  audio._mbCambioBrano=true;
+  try{audio.pause()}catch(_){finish(false)}
+ });
+}
 function quietDirectHandoff(app,audio,id,next,entry,reason){
  const pair=id+"|"+next?.id;
  if(!app||!next||!audio||audio.paused||
@@ -6287,7 +6326,7 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
   {outgoing:id,incoming:next.id,reason});
  Promise.resolve().then(()=>{
   if(app.currentId?.()!==id||app.mixNext?.()?.id!==next.id)return;
-  return app.mixHandoff(next.id,entry);
+  return continueQuietNative(app,audio,id,next,entry);
  })
   .catch(error=>console.warn("[Music Box DJ] Passaggio diretto non riuscito",String(error?.message||error)));
  return true;

@@ -6,7 +6,7 @@
 <button id="prime" disabled>1. Prepara secondo lettore</button><button id="run" disabled>2. Avvia sorgente</button><button id="stop">Arresta</button>
 <p><label>Dispositivo e versione iOS, se noti: <input id="device" maxlength="80"></label> <button id="save">Salva report</button></p>
 <pre id="status">Caricamento</pre>
-<script src="/audio-composite-mix.js"></script><script src="/observed-probe.js"></script><script>
+<script src="/audio-composite-mix.js"></script><script src="/observed-probe.js?v=2"></script><script>
 const el=id=>document.getElementById(id);let probe,fixture,timer;
 if(new URL(location.href).searchParams.get('silent')==='1')el('primerInfo').textContent='1 prepara il lettore in silenzio. 2 riproduce un breve finale di Gilgamesh e l’inizio di Sono Ok. Prova separata: nessuna modifica a Music Box, download o account.';
 fetch('/fixture.json').then(r=>r.json()).then(f=>{fixture=f;el('prime').disabled=false});
