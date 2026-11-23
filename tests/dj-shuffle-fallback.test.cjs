@@ -50,7 +50,8 @@ function fixture(options={}){
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>old.future?.[next.sha]||next.cue||null;",
   "const indexedFullBeatBridge=(old,next)=>old.future?.[next.sha]||null;",
-  ...(options.internalPlans?["const indexedStructuralBeatBridge=(old,next)=>next.cue?.structuralBeat&&!next.cue.invalidCertificate?next.cue:null;",
+  ...(options.internalPlans?["const indexedStructuralBeatBridge=(old,next)=>(next.cue?.structuralBeat||next.cue?.nativeCleanTail)&&!next.cue.invalidCertificate?next.cue:null;",
+    "const validateNativeCleanTailCue=(record,cue)=>!cue.invalidCertificate; // selector policy only, acoustic proof tested independently",
     "const fullBeatCueCertified=(old,next,cue)=>!cue.invalidCertificate;"]:[]),
   ...(options.neutralFallback?["const certifiedNeutralBridge=(old,next)=>next.safeNeutral||null;"]:[]),
   "const musicalIntroEntry=()=>0;",
@@ -507,5 +508,12 @@ test('future certification cannot escape scope, skip an incoming verse or change
  const unsafe=fixture({internalPlans:true,pool:specs});await unsafe.run();assert.equal(unsafe.selected(),null);
  specs[1].analysis.future[sha]={...future,entry:0};
  const missing=fixture({internalPlans:true,pool:specs.slice(0,2)});await missing.run();assert.equal(missing.selected(),null);
+ const manual=fixture({internalPlans:true,manual:true,pool:specs});await manual.run();assert.equal(manual.selected(),null);
+});
+
+test('a separately verified native clean junction enters the postlude tier, never the complete or partial beat counts',async()=>{
+ const specs=[{cue:null},{analysis:{introDrive:.01},cue:{kind:'postlude',nativeCleanTail:true,measuredFullBeat:false,metricalRhythmic:false,fade:2.339,begin:97.661}}];
+ const f=fixture({internalPlans:true,pool:specs});await f.run();
+ assert.equal(f.selected()?.pickId,3);assert.equal(f.decision().beatCandidates,0);assert.equal(f.decision().partialBeatCandidates,0);assert.equal(f.decision().postludeCandidates,1);
  const manual=fixture({internalPlans:true,manual:true,pool:specs});await manual.run();assert.equal(manual.selected(),null);
 });

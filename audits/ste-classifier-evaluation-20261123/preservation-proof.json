@@ -1,0 +1,23 @@
+{
+  "base": "b0b4f34a5736d03ef92ed59e59aaed93040f7cf3",
+  "unchangedSha256": {
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "audio-lyrics-worker.js": "eff4366b7360732950676aaf395429275440193c1a3525dddaf6c08145dd5097",
+    "karaoke-acoustic-proof.js": "0b12f36d42dcc6608aa636dc7ef054ae90719b7a62523946cefb70a77fedcbca",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "stato.json": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+    "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
+    "audio-stretch-core.mjs": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b"
+  },
+  "indexChangeOnly": {
+    "key": "audio/songs/track-38.mp3",
+    "field": "structuralBeatPlans",
+    "newPairs": 1
+  },
+  "currentStePersonalRecordings": 222,
+  "originalDownloadsDeleted": false
+}
