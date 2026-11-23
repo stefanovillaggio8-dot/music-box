@@ -1,0 +1,36 @@
+name: Italian phrase-onset diagnostic (two Ste recordings)
+on:
+  pull_request:
+    paths:
+      - 'tools/audit-dimmi-phrase-onsets.py'
+      - '.github/workflows/dimmi-phrase-onsets.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: stefanovillaggio8-dot/music-box-brani
+          ref: main
+          path: original-audio
+          sparse-checkout: |
+            songs/track-64.mp3
+            songs/track-74.mp3
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install faster-whisper==1.2.1
+      - run: python tools/audit-dimmi-phrase-onsets.py original-audio dimmi-phrase-onsets.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dimmi-phrase-onsets
+          path: dimmi-phrase-onsets.json
+          retention-days: 7
