@@ -1,11 +1,17 @@
 'use strict';
 // Isolated actual-app experiment. Shadow index only; two original Ste songs.
-const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {chromium,webkit}=require('playwright'),{currentSteScope,validateSteCases}=require('../tools/ste-research-scope.cjs');
 const root=path.resolve(__dirname,'..'),fixture=require('../audits/ste-classifier-evaluation-20261123/native-element-shadow.json');
 const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 validateSteCases([fixture],currentSteScope(),index);
-index.entries[fixture.from].structuralBeatPlans={...index.entries[fixture.from].structuralBeatPlans,[fixture.record.toSha]:fixture.record};
+for(const key of [fixture.from,fixture.to]){
+ const sha=index.entries[key].sha,bytes=fs.readFileSync(path.join(root,'../original-mp3',sha+'.mp3'));
+ assert.equal(crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex'),sha,'Actual-app audio must retain original Git identity');
+}
+const shadow=process.env.MUSICBOX_NATIVE_CLEAN_SHADOW==='true';
+if(shadow)index.entries[fixture.from].structuralBeatPlans={...index.entries[fixture.from].structuralBeatPlans,[fixture.record.toSha]:fixture.record};
+else assert.ok(index.entries[fixture.from].structuralBeatPlans?.[fixture.record.toSha]?.cue?.nativeCleanTail,'Release regression requires the ACTUAL installed index, never a shadow injection');
 const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  try{
@@ -28,7 +34,7 @@ const server=http.createServer((req,res)=>{
  }catch(e){res.writeHead(500);res.end(e.message)}
 });
 (async()=>{
- await new Promise(r=>server.listen(0,'127.0.0.1',r));const report={experimental:true,published:false,physicalIPhone:false,results:[]};
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const report={shadowIndex:shadow,published:false,physicalIPhone:false,results:[]};
  try{for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]){
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
   const browser=await engine.launch({headless:true});

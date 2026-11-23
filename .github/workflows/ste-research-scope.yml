@@ -69,6 +69,7 @@ jobs:
         if: inputs.native_clean_player
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-player.json
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
         run: |
           node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
           node tests/native-clean-browser.cjs

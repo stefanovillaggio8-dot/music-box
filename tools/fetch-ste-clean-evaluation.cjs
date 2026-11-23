@@ -7,7 +7,7 @@ const {currentSteScope,validateSteCases}=require('./ste-research-scope.cjs');
  if(candidate.evaluationOnly!==true)throw Error('Evaluation fixture required');
  const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
  const [pair]=validateSteCases([{from:candidate.from,to:candidate.to}],currentSteScope(),index);
- if(candidate.sourceSha!==pair.sourceSha||candidate.targetSha!==pair.targetSha)throw Error('Changed fixture SHA');
+ if((candidate.sourceSha||candidate.record?.fromSha)!==pair.sourceSha||(candidate.targetSha||candidate.record?.toSha)!==pair.targetSha)throw Error('Changed fixture SHA');
  const folder=path.resolve(root,'../original-mp3');fs.mkdirSync(folder,{recursive:true});
  for(const key of [pair.from,pair.to]){
   const sha=index.entries[key].sha,file=path.join(folder,sha+'.mp3');

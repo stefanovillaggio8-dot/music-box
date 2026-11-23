@@ -3,6 +3,14 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root=path.resolve(__dirname,'..'),source=fs.readFileSync(path.join(root,'mix-intelligente.js'),'utf8');
 const candidate=require('../audits/ste-classifier-evaluation-20261123/native-element-shadow.json');
 const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
+// Evaluate before/after even when running against an index that already
+// contains this class. Other prior cues and the certified controls survive.
+const baselineRecord=index.entries[candidate.from].structuralBeatPlans?.[candidate.record.toSha];
+if(baselineRecord){
+ const cues=(baselineRecord.cues||[baselineRecord.cue]).filter(p=>p&&!p.nativeCleanTail);
+ if(cues.length)index.entries[candidate.from].structuralBeatPlans[candidate.record.toSha]={...baselineRecord,cue:cues[0],cues};
+ else delete index.entries[candidate.from].structuralBeatPlans[candidate.record.toSha];
+}
 const start=source.indexOf('function validateNativeCleanTailCue('),end=source.indexOf('function validateStructuralBeatCue(',start);
 const validate=ios=>new Function('isIOS',source.slice(start,end)+'return validateNativeCleanTailCue;')(ios);
 function fixture(){const record=structuredClone(candidate.record);return {record,p:record.cue,a:index.entries[candidate.from],b:index.entries[candidate.to]};}
