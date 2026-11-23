@@ -162,7 +162,7 @@ const server=http.createServer((req,res)=>{
     const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,c.duration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha,duration:start.sourceDuration});
     assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
-    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,
+    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}

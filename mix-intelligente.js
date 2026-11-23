@@ -5844,6 +5844,14 @@ function cancel(){
  dropPrepared();
  mixing=false;
 }
+function claimLiveTransitionEOF(app,audio,id){
+ if(!audio?.ended||audio.seeking||app?.audio?.()!==audio||app.currentId?.()!==id)return false;
+ const target=app.mixNext?.()?.id;
+ const desktop=active&&(active.nativeTailFullBeat||active.subduedRhythmicUnderlay||active.postMusicalTailUnderlay||active.measuredReleaseLeadIn)&&
+  active.original===audio&&active.fromId===id&&active.track.id===target;
+ const mobile=mobileActive?.nativeTailFullBeat&&mobileActive.old===audio&&mobileActive.fromId===id&&mobileActive.track.id===target;
+ return !!(desktop||mobile)&&naturalEndHandoff();
+}
 // Native-only natural tail: no Web Audio decoding, stretch, gain envelope,
 // low-pass intro or binary decoder switch. Existing queue adoption owns EOF.
 function beginNativeCleanTail(app,old,next,p){
@@ -5996,10 +6004,13 @@ function naturalEndHandoff(certifiedSilentTail=false){
 
  if((active?.nativeTailFullBeat||active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay||
      active?.measuredReleaseLeadIn)&&
-    active.original?.ended&&
-    !active.handingOff){
-  if(active.nativeCleanTail&&(!active.started||active.upcoming.paused||active.upcoming.readyState<2)){cancel();return false;}
-  handoff();return true;
+    active.original?.ended){
+  const app=bridge();
+  if(app?.audio?.()===active.original&&app.currentId?.()===active.fromId&&app.mixNext?.()?.id===active.track.id){
+   if(active.handingOff)return true;
+   if(active.nativeCleanTail&&(!active.started||active.upcoming.paused||active.upcoming.readyState<2)){cancel();return false;}
+   handoff();return true;
+  }
  }
  if(!enabled||isIOS||mixing||active||
     window.MusicBoxRoom?.isActive())return false;
@@ -7090,6 +7101,9 @@ function tick(){
   });
  }
  // Do not run music analysis while iOS is seeking/buffering.
+ // Natural EOF is also paused. Claim an owned live handoff BEFORE the
+ // ordinary paused-player cleanup can destroy its already-heard intro.
+ if(claimLiveTransitionEOF(app,audio,id))return;
  if(isIOS&&audio&&(audio.seeking||audio.readyState<2)){
   if(mobileActive)stopMobileMix();
   return;

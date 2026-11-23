@@ -77,14 +77,16 @@ jobs:
         run: |
           node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
           node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
-          node --test tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs
+          node --test tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs tests/native-eof-ownership.test.cjs
       - name: New frozen second-source actual-app SHADOW
         if: inputs.stage == 'finish'
         env:
           MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
           MUSICBOX_NATIVE_CLEAN_OUTPUT: source6-shadow-player.json
-        run: node tests/native-clean-browser.cjs
+        run: |
+          node tests/native-clean-browser.cjs
+          MUSICBOX_NATIVE_CLEAN_OUTPUT=source6-shadow-repeat.json node tests/native-clean-browser.cjs
       - name: Actual iPhone-path player preserves unconsumed original intro before encoded EOF
         if: inputs.stage == 'finish'
         env:
@@ -120,6 +122,7 @@ jobs:
           path: |
             phone-native-intro.json
             source6-shadow-player.json
+            source6-shadow-repeat.json
             source-quiet-native.json
             next-prefix.json
             silent-observed.json
