@@ -263,7 +263,10 @@ function inventory(profile,list,audit){
    fs.writeFileSync(path.join(folder,profile+'.json'),JSON.stringify({name:profile,tracks,
     unavailable:library.filter(t=>!lookup(t)).map(t=>t.id),
     source:'Actual personal library snapshot; audit-only exclusions; no user data modified',
-    auditExclusions:report.auditExclusions.filter(p=>p.profile===profile),runtimeEvidence:report.runtimeEvidence},null,2)+'\n');
+    auditExclusions:report.auditExclusions.filter(p=>p.profile===profile),runtimeEvidence:report.runtimeEvidence,
+    membershipEvidence:{stateSha256:crypto.createHash('sha256').update(read(arg('state',path.join(root,'stato.json')))).digest('hex'),
+     playlistsSha256:crypto.createHash('sha256').update(read(arg('playlists',path.join(root,'playlist.json')))).digest('hex'),
+     importsSha256:report.publishedImports.sha256}},null,2)+'\n');
   }
   if(audit)report.inventories.push(inventory(profile,library,audit));
   if(arg('inventory-only','false')==='true')continue;
