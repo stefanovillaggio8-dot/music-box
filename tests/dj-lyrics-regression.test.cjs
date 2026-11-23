@@ -738,7 +738,7 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
  const first=app.indexOf("const _testoIdentitaCache=new WeakMap()");
  const end=app.indexOf("// A foreground, rate-limited upgrade",first);
  assert.ok(first>0&&end>first,"read the actual lyric identity and selection code");
- const code=app.slice(first,end);
+ const code="const _testoCoerenteConBrano=()=>true;\n"+app.slice(first,end);
  const am=builtin["b-track-205"],pa=builtin["b-track-28"],jo=builtin["b-track-213"];
  assert.equal(am.title,"Amelie");
  assert.equal(pa.title,"Paganini");
