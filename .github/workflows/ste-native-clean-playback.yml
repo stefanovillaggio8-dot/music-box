@@ -17,8 +17,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24.04, macos-latest]
     runs-on: ${{ matrix.os }}
+    # Keep the Linux decoder dependencies in a versioned, prebuilt image.
+    # The empty macOS value means native host execution, as before.
+    container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -32,24 +35,45 @@ jobs:
           npm_config_fetch_retries: '1'
         run: |
           npm install --no-save --no-package-lock playwright@1.64.1
-          npx playwright install --with-deps chromium webkit
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            node -e "const fs=require('fs'),p=require('playwright');for(const b of [p.chromium,p.webkit])if(!fs.existsSync(b.executablePath()))throw Error('Pinned native browser missing')"
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
       - name: Provide Linux native media output
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
-          pulseaudio --start --exit-idle-time=-1
-          pactl load-module module-null-sink sink_name=musicbox_clean rate=48000 channels=2
-          pactl set-default-sink musicbox_clean
+          apt-get update -qq
+          apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          # Container HOME is owned by the runner, not PulseAudio. Use an
+          # isolated system-mode socket rather than changing HOME or relying
+          # on user autospawn. No sound device or user storage is exposed.
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1 \
+            --log-target=file:/tmp/ste-native-pulse.log \
+            --load="module-native-protocol-unix socket=/tmp/ste-native-pulse auth-anonymous=1" \
+            --load="module-null-sink sink_name=musicbox_clean rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-native-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-native-pulse pactl set-default-sink musicbox_clean
       - name: Verify only the two current personal Ste original fixtures
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
+      - name: Verify the newly installed Ste pair originals
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
       - name: Check class, queue, seek and preserved controls
-        run: node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+        run: node --test tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
       - name: Exercise ACTUAL release index without shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
+        run: node tests/native-clean-browser.cjs
+      - name: New installed natural junction, no shadow injection
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: factored-clean-release-player.json
         run: node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-native-clean-release-${{ runner.os }}
-          path: native-clean-release-player.json
+          path: |
+            native-clean-release-player.json
+            factored-clean-release-player.json

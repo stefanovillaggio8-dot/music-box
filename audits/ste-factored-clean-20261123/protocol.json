@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "checkpoint": "2a062730325a4219498ea4fcd77a44c97c173321",
+  "instruction": "PR59 comment 7102103514",
+  "evaluationOnly": true,
+  "freezeBeforeNewPCM": true,
+  "scope": "Current personal Ste, Gym excluded, at most four selected pairs",
+  "source": {"key":"audio/songs/track-38.mp3","begin":158.75,"preRoll":0.3,"end":161.089},
+  "targets": ["audio/songs/track-4.mp3","audio/songs/track-705.mp3","audio/songs/track-50.mp3"],
+  "rates": [44100,48000],
+  "nativePrefixSeconds": 3.5,
+  "quietSourceMaximum20msChannelRms": 0.0001,
+  "quietSourceMaximumPeak": 0.001,
+  "worstCaseSummedOverlapPeak": 0.96,
+  "minimumMeaningfulIncomingSeconds": 0.75,
+  "meaningfulFrameRms": 0.001,
+  "maximumAbsoluteEofLevelChangeDb": 3,
+  "originalEntry": 0,
+  "nativeTempo": 1,
+  "sourceGain": 1,
+  "targetGain": 1,
+  "sourceEndsAt": "Actual original EOF, no source stop or fade before EOF",
+  "classification": "Clean natural junction, never full or partial metrical beatmatch",
+  "renderRequirement": "Actual original stereo, both rates, independent exposure screen, no clipping",
+  "browserRequirement": "Both native platforms and Chromium/WebKit before desktop installation",
+  "negativeControls": {
+    "loudEarlySource": "Reuse 38->4 eight-second original PCM measurements from ste-classifier-evaluation-20261123/preview-measurements.json; do not re-render",
+    "energeticShortTail": "Reuse 50->705 short-tail measurements in the same archive; do not re-render",
+    "identityAndClock": "Reject changed SHA, uncovered intervals and unknown/provisional native metadata"
+  },
+  "iphone": {
+    "enabledInApplication": false,
+    "prototypeOnly": "Study a foreground dual native-element bootstrap under a trusted gesture, retaining outgoing EOF and incoming element identity; no app adoption restriction removed",
+    "controls": ["source continues while secondary is primed muted", "entry zero", "no seek or source replacement at adoption", "pause/seek/hidden cancel secondary", "metadata readiness"],
+    "physicalDeviceRequired": true,
+    "webkitDesktopUserAgentIsNotPhysicalIphone": true
+  },
+  "noGlobalSweep": true,
+  "noNewFullBeatCertification": true,
+  "noHumanListeningYet": true
+}

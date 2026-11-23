@@ -1,0 +1,6 @@
+[
+  {"from":"audio/songs/track-38.mp3","to":"audio/songs/track-4.mp3","role":"published-clean-positive"},
+  {"from":"audio/songs/track-38.mp3","to":"audio/songs/track-705.mp3","role":"development-new-intro"},
+  {"from":"audio/songs/track-38.mp3","to":"audio/songs/track-50.mp3","role":"held-out-new-intro"},
+  {"from":"audio/songs/track-705.mp3","to":"audio/songs/track-50.mp3","role":"published-full-metadata-control-only"}
+]
