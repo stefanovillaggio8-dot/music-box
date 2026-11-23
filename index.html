@@ -994,7 +994,18 @@
         <p id="imArtist" class="im-artist"></p>
         <div class="im-lyrics-head">
           <div class="im-lyrics-heading"><span class="im-section-symbol" aria-hidden="true">♫</span><span>TESTO</span><span id="imLyricModeLabel" class="im-lyric-status">KARAOKE</span></div>
-          <button id="imFocusToggle" type="button" class="im-focus-toggle" aria-label="Ingrandisci il testo" aria-pressed="false">Focus testo <span aria-hidden="true">⤢</span></button>
+          <div class="im-lyric-tools">
+            <button id="imSyncToggle" type="button" class="im-sync-toggle" aria-label="Regola sincronizzazione delle frasi" aria-expanded="false" aria-controls="imSyncPanel" hidden>⏱ Sync</button>
+            <button id="imFocusToggle" type="button" class="im-focus-toggle" aria-label="Ingrandisci il testo" aria-pressed="false">Focus testo <span aria-hidden="true">⤢</span></button>
+          </div>
+          <div id="imSyncPanel" class="im-sync-panel" role="group" aria-label="Sincronizzazione testo del brano" hidden>
+            <span class="im-sync-title">Sincronismo frasi <output id="imSyncValue" aria-live="polite">0,0 s</output></span>
+            <div class="im-sync-actions">
+              <button id="imSyncEarlier" type="button" aria-label="Anticipa il testo di 0,2 secondi">− Prima</button>
+              <button id="imSyncLater" type="button" aria-label="Ritarda il testo di 0,2 secondi">+ Dopo</button>
+              <button id="imSyncReset" type="button" aria-label="Ripristina sincronismo originale">Azzera</button>
+            </div>
+          </div>
         </div>
         <div class="im-karaoke-frame">
           <div id="imKaraoke" class="im-karaoke" aria-live="off"><p class="im-line active">Musica, luci e atmosfera.</p></div>
