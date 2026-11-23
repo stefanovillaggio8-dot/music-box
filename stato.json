@@ -2615,13 +2615,13 @@
    },
    "[\"occhi mei\",\"thasup, mara sattei\"]": {
     "v": 5,
-    "s": 435,
+    "s": 455,
     "t": "OCCHI MEI",
     "a": "thasup, Mara Sattei"
    },
    "m:2026-11|[\"occhi mei\",\"thasup, mara sattei\"]": {
     "v": 5,
-    "s": 435,
+    "s": 455,
     "t": "OCCHI MEI",
     "a": "thasup, Mara Sattei"
    },
@@ -4319,13 +4319,13 @@
    },
    "[\"angela\",\"checco zalone, mitili ignoti\"]": {
     "v": 1,
-    "s": 240,
+    "s": 304,
     "t": "Angela",
     "a": "Checco Zalone, Mitili Ignoti"
    },
    "m:2026-11|[\"angela\",\"checco zalone, mitili ignoti\"]": {
     "v": 1,
-    "s": 240,
+    "s": 304,
     "t": "Angela",
     "a": "Checco Zalone, Mitili Ignoti"
    },
@@ -6682,14 +6682,14 @@
     "a": "TonyPitony"
    },
    "[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
-    "v": 1,
-    "s": 790,
+    "v": 2,
+    "s": 831,
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
-    "v": 1,
-    "s": 790,
+    "v": 2,
+    "s": 831,
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
@@ -7252,14 +7252,14 @@
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "[\"star\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 3,
-    "s": 759,
+    "v": 4,
+    "s": 760,
     "t": "Star",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 3,
-    "s": 759,
+    "v": 4,
+    "s": 760,
     "t": "Star",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -7493,13 +7493,13 @@
    },
    "[\"tiscatterÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
     "v": 2,
-    "s": 831,
+    "s": 913,
     "t": "TiscatterÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"tiscatterÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
     "v": 2,
-    "s": 831,
+    "s": 913,
     "t": "TiscatterÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
@@ -8063,13 +8063,13 @@
    },
    "[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 4,
-    "s": 760,
+    "s": 818,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 4,
-    "s": 760,
+    "s": 818,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -8873,13 +8873,13 @@
    },
    "[\"star\",\"luchÃÂ¨\"]": {
     "v": 4,
-    "s": 818,
+    "s": 861,
     "t": "Star",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂ¨\"]": {
     "v": 4,
-    "s": 818,
+    "s": 861,
     "t": "Star",
     "a": "LuchÃÂ¨"
    },
