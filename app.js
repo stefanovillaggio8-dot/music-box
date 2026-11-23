@@ -7858,7 +7858,9 @@ box.innerHTML = "";
     if(!entry||typeof entry!=="object"||
        entry.id!=null&&String(entry.id)!==String(id)||
        !_testoCoerenteConBrano(id,entry))return false;
-    const original=lyricsData[id];
+    const source=lyricsData[id];
+    const original=_testoCoerenteConBrano(id,source)?source:null;
+    // Wrong old builtin must never reject a newly fetched correct lyric.
     if(!original?.synced||!entry.synced)return true;
     if(entry===original||entry.synced===original.synced)return true;
     const stored=_testoIdentitaCache.get(entry);
