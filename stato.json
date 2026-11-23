@@ -3106,14 +3106,14 @@
     "a": "Massimo Pericolo, Crookers, Madame"
    },
    "[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 5,
-    "s": 608,
+    "v": 6,
+    "s": 673,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 5,
-    "s": 608,
+    "v": 6,
+    "s": 673,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
@@ -9389,13 +9389,13 @@
    },
    "[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 393,
+    "s": 423,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 393,
+    "s": 423,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
@@ -10198,14 +10198,14 @@
     "a": "ModÃ "
    },
    "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 2,
-    "s": 423,
+    "v": 3,
+    "s": 476,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 2,
-    "s": 423,
+    "v": 3,
+    "s": 476,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
@@ -11009,13 +11009,13 @@
    },
    "[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 3,
-    "s": 476,
+    "s": 525,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 3,
-    "s": 476,
+    "s": 525,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    }
