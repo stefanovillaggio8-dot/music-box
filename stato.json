@@ -2285,13 +2285,13 @@
    },
    "[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
     "v": 1,
-    "s": 626,
+    "s": 628,
     "t": "Memoria di uno sconfitto, pt. 2",
     "a": "Mostro"
    },
    "m:2026-11|[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
     "v": 1,
-    "s": 626,
+    "s": 628,
     "t": "Memoria di uno sconfitto, pt. 2",
     "a": "Mostro"
    },
@@ -2920,14 +2920,14 @@
     "a": "Kid Yugi, Sfera Ebbasta, Shablo"
    },
    "[\"addio xx\",\"nayt\"]": {
-    "v": 2,
-    "s": 430,
+    "v": 3,
+    "s": 504,
     "t": "Addio xx",
     "a": "nayt"
    },
    "m:2026-11|[\"addio xx\",\"nayt\"]": {
-    "v": 2,
-    "s": 430,
+    "v": 3,
+    "s": 504,
     "t": "Addio xx",
     "a": "nayt"
    },
@@ -4366,14 +4366,14 @@
     "a": "Kid Yugi"
    },
    "[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 3,
-    "s": 333,
+    "v": 4,
+    "s": 352,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
    "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 3,
-    "s": 333,
+    "v": 4,
+    "s": 352,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
