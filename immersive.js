@@ -33,6 +33,40 @@ function atmosphereForTrack(id,title,artist){
  void root.offsetWidth;
  root.classList.add("im-track-enter");
 }
+
+function closeSyncControls(){
+ const panel=$("imSyncPanel"),button=$("imSyncToggle");
+ if(panel)panel.hidden=true;
+ button?.setAttribute("aria-expanded","false");
+}
+function updateSyncValue(){
+ const id=api()?.currentId?.();
+ const value=Number(api()?.lyricsDelay?.(id));
+ const seconds=Number.isFinite(value)?value:0;
+ const label=$("imSyncValue");
+ if(label)label.textContent=(seconds>0?"+":"")+seconds.toFixed(1).replace(".",",")+" s";
+}
+function changeSyncDelay(amount){
+ if(!opened||!lyricTimed)return;
+ const bridge=api(),id=bridge?.currentId?.();
+ if(!id||String(id)!==String(lastLyricsId))return;
+ const current=Number(bridge?.lyricsDelay?.(id));
+ const previous=Number.isFinite(current)?current:0;
+ const value=Math.max(-8,Math.min(8,Math.round((previous+amount)*10)/10));
+ if(bridge?.setLyricsDelay?.(id,value)!==true)return;
+ updateSyncValue();
+ // Refresh the position of the phrase using the corrected media clock.
+ renderLyrics(false);
+}
+function toggleSyncControls(){
+ if(!opened||!lyricTimed||$("imSyncToggle")?.hidden)return;
+ const panel=$("imSyncPanel"),button=$("imSyncToggle");
+ if(!panel||!button)return;
+ const show=panel.hidden;
+ panel.hidden=!show;
+ button.setAttribute("aria-expanded",String(show));
+ if(show)updateSyncValue();
+}
 function fillCurrent(){
  const b=api(),id=b?.currentId?.(),t=b?.allTracks?.()?.find(x=>x.id===id);
  if(!opened)return;
@@ -45,6 +79,7 @@ function fillCurrent(){
  $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
  atmosphereForTrack(id,title,artist);
+ closeSyncControls();
  lastLyricsId="";
  lastLyrics=null;
  lastLine=-1;
@@ -117,6 +152,10 @@ function renderLyrics(force){
    const status=$("imLyricModeLabel");
    if(status)status.textContent=lyricTimed?
      "SINCRONIZZATO PER FRASI":next?.text?"TESTO NON SINCRONIZZATO":"SOLO MUSICA";
+   const syncButton=$("imSyncToggle");
+   if(syncButton)syncButton.hidden=!lyricTimed;
+   if(!lyricTimed)closeSyncControls();
+   else updateSyncValue();
    karaoke.scrollTop=0;
   }
   lastLyricsRefreshAt=Date.now();
@@ -258,6 +297,7 @@ function paint(){
  toggle.setAttribute("aria-pressed",String(!paused));
  $("immersivePanel").classList.toggle("im-paused",paused);
  $("immersivePanel").classList.toggle("im-away",document.hidden);
+ if(!$("imSyncPanel")?.hidden)updateSyncValue();
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
@@ -271,6 +311,7 @@ function open(){
  const root=$("immersivePanel");if(!root)return;
  focusBefore=document.activeElement;
  opened=true;lastId="";lastLyricsId="";
+ closeSyncControls();
  root.classList.remove("im-focus");
  $("imFocusToggle").setAttribute("aria-pressed","false");
  $("imFocusToggle").innerHTML='Focus testo <span aria-hidden="true">⤢</span>';
@@ -284,6 +325,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
+ closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
  if(lyricAnimation)cancelAnimationFrame(lyricAnimation);
@@ -354,6 +396,16 @@ function start(){
  $("imNext")?.addEventListener("click",goNext);
  $("imLyrics")?.addEventListener("click",textPanel);
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
+ $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
+ $("imSyncEarlier")?.addEventListener("click",()=>changeSyncDelay(-.2));
+ $("imSyncLater")?.addEventListener("click",()=>changeSyncDelay(.2));
+ $("imSyncReset")?.addEventListener("click",()=>{
+  if(!opened||!lyricTimed)return;
+  const id=api()?.currentId?.();
+  if(id&&String(id)===String(lastLyricsId)&&api()?.setLyricsDelay?.(id,0)===true){
+   updateSyncValue();renderLyrics(false);
+  }
+ });
  $("imSeek")?.addEventListener("change",seekTo);
  const karaoke=$("imKaraoke");
  // Use event delegation because lyric rows are replaced when the track changes.
@@ -428,7 +480,13 @@ function start(){
   if(gestureY!=null&&e.changedTouches?.[0]?.clientY-gestureY>140)close();
   gestureY=null;
  },{passive:true});
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&opened){e.preventDefault();close()}});
+ document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&opened){
+   e.preventDefault();
+   if(!$("imSyncPanel")?.hidden)closeSyncControls();
+   else close();
+  }
+ });
  window.addEventListener("popstate",()=>{if(opened)close()});
  const btn=$("btnImmersive");
  if(btn){btn.hidden=false;btn.disabled=false;btn.setAttribute("aria-expanded","false")}
