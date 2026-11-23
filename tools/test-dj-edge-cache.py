@@ -1,14 +1,28 @@
 """Exercise the pure cache functions without importing or loading audio models."""
-import ast,pathlib,unittest
+import ast,pathlib,unittest,tempfile,hashlib
 
 tree=ast.parse(pathlib.Path(__file__).with_name('dj-edge-grids.py').read_text())
 nodes=[n for n in tree.body if
-    isinstance(n,ast.FunctionDef) and n.name in ('same_evidence','merge_roles') or
+    isinstance(n,ast.FunctionDef) and n.name in ('same_evidence','merge_roles','cached_source') or
     isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='MODEL_SHA' for t in n.targets)]
-namespace={};exec(compile(ast.Module(body=nodes,type_ignores=[]),'dj-edge-grids.py','exec'),namespace)
+namespace={'pathlib':pathlib,'hashlib':hashlib};exec(compile(ast.Module(body=nodes,type_ignores=[]),'dj-edge-grids.py','exec'),namespace)
 merge=namespace['merge_roles'];model=namespace['MODEL_SHA']
 
 class CacheTests(unittest.TestCase):
+    def test_guarded_missing_or_changed_original_fails_without_downloader(self):
+        with tempfile.TemporaryDirectory() as cache:
+            sha='a'*40
+            with self.assertRaises(FileNotFoundError):namespace['cached_source'](cache,sha)
+            (pathlib.Path(cache)/(sha+'.mp3')).write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'Cached original changed'):namespace['cached_source'](cache,sha)
+
+    def test_guarded_cached_audio_requires_exact_git_blob_identity(self):
+        content=b'known local source';sha=hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()
+        with tempfile.TemporaryDirectory() as cache:
+            source=pathlib.Path(cache)/(sha+'.mp3');source.write_bytes(content)
+            self.assertEqual(namespace['cached_source'](cache,sha),source)
+            self.assertEqual(source.read_bytes(),content)
+
     def test_one_role_preserves_other_role_and_does_not_mutate_cached_evidence(self):
         old={'sha':'a'*40,'modelSha256':model,'intro':{'beats':[1]},'outro':{'beats':[10]}}
         identity={'sha':'a'*40,'modelSha256':model,'analysisView':'original'}

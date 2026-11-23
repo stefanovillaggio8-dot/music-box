@@ -24,6 +24,11 @@ def merge_roles(previous,identity,result):
  merged['analysisRoles']=sorted(role for role in ('intro','outro') if role in merged)
  return merged
 
+def cached_source(cache,sha):
+ source=pathlib.Path(cache)/(sha+'.mp3');content=source.read_bytes()
+ if hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()!=sha:raise ValueError('Cached original changed')
+ return source
+
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for k in ('cache','models','output'):p.add_argument('--'+k,required=True)
@@ -35,6 +40,7 @@ def main():
  args=p.parse_args()
  roles=set(args.roles.split(','))
  if not roles or not roles<={'intro','outro'}:raise ValueError('Unknown original-audio role')
+ guarded_index=None
  if args.ste_cases:
   if not args.keys:raise ValueError('A bounded --keys selection is required for Ste research')
   with tempfile.TemporaryDirectory(prefix='musicbox-ste-edge-') as tmp:
@@ -44,7 +50,9 @@ def main():
   allowed={c[k] for c in valid['cases'] for k in ('from','to')}
   selected=json.loads(pathlib.Path(args.keys).read_text(encoding='utf8'))
   if not isinstance(selected,list) or not selected or len(set(selected))!=len(selected) or any(k not in allowed for k in selected):raise ValueError('Only sources in the validated Ste cases are allowed')
-  index_for_scope=json.loads((ROOT/'dj-deep-analysis.json').read_text())['entries']
+  index_bytes=(ROOT/'dj-deep-analysis.json').read_bytes()
+  if hashlib.sha256(index_bytes).hexdigest()!=valid['scope']['runtimeEvidence']['indexSha256']:raise ValueError('Source index changed after validating current Ste membership')
+  guarded_index=json.loads(index_bytes);index_for_scope=guarded_index['entries']
   for key in selected:
    if not (pathlib.Path(args.cache)/(index_for_scope[key]['sha']+'.mp3')).exists():raise ValueError('Guarded research is offline-only: missing original '+key)
 
@@ -65,7 +73,7 @@ def main():
   temporary=checkpoint.with_suffix('.ckpt.tmp');temporary.write_bytes(content);temporary.replace(checkpoint)
  if hashlib.sha256(checkpoint.read_bytes()).hexdigest()!=MODEL_SHA:raise ValueError('Model changed')
  os.environ['TORCH_HOME']=str(model_root/'torch');torch.set_num_threads(2);model=Audio2Frames(str(checkpoint),device='cpu')
- index=json.loads((ROOT/'dj-deep-analysis.json').read_text(encoding='utf-8'));shard,parts=map(int,args.shard.split('/'));audio.SR=pcm.SR
+ index=guarded_index if guarded_index is not None else json.loads((ROOT/'dj-deep-analysis.json').read_text(encoding='utf-8'));shard,parts=map(int,args.shard.split('/'));audio.SR=pcm.SR
  pathlib.Path(args.cache).mkdir(parents=True,exist_ok=True)
  keys=[k for i,k in enumerate(sorted(k for k,e in index['entries'].items() if e['status']=='ok')) if i%parts==shard]
  if args.keys:
@@ -79,7 +87,13 @@ def main():
   e=index['entries'][key]
   if same_evidence(entries.get(key,{}),e['sha'],args.view) and all(role in entries[key] for role in roles):continue
   try:
-   at=time.monotonic();source=audio.source(key,e['sha'],pathlib.Path(args.cache));duration=e['duration'];result={}
+   at=time.monotonic()
+   if args.ste_cases:
+    # A cache file disappearing after the initial guard must fail closed,
+    # never fall through to the legacy downloader.
+    source=cached_source(args.cache,e['sha'])
+   else:source=audio.source(key,e['sha'],pathlib.Path(args.cache))
+   duration=e['duration'];result={}
    for role,start,seconds in [('intro',0,24),('outro',max(0,duration-48),48.1)]:
     if role not in roles:continue
     samples=audio.decode(source,start,seconds).mean(axis=1)
