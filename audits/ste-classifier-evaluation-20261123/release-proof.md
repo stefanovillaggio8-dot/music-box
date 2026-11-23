@@ -37,10 +37,10 @@ Service worker changes only the application-shell revision and matching
 asset URLs. No download cache name, deletion rule or database migration
 changes. Previous production commit b0b4f34a remains the rollback base.
 
-Full-suite results must distinguish pre-existing revoked historical-fixture
+Full-suite results must distinguish pre-existing missing historical-fixture
 failures from regressions. Baseline PR59 CI 45148548690 already fails the
 missing historical bass-pair and its future-selection assertion; these
-unrelated tests are not suppressed, restored as unsafe mixes, or retuned.
+unrelated tests are not suppressed, blindly restored as verified mixes, or retuned.
 No new music research is performed for their profiles/playlist.
 
 Remaining: broader held-out Ste validation, truly new full beatmatches,
@@ -66,3 +66,7 @@ storage sentinels, not an examination of anybody's physical iPhone data.
 
 PR71 remains a candidate, not a public 6.740 announcement. Do not claim the
 two historical failing tests are green or discard them to enable a release.
+
+The cause of the historical missing plan is unverified here; a failed
+fixture does not prove intentional safety revocation. Those two checks
+remain a release blocker, rather than being deleted or made conditional.

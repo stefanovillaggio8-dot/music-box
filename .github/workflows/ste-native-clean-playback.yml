@@ -9,6 +9,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ste-native-clean-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   native-clean:
     strategy:
@@ -22,7 +25,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: |
+      - name: Install pinned browser backends within a bounded setup budget
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
       - name: Provide Linux native media output
