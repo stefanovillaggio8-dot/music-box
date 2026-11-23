@@ -40,8 +40,9 @@ root.createNativeDualDeckProbe=function(f,options={}){
   return authorization.then(async()=>{
    await new Promise(r=>setTimeout(r,100));
    report.primingSourceContinued=!old.paused&&old.currentTime>.02;
+   report.primingObservationBeforeCleanup={paused:old.paused,currentTime:old.currentTime,readyState:old.readyState,error:old.error?.code||null};
    report.primingIncomingSeconds=incoming.currentTime;
-   if(!report.primingSourceContinued)throw Error('priming-interrupted-source');
+   if(!report.primingSourceContinued)throw Error(old.paused?'priming-source-paused':'priming-startup-not-observed-in-100ms');
    intentionalPause=true;old.pause();incoming.pause();
    await wait(()=>old.readyState>=2&&incoming.readyState>=2);
    const offset=root.MusicBoxCompositeMix.nativeClockOffset(f.sourceClock,f.sourceSha,old.duration);

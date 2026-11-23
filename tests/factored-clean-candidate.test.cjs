@@ -33,3 +33,35 @@ test('actual planner preserves the separate natural class and never upgrades the
  const p=engine.playbackTransition(added,f.b,f.a.duration);assert.equal(p.nativeCleanTail,true);assert.equal(p.kind,'postlude');
  assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,false);assert.equal(engine.fullBeatCueCertified(added,f.b,p),false);
 });
+test('native runtime recognizes declared raw metadata and cancels stale preparation without moving the incoming clock',async()=>{
+ const a=source.indexOf('function beginNativeCleanTail('),b=source.indexOf('// The normal Music Box EOF path',a);
+ const {clockOffset}=require('../tools/factored-native-clean.cjs');
+ const make=new Function('snippet','cue','clockOffset',`
+  const isIOS=false,document={hidden:false},window={MusicBoxCompositeMix:{nativeClockOffset:(c,sha,d)=>c?.sourceSha===sha?clockOffset(c,d):null}};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));let active=null,mixing=false,aborted=0,plays=0,seeks=0,target=2;
+  const timers=[],setTimeout=f=>(timers.push(f),timers.length),performance={now:()=>0},handlers=new Map();
+  const old={paused:false,seeking:false,currentTime:cue.begin-2,duration:cue.nativeCleanEvidence.sourceClock.decodedFrames/cue.nativeCleanEvidence.sourceClock.sampleRate,
+   addEventListener:(e,f)=>handlers.set(e,f),removeEventListener:e=>handlers.delete(e)};
+  const c=cue.nativeCleanEvidence.targetClock;
+  const incoming={paused:true,seeking:false,duration:c.rawFrames/c.sampleRate,readyState:4,
+   get currentTime(){return 0},set currentTime(v){seeks++},play(){plays++;this.paused=false;return Promise.resolve()}};
+  const app={mixAdoptHandoff:()=>true,currentId:()=>1,mixNext:()=>({id:target}),audio:()=>old,volume:()=>1,mixSourceMatches:()=>true};
+  let prepared={ready:true,id:2,fromId:1,naturalEntry:0,audio:incoming};
+  function cancel(){aborted++;active?.cleanup?.();active=null;mixing=false;incoming.paused=true}
+  function handoff(){throw Error('Unexpected early handoff')}
+  eval(snippet);
+  return {start:()=>beginNativeCleanTail(app,old,{id:2},cue),step:()=>{old.currentTime=cue.begin;timers.shift()?.()},
+   badMetadata:()=>incoming.duration=.002,changeQueue:()=>target=3,hide:()=>document.hidden=true,
+   seek:()=>handlers.get('seeking')?.(),pause:()=>{old.paused=true;handlers.get('pause')?.()},
+   state:()=>({plays,seeks,aborted,incomingPaused:incoming.paused,sourcePaused:old.paused})};
+ `);
+ const create=()=>make(source.slice(a,b),structuredClone(candidate.record.cue),clockOffset);
+ const pending=create();pending.badMetadata();assert.equal(pending.start(),false);assert.equal(pending.state().plays,0);
+ const success=create();assert.equal(success.start(),true);success.step();await Promise.resolve();
+ assert.deepEqual(success.state(),{plays:1,seeks:0,aborted:0,incomingPaused:false,sourcePaused:false});success.seek();
+ for(const action of ['badMetadata','changeQueue','hide','seek','pause']){
+  const f=create();assert.equal(f.start(),true);f[action]();f.step();await Promise.resolve();
+  const state=f.state();assert.equal(state.plays,0,action);assert.equal(state.seeks,0);assert.equal(state.aborted,1);assert.equal(state.incomingPaused,true);
+  assert.equal(state.sourcePaused,action==='pause');
+ }
+});

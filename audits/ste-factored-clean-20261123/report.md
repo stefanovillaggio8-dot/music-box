@@ -126,3 +126,35 @@ The actual playback assertions were already passing; this does not waive
 any audio threshold. Linux/macOS actual-app validation remains pending.
 Targeted proposal, candidate, planner, shuffle and preservation tests: 55/55.
 No new index entry or public release yet; available published counts unchanged.
+
+
+## Actual application and iPhone follow-through
+
+New candidate actual-app run 45186235079: 4/4 PASS, Linux/macOS Chromium
+and WebKit. Incoming play() requested at zero, volume/rate one; old native
+source reached EOF before adoption; same incoming element retained; no
+incoming seek. No new full or partial classification. Installed PR59 stored
+personal Ste pairs now 1 full / 1 partial / 2 clean desktop; public 6.740
+remains 1 / 1 / 1. Counts are distinct current-library SHA pairs, not a new
+catalog sweep or simulated events. See research-availability.json.
+
+Separate SEQUENTIAL authorization experiment 45186419742 did not repeat
+parallel startup or native-prefix decoding. It preserves all failed trials:
+Linux Chromium 2/2 pass, WebKit 0/2; macOS Chromium 1/2, WebKit 0/2. WebKit
+Linux missed the launch window after a native clock jump to EOF; the macOS
+rows did not show >20ms source advancement inside the initial fixed 100ms
+observation. IMPORTANT: old error label priming-interrupted-source DOES NOT
+prove iOS/Safari paused the source: failure cleanup subsequently pauses it.
+Those old receipts are immutable, but future probe snapshots now preserve
+paused/time/readyState BEFORE cleanup and distinguish lack of observed
+startup from actual pause. No physical-iPhone or universal single-stream
+claim is supported. Both variants remain experiments, not phone features.
+Do not rerun their same failed criteria as new research. The app's iPhone
+path remains unchanged. Any future study must handle native readiness and
+clock progression independently before drawing a media-policy conclusion.
+
+A small isolated release candidate is prepared in PR73 from main 5346215d,
+NOT from a merge of PR59: only v2/priority fixes, new Ste cue, their proofs,
+regressions and shell revision. Installed-index audio/player, phrase-only
+Karaoke and exact 6.740 worker-upgrade CI must finish before publication.
+No other-account/Gym research or user-data deletion performed.

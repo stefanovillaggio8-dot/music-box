@@ -1,0 +1,730 @@
+{
+  "physicalIPhone": false,
+  "notApplicationIntegration": true,
+  "notPlaybackCertified": true,
+  "platform": "darwin",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "variant": "audible",
+      "primingOrder": "sequential",
+      "prime": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.02322,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "audible",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.02322,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0.02322,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0,
+        "incomingTime": 0.02322,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "accepted": false,
+      "error": "{\"physicalIPhone\":false,\"notApplicationIntegration\":true,\"notPlaybackCertified\":true,\"userAgent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1\",\"sourceSha\":\"5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8\",\"targetSha\":\"004e594c10688869197f21e31e748c1dd82901b4\",\"phase\":\"stopped\",\"events\":[{\"event\":\"prime-request\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-pause\",\"at\":0.02322,\"paused\":true,\"ended\":false,\"muted\":false},{\"event\":\"source-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"source-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"priming-interrupted-source\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false},{\"event\":\"source-pause\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false}],\"bootstrap\":\"audible\",\"primingOrder\":\"sequential\",\"sourceClockOffset\":null,\"sequentialPrimerSeconds\":0.02322,\"primingSourceContinued\":false,\"primingIncomingSeconds\":0.02322,\"reason\":\"priming-interrupted-source\",\"sameIncomingElement\":false,\"sourceTime\":0,\"incomingTime\":0.02322,\"sourcePaused\":true,\"incomingPaused\":true}\n+ actual - expected\n\n+ 'stopped'\n- 'primed'\n",
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.02322,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "audible",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.02322,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0.02322,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0,
+        "incomingTime": 0.02322,
+        "sourcePaused": true,
+        "incomingPaused": true
+      }
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "variant": "muted",
+      "primingOrder": "sequential",
+      "prime": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "primed",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0.000111,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.029363,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 155.75,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "prime-complete",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          }
+        ],
+        "bootstrap": "muted",
+        "primingOrder": "sequential",
+        "sourceClockOffset": 0,
+        "sequentialPrimerSeconds": 0.029283,
+        "primingSourceContinued": true,
+        "primingIncomingSeconds": 0.029363,
+        "targetClockOffset": 0,
+        "sameIncomingElement": false,
+        "sourceTime": 155.75,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "adopted",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0.000111,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.029363,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 155.75,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "prime-complete",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "source-play",
+            "at": 155.762142,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 155.762175,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 161.088979,
+            "paused": true,
+            "ended": true,
+            "muted": false
+          },
+          {
+            "event": "source-ended",
+            "at": 161.088979,
+            "paused": true,
+            "ended": true,
+            "muted": false
+          }
+        ],
+        "bootstrap": "muted",
+        "primingOrder": "sequential",
+        "sourceClockOffset": 0,
+        "sequentialPrimerSeconds": 0.029283,
+        "primingSourceContinued": true,
+        "primingIncomingSeconds": 0.029363,
+        "targetClockOffset": 0,
+        "incomingStart": 0,
+        "sourceAtStart": 158.756072,
+        "incomingPlayResolved": true,
+        "beforeAdoption": {
+          "sourceEnded": true,
+          "sourceAt": 161.088979,
+          "sourceDuration": 161.088979,
+          "incomingAt": 2.321959
+        },
+        "adoptedSameElement": true,
+        "sameIncomingElement": true,
+        "sourceTime": 161.088979,
+        "incomingTime": 2.375751,
+        "sourcePaused": true,
+        "incomingPaused": false
+      },
+      "accepted": true
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "variant": "audible",
+      "primingOrder": "sequential",
+      "prime": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.039082708333324945,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "audible",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.0388070833333245,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0.0011903749999930824,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "accepted": false,
+      "error": "{\"physicalIPhone\":false,\"notApplicationIntegration\":true,\"notPlaybackCertified\":true,\"userAgent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1\",\"sourceSha\":\"5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8\",\"targetSha\":\"004e594c10688869197f21e31e748c1dd82901b4\",\"phase\":\"stopped\",\"events\":[{\"event\":\"prime-request\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"incoming-pause\",\"at\":0.039082708333324945,\"paused\":true,\"ended\":false,\"muted\":false},{\"event\":\"source-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"source-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"priming-interrupted-source\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false},{\"event\":\"source-pause\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false}],\"bootstrap\":\"audible\",\"primingOrder\":\"sequential\",\"sourceClockOffset\":null,\"sequentialPrimerSeconds\":0.0388070833333245,\"primingSourceContinued\":false,\"primingIncomingSeconds\":0,\"reason\":\"priming-interrupted-source\",\"sameIncomingElement\":false,\"sourceTime\":0.0011903749999930824,\"incomingTime\":0,\"sourcePaused\":true,\"incomingPaused\":true}\n+ actual - expected\n\n+ 'stopped'\n- 'primed'\n",
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.039082708333324945,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "audible",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.0388070833333245,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0.0011903749999930824,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      }
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "variant": "muted",
+      "primingOrder": "sequential",
+      "prime": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.03859274999999229,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "muted",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.038406041666661395,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "accepted": false,
+      "error": "{\"physicalIPhone\":false,\"notApplicationIntegration\":true,\"notPlaybackCertified\":true,\"userAgent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1\",\"sourceSha\":\"5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8\",\"targetSha\":\"004e594c10688869197f21e31e748c1dd82901b4\",\"phase\":\"stopped\",\"events\":[{\"event\":\"prime-request\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":true},{\"event\":\"incoming-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":true},{\"event\":\"incoming-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":true},{\"event\":\"incoming-pause\",\"at\":0.03859274999999229,\"paused\":true,\"ended\":false,\"muted\":true},{\"event\":\"source-play\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"source-playing\",\"at\":0,\"paused\":false,\"ended\":false,\"muted\":false},{\"event\":\"priming-interrupted-source\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false},{\"event\":\"source-pause\",\"at\":0,\"paused\":true,\"ended\":false,\"muted\":false}],\"bootstrap\":\"muted\",\"primingOrder\":\"sequential\",\"sourceClockOffset\":null,\"sequentialPrimerSeconds\":0.038406041666661395,\"primingSourceContinued\":false,\"primingIncomingSeconds\":0,\"reason\":\"priming-interrupted-source\",\"sameIncomingElement\":false,\"sourceTime\":0,\"incomingTime\":0,\"sourcePaused\":true,\"incomingPaused\":true}\n+ actual - expected\n\n+ 'stopped'\n- 'primed'\n",
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "stopped",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-pause",
+            "at": 0.03859274999999229,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "source-play",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "priming-interrupted-source",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "source-pause",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "muted",
+        "primingOrder": "sequential",
+        "sourceClockOffset": null,
+        "sequentialPrimerSeconds": 0.038406041666661395,
+        "primingSourceContinued": false,
+        "primingIncomingSeconds": 0,
+        "reason": "priming-interrupted-source",
+        "sameIncomingElement": false,
+        "sourceTime": 0,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      }
+    }
+  ]
+}
