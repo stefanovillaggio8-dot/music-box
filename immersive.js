@@ -100,10 +100,13 @@ function renderLyrics(force){
     // Only timed cues can seek; never guess locations from plain lyrics.
     if(lyricTimed&&Number.isFinite(data.t)&&data.t>=0){
      row.classList.add("im-seekable");
-     row.dataset.seekIndex=String(i);
+     // Real DOM supplies dataset/attributes; older lyric test doubles
+     // expose only text and classList. Keep those simulations compatible.
+     if(row.dataset)row.dataset.seekIndex=String(i);
+     else row.setAttribute?.("data-seek-index",String(i));
      row.tabIndex=0;
-     row.setAttribute("role","button");
-     row.setAttribute("aria-label","Vai a "+fmt(data.t)+": "+data.text);
+     row.setAttribute?.("role","button");
+     row.setAttribute?.("aria-label","Vai a "+fmt(data.t)+": "+data.text);
      row.title="Vai a "+fmt(data.t);
     }
     fragment.appendChild(row);
