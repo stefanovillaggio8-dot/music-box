@@ -18,7 +18,7 @@ test('a distinct natural class requires both native platforms, original speed, o
  const {record,p,a,b}=fixture();assert.ok(validate(false)(record,p,a,b,a.duration));
  assert.equal(validate(true)(record,p,a,b,a.duration),null,'iPhone remains on existing safe playback');
  const mutations=[p=>p.entry=.1,p=>p.tempo=1.001,p=>p.gain=.9,p=>p.kind='beat',p=>p.measuredFullBeat=true,
-  p=>p.end-=.1,p=>p.begin=NaN,p=>delete p.nativeCleanEvidence.begin,p=>p.composite={},
+  p=>p.end-=.1,p=>p.begin=NaN,p=>delete p.targetDuration,p=>delete p.nativeCleanEvidence.begin,p=>p.composite={},
   p=>p.nativeCleanEvidence.nativeMeasurements.pop(),p=>p.nativeCleanEvidence.nativeMeasurements[0].platform='darwin',
   p=>p.nativeCleanEvidence.nativeMeasurements[0].sourceTailRmsMax=.000101,
   p=>p.nativeCleanEvidence.nativeMeasurements[0].sourceTailPeak=.0011,
@@ -46,15 +46,18 @@ test('the native-only path aborts on queue changes and seeks without pausing the
   const timers=[],setTimeout=f=>(timers.push(f),timers.length),performance={now:()=>0};
   const handlers=new Map(),old={paused:false,seeking:false,currentTime:97,duration:100,
    addEventListener:(event,f)=>handlers.set(event,f),removeEventListener:(event)=>handlers.delete(event)};
-  const incoming={paused:true,seeking:false,currentTime:0,readyState:4,volume:0,play(){this.paused=false;return Promise.resolve()}};
+  const incoming={paused:true,seeking:false,currentTime:0,duration:200,readyState:4,volume:0,play(){this.paused=false;return Promise.resolve()}};
   let target=2;const app={mixAdoptHandoff:()=>true,currentId:()=>1,mixNext:()=>({id:target}),audio:()=>old,volume:()=>1,mixSourceMatches:()=>true};
   let prepared={ready:true,id:2,fromId:1,naturalEntry:0,audio:incoming};
   function cancel(){aborted++;active?.cleanup?.();active=null;mixing=false;incoming.paused=true}
   function handoff(){throw Error('Should not hand off before EOF')}
   eval(source+';');
-  return {start:()=>beginNativeCleanTail(app,old,{id:2},{begin:99,nativeCleanEvidence:{sourceClock:{}},sourceSha:'a'}),
+  return {start:()=>beginNativeCleanTail(app,old,{id:2},{begin:99,targetDuration:200,nativeCleanEvidence:{sourceClock:{}},sourceSha:'a'}),
+   provisional:()=>incoming.duration=.002,stable:()=>incoming.duration=200,
    changeQueue:()=>target=3,step:()=>timers.shift()?.(),seek:()=>handlers.get('seeking')?.(),
    state:()=>({aborted,oldPaused:old.paused,incomingPaused:incoming.paused,handlers:handlers.size})};
  `);
  for(const action of ['changeQueue','seek']){const f=make(source.slice(a,b));assert.equal(f.start(),true);f[action]();f.step();await Promise.resolve();assert.deepEqual(f.state(),{aborted:1,oldPaused:false,incomingPaused:true,handlers:0});}
+ const pending=make(source.slice(a,b));pending.provisional();assert.equal(pending.start(),false,'readyState=4 does not validate a two-millisecond MP3');
+ assert.equal(pending.state().oldPaused,false);pending.stable();assert.equal(pending.start(),true,'reuse preparation after genuine metadata arrives');pending.seek();
 });
