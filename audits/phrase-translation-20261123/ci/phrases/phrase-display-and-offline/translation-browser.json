@@ -1,0 +1,31 @@
+{
+  "method": "actual-app-translation-with-mocked-provider-v1",
+  "physicalIPhone": false,
+  "acousticAccuracyMeasured": false,
+  "results": [
+    {
+      "browser": "chromium",
+      "cappedFirstRequests": 60,
+      "cappedRepeatRequests": 0,
+      "repeatedPhraseRequests": 2,
+      "editedTextCorrect": true,
+      "abortedRequests": 2,
+      "escapedTextSafe": true,
+      "phraseOnly": true,
+      "wordModelRequests": 0,
+      "externalServiceCalls": 0
+    },
+    {
+      "browser": "webkit",
+      "cappedFirstRequests": 60,
+      "cappedRepeatRequests": 0,
+      "repeatedPhraseRequests": 2,
+      "editedTextCorrect": true,
+      "abortedRequests": 2,
+      "escapedTextSafe": true,
+      "phraseOnly": true,
+      "wordModelRequests": 0,
+      "externalServiceCalls": 0
+    }
+  ]
+}

@@ -34,5 +34,24 @@
   },
   "newAcousticAccuracyMeasured": false,
   "physicalIPhone": false,
-  "published": false
+  "published": true,
+  "publishedVersion": "6.742",
+  "merge": "b55e3e0ab7b2d6feb74af52503a3ea3b3ff0a313",
+  "fullSuite": {
+    "passed": 782,
+    "total": 784,
+    "sameHistoricalFailures": 2
+  },
+  "nativeInstalledControls": {
+    "passed": 8,
+    "total": 8,
+    "os": [
+      "Linux",
+      "macOS"
+    ],
+    "browsers": [
+      "Chromium",
+      "WebKit"
+    ]
+  }
 }
