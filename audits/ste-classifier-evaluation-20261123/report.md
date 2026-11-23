@@ -83,3 +83,56 @@ The existing Ste contract workflow has an opt-in `native_clean_evaluation`
 dispatch for these two originals only, Linux/macOS Chromium+WebKit,
 both rates. It does not run music experiments on PR/push. It never installs
 plans or modifies downloads, account data or public player files.
+
+## Completed native decoder comparison and second, distinct prototype
+
+Run 45158081505 and refined bounds run 45158635872 used only this frozen
+pair, two originals, Linux/macOS, Chromium/WebKit, 44.1/48 kHz. The first
+run completed successfully as an EXPERIMENT; macOS WebKit's measured
+`decoderAccepted` is FALSE. Nominal FLAC-to-original target correlation
+is .031624 and relative RMS 1.39364 at both rates, despite valid durations
+and safe peaks. Do not publish that splice or fit a waveform offset to
+turn its failure into a pass. Linux WebKit retains the source's declared
+1105/48000 s priming; macOS media and decode clocks also differ. Container
+clock mapping is required, not an invented synchronization correction.
+
+The second prototype is technically different: retain a native incoming
+HTML audio element from zero, at the ordinary listening volume, and adopt
+THAT SAME element after native outgoing EOF. It never uses the rejected
+FLAC/MP3 splice, low-pass preview, tempo change or an intro seek. It is
+desktop-only: iOS's existing restrictions on native element adoption are
+preserved. No iPhone claim is made.
+
+Across all eight native measurements, the source from begin-.3 to native
+EOF has RMS <=.000037175 and sample peak <=.000152588. Incoming original
+peak in the bounded possible native overlap is <=.376107; the sum's
+conservative absolute bound is far below .96. A new explicit category
+requires BOTH platforms/browsers/rates, all eight near-silent proofs,
+native source clock conversion, entry zero, tempo/gain one, original EOF,
+independent rendered introduction exposure and <=3 dB EOF level change.
+This is not a beat or a partial metrical mix and cannot use either label.
+
+`native-element-shadow.json` is still an evaluation candidate, outside the
+public runtime index. The app test injects it only into an isolated HTTP
+fixture, preserving all account data. Windows Chromium actual-app proof:
+native target play at 0, source approximately 158.76; matching normal
+volumes; adoption after outgoing EOF, target already at approximately
+2.30 seconds; same target element; no target seek. The old element resets
+its ended flag when released; the test measures EOF immediately BEFORE
+adoption rather than falsely reading that flag after `remove src/load`.
+
+The first prototype routing bug (early return bypassed prebuffer setup)
+was caught by the real-app test and corrected. This was a new experimental
+route bug, not claimed as the cause of the user's earlier recording.
+
+46/46 targeted regressions pass. A full local suite has 785/787 passing,
+with the same two pre-existing rejected historical fixture tests visible
+in baseline CI 45148548690 (a missing historical bass fixture and its
+future-selection assertion). They have not been altered or suppressed;
+no new music research is done on those fixtures. Windows WebKit remains
+an unavailable Web Audio backend, not a passing native test.
+
+Next mandatory checkpoint: actual-app native-element tests on Linux AND
+macOS Chromium/WebKit, via opt-in `native_clean_player`. Until those and
+isolated release checks pass, public Ste availability remains 1 full +
+1 partial, no newly certified/runtime-installed clean pair, no release.

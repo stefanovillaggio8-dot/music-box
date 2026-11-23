@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'tools/ste-research-scope.cjs'
+      - 'tools/ste-native-clean-evaluation.cjs'
+      - 'tools/build-native-clean-tail-candidate.cjs'
+      - 'tests/native-clean-tail.test.cjs'
+      - 'tests/native-clean-browser.cjs'
       - 'tools/simulate-library-listening.cjs'
       - 'tests/ste-research-scope.test.cjs'
       - 'tests/ste-metrical-diagnosis.test.cjs'
@@ -25,11 +29,15 @@ on:
         description: 'Read-only Ste clean-tail native decode experiment; never installs playback plans'
         type: boolean
         default: false
+      native_clean_player:
+        description: 'Actual-app Ste native-element SHADOW trial only; does not install or certify plans'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
   native-clean-evaluation:
-    if: github.event_name == 'workflow_dispatch' && inputs.native_clean_evaluation
+    if: github.event_name == 'workflow_dispatch' && (inputs.native_clean_evaluation || inputs.native_clean_player)
     strategy:
       fail-fast: false
       matrix:
@@ -55,12 +63,22 @@ jobs:
       - name: Fetch only the two current Ste originals with Git identity checks
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json
       - name: Measure nominal clocks and original waveform at both sample rates
+        if: inputs.native_clean_evaluation
         run: node tools/ste-native-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json native-clean-evaluation.json
+      - name: Exercise actual native element start and same-element adoption in the real app
+        if: inputs.native_clean_player
+        env:
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-player.json
+        run: |
+          node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+          node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-native-clean-evaluation-${{ runner.os }}
-          path: native-clean-evaluation.json
+          path: |
+            native-clean-evaluation.json
+            native-clean-player.json
   personal-scope:
     runs-on: ubuntu-latest
     timeout-minutes: 3
