@@ -330,3 +330,14 @@ propose clean junctions without a quadratic scan or a hardcoded song pair.
 Validate that factorization on an independently frozen Ste sample before
 installing more cues. It does not replace the missing rhythm/harmony/native
 evidence for full beatmatches and must not inflate their counters.
+
+Post-deployment workflow check: integrity, ordinary Chromium playback,
+volume, names and lyric-boundary update pass on public merge 2559a5c0.
+DJ/full-suite aggregators retain ONLY the same two historical failures.
+The post-deploy Immersive run 45174861229 times out while installing
+WebKit (14-minute job), not while evaluating application output. It is
+recorded as CANCELLED, never a pass. The earlier Immersive run 45173491204
+passed and all ten owning application/test/workflow blobs are identical
+to the deployed tree; post-deployment-checks.json records exact hashes.
+This provides prior identical-code coverage without inventing a successful
+post-deploy run or repeatedly downloading the same browser dependencies.
