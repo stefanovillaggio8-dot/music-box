@@ -1,0 +1,70 @@
+{
+  "personalSteRecordings": 222,
+  "examined": "stored same-account plans only; no Cartesian scan, simulation or new PCM",
+  "sourceJsSha256": "522de24a4948b21da27a7c02446b934a84922df82f2214c86b2010e208631b7e",
+  "indexSha256": "4bdc714417e897646507c519499b3198370bf2d7f28a99a282bce0b8e6b6e84f",
+  "counts": {
+    "full": 1,
+    "partial": 1,
+    "cleanDesktop": 4
+  },
+  "newCleanIPhone": 0,
+  "pairs": [
+    {
+      "from": "audio/songs/track-4.mp3",
+      "to": "audio/songs/track-38.mp3",
+      "kind": "partial",
+      "begin": 119.62671731448765,
+      "fade": 7.250282685512346,
+      "entry": 0,
+      "tempo": 1.0442804428044306
+    },
+    {
+      "from": "audio/songs/track-6.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "kind": "cleanDesktop",
+      "begin": 138.733,
+      "fade": 1.0999999999999943,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "full",
+      "begin": 148.52438815789475,
+      "fade": 10.77661184210524,
+      "entry": 0,
+      "tempo": 1.0167224080267576
+    }
+  ],
+  "physicalIPhone": false,
+  "humanListening": false
+}

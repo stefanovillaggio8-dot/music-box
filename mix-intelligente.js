@@ -418,12 +418,7 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    Math.abs(plan.end-ending.duration)<.1;
 
  if(plan?.neutralAmbientUnderlay===true)
-  return !!ending&&plan.kind==="underlay"&&
-   plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
-   ending.durationMismatch!==true&&
-   Number.isFinite(ending.duration)&&Number.isFinite(plan.end)&&
-   Math.abs(ending.duration-plan.end)<.20&&
-   plan.fade>=3.15&&plan.fade<=6.8&&plan.underlayVolume<=.09;
+  return false; // <=9% plus low-pass is not proof the original intro was heard.
  if(plan?.postMusicalTailUnderlay===true)
   return !!ending&&plan.kind==="postlude"&&plan.preserveTail===true&&
    ending.protectedEnding!==true&&Number.isFinite(ending.last)&&
@@ -689,8 +684,9 @@ function deepLookup(track){
   ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   let value=deepIndex.entries?.[key];
-  // Old offline metadata predates the entrance revocations. Retain its basic
-  // measurements and downloads, but wait for compatible static audio plans.
+  // Old offline metadata predates the entrance revocations. Keep its basic
+  // measurements and original downloads, but do not arm its static audio
+  // plans until the compatible metadata has arrived.
   if(value&&deepIndex.introExposureRevision!==2&&(value.structuralBeatPlans||value.pcmBeatPlans)){
    value={...value};delete value.structuralBeatPlans;delete value.pcmBeatPlans;
   }
@@ -775,6 +771,8 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
+   // Generated analysis is data: a new MP3 must not wait for another Pages
+   // deployment. The hourly analyzer publishes this public main-branch JSON.
    const indexUrl=force?
     "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/dj-deep-analysis.json?mb-dj-refresh=1":
     "dj-deep-analysis.json?pcm=1&structure=18";
@@ -3037,7 +3035,8 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
 // FLAC/MP3 splice, a seek or a decoder fitted offset. Never an iPhone cue.
 function validateNativeCleanTailCue(record,p,a,b,dur){
  const e=p?.nativeCleanEvidence;
- const factored=e?.method==='original-native-near-silent-tail-v2';
+ const originalLevel=e?.method==='original-native-near-silent-tail-v3';
+ const factored=originalLevel||e?.method==='original-native-near-silent-tail-v2';
  if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||record?.version!==1||
     record.fromSha!==a.sha||record.toSha!==b.sha||p?.sourceSha!==a.sha||p?.targetSha!==b.sha||
     ![record.sourceDuration,record.nextDuration,dur,a.duration,b.duration].every(Number.isFinite)||
@@ -3049,7 +3048,7 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
     Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     (!factored&&e?.method!=='original-native-near-silent-tail-v1')||e.sourceSha!==a.sha||e.targetSha!==b.sha||
     e.noDecoderSplice!==true||e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
-    e.notHumanListening!==true||!Number.isFinite(e.eofLevelChangeDb)||Math.abs(e.eofLevelChangeDb)>3||
+    e.notHumanListening!==true||!Number.isFinite(e.eofLevelChangeDb)||!originalLevel&&Math.abs(e.eofLevelChangeDb)>3||
     ![e.begin,e.end].every(Number.isFinite)||Math.abs(e.begin-p.begin)>.000001||Math.abs(e.end-p.end)>.000001||
     e.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||e.introductionExposure.accepted!==true||
     e.introductionExposure.sourceSha!==a.sha||e.introductionExposure.targetSha!==b.sha||
@@ -3093,13 +3092,29 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
       !knownClock(e.targetClock,b.sha,b.duration,v.targetDecodedDuration,v.targetDecodedOffset)||
       !knownClock(e.targetClock,b.sha,b.duration,v.targetMediaDuration,v.targetMediaOffset))return null;
   }
+  // V3 compares the MIX with the unmodified incoming at the SAME EOF window.
+  // A bass entrance already in the original is not an app gain discontinuity.
+  // Triangle inequality bounds any added level change by the independently
+  // measured outgoing peak. No larger arbitrary dB threshold or gain boost.
+  const referenceValid=v=>{
+   const r=v.originalLevelReference;
+   if(r?.method!=='original-native-eof-relative-level-v1'||r.sourceSha!==a.sha||r.targetSha!==b.sha||r.halfWindowSeconds!==.5||
+      ![r.originalBeforeRms,r.originalAfterRms,r.mixedBeforeRms,r.mixedAfterRms].every(x=>Number.isFinite(x)&&x>=.001))return false;
+   const quietPeak=Math.max(...e.nativeMeasurements.map(m=>m.sourceTailPeak)),minimum=Math.min(r.originalBeforeRms,r.originalAfterRms);
+   if(quietPeak>=minimum||Math.abs(r.mixedBeforeRms-r.originalBeforeRms)>quietPeak+1e-7||
+      Math.abs(r.mixedAfterRms-r.originalAfterRms)>quietPeak+1e-7)return false;
+   const original=20*Math.log10(r.originalAfterRms/r.originalBeforeRms),mixed=20*Math.log10(r.mixedAfterRms/r.mixedBeforeRms),
+    bound=20*Math.log10((1+quietPeak/minimum)/(1-quietPeak/minimum));
+   return Math.abs(v.eofLevelChangeDb-mixed)<=1e-6&&Math.abs(mixed-original)<=Math.min(3,bound+1e-5);
+  };
   if(!Array.isArray(e.renderMeasurements)||e.renderMeasurements.length!==2||new Set(e.renderMeasurements.map(v=>v.sampleRate)).size!==2||
      e.renderMeasurements.some(v=>![44100,48000].includes(v.sampleRate)||v.sourceSha!==a.sha||v.targetSha!==b.sha||
       v.sourceUnityThroughEof!==true||v.incomingUnityFromZero!==true||v.entry!==0||v.tempo!==1||v.sourceGain!==1||v.incomingGain!==1||
       ![v.begin,v.end,v.samplePeak,v.overlapPeak,v.oversampledPeak,v.sourceReadThrough,v.eofLevelChangeDb].every(Number.isFinite)||
       Math.abs(v.begin-p.begin)>.000001||Math.abs(v.end-p.end)>.000001||Math.abs(v.sourceReadThrough-a.duration)>.001||
       v.samplePeak<0||v.samplePeak>.9991||v.overlapPeak<0||v.overlapPeak>.96||v.oversampledPeak<0||v.oversampledPeak>1||
-      Math.abs(v.eofLevelChangeDb)>3||v.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||v.introductionExposure.accepted!==true))return null;
+      (originalLevel?!referenceValid(v):Math.abs(v.eofLevelChangeDb)>3)||v.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||v.introductionExposure.accepted!==true))return null;
+  if(originalLevel&&Math.abs(e.eofLevelChangeDb-e.renderMeasurements.find(v=>v.sampleRate===48000).eofLevelChangeDb)>1e-6)return null;
  }
  return {...p};
 }
@@ -4033,10 +4048,10 @@ function musicallyCompatibleOverlay(a,b,cue){
    Math.abs(expected.end-cue.end)<.085;
  }
  if(cue.neutralAmbientUnderlay===true){
-  const p=adaptiveLowBandContinuity(a,b,a?.duration);
-  return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
-   cue.drumOnlyUnderlay===true&&Math.abs(p.begin-cue.begin)<.085&&
-   Math.abs(p.end-cue.end)<.085;
+  // The old fallback consumed several native seconds after only a filtered,
+  // <=9% teaser, then sought past that unverified introduction. Preserve
+  // entry zero through the existing native/quiet-tail handoff instead.
+  return false;
  }
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
@@ -4753,6 +4768,8 @@ function playbackTransition(a,b,dur){
      e?.sourceSha===a?.sha&&e?.targetSha===b?.sha&&e?.assetSha256===c?.sha256&&
      e?.method==='rendered-introduction-band-masking-screen-v2';
    });
+   // Do not replace a measured masked intro with an unverified quiet preview
+   // of the same opening. A positively checked alternative remains eligible.
    if(checked.some(p=>p.composite.introductionExposure.accepted===false)&&
       !checked.some(p=>p.composite.introductionExposure.accepted===true))return null;
    let candidate=transition(a,b,dur);
@@ -5805,6 +5822,14 @@ function cancel(){
  dropPrepared();
  mixing=false;
 }
+function claimLiveTransitionEOF(app,audio,id){
+ if(!audio?.ended||audio.seeking||app?.audio?.()!==audio||app.currentId?.()!==id)return false;
+ const target=app.mixNext?.()?.id;
+ const desktop=active&&(active.nativeTailFullBeat||active.subduedRhythmicUnderlay||active.postMusicalTailUnderlay||active.measuredReleaseLeadIn)&&
+  active.original===audio&&active.fromId===id&&active.track.id===target;
+ const mobile=mobileActive?.nativeTailFullBeat&&mobileActive.old===audio&&mobileActive.fromId===id&&mobileActive.track.id===target;
+ return !!(desktop||mobile)&&naturalEndHandoff();
+}
 // Native-only natural tail: no Web Audio decoding, stretch, gain envelope,
 // low-pass intro or binary decoder switch. Existing queue adoption owns EOF.
 function beginNativeCleanTail(app,old,next,p){
@@ -5815,7 +5840,7 @@ function beginNativeCleanTail(app,old,next,p){
  const offset=sourceClock();
  if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
  const incoming=prepared.audio;
- const targetClock=()=>p.nativeCleanEvidence?.method==='original-native-near-silent-tail-v2'?
+ const targetClock=()=>['original-native-near-silent-tail-v2','original-native-near-silent-tail-v3'].includes(p.nativeCleanEvidence?.method)?
   window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence.targetClock,p.targetSha,incoming.duration):
   (Number.isFinite(incoming.duration)&&Math.abs(incoming.duration-p.targetDuration)<=.002?0:null);
  if(!incoming.paused||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2||
@@ -5957,10 +5982,13 @@ function naturalEndHandoff(certifiedSilentTail=false){
 
  if((active?.nativeTailFullBeat||active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay||
      active?.measuredReleaseLeadIn)&&
-    active.original?.ended&&
-    !active.handingOff){
-  if(active.nativeCleanTail&&(!active.started||active.upcoming.paused||active.upcoming.readyState<2)){cancel();return false;}
-  handoff();return true;
+    active.original?.ended){
+  const app=bridge();
+  if(app?.audio?.()===active.original&&app.currentId?.()===active.fromId&&app.mixNext?.()?.id===active.track.id){
+   if(active.handingOff)return true;
+   if(active.nativeCleanTail&&(!active.started||active.upcoming.paused||active.upcoming.readyState<2)){cancel();return false;}
+   handoff();return true;
+  }
  }
  if(!enabled||isIOS||mixing||active||
     window.MusicBoxRoom?.isActive())return false;
@@ -6236,6 +6264,45 @@ function mixCurve(kind,t,softTail=false){
  const guard=kind==="beat"?1-.12*Math.sin(Math.PI*time):kind==="phrase"?.93:1;
  return {outGain:outGain*guard,inGain:inGain*guard};
 }
+function continueQuietNative(app,audio,id,next,entry){
+ if(!isIOS||entry!==0)return app.mixHandoff(next.id,entry);
+ // This is a SINGLE native player, not the disabled dual-player adoption.
+ // Drain the old pause event before replacing src, so its delayed event
+ // cannot be mistaken for a headphone pause of the successor. Never seek.
+ const owns=()=>app.audio?.()===audio&&app.currentId?.()===id;
+ if(!owns()||audio.paused||app.wantsPlayback?.()===false)return Promise.resolve(false);
+ return new Promise((resolve,reject)=>{
+  const previousGuard=audio._mbCambioBrano;let closed=false,timer;
+  const finish=ack=>{
+   if(closed)return;closed=true;clearTimeout(timer);audio.removeEventListener('pause',onPause);
+   if(!owns()){resolve(false);return}
+   if(ack&&audio.paused&&app.wantsPlayback?.()!==false&&app.mixNext?.()?.id===next.id){
+    const token={fromId:id,toId:next.id,at:audio.currentTime,url:audio.currentSrc||audio.src};
+    audio._mbQuietNativeContinuation=token;
+    Promise.resolve().then(()=>{
+     if(!owns())return false;
+     if(app.wantsPlayback?.()===false||app.mixNext?.()?.id!==next.id){
+      audio._mbCambioBrano=previousGuard;
+      if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)Promise.resolve(app.playCurrent?.()).catch(()=>{});
+      return false;
+     }
+     return app.mixHandoff(next.id,0);
+    }).then(resolve,reject).finally(()=>{if(audio._mbQuietNativeContinuation===token)delete audio._mbQuietNativeContinuation});
+    return;
+   }
+   audio._mbCambioBrano=previousGuard;
+   // Queue changes retain the original decoder and playhead. Explicit Pause
+   // wins; no stale candidate can consume the manual queue or restart music.
+   if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)
+    Promise.resolve(app.playCurrent?.()).catch(()=>{});
+   resolve(false);
+  };
+  const onPause=()=>finish(true);
+  audio.addEventListener('pause',onPause,{once:true});timer=setTimeout(()=>finish(false),750);
+  audio._mbCambioBrano=true;
+  try{audio.pause()}catch(_){finish(false)}
+ });
+}
 function quietDirectHandoff(app,audio,id,next,entry,reason){
  const pair=id+"|"+next?.id;
  if(!app||!next||!audio||audio.paused||
@@ -6248,7 +6315,7 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
   {outgoing:id,incoming:next.id,reason});
  Promise.resolve().then(()=>{
   if(app.currentId?.()!==id||app.mixNext?.()?.id!==next.id)return;
-  return app.mixHandoff(next.id,entry);
+  return continueQuietNative(app,audio,id,next,entry);
  })
   .catch(error=>console.warn("[Music Box DJ] Passaggio diretto non riuscito",String(error?.message||error)));
  return true;
@@ -7012,6 +7079,9 @@ function tick(){
   });
  }
  // Do not run music analysis while iOS is seeking/buffering.
+ // Natural EOF is also paused. Claim an owned live handoff BEFORE the
+ // ordinary paused-player cleanup can destroy its already-heard intro.
+ if(claimLiveTransitionEOF(app,audio,id))return;
  if(isIOS&&audio&&(audio.seeking||audio.readyState<2)){
   if(mobileActive)stopMobileMix();
   return;
@@ -8599,7 +8669,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.742",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.743",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
