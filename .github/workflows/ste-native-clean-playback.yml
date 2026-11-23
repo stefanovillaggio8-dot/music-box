@@ -45,9 +45,16 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
-          pulseaudio --start --exit-idle-time=-1
-          pactl load-module module-null-sink sink_name=musicbox_clean rate=48000 channels=2
-          pactl set-default-sink musicbox_clean
+          # Container HOME is owned by the runner, not PulseAudio. Use an
+          # isolated system-mode socket rather than changing HOME or relying
+          # on user autospawn. No sound device or user storage is exposed.
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1 \
+            --log-target=file:/tmp/ste-native-pulse.log \
+            --load="module-native-protocol-unix socket=/tmp/ste-native-pulse auth-anonymous=1" \
+            --load="module-null-sink sink_name=musicbox_clean rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-native-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-native-pulse pactl set-default-sink musicbox_clean
       - name: Verify only the two current personal Ste original fixtures
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
       - name: Verify the newly installed Ste pair originals
