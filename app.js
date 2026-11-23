@@ -9504,7 +9504,8 @@ function openProfile() {
       if(parsed.length)return parsed;
     }
     const out = [];
-    const re = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]\s*([^\n]*)/g;
+    // A blank timed cue marks a pause, not whitespace before the next lyric.
+    const re = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\][ \t]*([^\r\n]*)/g;
     const s = String(synced || "");
     let m;
     while ((m = re.exec(s))) {
