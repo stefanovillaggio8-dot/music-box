@@ -19,8 +19,12 @@ jobs:
           npx playwright install --with-deps chromium webkit
       - name: Phrase ends, seeking, phrase-only rendering and existing player regressions
         run: |
-          node --test tests/karaoke-phrase-gap.test.cjs tests/karaoke-rapid-handoff.test.cjs tests/playback-session-expiry.test.cjs tests/dj-lyrics-regression.test.cjs
+          node --test tests/lyrics-translation.test.cjs tests/karaoke-phrase-gap.test.cjs tests/karaoke-rapid-handoff.test.cjs tests/playback-session-expiry.test.cjs tests/dj-lyrics-regression.test.cjs
           node tests/karaoke-dj-regression.cjs
+      - name: Translation identity, capped reuse and abort in actual browser DOM
+        run: node tests/lyrics-translation-browser.cjs > translation-browser.json
+        env:
+          MUSICBOX_COMPOSITE_BROWSERS: chromium,webkit
       - name: Both actual application views at a controlled media clock
         run: node tests/karaoke-phrase-browser.cjs > phrase-display-browser.json
         env:
@@ -33,5 +37,6 @@ jobs:
           name: phrase-display-and-offline
           path: |
             phrase-display-browser.json
+            translation-browser.json
             phrase-offline-upgrade.json
           retention-days: 30
