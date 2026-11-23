@@ -2,6 +2,30 @@
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");
 const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
 const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+test("mismatched historical lyrics cannot override the actual thasup recording",()=>{
+ const start=app.indexOf("  const _titoliOriginaliTesti=new Map();");
+ const stop=app.indexOf("  function _statoKaraokeBrano(id){",start);
+ assert.ok(start>0&&stop>start,"player has a bounded lyric identity guard");
+ const builtin=[
+  {title:"dimmi che ce'",file:"songs/track-64.mp3"},
+  {title:"Dimmi Che C''",file:"songs/track-74.mp3"}
+ ];
+ const norm=v=>String(v||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
+  .toLowerCase().replace(/[^a-z0-9]+/g,"");
+ const belongs=new Function("BUILTIN","_idBranoStabile","titleCompatible",
+  app.slice(start,stop)+"return _testoCoerenteConBrano;"
+ )(builtin,b=>"b-"+b.file.split("/").pop().replace(/\\.mp3$/i,""),
+  (a,b)=>norm(a)===norm(b));
+ const lyrics=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ assert.equal(lyrics["b-track-64"]?.title,"Albachiara");
+ assert.equal(belongs("b-track-64",lyrics["b-track-64"]),false,
+  "stale Albachiara must not display for Dimmi che c'è");
+ assert.equal(belongs("b-track-74",lyrics["b-track-74"]),true,
+  "the second recording still uses its correctly titled source");
+ assert.equal(belongs("b-track-64",{title:"dimmi che c'è",synced:"[00:02.00] Testo"}),true,
+  "a corrected source remains eligible");
+ assert.match(app,/setLyricsDelay:\(id,value\)=>/);
+});
 test("LRCLIB search uses first artist and never exact-get after successful empty search",()=>{
  const from=app.indexOf('const endpoint = "https://lrclib.net"'),to=app.indexOf("if (options.syncedOnly) return null;",from);
  const block=app.slice(from,to);
