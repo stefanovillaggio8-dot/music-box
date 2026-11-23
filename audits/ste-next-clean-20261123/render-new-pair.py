@@ -5,7 +5,7 @@ from scipy.signal import resample_poly
 ROOT=pathlib.Path.cwd();HERE=pathlib.Path(__file__).resolve().parent
 out=pathlib.Path(sys.argv[1]);assert not out.exists(),'Preserve prior evidence'
 subprocess.run(['node','tools/ste-research-scope.cjs','--cases='+str(HERE/'cases.json'),'--output='+str(out/'selection.json')],capture_output=True,check=True)
-p=json.loads((HERE/'protocol.json').read_bytes());index=json.loads((ROOT/'dj-deep-analysis.json').read_bytes())['entries'];source=p['source'];target='audio/songs/track-34.mp3'
+p=json.loads((HERE/'protocol.json').read_bytes());index=json.loads((ROOT/'dj-deep-analysis.json').read_bytes())['entries'];source=p['source'];targets=[k for k in p['targets'] if k!='audio/songs/track-4.mp3'];assert len(targets)==1;target=targets[0]
 assert any(c['from']==source['key'] and c['to']==target for c in json.loads((out/'selection.json').read_bytes())['cases'])
 files={key:ROOT.parent/'original-mp3'/(index[key]['sha']+'.mp3') for key in [source['key'],target]}
 for key,file in files.items():
@@ -26,6 +26,10 @@ for rate in [44100,48000]:
       'sourceReadThrough':source['begin']-pre+len(a)/rate,'samplePeak':float(np.max(np.abs(mix))),
       'overlapPeak':float(np.max(np.abs(mix[offset:eof]))),'oversampledPeak':float(np.max(np.abs(resample_poly(mix,4,1,axis=0)))),
       'eofLevelChangeDb':float(20*np.log10(after/before)),'notHumanListening':True}
+ original_at=eof-offset
+ row['originalLevelReference']={'method':'original-native-eof-relative-level-v1','sourceSha':index[source['key']]['sha'],'targetSha':index[target]['sha'],
+  'halfWindowSeconds':.5,'originalBeforeRms':rms(b[original_at-round(.5*rate):original_at]),'originalAfterRms':rms(b[original_at:original_at+round(.5*rate)]),
+  'mixedBeforeRms':before,'mixedAfterRms':after}
  subprocess.run(['ffmpeg','-nostdin','-v','error','-f','f32le','-ac','2','-ar',str(rate),'-i',str(folder/'mix.f32'),'-c:a','libmp3lame','-q:a','2',str(folder/'evaluation.mp3')],check=True)
  # Existing independent multiband screen, on actual unity-gain components.
  js="""(async()=>{const fs=require('fs'),{pathToFileURL}=require('url');const {introductionExposure}=await import(pathToFileURL(process.cwd()+'/tools/introduction-exposure.mjs'));const folder=process.argv[2],sr=Number(process.argv[3]),fade=Number(process.argv[4]);function read(name){const b=fs.readFileSync(folder+'/'+name+'.f32'),x=new Float32Array(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength));return [0,1].map(c=>Float32Array.from({length:x.length/2},(_,i)=>x[i*2+c]));}console.log(JSON.stringify(introductionExposure(read('outgoing'),read('incoming'),read('original-incoming'),sr,{entry:0,tempo:1,fade},.3)));})().catch(e=>{console.error(e);process.exitCode=1});"""

@@ -3062,7 +3062,8 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
 // FLAC/MP3 splice, a seek or a decoder fitted offset. Never an iPhone cue.
 function validateNativeCleanTailCue(record,p,a,b,dur){
  const e=p?.nativeCleanEvidence;
- const factored=e?.method==='original-native-near-silent-tail-v2';
+ const originalLevel=e?.method==='original-native-near-silent-tail-v3';
+ const factored=originalLevel||e?.method==='original-native-near-silent-tail-v2';
  if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||record?.version!==1||
     record.fromSha!==a.sha||record.toSha!==b.sha||p?.sourceSha!==a.sha||p?.targetSha!==b.sha||
     ![record.sourceDuration,record.nextDuration,dur,a.duration,b.duration].every(Number.isFinite)||
@@ -3074,7 +3075,7 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
     Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     (!factored&&e?.method!=='original-native-near-silent-tail-v1')||e.sourceSha!==a.sha||e.targetSha!==b.sha||
     e.noDecoderSplice!==true||e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
-    e.notHumanListening!==true||!Number.isFinite(e.eofLevelChangeDb)||Math.abs(e.eofLevelChangeDb)>3||
+    e.notHumanListening!==true||!Number.isFinite(e.eofLevelChangeDb)||!originalLevel&&Math.abs(e.eofLevelChangeDb)>3||
     ![e.begin,e.end].every(Number.isFinite)||Math.abs(e.begin-p.begin)>.000001||Math.abs(e.end-p.end)>.000001||
     e.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||e.introductionExposure.accepted!==true||
     e.introductionExposure.sourceSha!==a.sha||e.introductionExposure.targetSha!==b.sha||
@@ -3118,13 +3119,29 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
       !knownClock(e.targetClock,b.sha,b.duration,v.targetDecodedDuration,v.targetDecodedOffset)||
       !knownClock(e.targetClock,b.sha,b.duration,v.targetMediaDuration,v.targetMediaOffset))return null;
   }
+  // V3 compares the MIX with the unmodified incoming at the SAME EOF window.
+  // A bass entrance already in the original is not an app gain discontinuity.
+  // Triangle inequality bounds any added level change by the independently
+  // measured outgoing peak. No larger arbitrary dB threshold or gain boost.
+  const referenceValid=v=>{
+   const r=v.originalLevelReference;
+   if(r?.method!=='original-native-eof-relative-level-v1'||r.sourceSha!==a.sha||r.targetSha!==b.sha||r.halfWindowSeconds!==.5||
+      ![r.originalBeforeRms,r.originalAfterRms,r.mixedBeforeRms,r.mixedAfterRms].every(x=>Number.isFinite(x)&&x>=.001))return false;
+   const quietPeak=Math.max(...e.nativeMeasurements.map(m=>m.sourceTailPeak)),minimum=Math.min(r.originalBeforeRms,r.originalAfterRms);
+   if(quietPeak>=minimum||Math.abs(r.mixedBeforeRms-r.originalBeforeRms)>quietPeak+1e-7||
+      Math.abs(r.mixedAfterRms-r.originalAfterRms)>quietPeak+1e-7)return false;
+   const original=20*Math.log10(r.originalAfterRms/r.originalBeforeRms),mixed=20*Math.log10(r.mixedAfterRms/r.mixedBeforeRms),
+    bound=20*Math.log10((1+quietPeak/minimum)/(1-quietPeak/minimum));
+   return Math.abs(v.eofLevelChangeDb-mixed)<=1e-6&&Math.abs(mixed-original)<=Math.min(3,bound+1e-5);
+  };
   if(!Array.isArray(e.renderMeasurements)||e.renderMeasurements.length!==2||new Set(e.renderMeasurements.map(v=>v.sampleRate)).size!==2||
      e.renderMeasurements.some(v=>![44100,48000].includes(v.sampleRate)||v.sourceSha!==a.sha||v.targetSha!==b.sha||
       v.sourceUnityThroughEof!==true||v.incomingUnityFromZero!==true||v.entry!==0||v.tempo!==1||v.sourceGain!==1||v.incomingGain!==1||
       ![v.begin,v.end,v.samplePeak,v.overlapPeak,v.oversampledPeak,v.sourceReadThrough,v.eofLevelChangeDb].every(Number.isFinite)||
       Math.abs(v.begin-p.begin)>.000001||Math.abs(v.end-p.end)>.000001||Math.abs(v.sourceReadThrough-a.duration)>.001||
       v.samplePeak<0||v.samplePeak>.9991||v.overlapPeak<0||v.overlapPeak>.96||v.oversampledPeak<0||v.oversampledPeak>1||
-      Math.abs(v.eofLevelChangeDb)>3||v.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||v.introductionExposure.accepted!==true))return null;
+      (originalLevel?!referenceValid(v):Math.abs(v.eofLevelChangeDb)>3)||v.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||v.introductionExposure.accepted!==true))return null;
+  if(originalLevel&&Math.abs(e.eofLevelChangeDb-e.renderMeasurements.find(v=>v.sampleRate===48000).eofLevelChangeDb)>1e-6)return null;
  }
  return {...p};
 }
@@ -5842,7 +5859,7 @@ function beginNativeCleanTail(app,old,next,p){
  const offset=sourceClock();
  if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
  const incoming=prepared.audio;
- const targetClock=()=>p.nativeCleanEvidence?.method==='original-native-near-silent-tail-v2'?
+ const targetClock=()=>['original-native-near-silent-tail-v2','original-native-near-silent-tail-v3'].includes(p.nativeCleanEvidence?.method)?
   window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence.targetClock,p.targetSha,incoming.duration):
   (Number.isFinite(incoming.duration)&&Math.abs(incoming.duration-p.targetDuration)<=.002?0:null);
  if(!incoming.paused||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2||

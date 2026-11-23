@@ -14,7 +14,8 @@ function build(data,pair,render){
  const cue={kind:'postlude',nativeCleanTail:true,measuredFullBeat:false,metricalRhythmic:false,structuralBeat:false,
   preserveTail:true,nativeTailFullBeat:true,silenceTrim:false,gain:1,sourceSha:a.sourceSha,targetSha:b.sourceSha,
   begin:proposed.begin,end:proposed.end,fade:proposed.fade,entry:0,tempo:1,targetDuration:b.duration,
-  nativeCleanEvidence:{method:'original-native-near-silent-tail-v2',sourceSha:a.sourceSha,targetSha:b.sourceSha,
+  nativeCleanEvidence:{method:rows?.every(r=>r.originalLevelReference?.method==='original-native-eof-relative-level-v1')?
+   'original-native-near-silent-tail-v3':'original-native-near-silent-tail-v2',sourceSha:a.sourceSha,targetSha:b.sourceSha,
    begin:proposed.begin,end:proposed.end,noDecoderSplice:true,sourceUnityThroughEOF:true,incomingUnityFromZero:true,
    notHumanListening:true,sourceClock:a.clock,targetClock:b.clock,nativeMeasurements:proposed.nativeMeasurements,
    renderMeasurements:rows,eofLevelChangeDb:level?.eofLevelChangeDb,

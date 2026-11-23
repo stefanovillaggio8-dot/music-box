@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-latest]
+        # Standard Intel pool is a bounded alternative to a queued ARM latest.
+        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel') && '["macos-15-intel"]' || '["ubuntu-24.04","macos-latest"]') }}
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
     timeout-minutes: 10
@@ -50,16 +51,16 @@ jobs:
       - name: Three frozen Ste originals only, one new prefix
         run: node tools/fetch-ste-clean-recordings.cjs audits/ste-next-clean-20261123/recordings.json
       - name: New native original prefix, no certificate or playback installation
-        if: inputs.stage == 'prepare'
+        if: inputs.stage == 'prepare' || inputs.stage == 'prepare-mac-intel'
         run: node tools/ste-clean-prefix-native.cjs audits/ste-next-clean-20261123/recordings.json next-prefix.json
       - name: Silent primer and declared clock after source first play, isolated from app
-        if: inputs.stage == 'prepare'
+        if: inputs.stage == 'prepare' || inputs.stage == 'prepare-mac-intel'
         env:
           MUSICBOX_OBSERVED_VARIANT: silent-observe
           MUSICBOX_OBSERVED_MODES: natural,seek,hidden,hidden-after-adopt
         run: node tests/ste-ios-observed-browser.cjs audits/ste-factored-clean-20261123/recordings.json silent-observed.json
       - name: New frozen actual-app SHADOW, never release index mutation
-        if: inputs.stage == 'player'
+        if: inputs.stage == 'player' || inputs.stage == 'player-mac-intel'
         env:
           MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-next-clean-20261123/new-pair-shadow.json
