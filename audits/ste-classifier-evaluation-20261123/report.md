@@ -322,3 +322,11 @@ audio revisions; the research branch does not deploy itself.
 Post-merge full regression: 786/788, the same two baseline failures.
 Final native-release receipts are archived here as final-native-clean-
 player-*.json, rather than depending only on expiring CI artifacts.
+
+Architectural follow-up, NOT implemented/certified yet: separate reusable
+per-recording native quiet-suffix and introduction proofs from pair search.
+The current absolute source/target peak bounds suggest a bounded way to
+propose clean junctions without a quadratic scan or a hardcoded song pair.
+Validate that factorization on an independently frozen Ste sample before
+installing more cues. It does not replace the missing rhythm/harmony/native
+evidence for full beatmatches and must not inflate their counters.
