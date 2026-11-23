@@ -62,7 +62,7 @@ permissions:
   contents: read
 jobs:
   bounded-next:
-    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'prepare' || inputs.bounded_next_stage == 'player' || inputs.bounded_next_stage == 'prepare-mac-intel' || inputs.bounded_next_stage == 'player-mac-intel')
+    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'prepare' || inputs.bounded_next_stage == 'player' || inputs.bounded_next_stage == 'prepare-mac-intel' || inputs.bounded_next_stage == 'player-mac-intel' || inputs.bounded_next_stage == 'source-quiet')
     uses: ./.github/workflows/ste-bounded-next.yml
     with:
       stage: ${{ inputs.bounded_next_stage }}

@@ -1,0 +1,1589 @@
+{
+  "scope": {
+    "name": "Ste",
+    "tracks": [
+      {
+        "id": "b-track-2",
+        "key": "audio/songs/track-2.mp3",
+        "sha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9",
+        "title": "QUANTO FORTE TI PENSAVO",
+        "artist": "Madame"
+      },
+      {
+        "id": "b-track-4",
+        "key": "audio/songs/track-4.mp3",
+        "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "title": "Sono Ok",
+        "artist": "XCarme"
+      },
+      {
+        "id": "b-track-6",
+        "key": "audio/songs/track-6.mp3",
+        "sha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+        "title": "Kid Yugi x Lil Peep MASHUP",
+        "artist": "Kid Yugi / Lil Peep"
+      },
+      {
+        "id": "b-track-7",
+        "key": "audio/songs/track-7.mp3",
+        "sha": "30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+        "title": "Star Shopping",
+        "artist": "Lil Peep"
+      },
+      {
+        "id": "b-track-8",
+        "key": "audio/songs/track-8.mp3",
+        "sha": "f3984ac6fc22355cb6ac09cb1917719e050ab4d4",
+        "title": "Malpensa",
+        "artist": "G.Mineiro, Flatpearl, Succo"
+      },
+      {
+        "id": "b-track-9",
+        "key": "audio/songs/track-9.mp3",
+        "sha": "48f947b6aa3b103ce9def6537ee2d3b3f8d087ff",
+        "title": "LA CITTÀ",
+        "artist": "MOSTRO"
+      },
+      {
+        "id": "b-track-10",
+        "key": "audio/songs/track-10.mp3",
+        "sha": "a5c78e75709551513f6e27b78a1ba75dce459cd0",
+        "title": "CIGNO NERO RMX",
+        "artist": "Nayt / Frah Quintale / Tony Boy"
+      },
+      {
+        "id": "b-track-11",
+        "key": "audio/songs/track-11.mp3",
+        "sha": "09aaa5809875ee187fe388bfcefbbc3f6e0f305b",
+        "title": "Romantici Terroni",
+        "artist": "SAITTA"
+      },
+      {
+        "id": "b-track-12",
+        "key": "audio/songs/track-12.mp3",
+        "sha": "0f2e4911a3e5adb663494476613de632c8fc03f3",
+        "title": "s!r!",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-13",
+        "key": "audio/songs/track-13.mp3",
+        "sha": "ab0890d6c9a63fb2697f904884e33eab37983f67",
+        "title": "Victoria",
+        "artist": "Tony Boy"
+      },
+      {
+        "id": "b-track-14",
+        "key": "audio/songs/track-14.mp3",
+        "sha": "d973e5270bc934423305e360946041e7064ff5a2",
+        "title": "Un mondo a parte (Visual)",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-15",
+        "key": "audio/songs/track-15.mp3",
+        "sha": "bad95e72e4c1236e146ad5675913d057471e69be",
+        "title": "Sogni Appesi",
+        "artist": "Ultimo"
+      },
+      {
+        "id": "b-track-16",
+        "key": "audio/songs/track-16.mp3",
+        "sha": "1f92bca4ab5b502e319c100bc44096efa28dfba7",
+        "title": "Exit",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-17",
+        "key": "audio/songs/track-17.mp3",
+        "sha": "7dbf8fd1f1a950dd9a885dae13c9446dec60e51b",
+        "title": "Hai visto mai",
+        "artist": "Frah Quintale"
+      },
+      {
+        "id": "b-track-18",
+        "key": "audio/songs/track-18.mp3",
+        "sha": "427dcfda67c44bb05335627ebf1ca805f6fefc44",
+        "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-19",
+        "key": "audio/songs/track-19.mp3",
+        "sha": "18f06e2b118d9843d22a45d88333d1ca30fd55d0",
+        "title": "Stella Cadente",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-20",
+        "key": "audio/songs/track-20.mp3",
+        "sha": "63544f845f747320713dbac66b5209ce7c3a9c0d",
+        "title": "Kid Yugi x Nuts - Lil Peep",
+        "artist": "Ferro di checov"
+      },
+      {
+        "id": "b-track-23",
+        "key": "audio/songs/track-23.mp3",
+        "sha": "36031f3f1b17a0fbd88e6de9d709be3af3008e11",
+        "title": "Lastronauta (Visual)",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-25",
+        "key": "audio/songs/track-25.mp3",
+        "sha": "f0eb4b853b9cba90fd5188e0d9ca4dfb2483e8fb",
+        "title": "Poter scegliere",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-26",
+        "key": "audio/songs/track-26.mp3",
+        "sha": "f0ec0a6049f8d0688f23030ef7c00907c39a44b2",
+        "title": "NON MI RICONOSCO",
+        "artist": "MACE"
+      },
+      {
+        "id": "b-track-27",
+        "key": "audio/songs/track-27.mp3",
+        "sha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "title": "Il Filmografo",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-29",
+        "key": "audio/songs/track-29.mp3",
+        "sha": "a1d867c940efda354c4a8da7b5a6a35ab44c49bd",
+        "title": "terr1",
+        "artist": "kid yugi"
+      },
+      {
+        "id": "b-track-30",
+        "key": "audio/songs/track-30.mp3",
+        "sha": "1ebd28bcab8b1339e4c3238ce2fb793ea3fe8ed8",
+        "title": "Sintetico",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-31",
+        "key": "audio/songs/track-31.mp3",
+        "sha": "af103ae2e1e683c802194b27f198f499a5e38b42",
+        "title": "ROMANTICA",
+        "artist": "Ultimo"
+      },
+      {
+        "id": "b-track-33",
+        "key": "audio/songs/track-33.mp3",
+        "sha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "title": "Lilith",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-34",
+        "key": "audio/songs/track-34.mp3",
+        "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "title": "Eva",
+        "artist": "Kid Yugi, Tedua & Junior K"
+      },
+      {
+        "id": "b-track-35",
+        "key": "audio/songs/track-35.mp3",
+        "sha": "9f3676d0031d50b30306b7fc5c6ffbecc8f559c8",
+        "title": "l'anima",
+        "artist": "madame"
+      },
+      {
+        "id": "b-track-36",
+        "key": "audio/songs/track-36.mp3",
+        "sha": "454c682a80ed563e829bbac92e2b2ba1ff045548",
+        "title": "IL GIORNO CHE ASPETTAVO",
+        "artist": "Ultimo"
+      },
+      {
+        "id": "b-track-37",
+        "key": "audio/songs/track-37.mp3",
+        "sha": "b9d32bc7cf9368f409408e628f23e55d058ba28c",
+        "title": "La Violenza Necessaria",
+        "artist": "Kid Yugi & Shiva"
+      },
+      {
+        "id": "b-track-38",
+        "key": "audio/songs/track-38.mp3",
+        "sha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "title": "Gilgamesh",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-39",
+        "key": "audio/songs/track-39.mp3",
+        "sha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd",
+        "title": "Tristano e Isotta",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-40",
+        "key": "audio/songs/track-40.mp3",
+        "sha": "0f1ac7429eba1ab2df58bd9ccad8ae7d5429d362",
+        "title": "Donna",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-41",
+        "key": "audio/songs/track-41.mp3",
+        "sha": "e87337b7bc6224ba2c5dc74c62ac350455d9d824",
+        "title": "Lucifero",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-43",
+        "key": "audio/songs/track-43.mp3",
+        "sha": "4a9ae533e508406d9500ade6caeaf9666413af63",
+        "title": "solo domande",
+        "artist": "nayt & 3D"
+      },
+      {
+        "id": "b-track-44",
+        "key": "audio/songs/track-44.mp3",
+        "sha": "94bd665af855fa8252bfe3439979e22775bc0dc2",
+        "title": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-46",
+        "key": "audio/songs/track-46.mp3",
+        "sha": "e5a94fd8d85b4c3da386d83fe13b194d0067f61a",
+        "title": "sailor song",
+        "artist": "gigi perez"
+      },
+      {
+        "id": "b-track-47",
+        "key": "audio/songs/track-47.mp3",
+        "sha": "9525b94a365fa71221d8eae69f4d1fe744fea74f",
+        "title": "nuts",
+        "artist": "Lil Peep"
+      },
+      {
+        "id": "b-track-48",
+        "key": "audio/songs/track-48.mp3",
+        "sha": "a77162334802ca64537543dc517a9c369495a187",
+        "title": "NEON",
+        "artist": "Sfera Ebbasta & Shiva"
+      },
+      {
+        "id": "b-track-49",
+        "key": "audio/songs/track-49.mp3",
+        "sha": "db545d9e16290dc62f08773eb90dd9e23b073257",
+        "title": "Mostro (Visual)",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-50",
+        "key": "audio/songs/track-50.mp3",
+        "sha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+        "title": "la mia storia tra le dita",
+        "artist": "gianluca grignani"
+      },
+      {
+        "id": "b-track-69",
+        "key": "audio/songs/track-69.mp3",
+        "sha": "fe400c4a1cd59f8856e602594951825d82ee544a",
+        "title": "Albachiara",
+        "artist": "Vasco Rossi"
+      },
+      {
+        "id": "b-track-76",
+        "key": "audio/songs/track-76.mp3",
+        "sha": "3c5b4d691de357ded16372651e5c64de4f4b3b62",
+        "title": "Wonderwall",
+        "artist": "Oasis"
+      },
+      {
+        "id": "b-track-72",
+        "key": "audio/songs/track-72.mp3",
+        "sha": "5e9c8850891b2e4679bd829432b403c9c10b3d25",
+        "title": "HO SBAGLIATO ANCORA",
+        "artist": "Chiello"
+      },
+      {
+        "id": "b-track-68",
+        "key": "audio/songs/track-68.mp3",
+        "sha": "d0c6a9e298860aa3d07403bc17ff86d90dd0344a",
+        "title": "siLLy cUp",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-67",
+        "key": "audio/songs/track-67.mp3",
+        "sha": "0ad3c969b1e7131638eadefb9382549310f4b754",
+        "title": "carusi do sud",
+        "artist": "l'elfo"
+      },
+      {
+        "id": "b-track-73",
+        "key": "audio/songs/track-73.mp3",
+        "sha": "0daa38c2180ea190499be935a4fe73196e1137dc",
+        "title": "nei treni la notte",
+        "artist": "frah quintale"
+      },
+      {
+        "id": "b-track-74",
+        "key": "audio/songs/track-74.mp3",
+        "sha": "042ee1ed88c72616f7c074a92210037322b810e1",
+        "title": "Dimmi Che C''",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-75",
+        "key": "audio/songs/track-75.mp3",
+        "sha": "dc891d30e83c58c9ed6e4f91489d1fd59f83dcf3",
+        "title": "stupido",
+        "artist": "massimo pericolo"
+      },
+      {
+        "id": "b-track-77",
+        "key": "audio/songs/track-77.mp3",
+        "sha": "2dce22797c624f1875a46b24accc35caec0d0c88",
+        "title": "Spettri",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-78",
+        "key": "audio/songs/track-78.mp3",
+        "sha": "81d7edc3bc8b0918be83a20372493414f9941bac",
+        "title": "Memoria di uno sconfitto, pt. 2",
+        "artist": "Mostro"
+      },
+      {
+        "id": "b-track-79",
+        "key": "audio/songs/track-79.mp3",
+        "sha": "873b4620fa414409628681c56875867cb8086444",
+        "title": "G&V",
+        "artist": "ivanBì"
+      },
+      {
+        "id": "b-track-80",
+        "key": "audio/songs/track-80.mp3",
+        "sha": "fe9da6716c5f88d2bdc7a7919014d67ccf690758",
+        "title": "Da zero",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-81",
+        "key": "audio/songs/track-81.mp3",
+        "sha": "c31430fb29d623598aeece149ed747042ac2308e",
+        "title": "Gli occhi della tigre",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-87",
+        "key": "audio/songs/track-87.mp3",
+        "sha": "9c738da06344a9a141398d53fa95591573f7630d",
+        "title": "Bullet Ballet",
+        "artist": "Kid Yugi, Artie 5ive"
+      },
+      {
+        "id": "b-track-88",
+        "key": "audio/songs/track-88.mp3",
+        "sha": "bd0e813d2024a0b0ce46606491986aa4affb54d0",
+        "title": "SOGNO AMERICANO",
+        "artist": "Artie 5ive"
+      },
+      {
+        "id": "b-track-89",
+        "key": "audio/songs/track-89.mp3",
+        "sha": "a9b53cb83ca8141042567776d7f633730c865290",
+        "title": "Niente Canzoni D'Amore",
+        "artist": "Elodie"
+      },
+      {
+        "id": "b-track-90",
+        "key": "audio/songs/track-90.mp3",
+        "sha": "e2423a49024a300a6ae5ca82c6b2ea2c97319730",
+        "title": "Odi et Amo",
+        "artist": "Blake el Diablo"
+      },
+      {
+        "id": "b-track-92",
+        "key": "audio/songs/track-92.mp3",
+        "sha": "774d31faaaf43a77655956026089030faacd21ff",
+        "title": "Scale",
+        "artist": "Night Skinny, Luchè"
+      },
+      {
+        "id": "b-track-93",
+        "key": "audio/songs/track-93.mp3",
+        "sha": "e543e0b58e9cd3324db0333d18d24a5c7f8c9ccb",
+        "title": "oh 9od",
+        "artist": "thasup, nayt"
+      },
+      {
+        "id": "b-track-94",
+        "key": "audio/songs/track-94.mp3",
+        "sha": "01581b55bdd403284e5604f84a8adaea3f66e133",
+        "title": "Doom",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-95",
+        "key": "audio/songs/track-95.mp3",
+        "sha": "659bebdacaa4a6ea6a0ab5a280537f96200f5d06",
+        "title": "Ballon d'Or",
+        "artist": "Gemitaiz, nayt"
+      },
+      {
+        "id": "b-track-96",
+        "key": "audio/songs/track-96.mp3",
+        "sha": "00738c793a8901d673e9a96d783d8aabf973c8ec",
+        "title": "un'idea",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-97",
+        "key": "audio/songs/track-97.mp3",
+        "sha": "27297febddf9ef8c318048c2a7d5ec103f2ac1d3",
+        "title": "guerra dentro",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-98",
+        "key": "audio/songs/track-98.mp3",
+        "sha": "2981cc92d82aa279f8dc87a5988cb39d514f7387",
+        "title": "Cigno nero",
+        "artist": "Fedez, Francesca Michelini"
+      },
+      {
+        "id": "b-track-99",
+        "key": "audio/songs/track-99.mp3",
+        "sha": "7d796c1aa6550e878c96a6a0cbf119090b74ae0d",
+        "title": "Se Piovesse Il Tuo Nome - con Calcutta",
+        "artist": "Elisa, Calcutta"
+      },
+      {
+        "id": "b-track-100",
+        "key": "audio/songs/track-100.mp3",
+        "sha": "f06b5e2eead5f9dcf950d025e618bdce9b58581a",
+        "title": "Chic",
+        "artist": "Izi"
+      },
+      {
+        "id": "b-track-101",
+        "key": "audio/songs/track-101.mp3",
+        "sha": "039eaae8af9e28898e17530ad9a3dec8ef1cef96",
+        "title": "molecole (interlude)",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-102",
+        "key": "audio/songs/track-102.mp3",
+        "sha": "a4e6c247fc00611bdba2ba286f1849da72e31c46",
+        "title": "Il Tuo Sorriso",
+        "artist": "Medy"
+      },
+      {
+        "id": "b-track-103",
+        "key": "audio/songs/track-103.mp3",
+        "sha": "525e5f2928f7e80cd654a054cbc0b89ef7df3527",
+        "title": "AIRFORCE",
+        "artist": "Massimo Pericolo, Crookers, Madame"
+      },
+      {
+        "id": "b-track-105",
+        "key": "audio/songs/track-105.mp3",
+        "sha": "9feb6c91df6ebb93bc7aeed556c2baccc0fc5244",
+        "title": "Striscia",
+        "artist": "TonyPitony"
+      },
+      {
+        "id": "b-track-106",
+        "key": "audio/songs/track-106.mp3",
+        "sha": "68cddd939e84f2fde178c92c3100ab045853a8da",
+        "title": "MI PIACCIONO LE NERE",
+        "artist": "TonyPitony"
+      },
+      {
+        "id": "b-track-107",
+        "key": "audio/songs/track-107.mp3",
+        "sha": "6fc08d93b90c56383d489c7f6a9c6bde16c7c535",
+        "title": "CULO",
+        "artist": "TonyPitony"
+      },
+      {
+        "id": "b-track-108",
+        "key": "audio/songs/track-108.mp3",
+        "sha": "11ccf0c644f24b457ec6e022368d4eeb1851e18d",
+        "title": "BALÙ - Acoustic Version",
+        "artist": "TonyPitony"
+      },
+      {
+        "id": "b-track-109",
+        "key": "audio/songs/track-109.mp3",
+        "sha": "64d4155408dec3a5df31f2668275b0606277ad5b",
+        "title": "OCCHI MEI",
+        "artist": "thasup, Mara Sattei"
+      },
+      {
+        "id": "b-track-110",
+        "key": "audio/songs/track-110.mp3",
+        "sha": "69106c9c7955d53b35b219698aaa9ae41219461a",
+        "title": "Non Abbiamo Età",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-111",
+        "key": "audio/songs/track-111.mp3",
+        "sha": "383cbc70b1f4bd0950ddfa7af55cab6818b1041c",
+        "title": "Voodoo",
+        "artist": "Guè"
+      },
+      {
+        "id": "b-track-112",
+        "key": "audio/songs/track-112.mp3",
+        "sha": "d066e73519b3f3742204ba1042781a16ee78a87b",
+        "title": "Concedimi",
+        "artist": "Matteo Romano"
+      },
+      {
+        "id": "b-track-113",
+        "key": "audio/songs/track-113.mp3",
+        "sha": "549785208dbf3d49d122f0232d8f2f2deda8cd4b",
+        "title": "INTRO (La Bella Vita)",
+        "artist": "Artie 5ive"
+      },
+      {
+        "id": "b-track-114",
+        "key": "audio/songs/track-114.mp3",
+        "sha": "e4d7f703890727df1aace2dfec3071a3a845c874",
+        "title": "GIOVANNI",
+        "artist": "TonyPitony"
+      },
+      {
+        "id": "b-track-115",
+        "key": "audio/songs/track-115.mp3",
+        "sha": "9941e9b42640088f7be9039b9802ebd243bbbcdc",
+        "title": "15 Piani",
+        "artist": "Sfera Ebbasta, Marracash"
+      },
+      {
+        "id": "b-track-116",
+        "key": "audio/songs/track-116.mp3",
+        "sha": "f8667c1d65807b96bcb9ebaa8d3b306a1880cd3a",
+        "title": "Labirinto",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-117",
+        "key": "audio/songs/track-117.mp3",
+        "sha": "b7b41d092ddcc54330870f07406a0c7e575778d7",
+        "title": "Nessuna",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-118",
+        "key": "audio/songs/track-118.mp3",
+        "sha": "2b4099d9a3845371b70fb9955f87900cb81f1e1a",
+        "title": "Babydoll",
+        "artist": "Dominic Fike"
+      },
+      {
+        "id": "b-track-119",
+        "key": "audio/songs/track-119.mp3",
+        "sha": "5816d073422ce12b48f78d93b4c4086bfdbb06b2",
+        "title": "Baby Mama",
+        "artist": "Don Pero"
+      },
+      {
+        "id": "b-track-120",
+        "key": "audio/songs/track-120.mp3",
+        "sha": "e9732c7a292fdb1ee66b0e37d71394a4db45f568",
+        "title": "Lo So Che",
+        "artist": "Capo Plaza"
+      },
+      {
+        "id": "b-track-121",
+        "key": "audio/songs/track-121.mp3",
+        "sha": "7f1ced96c96161ac127c98de47de1d14e5a8fd17",
+        "title": "Scrivendo",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-122",
+        "key": "audio/songs/track-122.mp3",
+        "sha": "ab7ceb5ddef38148aaa59aca414649b72410a7af",
+        "title": "Vibe",
+        "artist": "Guè"
+      },
+      {
+        "id": "b-track-124",
+        "key": "audio/songs/track-124.mp3",
+        "sha": "7caf658056f0279b0d89281f43f747b7dee6f6c5",
+        "title": "marte",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-125",
+        "key": "audio/songs/track-125.mp3",
+        "sha": "61151a4227780561af82172f43427905c6765997",
+        "title": "mi @mio è f@ke",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-126",
+        "key": "audio/songs/track-126.mp3",
+        "sha": "963a6b05ba92f3672811f38851d82329ae90efb3",
+        "title": "slrl",
+        "artist": "thasup, Lazza, Sfera Ebbasta"
+      },
+      {
+        "id": "b-track-127",
+        "key": "audio/songs/track-127.mp3",
+        "sha": "f2d3efc94c74d4bd971b01d8b8887e1a11594349",
+        "title": "Hey There Delilah",
+        "artist": "Plain White T's"
+      },
+      {
+        "id": "b-track-128",
+        "key": "audio/songs/track-128.mp3",
+        "sha": "aa4f5f22088752922794c0545ce7514146cf8e52",
+        "title": "STANOTTE",
+        "artist": "TY1, Coez, Massimo Pericolo"
+      },
+      {
+        "id": "b-track-129",
+        "key": "audio/songs/track-129.mp3",
+        "sha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+        "title": "CRUDELIA - Inervi",
+        "artist": "Marracash"
+      },
+      {
+        "id": "b-track-130",
+        "key": "audio/songs/track-130.mp3",
+        "sha": "d70187ce34cf6a1c239b0025ab74d4a05c271d17",
+        "title": "ADRENALINA",
+        "artist": "Samurai Jay, Vito Salamarca"
+      },
+      {
+        "id": "b-track-131",
+        "key": "audio/songs/track-131.mp3",
+        "sha": "8b0b005308fb6846e6b5bc396dfc456295bfe479",
+        "title": "romantici",
+        "artist": "Tommaso Paradiso"
+      },
+      {
+        "id": "b-track-133",
+        "key": "audio/songs/track-133.mp3",
+        "sha": "07f26eeef656df67b773512112c9800c44fc1afa",
+        "title": "RUGGINE",
+        "artist": "MACE, chiello, Coez"
+      },
+      {
+        "id": "b-track-134",
+        "key": "audio/songs/track-134.mp3",
+        "sha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+        "title": "TUTTO FUORI CONTROLLO",
+        "artist": "MACE, Kid Yugi, IzI, Franco126"
+      },
+      {
+        "id": "b-track-135",
+        "key": "audio/songs/track-135.mp3",
+        "sha": "a074b2be7650c7f28df0d1fc592a900d4f5bc1ba",
+        "title": "DAVVERODAVVERO",
+        "artist": "Artie 5ive"
+      },
+      {
+        "id": "b-track-136",
+        "key": "audio/songs/track-136.mp3",
+        "sha": "6de9bd5f4edcd83e40a4df9d233abafda177125f",
+        "title": "Frosinone",
+        "artist": "Calcutta"
+      },
+      {
+        "id": "b-track-138",
+        "key": "audio/songs/track-138.mp3",
+        "sha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+        "title": "Ex Angelo",
+        "artist": "Kid Yugi, Sfera Ebbasta, Shablo"
+      },
+      {
+        "id": "b-track-139",
+        "key": "audio/songs/track-139.mp3",
+        "sha": "f64795c0f406aa7d0ee4cb3ccaeda252f2b49370",
+        "title": "Faccio un casino",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-140",
+        "key": "audio/songs/track-140.mp3",
+        "sha": "d4a0e079d6fc38bfcc2b58191f4a3ed342f00969",
+        "title": "La musica non c'è",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-143",
+        "key": "audio/songs/track-143.mp3",
+        "sha": "66310180747c213adc257e4c7bc803482a370222",
+        "title": "La tua canzone",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-144",
+        "key": "audio/songs/track-144.mp3",
+        "sha": "0ac132d2c306dc32bdcec7cf14625037d4bbe8a8",
+        "title": "E yo mamma",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-146",
+        "key": "audio/songs/track-146.mp3",
+        "sha": "74ea0669645e1c2b026b44eed6ef2b5ffca266d7",
+        "title": "Qualcosa di grande",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-147",
+        "key": "audio/songs/track-147.mp3",
+        "sha": "67675871b80e06d8beea33796467f4dbe5661daf",
+        "title": "È sempre bello",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-148",
+        "key": "audio/songs/track-148.mp3",
+        "sha": "24ce93501e0e464f482ca36fe71d02a97b052662",
+        "title": "Domenica",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-149",
+        "key": "audio/songs/track-149.mp3",
+        "sha": "bd319d2d3817ab7ad37e5c4d487960856e50bd69",
+        "title": "8 miliardi di persone",
+        "artist": "Frah Quintale"
+      },
+      {
+        "id": "b-track-150",
+        "key": "audio/songs/track-150.mp3",
+        "sha": "598f3ae12e70e7454d8ff86bb426a1554ca08b58",
+        "title": "Quel sorriso in volto",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-152",
+        "key": "audio/songs/track-152.mp3",
+        "sha": "80db2cee7fab7aae44e4cc3c716cc577fff468f5",
+        "title": "Come un pittore",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-153",
+        "key": "audio/songs/track-153.mp3",
+        "sha": "9d35c5365fc24bf1149fef1cf6fb5bcbff45c238",
+        "title": "Le luci della città",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-154",
+        "key": "audio/songs/track-154.mp3",
+        "sha": "4dadf780ad379a9eeb1eff4f3ddf64e77b21089d",
+        "title": "Le parole più grandi",
+        "artist": "Coez"
+      },
+      {
+        "id": "b-track-155",
+        "key": "audio/songs/track-155.mp3",
+        "sha": "858a6a691a0b46d23f83b6ca2f9145c9d30b0e31",
+        "title": "Tappeto di fragole",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-157",
+        "key": "audio/songs/track-157.mp3",
+        "sha": "bdb8917e4b0ccbb0c7003fca6be4d976d967985f",
+        "title": "Arriverà",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-158",
+        "key": "audio/songs/track-158.mp3",
+        "sha": "4efbf50b9df82a550ca8eef3dc91e94b6ceca15f",
+        "title": "Ti amo ma non posso dirlo",
+        "artist": "Modà, Bianca Atzei"
+      },
+      {
+        "id": "b-track-159",
+        "key": "audio/songs/track-159.mp3",
+        "sha": "2ae54af9a0b2bc9604bfc48f667a21eef958b263",
+        "title": "La notte",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-160",
+        "key": "audio/songs/track-160.mp3",
+        "sha": "9e4386e29e2571d578fbcc3a6c7c85b0a22f53b8",
+        "title": "Per una notte insieme",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-161",
+        "key": "audio/songs/track-161.mp3",
+        "sha": "183752a506f1d5f82d398c0e9ade666411bdb7dc",
+        "title": "E non c'è mai una fine",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-163",
+        "key": "audio/songs/track-163.mp3",
+        "sha": "b056f6b7df00c03b02b7b940ad2eefd360b2488b",
+        "title": "Dove è sempre sole",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-164",
+        "key": "audio/songs/track-164.mp3",
+        "sha": "9183c3e1b318ef543594e9720becfe5ce9966687",
+        "title": "Se si potesse non morire",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-165",
+        "key": "audio/songs/track-165.mp3",
+        "sha": "dc7b0e063f5a7b1fa115b163089ccd1ff254b60a",
+        "title": "Lasciami",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-166",
+        "key": "audio/songs/track-166.mp3",
+        "sha": "f1392f160613a77791b3f870e60541c692ed08ef",
+        "title": "Passione maledetta",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-168",
+        "key": "audio/songs/track-168.mp3",
+        "sha": "06bf09ec29123b2220eef11e470aabde9394f588",
+        "title": "Quelli come me",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-169",
+        "key": "audio/songs/track-169.mp3",
+        "sha": "c587042538abaf2c58dee2a3f7019d00ab91c8f8",
+        "title": "Salvami",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-170",
+        "key": "audio/songs/track-170.mp3",
+        "sha": "7e8f71f33455fc210aadee76b9730a7103deafc5",
+        "title": "Quello che non ti ho detto",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-171",
+        "key": "audio/songs/track-171.mp3",
+        "sha": "8d39b302c946d5fb6d12f02dd89de1b879f6fdb2",
+        "title": "Favola",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-173",
+        "key": "audio/songs/track-173.mp3",
+        "sha": "4f6dc1141f79918ac03b735bf31f3ff792852604",
+        "title": "Mi Fido Di Te",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-175",
+        "key": "audio/songs/track-175.mp3",
+        "sha": "420aab813efc6b8c173cf6be162110278dc824ae",
+        "title": "Baciami Ancora - Radio Edit",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-176",
+        "key": "audio/songs/track-176.mp3",
+        "sha": "9cf80bf014c8d1430d18192d67004297de9100e8",
+        "title": "Ragazza Magica",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-178",
+        "key": "audio/songs/track-178.mp3",
+        "sha": "a679947156c37ff7e7c832982c155ea9b1d6c53c",
+        "title": "Autoritratto",
+        "artist": "Charlie Charles, nayt"
+      },
+      {
+        "id": "b-track-179",
+        "key": "audio/songs/track-179.mp3",
+        "sha": "a7999daeac0fc48e4da0aacc6195061baeaafe5c",
+        "title": "Certe bugie",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-180",
+        "key": "audio/songs/track-180.mp3",
+        "sha": "20b356b0b284676c863cbff2d4e322767782a617",
+        "title": "se ne va",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-181",
+        "key": "audio/songs/track-181.mp3",
+        "sha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+        "title": "Non ti dimentico",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-182",
+        "key": "audio/songs/track-182.mp3",
+        "sha": "703269232a1338e4b9efa4afee36cd2fec849afe",
+        "title": "Le Tasche Piene Di Sassi",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-184",
+        "key": "audio/songs/track-184.mp3",
+        "sha": "07816c432cf4192e67516ad002c5c63e4131bc05",
+        "title": "Tuttok",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-185",
+        "key": "audio/songs/track-185.mp3",
+        "sha": "bd00d01c06cd712b0618984e7027aadde26c460a",
+        "title": "Dimenticare",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-187",
+        "key": "audio/songs/track-187.mp3",
+        "sha": "d1c31f87e34e89bc1c52140e1f343856459938a1",
+        "title": "Cose che non vuoi sentirti dire",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-188",
+        "key": "audio/songs/track-188.mp3",
+        "sha": "7c88d30be99ed7ea55f8832fecb715f2982879b1",
+        "title": "Prima che",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-189",
+        "key": "audio/songs/track-189.mp3",
+        "sha": "600fa2ec9b1b3ce23f600e499af0d1e96e5a11f0",
+        "title": "Di abbattere le mura (18 Donne)",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-190",
+        "key": "audio/songs/track-190.mp3",
+        "sha": "7b699ba2b9c4c15e61fffc72252d6086796ddcda",
+        "title": "Mortale",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-191",
+        "key": "audio/songs/track-191.mp3",
+        "sha": "41654580c5b9f3d1ab5615e8ea3249a36fddd846",
+        "title": "Bad vibes",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-192",
+        "key": "audio/songs/track-192.mp3",
+        "sha": "eaa804e20c9a1e3134c514b18344062416de52a8",
+        "title": "Ci nasci, ci muori",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-193",
+        "key": "audio/songs/track-193.mp3",
+        "sha": "d1600f4fee84e9f04aac8d63913e4e21385005e0",
+        "title": "Punto d'incontro",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-194",
+        "key": "audio/songs/track-194.mp3",
+        "sha": "e7fd57c44877d0aa34c22393fb5a61013c92abf3",
+        "title": "Forte",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-195",
+        "key": "audio/songs/track-195.mp3",
+        "sha": "8c73ceae7033d74ca0f2e33134989a6d4c5f5669",
+        "title": "Noi due",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-196",
+        "key": "audio/songs/track-196.mp3",
+        "sha": "116560350f54ad970489622d28c4af63a892dc16",
+        "title": "Esistere (più di me)",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-198",
+        "key": "audio/songs/track-198.mp3",
+        "sha": "098e3b83bfb24984601c910a0159be513d169e0c",
+        "title": "Tutti il resto è noi",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-200",
+        "key": "audio/songs/track-200.mp3",
+        "sha": "4eb1f584ba88f1e24c63b2925e856b0abb20a9db",
+        "title": "Essere noi",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-201",
+        "key": "audio/songs/track-201.mp3",
+        "sha": "368714d7e3316215dfecde56bfb12513efb47046",
+        "title": "Lullu - Acoustic Version",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-203",
+        "key": "audio/songs/track-203.mp3",
+        "sha": "1a13220803ad51d7523a21da7beae950670e016c",
+        "title": "ily",
+        "artist": "thasup, Coez"
+      },
+      {
+        "id": "b-track-205",
+        "key": "audio/songs/track-205.mp3",
+        "sha": "611c879b4c80ba12a1a415f2225a8cea89cf1416",
+        "title": "Amelie",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-206",
+        "key": "audio/songs/track-206.mp3",
+        "sha": "592f4db9c95c76cc002683f347fa0ab675eb00b4",
+        "title": "Per il Sangue Versato",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-207",
+        "key": "audio/songs/track-207.mp3",
+        "sha": "d747047edd58b7725f595a9676241a5d5c624864",
+        "title": "Per te che Lotto",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-208",
+        "key": "audio/songs/track-208.mp3",
+        "sha": "6564028b080714ee4518cc905c72b1c92e5f9d4a",
+        "title": "Davide e Golia",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-209",
+        "key": "audio/songs/track-209.mp3",
+        "sha": "c56a93a1aec44b17db556fe57de10a8d0c22d99b",
+        "title": "cosa conta davvero",
+        "artist": "nayt, 3D"
+      },
+      {
+        "id": "b-track-210",
+        "key": "audio/songs/track-210.mp3",
+        "sha": "e832097a514113e7328912b824fb257365fc9fdb",
+        "title": "Paraguai",
+        "artist": "nayt, Canova"
+      },
+      {
+        "id": "b-track-211",
+        "key": "audio/songs/track-211.mp3",
+        "sha": "98b4cb7260908cdfb9692852785b2a358a87fdb8",
+        "title": "m@star",
+        "artist": "thasup"
+      },
+      {
+        "id": "b-track-212",
+        "key": "audio/songs/track-212.mp3",
+        "sha": "4fd12270f7cc3acf69ac3b64a8bdcc9c19cef4e6",
+        "title": "gRAZie A Dio",
+        "artist": "yungest Moonstar, thasup"
+      },
+      {
+        "id": "b-track-213",
+        "key": "audio/songs/track-213.mp3",
+        "sha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+        "title": "Jolly",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-215",
+        "key": "audio/songs/track-215.mp3",
+        "sha": "7d7b064ba371e9cf775525b1a6110b03ae2cd92f",
+        "title": "Il Ferro di Echov",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-track-216",
+        "key": "audio/songs/track-216.mp3",
+        "sha": "ca0d866033663d484d9a455984c34d5a00a43b06",
+        "title": "La guerra di Piero",
+        "artist": "Fabrizio De André"
+      },
+      {
+        "id": "b-track-217",
+        "key": "audio/songs/track-217.mp3",
+        "sha": "7bc2eca365b6b44a6eec418572ac8ef9445a29a7",
+        "title": "Bocca di rosa",
+        "artist": "Fabrizio De André"
+      },
+      {
+        "id": "b-track-218",
+        "key": "audio/songs/track-218.mp3",
+        "sha": "9efed4dc03aad75a9e2635a3bd0636c20e7b0cbe",
+        "title": "Via del campo",
+        "artist": "Fabrizio De André"
+      },
+      {
+        "id": "b-track-220",
+        "key": "audio/songs/track-220.mp3",
+        "sha": "6ec33e57dd42e95328ce241d35f23e3a80029373",
+        "title": "Il pescatore",
+        "artist": "Fabrizio De André"
+      },
+      {
+        "id": "b-track-221",
+        "key": "audio/songs/track-221.mp3",
+        "sha": "aff42b6f760df3ec68e0c8d26d33b8ec1939920e",
+        "title": "Ti Amo",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-222",
+        "key": "audio/songs/track-222.mp3",
+        "sha": "d3d8636a264aa43285d61b8145b4b0082d9abbae",
+        "title": "Miami Vice",
+        "artist": "Luchè, Sfera Ebbasta, Simba La Rue"
+      },
+      {
+        "id": "b-track-225",
+        "key": "audio/songs/track-225.mp3",
+        "sha": "bc33df7f05b37476d30d5de532e0fee3723aafa2",
+        "title": "Star",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-226",
+        "key": "audio/songs/track-226.mp3",
+        "sha": "1fb9c99f6a26ab31983a46f6458933cf91d169f8",
+        "title": "Torna Da Me",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-227",
+        "key": "audio/songs/track-227.mp3",
+        "sha": "c897a89a4542ca3bfb05849a25e492d00143fe0d",
+        "title": "Lo Stesso Viso",
+        "artist": "Luchè, Da Blonde"
+      },
+      {
+        "id": "b-track-228",
+        "key": "audio/songs/track-228.mp3",
+        "sha": "40ba477eeaca5931d7d76cb7837086b80736e1eb",
+        "title": "Cosa mi manchi a fare",
+        "artist": "Calcutta"
+      },
+      {
+        "id": "b-track-229",
+        "key": "audio/songs/track-229.mp3",
+        "sha": "e2b27dd98fa0e3c5aad761557ba3e1d502559198",
+        "title": "Tutti",
+        "artist": "Calcutta"
+      },
+      {
+        "id": "b-track-230",
+        "key": "audio/songs/track-230.mp3",
+        "sha": "7e6260d035867e5091b3841133e2adae071f9a26",
+        "title": "Oroscopo",
+        "artist": "Calcutta, Takagi & Ketra"
+      },
+      {
+        "id": "b-track-232",
+        "key": "audio/songs/track-232.mp3",
+        "sha": "475647f9762553fee6c1c0bdf3e8721d53c88d11",
+        "title": "Estate",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-233",
+        "key": "audio/songs/track-233.mp3",
+        "sha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+        "title": "Meraviglioso",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-234",
+        "key": "audio/songs/track-234.mp3",
+        "sha": "58cb6a699dfdd4dbab0678dcc266651a0afeb563",
+        "title": "L'immenso",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-236",
+        "key": "audio/songs/track-236.mp3",
+        "sha": "ffe3298a77618ab08818ba4195c6145407379928",
+        "title": "Solo 3 min",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-237",
+        "key": "audio/songs/track-237.mp3",
+        "sha": "8910a1a0db1f325c344bea5c37e4fbcfb789648e",
+        "title": "Solo Per Te",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-239",
+        "key": "audio/songs/track-239.mp3",
+        "sha": "27f89ce447b15bab428c8b83c78dd140e2b547e9",
+        "title": "A mano a mano",
+        "artist": "Rino Gaetano"
+      },
+      {
+        "id": "b-track-240",
+        "key": "audio/songs/track-240.mp3",
+        "sha": "8689a0909a0567321de68b767f81177af035bc74",
+        "title": "Ma il cielo è sempre più blu",
+        "artist": "Rino Gaetano"
+      },
+      {
+        "id": "b-track-241",
+        "key": "audio/songs/track-241.mp3",
+        "sha": "2a730e964bc282c434596689d1203d1f2b0bc0b8",
+        "title": "Tiscatterò una foto",
+        "artist": "Tiziano Ferro"
+      },
+      {
+        "id": "b-track-242",
+        "key": "audio/songs/track-242.mp3",
+        "sha": "432b65cc91f06b13dba010548b097d9d3c1bbdd1",
+        "title": "Il Regalo Più Grande",
+        "artist": "Tiziano Ferro"
+      },
+      {
+        "id": "b-track-243",
+        "key": "audio/songs/track-243.mp3",
+        "sha": "87ac5dbf8c3e5150d9fa3bef000fa0d2573e11c9",
+        "title": "L'universo tranne noi",
+        "artist": "Max Pezzali"
+      },
+      {
+        "id": "b-track-244",
+        "key": "audio/songs/track-244.mp3",
+        "sha": "631104000b091ef6d439cfd6ad3b308b7fab9779",
+        "title": "FW/SS25 (Freestyle)",
+        "artist": "Artie 5ive"
+      },
+      {
+        "id": "b-track-246",
+        "key": "audio/songs/track-246.mp3",
+        "sha": "437a0596b790f2574ca8f0366f22109f89369cab",
+        "title": "Sono già solo",
+        "artist": "Modà"
+      },
+      {
+        "id": "b-track-248",
+        "key": "audio/songs/track-248.mp3",
+        "sha": "137fa324f0dd0280d2396e8dd1c1de1b27efd678",
+        "title": "So solo che la vita",
+        "artist": "Jovanotti"
+      },
+      {
+        "id": "b-track-245",
+        "key": "audio/songs/track-245.mp3",
+        "sha": "1097b90206a5061375da4fd5a4bafb5a661dcba3",
+        "title": "Mentre Tutto Score",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-249",
+        "key": "audio/songs/track-249.mp3",
+        "sha": "f9b16ae7a24abf21114587ecf2ab20b8e745b372",
+        "title": "La prima volta",
+        "artist": "Negromaro"
+      },
+      {
+        "id": "b-track-250",
+        "key": "audio/songs/track-250.mp3",
+        "sha": "593654e25364824133f6a2c7e7d8b557b49d9c22",
+        "title": "we fell in love in october",
+        "artist": "girl in red"
+      },
+      {
+        "id": "b-track-304",
+        "key": "audio/songs/track-304.mp3",
+        "sha": "bdca769009cb08fc40d872888190e5058f38d61e",
+        "title": "QUELLI CHE NON PENSANO - Il cervello",
+        "artist": "Marracash, Coez"
+      },
+      {
+        "id": "b-track-315",
+        "key": "audio/songs/track-315.mp3",
+        "sha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+        "title": "Futuri Possibili",
+        "artist": "Franco126"
+      },
+      {
+        "id": "b-track-349",
+        "key": "audio/songs/track-349.mp3",
+        "sha": "754443ff0e103b86e9c0d2ba6ec7c10bb3b43433",
+        "title": "her",
+        "artist": "JVKE"
+      },
+      {
+        "id": "b-track-390",
+        "key": "audio/songs/track-390.mp3",
+        "sha": "668c403f398bc64621a1cf8ca45aba2d5fec2104",
+        "title": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+        "artist": "THYNA, Nuova Scena"
+      },
+      {
+        "id": "b-track-406",
+        "key": "audio/songs/track-406.mp3",
+        "sha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+        "title": "CRUDELIA - I nervi",
+        "artist": "Marracash"
+      },
+      {
+        "id": "b-track-440",
+        "key": "audio/songs/track-440.mp3",
+        "sha": "4ac389a3512e0dfdc3536b9b9d17f5b5905354da",
+        "title": "Morto Mai (Piano Solo)",
+        "artist": "Lazza"
+      },
+      {
+        "id": "b-track-457",
+        "key": "audio/songs/track-457.mp3",
+        "sha": "3a724535d003e3ecf1cc78169b56b216305076da",
+        "title": "Funghi in salsa rosa",
+        "artist": "L'Elfo, Funkymann"
+      },
+      {
+        "id": "b-track-466",
+        "key": "audio/songs/track-466.mp3",
+        "sha": "7dbc8322cf5372ae4c72af2ba50fe4599a3c88c5",
+        "title": "Senza Di Me (feat. Venerus & Franco126)",
+        "artist": "Gemitaiz, Venerus, Franco126"
+      },
+      {
+        "id": "b-track-483",
+        "key": "audio/songs/track-483.mp3",
+        "sha": "1101310dacae5b0f621dfa462b5d62d68e39bf53",
+        "title": "Addio xx",
+        "artist": "nayt"
+      },
+      {
+        "id": "b-track-485",
+        "key": "audio/songs/track-485.mp3",
+        "sha": "7dbf8fd1f1a950dd9a885dae13c9446dec60e51b",
+        "title": "Hai visto mai",
+        "artist": "Frah Quintale"
+      },
+      {
+        "id": "b-track-488",
+        "key": "audio/songs/track-488.mp3",
+        "sha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+        "title": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
+        "artist": "MACE, Kid Yugi, Izi, Franco126"
+      },
+      {
+        "id": "b-track-509",
+        "key": "audio/songs/track-509.mp3",
+        "sha": "0041799f5894fe9e7cf6f0e660e461d638182fc5",
+        "title": "verdi nei viola",
+        "artist": "lazza"
+      },
+      {
+        "id": "b-track-513",
+        "key": "audio/songs/track-513.mp3",
+        "sha": "1e1a1581be091f8f42f030866ddd022a595be5e8",
+        "title": "mi manchi",
+        "artist": "paky"
+      },
+      {
+        "id": "b-track-514",
+        "key": "audio/songs/track-514.mp3",
+        "sha": "2998a64453b8dcc1addf74d218ea25742c86987d",
+        "title": "Disfruto - Carla Morrison",
+        "artist": "Carla Morrison"
+      },
+      {
+        "id": "b-track-515",
+        "key": "audio/songs/track-515.mp3",
+        "sha": "91eee5c99e2284cd5d63f56072a4864b73c9daab",
+        "title": "Jovanotti - A Te",
+        "artist": "le tasche piene di sassi"
+      },
+      {
+        "id": "b-track-516",
+        "key": "audio/songs/track-516.mp3",
+        "sha": "f134034e8838c67914cea0fc051e9794c9d29c59",
+        "title": "non avere paura",
+        "artist": "tommaso paradiso"
+      },
+      {
+        "id": "b-track-518",
+        "key": "audio/songs/track-518.mp3",
+        "sha": "798d8352d262648e9859cc3694763c1122c4f224",
+        "title": "CORALINE",
+        "artist": "Måneskin"
+      },
+      {
+        "id": "b-track-478",
+        "key": "audio/songs/track-478.mp3",
+        "sha": "03ade830fa5a0e3f812d8084993b4ef94a6936dd",
+        "title": "VENT'ANNI",
+        "artist": "Måneskin"
+      },
+      {
+        "id": "b-track-520",
+        "key": "audio/songs/track-520.mp3",
+        "sha": "2ac65079ee65659ebc92e5d5986a3ea3f37873da",
+        "title": "ZITTI E BUONI",
+        "artist": "Måneskin"
+      },
+      {
+        "id": "b-track-309",
+        "key": "audio/songs/track-309.mp3",
+        "sha": "0ae677c54055bc089720c66fd4b85b3aa074e7ef",
+        "title": "Morirò da Re",
+        "artist": "Måneskin"
+      },
+      {
+        "id": "b-track-574",
+        "key": "audio/songs/track-574.mp3",
+        "sha": "6cdb6f5169f2b3245c5344894189ba914f613418",
+        "title": "A Lei",
+        "artist": "Papa V, Nerissima Serpe, Fritu"
+      },
+      {
+        "id": "b-track-627",
+        "key": "audio/songs/track-627.mp3",
+        "sha": "dbfaaffa82fe088e6a740165fc9acdfd071eea19",
+        "title": "SWAG MUSIC",
+        "artist": "Artie 5ive"
+      },
+      {
+        "id": "b-track-658",
+        "key": "audio/songs/track-658.mp3",
+        "sha": "25478deb4b95bdceaf9f3c2ede1a598e1bec3c94",
+        "title": "Che Dio Mi Benedica",
+        "artist": "Luchè"
+      },
+      {
+        "id": "b-track-1197",
+        "key": "audio/songs/track-1197.mp3",
+        "sha": "a95dbd2f9a220b575676c0265ab4c7e8bbc9a221",
+        "title": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+        "artist": "Adriano Celentano"
+      },
+      {
+        "id": "b-track-664",
+        "key": "audio/songs/track-664.mp3",
+        "sha": "6100ddace519a0681baf5df4f6561e04a0416d89",
+        "title": "Poetica",
+        "artist": "Cesare Cremonini"
+      },
+      {
+        "id": "b-track-670",
+        "key": "audio/songs/track-670.mp3",
+        "sha": "45ad3fc1c5832d38832ebb1856cfb0fe3fa29f7d",
+        "title": "Con Te Partirò",
+        "artist": "Andrea Bocelli"
+      },
+      {
+        "id": "b-track-705",
+        "key": "audio/songs/track-705.mp3",
+        "sha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+        "title": "End of Beginning",
+        "artist": "Djo"
+      },
+      {
+        "id": "b-track-724",
+        "key": "audio/songs/track-724.mp3",
+        "sha": "6c36649af8180f8a76b95de9a7349c966f1c21f4",
+        "title": "Angela",
+        "artist": "Checco Zalone, Mitili Ignoti"
+      },
+      {
+        "id": "b-track-855",
+        "key": "audio/songs/track-855.mp3",
+        "sha": "840888ad1240fc96294778f1e0cb23618926e021",
+        "title": "Superclassico",
+        "artist": "Ernia"
+      },
+      {
+        "id": "b-track-954",
+        "key": "audio/songs/track-954.mp3",
+        "sha": "c0a0a865af55172630f20a477f2acd06d82e11af",
+        "title": "Buon Viaggio (Share The Love)",
+        "artist": "Cesare Cremonini"
+      },
+      {
+        "id": "b-track-963",
+        "key": "audio/songs/track-963.mp3",
+        "sha": "be6982659be9be3ff5fbca15d6adecb5618465d5",
+        "title": "Occhi Lucidi",
+        "artist": "Leon Faun, Duffy"
+      },
+      {
+        "id": "b-track-977",
+        "key": "audio/songs/track-977.mp3",
+        "sha": "e543e0b58e9cd3324db0333d18d24a5c7f8c9ccb",
+        "title": "oh 9od - feat. Nayt",
+        "artist": "tha Supreme, nayt"
+      },
+      {
+        "id": "b-track-1187",
+        "key": "audio/songs/track-1187.mp3",
+        "sha": "91880f7106a62122af82cff60cc00541b500369f",
+        "title": "Stratos",
+        "artist": "Kid Yugi"
+      },
+      {
+        "id": "b-youtube-S8oUoa0pwpo",
+        "key": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+        "sha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+        "title": "Sentire La Musica",
+        "artist": "Kid Yugi"
+      }
+    ],
+    "unavailable": [],
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified",
+    "auditExclusions": [
+      {
+        "profile": "Ste",
+        "playlist": "gym"
+      }
+    ],
+    "runtimeEvidence": {
+      "engineSha256": "a9534b6e461664d31b8e3d43fd17496809a462ae61f712d444cc506da5f0b217",
+      "indexSha256": "b3c7d0ecbbb9ddc09f53ed238cc60ba2b297a54a77ab4caefc8f990a29bd8a91",
+      "compositeSha256": "1bcce94701948bf8f0a0f1bd532a3c187e6203c9a1c66a7366d834d9872e6ed5",
+      "applicationSha256": "9f80592a3deb8c2f8234909e9e1b06e277dc4bd62a443ae89d5f7340a7813480"
+    },
+    "membershipEvidence": {
+      "stateSha256": "b13e01bc3c349a027d3dccb2deca3c57ca52c889c07bd0a578f3403a62d55ce7",
+      "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+      "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+    }
+  },
+  "cases": [
+    {
+      "from": "audio/songs/track-6.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "role": "Different architecture: test whether normalized late onsets are actually audible; never retry cadence/WSOLA splice",
+      "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "targetSha": "004e594c10688869197f21e31e748c1dd82901b4"
+    }
+  ]
+}

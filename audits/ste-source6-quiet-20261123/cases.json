@@ -1,0 +1,12 @@
+[
+  {
+    "from": "audio/songs/track-6.mp3",
+    "to": "audio/songs/track-4.mp3",
+    "role": "Different architecture: test whether normalized late onsets are actually audible; never retry cadence/WSOLA splice"
+  },
+  {
+    "from": "audio/songs/track-6.mp3",
+    "to": "audio/songs/track-34.mp3",
+    "role": "Alternative incoming after Sono Ok short-prefix exposure failed; same frozen source quiet window, reused Eva evidence"
+  }
+]
