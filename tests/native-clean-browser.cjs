@@ -114,7 +114,7 @@ const server=http.createServer((req,res)=>{
     const adopt=MusicBoxBridge.mixAdoptHandoff;
     MusicBoxBridge.mixAdoptHandoff=(id,audio)=>{
      window.__beforeNativeAdoption={oldEnded:__outgoingNative.ended,sourceAt:__outgoingNative.currentTime,sourceDuration:__outgoingNative.duration,
-      incomingAt:audio.currentTime,incomingPaused:audio.paused,incomingSeeking:audio.seeking};
+      incomingAt:audio.currentTime,incomingPaused:audio.paused,incomingSeeking:audio.seeking,observedAt:performance.now()};
      return adopt(id,audio);
     };
     const b=document.createElement('button');b.id='start-native-clean';b.textContent='Start Ste native clean trial';b.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
@@ -173,11 +173,14 @@ const server=http.createServer((req,res)=>{
      assert.ok(samples.length>=8);assert.ok(samples.every(s=>s.id===fromId&&s.lyrics.includes('Native outgoing phrase')&&!s.lyrics.includes('Native incoming phrase')));
     }
     const adopted=await page.evaluate(()=>({sameElement:MusicBoxBridge.audio()===__incomingNative,beforeAdoption:window.__beforeNativeAdoption,
-     targetTime:MusicBoxBridge.audio().currentTime,rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
+     targetTime:MusicBoxBridge.audio().currentTime,observedAt:performance.now(),rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
      isPlaying:!MusicBoxBridge.audio().paused,sourceEndedAt:__outgoingNative.currentTime}));
     assert.equal(adopted.sameElement,true);assert.equal(adopted.beforeAdoption.oldEnded,true);assert.equal(adopted.isPlaying,true);assert.equal(adopted.rate,1);
     assert.ok(Math.abs(adopted.beforeAdoption.sourceAt-adopted.beforeAdoption.sourceDuration)<.002);
-    assert.ok(adopted.targetTime>1&&adopted.targetTime<4);assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);
+    assert.ok(adopted.beforeAdoption.incomingAt>1&&adopted.beforeAdoption.incomingAt<4,'already heard original prefix at actual EOF adoption');
+    const advanced=adopted.targetTime-adopted.beforeAdoption.incomingAt,wall=(adopted.observedAt-adopted.beforeAdoption.observedAt)/1000;
+    assert.ok(advanced>=-.02&&Math.abs(advanced-wall)<.5,'same native decoder continues from its observed adoption clock');
+    assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);
     const start=adopted.trace.find(t=>t.event==='target-play');assert.ok(start.at<=.02);assert.equal(start.volume,overlap.oldVolume);
     // Validate the actual launch clock at launch, not a later EOF duration
     // estimate. EOF still independently requires ended=true and intact source.
