@@ -1121,7 +1121,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 83,
-    "s": 2155,
+    "s": 2171,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1745,7 +1745,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 82,
-    "s": 2147,
+    "s": 2163,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -3556,14 +3556,14 @@
     "a": "Coez"
    },
    "[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 4,
-    "s": 567,
+    "v": 5,
+    "s": 619,
     "t": "nei treni la notte",
     "a": "frah quintale"
    },
    "m:2026-11|[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 4,
-    "s": 567,
+    "v": 5,
+    "s": 619,
     "t": "nei treni la notte",
     "a": "frah quintale"
    },
@@ -6977,7 +6977,7 @@
    },
    "[\"morirÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 337,
+    "s": 364,
     "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -7211,7 +7211,7 @@
    },
    "m:2026-11|[\"morirÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 332,
+    "s": 359,
     "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -7787,7 +7787,7 @@
    },
    "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 364,
+    "s": 407,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -7931,13 +7931,13 @@
    },
    "[\"la musica non c'ÃÂÃÂ¨\",\"coez\"]": {
     "v": 3,
-    "s": 746,
+    "s": 773,
     "t": "La musica non c'ÃÂÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂ¨\",\"coez\"]": {
     "v": 3,
-    "s": 746,
+    "s": 773,
     "t": "La musica non c'ÃÂÃÂ¨",
     "a": "Coez"
    },
@@ -8021,7 +8021,7 @@
    },
    "m:2026-11|[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 359,
+    "s": 402,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -8741,13 +8741,13 @@
    },
    "[\"la musica non c'ÃÂ¨\",\"coez\"]": {
     "v": 3,
-    "s": 773,
+    "s": 841,
     "t": "La musica non c'ÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂ¨\",\"coez\"]": {
     "v": 3,
-    "s": 773,
+    "s": 841,
     "t": "La musica non c'ÃÂ¨",
     "a": "Coez"
    },
