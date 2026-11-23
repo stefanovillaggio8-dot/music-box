@@ -41,5 +41,5 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),{chromium,webki
   }}finally{await browser.close()}
  }}finally{env.server.close();fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n')}
  console.log(JSON.stringify({trials:report.results.length,passed:report.results.filter(r=>r.accepted).length,failed:report.results.filter(r=>r.accepted===false).length,physicalIPhone:false}));
- if(report.results.some(r=>r.accepted===false))process.exitCode=1;
+ if(!report.results.length||report.results.some(r=>r.accepted!==true))process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});

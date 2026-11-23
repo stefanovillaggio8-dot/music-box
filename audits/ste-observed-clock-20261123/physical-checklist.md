@@ -7,7 +7,7 @@ account state, cache, downloads, playlists or the production player.
 1. Pause Music Box. Use moderate device volume. Keep the PC and iPhone on
    the same trusted local network. From the research repository run:
    `node tools/ste-clean-probe-server.cjs audits/ste-factored-clean-20261123/recordings.json 0.0.0.0`.
-   Only the whitelisted probe code and SHA-checked frozen original excerpts
+   Only the whitelisted probe code and SHA-checked frozen original files
    are served; the server has no write API or generic filesystem route.
    Do not change firewall rules or expose the port to the internet. If LAN
    access is unavailable, stop; the test has not been performed.

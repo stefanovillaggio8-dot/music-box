@@ -24,3 +24,27 @@ failures, because the new protocol changes both priming and clock observation.
 
 Next: separately test a genuinely silent native primer and source changes,
 then physical Safari/PWA behavior, before any in-app iPhone enablement.
+
+## Additional terminal-lifetime controls
+
+The isolated secondary must stop even when visibility changes AFTER source
+EOF/adoption; completing a bounded preview also invalidates late play
+promises. A late primer promise cannot restart a cancelled second deck.
+Five deterministic contracts pass; Linux Chromium/WebKit and Windows
+Chromium pass the real hidden-after-adoption control. These extend the
+prototype, never the public iPhone path. Downloadable JSON and a physical
+checklist are provided without writing Music Box state.
+
+Windows WebKit 27.2 FAILED before original playback: source metadata duration
+161.16s is neither declared raw nor gapless clock, so bounded readiness stops
+with original plays=0 (no source play events) and both elements paused. Do
+not add a fitted offset or widen the 2ms container-clock tolerance. This does
+not prove a permanent decoder incompatibility: metadata was observed BEFORE
+the original's first play and might be provisional. A genuinely different
+future protocol could study clock refinement after trusted original playback,
+but must preserve source identity and cancellation. It is not a successful
+hidden-after-adoption case, nor a regression in production Music Box.
+
+Latest platform completion/cancellation is saved in terminal-status.json.
+The browser harness also fails if all cases are skipped or no browser runs;
+an empty report is never a successful acoustic control.
