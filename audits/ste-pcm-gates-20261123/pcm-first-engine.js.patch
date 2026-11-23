@@ -1,0 +1,20 @@
+--- a/mix-intelligente.js
++++ b/mix-intelligente.js
+@@ -3139,7 +3139,7 @@
+ }
+ function measuredFullBeatBridge(a,b,dur){
+  if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
+- if(!beatBearingIntro(b,.39)||!Number.isFinite(Math.min(
++ if(!Number.isFinite(Math.min(
+    Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity)))return null;
+  let best=null;
+@@ -3153,7 +3153,7 @@
+  if(!a||!b||a.durationMismatch||b.durationMismatch||
+     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+     Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
+-    a.last>dur+.2||!beatBearingIntro(b,.39)||
++    a.last>dur+.2||
+     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
+  const nominal=a.bpm/b.bpm;
+  if(nominal<.93||nominal>1.07)return null;

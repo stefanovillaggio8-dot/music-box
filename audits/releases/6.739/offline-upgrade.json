@@ -1,0 +1,29 @@
+{
+  "method": "actual-webkit-service-worker-upgrade-v1",
+  "from": "6.738",
+  "to": "6.739",
+  "physicalIPhone": false,
+  "originalMediaDecoding": false,
+  "proof": {
+    "savedPerProfile": [
+      true,
+      true,
+      true
+    ],
+    "legacyRetained": true,
+    "foreign": "keep-other-app",
+    "localUnchanged": true,
+    "indexed": "unchanged-user-data",
+    "cacheNames": [
+      "spotifynonavraiimieisoldi-v6738",
+      "spotifynonavraiimieisoldi-brani-Ste",
+      "spotifynonavraiimieisoldi-dj-index",
+      "spotifynonavraiimieisoldi-brani-Diego",
+      "spotifynonavraiimieisoldi-brani-Emanuele",
+      "unrelated-origin-app-cache",
+      "spotifynonavraiimieisoldi-v6739"
+    ]
+  },
+  "freshDJIndexRevalidated": true,
+  "offlineNewPlayer": true
+}

@@ -1,0 +1,13 @@
+{
+  "method": "node --test tests/*.test.cjs",
+  "stats": {
+    "tests": 772,
+    "pass": 770,
+    "fail": 2
+  },
+  "knownFailures": [
+    "tests/dj-rhythmic-tail.test.cjs:7 (old excluded data)",
+    "tests/dj-rhythmic-tail.test.cjs:75 (old excluded data)"
+  ],
+  "physicalIPhone": false
+}

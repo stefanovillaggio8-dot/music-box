@@ -1,0 +1,12 @@
+{
+  "scope": "Ste personal only; same 222 recordings and 24 Kid Yugi cohort, no Gym",
+  "baselineCommit": "295b6b4156fa5227d41df05ec810a37bc610eade",
+  "baselineEngineSha256": "60de183aa681f93f3c13dcff0e7692534c699b926d5cd0ac6d398b392dd5531f",
+  "discoveryOnly": true,
+  "newCertifiedPairs": 0,
+  "inputs": {
+    "index.json": "993410d1f65175a2d159b622332d386256aa5f34a6b4ed819df679775dfcce58",
+    "pcm-0.json": "414cd40fb8208b373b6bfd72ce41ff5721756ca85cc015b66ea5949e22f596e4",
+    "pairs.json": "df4f90576d11cf86b9cd6fc82e22afa53bd50748c4154486cd5213c6ff8d9399"
+  }
+}

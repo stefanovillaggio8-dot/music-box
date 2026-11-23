@@ -1,0 +1,111 @@
+--- a/mix-intelligente.js
++++ b/mix-intelligente.js
+@@ -2579,6 +2579,7 @@
+   }
+  }
+  const ratio=errors.length/Math.max(old.length,next.length);
++ if(diagnosis)Object.assign(diagnosis,{sourcePulses:old.length,targetPulses:next.length,matches:errors.length,ratio,first,second,rms:errors.length?Math.sqrt(errors.reduce((sum,x)=>sum+x*x,0)/errors.length):null});
+  if(errors.length<8||ratio<.90||first<3||second<3)return reject('observedPulseAgreement');
+  const rms=Math.sqrt(errors.reduce((sum,x)=>sum+x*x,0)/errors.length);
+  if(rms>.040)return reject('observedPulseTiming');
+@@ -3137,11 +3138,20 @@
+  }
+  return variants;
+ }
++const __pcmGateLog={calls:{},pairs:{},closest:{}};
++function __pcmObserve(name,a,b){
++ __pcmGateLog.calls[name]=(__pcmGateLog.calls[name]||0)+1;
++ (__pcmGateLog.pairs[name]??=new Set()).add(a.sha+"/"+b.sha);
++}
++process.on('exit',()=>process.getBuiltinModule('fs').writeFileSync('../audibility-future-20261117/ste-pcm-gates-20261123/asymmetric-gates.json',JSON.stringify({discoveryOnly:true,source:'instrumented offline engine, criteria unchanged from asymmetric hypothesis',calls:__pcmGateLog.calls,closest:Object.values(__pcmGateLog.closest).sort((a,b)=>b.ratio-a.ratio||a.rms-b.rms).slice(0,25),distinctPairs:Object.fromEntries(Object.entries(__pcmGateLog.pairs).map(([k,v])=>[k,v.size]))},null,2)));
+ function measuredFullBeatBridge(a,b,dur){
++ __pcmObserve("pairEntered",a,b);
+  if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
+- if(!beatBearingIntro(b,.39)||!Number.isFinite(Math.min(
++ // Discovery-only alternative. Model regions are not a silence certificate.
++ if(!Number.isFinite(Math.min(
+    Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+-   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity)))return null;
++   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity))&&
++   !(a.musicalContent?.wholeCoverageVerified&&a.musicalContent.sourceSha===a.sha))return null;
+  let best=null;
+  for(const aa of pcmBeatVariants(a,"outro"))for(const bb of pcmBeatVariants(b,"intro")){
+   const cue=pcmFullBeatWindowSearch(aa,bb,dur);
+@@ -3153,25 +3163,27 @@
+  if(!a||!b||a.durationMismatch||b.durationMismatch||
+     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+     Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
+-    a.last>dur+.2||!beatBearingIntro(b,.39)||
++    a.last>dur+.2||
+     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
++ __pcmObserve("variantEntered",a,b);
+  const nominal=a.bpm/b.bpm;
+- if(nominal<.93||nominal>1.07)return null;
++ if(nominal<.93||nominal>1.07){__pcmObserve("tempoRejected",a,b);return null;}
+  const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+     Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+- if(!Number.isFinite(firstVoice))return null;
++ if(!Number.isFinite(firstVoice)&&!(a.musicalContent?.wholeCoverageVerified&&a.musicalContent.sourceSha===a.sha))return null;
+  const baseEntry=0,end=dur-.035;
+  const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
+- if(!outro||!intro)return null;
++ if(!outro||!intro){__pcmObserve(!outro?"outroSectionMissing":"introSectionMissing",a,b);return null;}
++ __pcmObserve("bothPCMSections",a,b);
+  // Missing vocal data never certifies a full-band instrumental intro.
+- if(!Number.isFinite(firstVoice)||baseEntry<intro.start||end>outro.end)return null;
++ if(baseEntry<intro.start||end>outro.end)return null;
+  // The actual overlapping sections determine harmony below. A whole-song
+  // key must not veto a separately verified local modulation.
+  let best=null;
+  const entries=[baseEntry,...intro.beats.filter(t=>t>baseEntry+.1&&
+   t<=Math.min(baseEntry+8,firstVoice-5.4))];
+  for(const entry of entries){
+- if(!incomingContentDecision(b,{entry}).allowed)continue;
++ if(!incomingContentDecision(b,{entry}).allowed){__pcmObserve("incomingContentRejected",a,b);continue;}
+  for(const oldBeat of outro.beats){
+   if(oldBeat<end-16.0||oldBeat>end-3.0)continue;
+   for(const nextBeat of intro.beats){
+@@ -3181,20 +3193,38 @@
+    for(const rate of rates){
+    const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
+    if(begin<26||fade<4.5||fade>16||begin<outro.start||
+-      entry+fade*Math.max(1,rate)>intro.end||
+-      (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
++      entry+fade*Math.max(1,rate)>intro.end)continue;
++   const needsOutgoingModel=!(Number.isFinite(firstVoice)&&(firstVoice-entry)/Math.max(1,rate)>=fade+.65);
++   if(needsOutgoingModel){
++    const model=a.musicalContent,regions=model?.vocalRegions;
++    if(!model?.wholeCoverageVerified||model.sourceSha!==a.sha||
++       !Array.isArray(regions)||!regions.length||
++       regions.some(r=>!Array.isArray(r)||r.length!==2||!r.every(Number.isFinite)||r[1]<r[0]||r[1]>begin-.65&&r[0]<end+.3)||
++       Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=begin-.65)continue;
++   }
+    // The complete original finishes at native EOF, including any vocal.
+    // The incoming window must precede the known vocal/lyric boundary.
+    // An LRC boundary is metadata, not an independent vocal-model result.
+-   const fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade);
+-   if(!fit)continue;
++   __pcmObserve("fitAttempt",a,b);
++   const why={},fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade,why);
++   if(!fit){
++    __pcmObserve("fitRejected:"+why.reason,a,b);
++    if(why.matches>=8&&why.ratio>=.65&&why.rms<=.04){
++     const key=a.sha+"/"+b.sha,old=__pcmGateLog.closest[key];
++     if(!old||why.ratio>old.ratio||why.ratio===old.ratio&&why.rms<old.rms)__pcmGateLog.closest[key]={sourceSha:a.sha,targetSha:b.sha,begin,entry,fade,rate,...why};
++    }
++    continue;
++   }
++   __pcmObserve("fitPassed",a,b);
+    const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade)||
+     (entry===0?pcmPreservedTailHarmony(outro,intro,begin,rate,fade):null);
+-   if(!harmony)continue;
++   if(!harmony){__pcmObserve("harmonyRejected",a,b);continue;}
++   __pcmObserve("harmonyPassed",a,b);
+    const quality=.45*fit.score+.35*(harmony.percussiveIntro?fit.ratio:
+     harmony.compatibleKey?harmony.keyCompatibility:harmony.average)+.20*fit.ratio;
+    const cue={kind:"beat",measuredFullBeat:true,fullBeatSearchVersion:2,
+     sourceTempoBpm:a.bpm,targetTempoBpm:b.bpm,
++    discoveryOnly:true,vocalPolicyHypothesis:needsOutgoingModel?"outgoing-model-regions-not-a-silence-certificate":"incoming-known-boundary",
+     sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
+     measuredBeatPlacement:true,measuredOnsetGrid:true,
+     begin,end,fade,entry,tempo:rate,gain:1,

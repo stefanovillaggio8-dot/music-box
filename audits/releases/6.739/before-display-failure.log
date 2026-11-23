@@ -1,0 +1,27 @@
+chromium normal phrase trace [{"time":2.5,"active":["Entire sung phrase"],"wordSpans":0},{"time":6,"active":["Entire sung phrase"],"wordSpans":0},{"time":12.25,"active":["Next complete phrase"],"wordSpans":0},{"time":2.75,"active":["Entire sung phrase"],"wordSpans":0}]
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    [
+      'Entire sung phrase'
+    ],
+-   [],
+    [
++     'Entire sung phrase'
++   ],
++   [
+      'Next complete phrase'
+    ],
+    [
+      'Entire sung phrase'
+    ]
+
+    at C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-phrase6739\tests\karaoke-phrase-browser.cjs:47:11 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [Array],
+  expected: [Array],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
