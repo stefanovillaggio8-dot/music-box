@@ -18,6 +18,7 @@ on:
       - '.github/workflows/dj-equivalence-audit.yml'
       - '.github/workflows/dj-pcm-transition-features.yml'
       - '.github/workflows/dj-structural-integration.yml'
+      - '.github/workflows/dj-real-audio-audit.yml'
   workflow_dispatch:
 permissions:
   contents: read
