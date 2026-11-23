@@ -38,6 +38,19 @@ const server=http.createServer((req,res)=>{
    ]){assert.equal(code.split(marker).length,2);code=code.replace(marker,marker+extra)}
    res.setHeader('Content-Type','text/javascript');res.end(code);return;
   }
+  if(name==='/mix-intelligente.js'){
+   let code=fs.readFileSync(path.join(root,'mix-intelligente.js'),'utf8');
+   const marker='function beginNativeCleanTail(app,old,next,p){';assert.equal(code.split(marker).length,2);
+   code=code.replace(marker,`function beginNativeCleanTail(app,old,next,p){
+    const sample={sourceAt:old.currentTime,sourceDuration:old.duration,begin:p.begin,preparedReady:prepared?.ready,preparedFailed:prepared?.failed,
+     preparedEntry:prepared?.naturalEntry,targetTime:prepared?.audio?.currentTime,targetDuration:prepared?.audio?.duration,targetReady:prepared?.audio?.readyState,
+     sourceClock:window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration),active:!!active,mixing};
+    const result=nativeCleanTestImplementation(app,old,next,p);sample.result=result;
+    (window.__nativeClockAttempts??=[]).push(sample);if(__nativeClockAttempts.length>180)__nativeClockAttempts.shift();return result;
+   }
+   function nativeCleanTestImplementation(app,old,next,p){`);
+   res.setHeader('Content-Type','text/javascript');res.end(code);return;
+  }
   const file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
   if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
   if(!fs.existsSync(file)){res.writeHead(404);res.end();return;}
@@ -174,7 +187,7 @@ const server=http.createServer((req,res)=>{
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
-   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
+   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),clockAttempts:window.__nativeClockAttempts,timeline:window.__nativeCleanTimeline}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
   }finally{await browser.close()}
  }}finally{server.close();if(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT)fs.writeFileSync(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT,JSON.stringify(report,null,2)+'\n')}
