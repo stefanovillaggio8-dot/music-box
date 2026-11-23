@@ -1,0 +1,68 @@
+{
+  "currentHead": "35285e3d75653a003a9b11fe5ab0261376f925c3",
+  "verifiedNativeRun": 45173490869,
+  "verifiedPhraseAndOfflineRun": 45171878062,
+  "identicalOwningBlobsToVerifiedPhraseRun": [
+    {
+      "file": "app.js",
+      "blob": "d58b6e56d8c09da4c8c912117739de9f0d763027"
+    },
+    {
+      "file": "sw.js",
+      "blob": "e95ef84ec6fb588d439e406ec556e702fd7ed941"
+    },
+    {
+      "file": "index.html",
+      "blob": "0af879093fe499398ac9e9e247cd4ca341c84d4c"
+    },
+    {
+      "file": "versione.json",
+      "blob": "985707b478cb202bdb1c6de20d2f56bcede31fed"
+    },
+    {
+      "file": "mix-intelligente.js",
+      "blob": "e12bd843a01f38f15ac8632044b22fc1d2e4d8c7"
+    },
+    {
+      "file": "dj-deep-analysis.json",
+      "blob": "8ecf3e180c2df264411a1c98ef4bb65cdb10ebc8"
+    },
+    {
+      "file": "word-karaoke.js",
+      "blob": "9333aa8eb41b32283b036c53727c0263ff81044e"
+    },
+    {
+      "file": "immersive.js",
+      "blob": "b87ce9e3bc19dcb7213529131865cd54abf30460"
+    },
+    {
+      "file": ".github/workflows/phrase-karaoke.yml",
+      "blob": "a6b5c96db131f0d59ee76a34f33c7081d71050a2"
+    },
+    {
+      "file": "tests/karaoke-phrase-browser.cjs",
+      "blob": "e77d0e32aec31c1ba1fb8305caef07d916448a5e"
+    },
+    {
+      "file": "tests/offline-upgrade.cjs",
+      "blob": "84064cdc09762a2f4ef3164f9d2a4c8d8ae79141"
+    },
+    {
+      "file": "tests/fixtures/sw-6739.js",
+      "blob": "54c61a1e198d39726da193d274e6d376e94ddfc4"
+    }
+  ],
+  "baseline": "a5e8874c32f45013feb175d68767d0dad2cbd375",
+  "baselineFixtureTests": {
+    "tests": 8,
+    "passed": 6,
+    "failed": 2
+  },
+  "releaseFullSuite": {
+    "tests": 769,
+    "passed": 767,
+    "failed": 2
+  },
+  "newFailures": 0,
+  "physicalIPhone": false
+}

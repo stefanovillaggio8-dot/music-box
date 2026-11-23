@@ -232,7 +232,83 @@ This infrastructure correction is not an increase in musical coverage.
 
 Next exact resume point: finish PR71 release validation (including the
 duration guard), resolve/explicitly account for the pre-existing failing
-release contracts without restoring retired unsafe pairs, and only then
+release contracts without blindly restoring unverified historical plans, and only then
 publish a verified isolated change. Musical research remains limited to
 the frozen Ste cases; 50->705 still needs an independent harmonic/native
 certificate, not another repetition of failed global estimators.
+
+The two historical failures demonstrate a missing expected fixture/plan, not
+by themselves an intentional safety revocation. Its disappearance has NOT
+been diagnosed in this Ste-only musical campaign. Do not treat absence as
+proof that its old certification was unsafe, or restore it just to pass CI.
+
+## PUBLICATION COMPLETED: current status supersedes the earlier holds
+
+PR72 merged as a5e8874c32f45013feb175d68767d0dad2cbd375 after 6/6 scope
+contracts and CI passed. The legacy raw sampling workflow is now manual
+on main. App/player/index/version blobs remained unchanged at 6.739 for
+this policy-only publication. Rollback tag:
+music-box-v6.739-before-legacy-audit-policy-20261123.
+
+Final native-clean run 45173490869 passes BOTH platforms and BOTH browsers
+after the provisional-target-duration guard. The ordinary Ste common-PCM
+Chromium and WebKit regressions in run 45173491280 pass as well. The actual
+iPhone-WebKit foreground control in run 45173490856 passes (24 rapid
+starts, 24 clean stops, 6 paused stops, safe seek); the workflow's later
+full-suite step stays red for the two SAME pre-existing historical tests.
+It is NOT a physical iPhone test.
+
+An independent baseline replay interposed only immutable main a5e8874c
+engine/index bytes into that historical test file: 6/8 pass and the exact
+same 2 fail. No expected value or musical threshold was weakened. This
+establishes no NEW regression from the isolated Ste route; it does not
+diagnose the old missing plan. Isolated candidate: 767/769 full, 47/47
+relevant latest controls. PR59 research: 786/788 full. Those results must
+remain explicit, rather than claiming all checks are green.
+
+The phrase/offline run 45171878062 passed. All twelve owning blobs for
+player/index/worker/phrase assets, test and workflow are IDENTICAL between
+its verified head 691cd98f and release head 35285e3d. The latest redundant
+install was still pending; reuse is justified by byte identity, not an
+assumed pass. `published-release-readiness.json` records that evidence.
+
+With the specific route, preserved controls and data verified, PR71 was
+made ready and merged through NORMAL GitHub merging, matching exact head
+35285e3d75653a003a9b11fe5ab0261376f925c3, without admin/force bypass.
+Merge: 2559a5c0532f89abc95c77a80178f56cd9f05135. No whole-PR59 merge.
+The two unrelated baseline failures remain open and visible. This is a
+progressive verified desktop correction, not completion of the project.
+
+Pages deploy 45174860213 completed successfully for that exact merge.
+Public versione.json returns 6.740; public mix-intelligente.js and the
+entire public audio index match the tested Git blobs EXACTLY. The actual
+published engine was evaluated on ONLY already-stored same-account plans
+in the current 222-recording personal Ste scope (no pair sweep, new PCM
+or other-account simulation):
+
+| Distinct Ste ordered pairs | Before | Public 6.740 |
+| --- | ---: | ---: |
+| Full beatmatch | 1 | 1 |
+| Partial metrical | 1 | 1 |
+| Explicit native clean, desktop only | 0 | 1 |
+
+Full: 705->50. Partial: 4->38. New clean: 38->4, native overlap 2.339s,
+entry zero, tempo one. `published-availability-6740.json` records the
+actual public-engine result. iPhone does not gain the new clean class;
+its 1 full/1 partial remain. No daily-session percentage improvement is
+invented from a single new clean pair.
+
+Rollback tag music-box-v6.739-before-ste-native-clean-20261123 points to
+the prior production main a5e8874c. Original downloads, profile content,
+Karaoke phrases and session fixes are preserved. Human listening to the
+new desktop junction and physical iPhone update/resume/download checks
+remain necessary; no claim of Spotify equivalence is made.
+
+CURRENT RESUME POINT: preserve public 6.740 and its new native clean route;
+continue Ste-only false-negative research on the frozen long 50->705
+evaluation (independent harmonic/pulse/native evidence still missing),
+and explain the two old missing-plan contracts before changing their
+expectations. Do not repeat the failed global/CQT/timing experiments or
+reclassify the new clean junction as a complete beatmatch. A future iPhone
+route must respect the existing restriction on adopting native elements;
+the desktop fix is not permission to remove that restriction.
