@@ -3037,6 +3037,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
 // FLAC/MP3 splice, a seek or a decoder fitted offset. Never an iPhone cue.
 function validateNativeCleanTailCue(record,p,a,b,dur){
  const e=p?.nativeCleanEvidence;
+ const factored=e?.method==='original-native-near-silent-tail-v2';
  if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||record?.version!==1||
     record.fromSha!==a.sha||record.toSha!==b.sha||p?.sourceSha!==a.sha||p?.targetSha!==b.sha||
     ![record.sourceDuration,record.nextDuration,dur,a.duration,b.duration].every(Number.isFinite)||
@@ -3046,7 +3047,7 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
     ![p.begin,p.end,p.fade].every(Number.isFinite)||p.begin<26||p.fade<.5||p.fade>3||
     !Number.isFinite(p.targetDuration)||Math.abs(p.targetDuration-b.duration)>.001||
     Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
-    e?.method!=='original-native-near-silent-tail-v1'||e.sourceSha!==a.sha||e.targetSha!==b.sha||
+    (!factored&&e?.method!=='original-native-near-silent-tail-v1')||e.sourceSha!==a.sha||e.targetSha!==b.sha||
     e.noDecoderSplice!==true||e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
     e.notHumanListening!==true||!Number.isFinite(e.eofLevelChangeDb)||Math.abs(e.eofLevelChangeDb)>3||
     ![e.begin,e.end].every(Number.isFinite)||Math.abs(e.begin-p.begin)>.000001||Math.abs(e.end-p.end)>.000001||
@@ -3060,7 +3061,7 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
      ![v.sourceTailRmsMax,v.sourceTailPeak,v.targetNativeOverlapPeak,v.sourceDecodedOffset,v.sourceMediaOffset,v.targetDecodedOffset,v.targetMediaOffset].every(Number.isFinite)||
      v.sourceTailRmsMax<0||v.sourceTailRmsMax>.0001||v.sourceTailPeak<0||v.sourceTailPeak>.001||
      v.targetNativeOverlapPeak<.001||v.targetNativeOverlapPeak+v.sourceTailPeak>.96||
-     v.targetDecodedOffset!==0||v.targetMediaOffset!==0||
+     !factored&&(v.targetDecodedOffset!==0||v.targetMediaOffset!==0)||
      ![0,e.sourceClock?.primingFrames/e.sourceClock?.sampleRate].includes(v.sourceDecodedOffset)||
      ![0,e.sourceClock?.primingFrames/e.sourceClock?.sampleRate].includes(v.sourceMediaOffset))return null;
  }
@@ -3070,6 +3071,36 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
     ![c.rawFrames,c.decodedFrames,c.primingFrames,c.paddingFrames].every(Number.isInteger)||c.decodedFrames<c.sampleRate*26||
     c.primingFrames<0||c.primingFrames>c.sampleRate*.1||c.paddingFrames<0||c.paddingFrames>c.sampleRate*.1||
     c.rawFrames!==c.decodedFrames+c.primingFrames+c.paddingFrames||Math.abs(c.decodedFrames/c.sampleRate-a.duration)>.001)return null;
+ if(factored){
+  // V2 accepts only the two container-declared clocks, never a fitted lag.
+  // The incoming element still plays at zero and is retained through EOF.
+  const knownClock=(clock,sha,duration,measured,offset)=>{
+   if(clock?.method!=='original-mp3-gapless-metadata-v1'||clock.sourceSha!==sha||![44100,48000].includes(clock.sampleRate)||
+      ![clock.rawFrames,clock.decodedFrames,clock.primingFrames,clock.paddingFrames].every(Number.isInteger)||
+      clock.decodedFrames<26*clock.sampleRate||clock.primingFrames<0||clock.paddingFrames<0||
+      clock.primingFrames>clock.sampleRate*.1||clock.paddingFrames>clock.sampleRate*.1||
+      clock.rawFrames!==clock.decodedFrames+clock.primingFrames+clock.paddingFrames||
+      Math.abs(clock.decodedFrames/clock.sampleRate-duration)>.001||!Number.isFinite(measured))return false;
+   const gapless=Math.abs(measured-clock.decodedFrames/clock.sampleRate)<=.002;
+   const raw=Math.abs(measured-clock.rawFrames/clock.sampleRate)<=.002;
+   return !(gapless&&raw&&clock.primingFrames>0)&&
+    (gapless?offset===0:raw&&offset===clock.primingFrames/clock.sampleRate);
+  };
+  for(const v of e.nativeMeasurements){
+   if(!Number.isFinite(v.channelRmsUpperBound)||v.channelRmsUpperBound<Math.SQRT2*v.sourceTailRmsMax-1e-15||v.channelRmsUpperBound>.0001||
+      !knownClock(c,a.sha,a.duration,v.sourceDecodedDuration,v.sourceDecodedOffset)||
+      !knownClock(c,a.sha,a.duration,v.sourceMediaDuration,v.sourceMediaOffset)||
+      !knownClock(e.targetClock,b.sha,b.duration,v.targetDecodedDuration,v.targetDecodedOffset)||
+      !knownClock(e.targetClock,b.sha,b.duration,v.targetMediaDuration,v.targetMediaOffset))return null;
+  }
+  if(!Array.isArray(e.renderMeasurements)||e.renderMeasurements.length!==2||new Set(e.renderMeasurements.map(v=>v.sampleRate)).size!==2||
+     e.renderMeasurements.some(v=>![44100,48000].includes(v.sampleRate)||v.sourceSha!==a.sha||v.targetSha!==b.sha||
+      v.sourceUnityThroughEof!==true||v.incomingUnityFromZero!==true||v.entry!==0||v.tempo!==1||v.sourceGain!==1||v.incomingGain!==1||
+      ![v.begin,v.end,v.samplePeak,v.overlapPeak,v.oversampledPeak,v.sourceReadThrough,v.eofLevelChangeDb].every(Number.isFinite)||
+      Math.abs(v.begin-p.begin)>.000001||Math.abs(v.end-p.end)>.000001||Math.abs(v.sourceReadThrough-a.duration)>.001||
+      v.samplePeak<0||v.samplePeak>.9991||v.overlapPeak<0||v.overlapPeak>.96||v.oversampledPeak<0||v.oversampledPeak>1||
+      Math.abs(v.eofLevelChangeDb)>3||v.introductionExposure?.method!=='rendered-introduction-band-masking-screen-v2'||v.introductionExposure.accepted!==true))return null;
+ }
  return {...p};
 }
 function validateStructuralBeatCue(record,p,a,b,dur){
@@ -4725,6 +4756,10 @@ function playbackTransition(a,b,dur){
    if(checked.some(p=>p.composite.introductionExposure.accepted===false)&&
       !checked.some(p=>p.composite.introductionExposure.accepted===true))return null;
    let candidate=transition(a,b,dur);
+   // A late start is intentional for an independently quiet, intact tail.
+   // Do not replace its unity-gain native entrance with a subdued preview
+   // merely because it begins after the last audible source sample.
+   if(candidate?.nativeCleanTail&&validateNativeCleanTailCue(a?.structuralBeatPlans?.[b?.sha],candidate,a,b,dur))return candidate;
    if(!candidate||candidate.kind==="cut"||
       (Number.isFinite(candidate.begin)&&
        Number.isFinite(a?.last)&&
@@ -5779,8 +5814,11 @@ function beginNativeCleanTail(app,old,next,p){
  const offset=window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration);
  if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
  const incoming=prepared.audio;
+ const targetClock=()=>p.nativeCleanEvidence?.method==='original-native-near-silent-tail-v2'?
+  window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence.targetClock,p.targetSha,incoming.duration):
+  (Number.isFinite(incoming.duration)&&Math.abs(incoming.duration-p.targetDuration)<=.002?0:null);
  if(!incoming.paused||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2||
-    !Number.isFinite(incoming.duration)||Math.abs(incoming.duration-p.targetDuration)>.002)return false;
+    targetClock()==null)return false;
  const act={original:old,upcoming:incoming,track:next,fromId:app.currentId(),entry:0,
   nativeTailFullBeat:true,nativeCleanTail:true,kind:'postlude',fade:p.fade,handingOff:false,timer:null};
  active=act;mixing=true;prepared=null;
@@ -5800,7 +5838,7 @@ function beginNativeCleanTail(app,old,next,p){
    incoming.volume=clamp(Number(app.volume())||0,0,1);
    if(old.ended){handoff();return;}
   }else if(old.currentTime>=p.begin+offset){
-   if(old.currentTime>p.begin+offset+.08){abort();return;}
+   if(old.currentTime>p.begin+offset+.08||targetClock()==null||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2){abort();return;}
    incoming.volume=clamp(Number(app.volume())||0,0,1);incoming.playbackRate=1;
    act.playPending=true;act.playRequestedAt=performance.now();
    Promise.resolve(incoming.play()).then(()=>{if(active===act){act.playPending=false;act.started=true;act.at=performance.now()}}).catch(abort);
@@ -8560,7 +8598,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.740",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.741",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

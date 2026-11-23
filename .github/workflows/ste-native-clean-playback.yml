@@ -42,14 +42,23 @@ jobs:
           pactl set-default-sink musicbox_clean
       - name: Verify only the two current personal Ste original fixtures
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
+      - name: Verify the newly installed Ste pair originals
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
       - name: Check class, queue, seek and preserved controls
-        run: node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+        run: node --test tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
       - name: Exercise ACTUAL release index without shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
+        run: node tests/native-clean-browser.cjs
+      - name: New installed natural junction, no shadow injection
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: factored-clean-release-player.json
         run: node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-native-clean-release-${{ runner.os }}
-          path: native-clean-release-player.json
+          path: |
+            native-clean-release-player.json
+            factored-clean-release-player.json
