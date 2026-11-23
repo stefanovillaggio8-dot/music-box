@@ -5811,7 +5811,8 @@ function beginNativeCleanTail(app,old,next,p){
  if(isIOS||active||mixing||document.hidden||typeof app.mixAdoptHandoff!=='function'||
     !prepared?.ready||prepared.failed||prepared.id!==next.id||prepared.fromId!==app.currentId()||
     prepared.naturalEntry!==0||old.paused||old.seeking)return false;
- const offset=window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration);
+ const sourceClock=()=>window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration);
+ const offset=sourceClock();
  if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
  const incoming=prepared.audio;
  const targetClock=()=>p.nativeCleanEvidence?.method==='original-native-near-silent-tail-v2'?
@@ -5838,7 +5839,7 @@ function beginNativeCleanTail(app,old,next,p){
    incoming.volume=clamp(Number(app.volume())||0,0,1);
    if(old.ended){handoff();return;}
   }else if(old.currentTime>=p.begin+offset){
-   if(old.currentTime>p.begin+offset+.08||targetClock()==null||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2){abort();return;}
+   if(old.currentTime>p.begin+offset+.08||sourceClock()!==offset||targetClock()==null||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2){abort();return;}
    incoming.volume=clamp(Number(app.volume())||0,0,1);incoming.playbackRate=1;
    act.playPending=true;act.playRequestedAt=performance.now();
    Promise.resolve(incoming.play()).then(()=>{if(active===act){act.playPending=false;act.started=true;act.at=performance.now()}}).catch(abort);

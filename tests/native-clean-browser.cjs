@@ -60,7 +60,7 @@ const server=http.createServer((req,res)=>{
     }});
     HTMLMediaElement.prototype.play=function(){
      if(new URL(this.src,location.href).pathname.endsWith(targetFile)){
-      window.__incomingNative=this;__nativeCleanTrace.push({event:'target-play',at:this.currentTime,volume:this.volume,rate:this.playbackRate,sourceAt:window.__outgoingNative?.currentTime});
+      window.__incomingNative=this;__nativeCleanTrace.push({event:'target-play',at:this.currentTime,volume:this.volume,rate:this.playbackRate,sourceAt:window.__outgoingNative?.currentTime,sourceDuration:window.__outgoingNative?.duration});
      }
      return play.apply(this,arguments);
     };
@@ -99,7 +99,9 @@ const server=http.createServer((req,res)=>{
     assert.ok(Math.abs(adopted.beforeAdoption.sourceAt-adopted.beforeAdoption.sourceDuration)<.002);
     assert.ok(adopted.targetTime>1&&adopted.targetTime<4);assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);
     const start=adopted.trace.find(t=>t.event==='target-play');assert.ok(start.at<=.02);assert.equal(start.volume,overlap.oldVolume);
-    const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,__beforeNativeAdoption.sourceDuration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha});
+    // Validate the actual launch clock at launch, not a later EOF duration
+    // estimate. EOF still independently requires ended=true and intact source.
+    const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,c.duration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha,duration:start.sourceDuration});
     assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,logs});

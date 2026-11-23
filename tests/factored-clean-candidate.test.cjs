@@ -51,7 +51,7 @@ test('native runtime recognizes declared raw metadata and cancels stale preparat
   function handoff(){throw Error('Unexpected early handoff')}
   eval(snippet);
   return {start:()=>beginNativeCleanTail(app,old,{id:2},cue),step:()=>{old.currentTime=cue.begin;timers.shift()?.()},
-   badMetadata:()=>incoming.duration=.002,changeQueue:()=>target=3,hide:()=>document.hidden=true,
+   badMetadata:()=>incoming.duration=.002,badSourceMetadata:()=>old.duration=.002,changeQueue:()=>target=3,hide:()=>document.hidden=true,
    seek:()=>handlers.get('seeking')?.(),pause:()=>{old.paused=true;handlers.get('pause')?.()},
    state:()=>({plays,seeks,aborted,incomingPaused:incoming.paused,sourcePaused:old.paused})};
  `);
@@ -59,7 +59,7 @@ test('native runtime recognizes declared raw metadata and cancels stale preparat
  const pending=create();pending.badMetadata();assert.equal(pending.start(),false);assert.equal(pending.state().plays,0);
  const success=create();assert.equal(success.start(),true);success.step();await Promise.resolve();
  assert.deepEqual(success.state(),{plays:1,seeks:0,aborted:0,incomingPaused:false,sourcePaused:false});success.seek();
- for(const action of ['badMetadata','changeQueue','hide','seek','pause']){
+ for(const action of ['badMetadata','badSourceMetadata','changeQueue','hide','seek','pause']){
   const f=create();assert.equal(f.start(),true);f[action]();f.step();await Promise.resolve();
   const state=f.state();assert.equal(state.plays,0,action);assert.equal(state.seeks,0);assert.equal(state.aborted,1);assert.equal(state.incomingPaused,true);
   assert.equal(state.sourcePaused,action==='pause');
