@@ -6,6 +6,8 @@ on:
       - 'tools/simulate-library-listening.cjs'
       - 'tests/ste-research-scope.test.cjs'
       - 'tests/ste-metrical-diagnosis.test.cjs'
+      - 'tests/context-bar-chains.test.cjs'
+      - 'tools/context-bar-chains.cjs'
       - 'tools/diagnose-ste-metrical-pulses.cjs'
       - 'tools/build-preserved-tail-plans.cjs'
       - 'tools/dj-edge-grids.py'
@@ -28,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/ste-research-scope.test.cjs tests/ste-metrical-diagnosis.test.cjs tests/published-personal-catalog.test.cjs
+      - run: node --test tests/ste-research-scope.test.cjs tests/ste-metrical-diagnosis.test.cjs tests/context-bar-chains.test.cjs tests/published-personal-catalog.test.cjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

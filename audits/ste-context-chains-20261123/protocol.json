@@ -1,0 +1,26 @@
+{
+  "checkpoint": "642c7535d6649f00662b404b7c8492da2d096fea",
+  "instructionComment": 7095624452,
+  "hypothesis": "Some coherent, originally observed bar chains are broken by keeping whole-file and edge-context detections in separate lists. A bounded DAG may assemble complementary original bars without inventing an event or lowering any existing gate.",
+  "scope": "Current personal Ste only; three ordered cases, two Kid Yugi outgoing recordings, one frozen negative control.",
+  "inputs": "Existing SHA-bound original whole and edge evidence only. No new decoding, models, percussive view, onset estimator or temporal interpolation.",
+  "successDefinedBeforeExperiment": [
+    "A new chain is not wholly present in either owning context.",
+    "Every constituent bar retains its original metrical evidence and actual model timestamps.",
+    "Every cross-context join has <=80ms boundary error, same meter, <=8% adjacent beat-period difference.",
+    "The resulting plan passes every unchanged compiler gate, including original PCM downbeats, complete vocal/lyric protection, harmony, pulse fit, incoming entry zero and outgoing EOF.",
+    "Only such a plan may advance to rendering at 44.1/48kHz; no certificate or public release from candidate data alone."
+  ],
+  "failure": "No novel complete gate-passing plan: reject this method on the bounded cases and do not run more audio or global searches. A recovered chain alone is not a musical improvement.",
+  "cacheOnlyFeasibilityObservation": {
+    "notCandidateOrCertificate": true,
+    "additionalStePair": "Amelie -> Eva",
+    "twoBarRate": 1.0395256916996045,
+    "twoBarBegin": 175.7483650190114,
+    "twoBarFade": 9.175634980988605,
+    "fourBarRate": 1.0456349206349194,
+    "fourBarBegin": 170.72960151802656,
+    "fourBarFade": 14.194398481973451,
+    "existingHarmonyResult": "both null; repairing onsets alone cannot authorize either projected window; no DSP executed"
+  }
+}

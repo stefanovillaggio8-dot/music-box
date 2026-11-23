@@ -14,8 +14,9 @@ const cadenceWindows=arg('metrical-cadence','false')==='true';
 const tailWindows=arg('rhythmic-tail','true')==='true';
 const allowHandoff=arg('vocal-handoff','true')==='true';
 const separateGrids=arg('separate-grid-hypotheses','true')==='true';
+const contextChains=arg('context-bar-chains','false')==='true';
 const initialBarLimit=Number(arg('initial-bar-limit','8'));
-const diagnose=arg('diagnostics','false')==='true',pulseRejections=[],octavePairs=new Map();
+const diagnose=arg('diagnostics','false')==='true',pulseRejections=[],octavePairs=new Map(),caseDiagnostics=[];
 const exactSilence=arg('exact-silence','')?JSON.parse(fs.readFileSync(arg('exact-silence',''))).entries:{};
 if(![4,8].includes(initialBarLimit))throw Error('Supported initial-bar candidate limits: 4 or 8 seconds');
 const root=path.resolve(__dirname,'..'),index=JSON.parse(fs.readFileSync(arg('index',path.join(root,'dj-deep-analysis.json'))));
@@ -28,6 +29,7 @@ if(casesFile){
  selectedCases=new Set(cases.map(c=>c.from+'|'+c.to));selectedKeys=new Set(cases.flatMap(c=>[c.from,c.to]));
  if(!arg('output','')||fs.existsSync(arg('output','')))throw Error('Bounded research requires a new explicit output path; existing evidence is preserved');
 }
+if(contextChains&&!selectedCases)throw Error('Original context chains require bounded current Ste --cases');
 const allFiles=(dir,re)=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?allFiles(path.join(dir,e.name),re):re.test(e.name)?[path.join(dir,e.name)]:[]);
 const whole=new Map(),pcm=new Map();
 const edges=new Map();
@@ -92,12 +94,20 @@ for(const [key,raw] of Object.entries(index.entries)){
  let e=whole.get(key),p=pcm.get(key);const edge=edges.get(key);
  if(edge){e={...e,beats:[...e.beats,...edge.intro.beats,...edge.outro.beats].sort((a,b)=>a-b)};p={intro:edge.intro.pcm,outro:edge.outro.pcm};}
  if(!e||!p)throw Error('Missing source evidence '+key);
- const source=[],target=[];
+ const source=[],target=[],contextChainCounts={};
  for(const role of ['intro','outro']){
- for(const variant of [{bars:e.reliableBars,...(separateGrids?{view:'whole-original',observed:observedGrid(p[role],whole.get(key))}:{})},...(edge?[{bars:edge[role].bars,...(separateGrids?{view:'edge-original',observed:observedGrid(edge[role].pcm,{beats:edge[role].beats})}:{})}]:[]),...(extraEdges.get(key)?.[role]?[{bars:extraEdges.get(key)[role].bars,view:'percussive',observed:observedGrid(extraEdges.get(key)[role].pcm,{beats:separateGrids?extraEdges.get(key)[role].beats:[...whole.get(key).beats,...extraEdges.get(key)[role].beats].sort((a,b)=>a-b)})}]:[])]){
+ const joined=contextChains&&edge?require('./context-bar-chains.cjs').contextBarChains([
+  {name:'whole-original',bars:e.reliableBars},{name:'edge-original',bars:edge[role].bars}],
+  {start:p[role].start,end:p[role].end,earliestStart:role==='outro'?Math.max(26,raw.duration-16):0,latestStart:role==='intro'?initialBarLimit:raw.duration}):[];
+ contextChainCounts[role]=joined.length;
+ // A joined chain must retain the entire original event population. Using
+ // only its selected bar beats could conceal unmatched attacks and inflate
+ // pulse agreement. The legacy observed-PCM refinement is unchanged.
+ for(const variant of [{bars:e.reliableBars,...(separateGrids?{view:'whole-original',observed:observedGrid(p[role],whole.get(key))}:{})},...(edge?[{bars:edge[role].bars,...(separateGrids?{view:'edge-original',observed:observedGrid(edge[role].pcm,{beats:edge[role].beats})}:{})}]:[]),...(extraEdges.get(key)?.[role]?[{bars:extraEdges.get(key)[role].bars,view:'percussive',observed:observedGrid(extraEdges.get(key)[role].pcm,{beats:separateGrids?extraEdges.get(key)[role].beats:[...whole.get(key).beats,...extraEdges.get(key)[role].beats].sort((a,b)=>a-b)})}]:[]),...(joined.length?[{bars:[],chains:joined.map(x=>x.bars),view:'original-context-chain',observed:observedGrid(p[role],e)}]:[])]){
  const bars=variant.bars;
- for(let stop=2;stop<=bars.length;stop++)for(const n of [2,4,8]){
-  const chain=bars.slice(stop-n,stop);if(stop<n||chain.length!==n||chain.some((r,i)=>i&&(Math.abs(chain[i-1].end-r.start)>.08||r.beatsPerBar!==chain[0].beatsPerBar)))continue;
+ const chains=variant.chains||Array.from({length:Math.max(0,bars.length-1)},(_,i)=>i+2).flatMap(stop=>[2,4,8].filter(n=>stop>=n).map(n=>bars.slice(stop-n,stop)));
+ for(const chain of chains){
+  const n=chain.length;if(chain.some((r,i)=>i&&(Math.abs(chain[i-1].end-r.start)>.08||r.beatsPerBar!==chain[0].beatsPerBar)))continue;
   const start=chain[0].start,end=chain.at(-1).end;
   const w={start,end,bars:n,meter:chain[0].beatsPerBar,phase:Math.min(...chain.map(x=>x.metricalPhaseConfidence)),downbeats:[...chain.map(x=>x.start),end],modelBeats:chain.flatMap(x=>x.modelBeats)};
   if(role==='outro'&&start>=26&&raw.duration-start<=16&&raw.duration-end>=-.001&&raw.duration-end<=8)source.push({...w,...(variant.observed?{observed:variant.observed,analysisView:variant.view}:{})});
@@ -105,22 +115,25 @@ for(const [key,raw] of Object.entries(index.entries)){
  }
  }
  }
- prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
+ prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,contextChainCounts,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
 }
-const report={version:1,caseRestricted:!!selectedCases,requestedCases:selectedCases?.size??null,membershipEvidence:currentSte?.membershipEvidence??null,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,unavailableMembers:scope.unavailable?.length||0,source:scope.source}:null};
+const report={version:1,caseRestricted:!!selectedCases,contextBarChains:contextChains,requestedCases:selectedCases?.size??null,membershipEvidence:currentSte?.membershipEvidence??null,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,unavailableMembers:scope.unavailable?.length||0,source:scope.source}:null};
 const count=(profiles,key)=>{for(const p of profiles){report.profileFunnel[p]??={};report.profileFunnel[p][key]=(report.profileFunnel[p][key]||0)+1;}};
 for(const a of prepared)for(const b of prepared){
  if(selectedCases&&!selectedCases.has(a.key+'|'+b.key))continue;
  if(a.key===b.key||a.raw.sha===b.raw.sha||a.key.replace('/bassi/','/')===b.key.replace('/bassi/','/'))continue;
  const profiles=[...a.owners].filter(x=>b.owners.has(x));if(!profiles.length)continue;count(profiles,'pairs');
- if(!a.source.length){count(profiles,'noCoherentEndingBars');continue;}
- if(!b.target.length){count(profiles,'noCoherentInitialBars');continue;}
+ const caseTrace=diagnose&&selectedCases?{from:a.key,to:b.key,windowExclusions:{}}:null;
+ if(caseTrace)caseDiagnostics.push(caseTrace);
+ if(!a.source.length){count(profiles,'noCoherentEndingBars');if(caseTrace)caseTrace.firstMissing='noCoherentEndingBars';continue;}
+ if(!b.target.length){count(profiles,'noCoherentInitialBars');if(caseTrace)caseTrace.firstMissing='noCoherentInitialBars';continue;}
  let tempo=false,voice=false,harmony=false;const choices=[],reached=new Set();
- const excluded=k=>{for(const p of profiles){report.windowExclusions[p]??={};report.windowExclusions[p][k]=(report.windowExclusions[p][k]||0)+1;}};
+ const excluded=k=>{if(caseTrace)caseTrace.windowExclusions[k]=(caseTrace.windowExclusions[k]||0)+1;for(const p of profiles){report.windowExclusions[p]??={};report.windowExclusions[p][k]=(report.windowExclusions[p][k]||0)+1;}};
  for(const x of a.source)for(const y of b.target){
   if(x.meter!==y.meter){excluded('meter');continue;}if(x.bars!==y.bars){excluded('barSpan');continue;}reached.add('meterAndSpan');
   const pairOut=x.observed||a.outro,pairIn=y.observed||b.intro;
-  if(partial&&a.raw.duration-x.end>.65&&!(cadenceWindows&&x.bars===4))continue;
+  if(partial&&a.raw.duration-x.end>.65&&!(cadenceWindows&&x.bars===4)){excluded('unsupportedMetricalTail');continue;}
+  reached.add('tailEligibility');
   const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05){
    if(diagnose){for(const factor of [.5,2])if(ratio*factor>=.95&&ratio*factor<=1.05){
     const key=a.key+'|'+b.key,previous=octavePairs.get(key),cost=Math.abs(Math.log(ratio*factor));
@@ -184,9 +197,10 @@ for(const a of prepared)for(const b of prepared){
     ...(zeroFit?{exactSilentSuffix:{...silence,beatVerificationSeconds:silentSeconds}}:{})});
   }
  }
- const firstMissing=['meterAndSpan','bpm','observedDownbeat','affineDownbeatFit','duration','voice','harmony'].find(k=>!reached.has(k))||(!choices.length?'independentBeatFit':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
+ const firstMissing=['meterAndSpan','tailEligibility','bpm','observedDownbeat','affineDownbeatFit','duration','voice','harmony'].find(k=>!reached.has(k))||(!choices.length?'independentBeatFit':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
+ if(caseTrace)Object.assign(caseTrace,{firstMissing,reached:[...reached],candidateWindows:choices.length});
  for(const p of profiles){report.pairConditions[p]??={};report.pairConditions[p][firstMissing]=(report.pairConditions[p][firstMissing]||0)+1;}
- count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
+ count(profiles,reached.has('meterAndSpan')&&!reached.has('tailEligibility')?'unsupportedMetricalTail':!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
  if(choices.length){
   const selected=shortlist(choices);
   for(const [number,c] of selected.entries()){
@@ -223,5 +237,7 @@ for(const a of prepared)for(const b of prepared){
  }
 }
 if(diagnose)report.diagnostics={notPlaybackCertificates:true,pulseRejections,
+ caseDiagnostics:selectedCases?caseDiagnostics:undefined,
+ contextChainCounts:contextChains?prepared.map(p=>({key:p.key,...p.contextChainCounts})):undefined,
  octaveTempoPairs:octavePairs.size,octaveSamples:[...octavePairs.values()].sort((a,b)=>a.cost-b.cost||a.from.localeCompare(b.from)||a.to.localeCompare(b.to)).slice(0,64)};
 const output=arg('output','preserved-tail-plans.json');fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,plans:report.plans.length,diagnostics:diagnose?{pulseWindows:pulseRejections.length,octaveTempoPairs:octavePairs.size}:undefined}));
