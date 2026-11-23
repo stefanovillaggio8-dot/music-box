@@ -1,0 +1,122 @@
+{
+  "physicalIPhone": false,
+  "notApplicationIntegration": true,
+  "notPlaybackCertified": true,
+  "platform": "darwin",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "variant": "audible",
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "adopted",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "prime-complete",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": false
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "audible",
+        "sourceClockOffset": 0,
+        "primingSourceContinued": true,
+        "primingIncomingSeconds": 0.032965,
+        "targetClockOffset": 0,
+        "incomingStart": 0,
+        "sourceAtStart": 158.766622,
+        "incomingPlayResolved": true,
+        "beforeAdoption": {
+          "sourceEnded": true,
+          "sourceAt": 161.088979,
+          "sourceDuration": 161.088979,
+          "incomingAt": 2.33571
+        },
+        "adoptedSameElement": true,
+        "sameIncomingElement": true,
+        "sourceTime": 161.088979,
+        "incomingTime": 2.350512,
+        "sourcePaused": true,
+        "incomingPaused": false
+      }
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "variant": "muted",
+      "result": {
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "phase": "adopted",
+        "events": [
+          {
+            "event": "prime-request",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "prime-complete",
+            "at": 0,
+            "paused": true,
+            "ended": false,
+            "muted": true
+          },
+          {
+            "event": "incoming-playing",
+            "at": 0,
+            "paused": false,
+            "ended": false,
+            "muted": false
+          }
+        ],
+        "bootstrap": "muted",
+        "sourceClockOffset": 0,
+        "primingSourceContinued": true,
+        "primingIncomingSeconds": 0.037925,
+        "targetClockOffset": 0,
+        "incomingStart": 0,
+        "sourceAtStart": 158.765711,
+        "incomingPlayResolved": true,
+        "beforeAdoption": {
+          "sourceEnded": true,
+          "sourceAt": 161.088979,
+          "sourceDuration": 161.088979,
+          "incomingAt": 2.346953
+        },
+        "adoptedSameElement": true,
+        "sameIncomingElement": true,
+        "sourceTime": 161.088979,
+        "incomingTime": 2.364946,
+        "sourcePaused": true,
+        "incomingPaused": false
+      }
+    }
+  ]
+}

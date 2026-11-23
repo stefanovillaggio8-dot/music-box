@@ -38,11 +38,15 @@ on:
         description: 'Frozen Ste recording-prefix and isolated iPhone-bootstrap study; never installs or publishes a plan'
         type: boolean
         default: false
+      factored_player:
+        description: 'New frozen Ste factored SHADOW only, actual app on two native platforms'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
   factored-native-study:
-    if: github.event_name == 'workflow_dispatch' && inputs.factored_native_study
+    if: github.event_name == 'workflow_dispatch' && (inputs.factored_native_study || inputs.factored_player)
     strategy:
       fail-fast: false
       matrix:
@@ -71,11 +75,26 @@ jobs:
           pactl set-default-sink ste_factored
       - run: node --test tests/factored-native-clean.test.cjs
       - name: Only selected Ste originals, hot rejected candidate excluded
+        if: inputs.factored_native_study
         run: node tools/fetch-ste-clean-recordings.cjs audits/ste-factored-clean-20261123/recordings.json
       - name: Independent new target prefix receipts
+        if: inputs.factored_native_study
         run: node tools/ste-clean-prefix-native.cjs audits/ste-factored-clean-20261123/recordings.json factored-prefix-native.json
       - name: Isolated native dual-deck bootstrap, not iPhone certification
+        if: inputs.factored_native_study
         run: node tests/ste-ios-native-prototype.cjs audits/ste-factored-clean-20261123/recordings.json ios-native-prototype.json
+      - name: Only the new Ste shadow pair, original Git identity checked
+        if: inputs.factored_player
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+      - name: New factored player on actual application, no index installation
+        if: inputs.factored_player
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: factored-new-pair-player.json
+        run: |
+          node --test tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+          node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -83,6 +102,7 @@ jobs:
           path: |
             factored-prefix-native.json
             ios-native-prototype.json
+            factored-new-pair-player.json
   native-clean-evaluation:
     if: github.event_name == 'workflow_dispatch' && (inputs.native_clean_evaluation || inputs.native_clean_player)
     strategy:

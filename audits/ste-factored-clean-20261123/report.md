@@ -82,3 +82,47 @@ Initial 11/11 targeted proposal/scope/existing-class regressions pass. Full
 suites and the two known historical missing-plan failures are not rerun for
 this tool-only checkpoint. Public counts stay 1 full, 1 partial, 1 clean
 desktop, 0 newly certified clean iPhone. Human listening: not performed.
+
+
+## Completed native-prefix and new-pair rendering checkpoint
+
+Run 45184707899 completed: both native-prefix jobs produced all eight new
+Grignani measurements, but the subsequent mobile-UA bootstrap experiment
+FAILED on WebKit on BOTH Linux and macOS. The first audible parallel primer
+paused the original element at time zero (priming-interrupted-source).
+Chromium completed the audible/muted trials. Failed snapshots were printed
+in CI logs, while the first runner incorrectly appended only successful
+trials to its JSON. This is a diagnostic collection defect, not permission
+to mark the WebKit job green or to enable iPhone playback. Existing receipts
+are preserved unchanged. No claim about physical iOS policy follows.
+
+New Grignani WebKit receipts preserve declared MP3 priming: media/decode
+clock offset 1105/48000 = 23.020833 ms, native duration 305.736 s;
+Chromium uses offset zero and gapless duration 305.690708 s. These are
+container-derived clocks, not offsets estimated by waveform fitting.
+
+The held-out Gilgamesh -> La mia storia tra le dita original render passes
+44.1/48 kHz: overlap peaks .600595/.608134, 4x peaks .646904/.644914,
+EOF RMS level change +.4465 dB, 2.25 meaningful intro seconds, no sustained
+multiband masking detected. Both originals unity gain; incoming starts at
+zero; source read through original EOF. Render is saved in new-pair-render.json.
+No human listening has occurred, and no beat/downbeat claim is made.
+
+Two specific false-negative mechanisms are corrected experimentally:
+- V1 requires zero target offsets; V2 recognizes ONLY container-declared
+  raw/gapless clocks, including all eight native receipts and both renders.
+  Incoming remains the same native element from position zero, never sought
+  forward by encoder priming. V1 and all iPhone refusals remain intact.
+- playbackTransition could replace an independently validated natural cue
+  with a subdued underlay because its begin was after lastAudible+.20.
+  Validated native clean cues now retain their intentional late placement.
+
+New shadow fixture passes Windows Chromium actual-app playback: incoming
+native play at zero and unity volume, source reaches original EOF, same
+incoming element adopted without seeking or changing rate. A runner-only
+assertion initially read the source duration AFTER adoption cleared its src;
+that assertion now uses the duration captured immediately before adoption.
+The actual playback assertions were already passing; this does not waive
+any audio threshold. Linux/macOS actual-app validation remains pending.
+Targeted proposal, candidate, planner, shuffle and preservation tests: 55/55.
+No new index entry or public release yet; available published counts unchanged.
