@@ -10,11 +10,11 @@ test("mismatched historical lyrics cannot override the actual thasup recording",
   {title:"dimmi che ce'",file:"songs/track-64.mp3"},
   {title:"Dimmi Che C''",file:"songs/track-74.mp3"}
  ];
- const norm=v=>String(v||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
+ const norm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
   .toLowerCase().replace(/[^a-z0-9]+/g,"");
  const belongs=new Function("BUILTIN","_idBranoStabile","titleCompatible",
   app.slice(start,stop)+"return _testoCoerenteConBrano;"
- )(builtin,b=>"b-"+b.file.split("/").pop().replace(/\\.mp3$/i,""),
+ )(builtin,b=>"b-"+b.file.split("/").pop().replace(/\.mp3$/i,""),
   (a,b)=>norm(a)===norm(b));
  const lyrics=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
  assert.equal(lyrics["b-track-64"]?.title,"Albachiara");
