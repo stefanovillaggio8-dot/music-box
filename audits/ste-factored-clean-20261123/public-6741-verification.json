@@ -1,0 +1,43 @@
+{
+  "release": "0b607622f0afc655681a4fdd17c222771a889c75",
+  "deploymentRun": 45192805112,
+  "checks": [
+    {
+      "file": "versione.json",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "c456ab261b5c0051951c447151ce432e062bf0a222dbdf2ffaf596bdf7b951a7"
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "f91253a3c071f60a0d4dcc193faf4b2c409ac2052e2f8a65033483133a9e5a1f"
+    },
+    {
+      "file": "mix-intelligente.js",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "c2bcece311d6754f72ee3bd5297a2d71323abc2de395a1f716fc541c3fed0987"
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "cf795b17709f68cc1c1bed8130c03a2c2e2ce376deb9f9e1f5674de438592833"
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "59dfc2d4ca6e05286161484a69a9bd7c8357f6f0653238e2a34adecd29aafd69"
+    },
+    {
+      "file": "dj-deep-analysis.json",
+      "status": 200,
+      "equalsGitRelease": true,
+      "sha256": "b3c7d0ecbbb9ddc09f53ed238cc60ba2b297a54a77ab4caefc8f990a29bd8a91"
+    }
+  ],
+  "publicVersion": "6.741"
+}

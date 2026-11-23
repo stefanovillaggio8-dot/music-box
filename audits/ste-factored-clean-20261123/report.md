@@ -200,3 +200,52 @@ master peak is not introduced by this quiet-tail overlap. The export is PCM
 reconstruction, not browser output capture, and has not been human-listened.
 See context-listening-sample.json. Do not use its normalized file as proof of
 unity-gain certification: use the archived original rendering/native receipts.
+
+
+## FINAL published checkpoint 6.741 (continuation of 7103512006)
+
+PR73 merged independently, release 0b607622f0afc655681a4fdd17c222771a889c75.
+Pages deployment 45192805112 succeeded. Six public assets, including the
+actual JS, worker and index, matched their Git release bytes. Public Ste:
+1 full / 1 partial / 2 clean DESKTOP / 0 new clean iPhone. One newly usable
+natural direction, Gilgamesh -> La mia storia tra le dita, not a new full
+beatmatch. Gilgamesh -> Sono Ok and the prior full/partial remain intact.
+
+Installed originals: 8/8 retained/new cases over Linux/macOS Chromium/WebKit,
+4/4 for the NEW pair. Linux successful job 45191714791 (official Playwright
+container pinned to verified image digest); macOS successful job 45191178406.
+Application and index bytes were checked identical across those revisions.
+The redundant macOS job still queued in the last run was cancelled, not
+reported passed. The aggregate proof preserves per-run provenance. Three
+host package-install timeouts and one PulseAudio user-home setup failure
+were infrastructure failures BEFORE audio testing; they were not converted
+to musical successes. System-mode PulseAudio uses an isolated CI socket,
+without modifying HOME or using any user device/storage.
+
+Full candidate suite on identical application: 776/778, known two historical
+missing-plan/dependent-selection failures. Main post-merge integrity,
+Chromium, Immersive and volume checks passed; full-suite/WebKit wrappers
+must not be called green merely because their live browser parts succeeded.
+Duplicate automatic checks after CI-only changes were cancelled and reused
+only with explicit identical-code proof, never presented as fresh passes.
+
+The actual release parent c1afab36 and merged commit have identical state,
+playlists, imports, phrase Karaoke assets and scanner state. Thus newer
+listening statistics were preserved; reverting ONLY the isolated release
+merge is the rollback route, never resetting main to an old data snapshot.
+Exact WebKit worker-upgrade proof retains saved/legacy audio, foreign cache,
+localStorage and IndexedDB. No user's physical iPhone data was examined.
+
+Research merge 25402c99 preserves all experiments and incorporates public
+6.741 without merging PR59 into main. A single HTML conflict was resolved by
+retaining RESEARCH stretch/composite revisions 6/18 and adopting the public
+6741 player URL; both research worker lists match those exact URLs. Production
+keeps its separately tested 5/14 revisions. Post-resolution targeted tests
+45/45 pass. No conflicts or modified tracked files remained at that commit.
+
+Next work: Ste-only, Kid Yugi first. Do not repeat the archived energy/HPSS
+peak-refinement, CQT/STFT, full/native phase splice, or failed fixed-100ms
+mobile bootstraps as new evidence. iPhone remains disabled for this class;
+new research needs independent native readiness/clock evidence and then
+physical Safari/PWA audibility, queue and background validation. Full-beat
+coverage remains 1; per-recording proposals are not automatic certification.
