@@ -1,0 +1,68 @@
+{
+  "codeCI": {
+    "commit": "372e5a4f156ef69b83ad757ebc5d6723e3e55be1",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45142495558",
+    "status": "success"
+  },
+  "researchCI": {
+    "commit": "e3b2746a5d0b36abfe00026ad512a5fa78401e4a",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45142000669",
+    "nodePassed": 15,
+    "pythonPassed": 14,
+    "status": "success"
+  },
+  "localTargetedNodePassed": 140,
+  "publicationCI": {
+    "commit": "a062ab47352c4430ee27d1d98d078b9d31072d5d",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45142586286",
+    "nodePassed": 6,
+    "status": "success"
+  },
+  "existingFailuresVerifiedUnchanged": [
+    {
+      "currentRun": 45142000656,
+      "baselineRun": 45129327070,
+      "sameFailures": 2
+    },
+    {
+      "currentRun": 45142000585,
+      "baselineRun": 45129326996,
+      "sameFailures": 2
+    }
+  ],
+  "commonPCMChromiumWebKit": {
+    "run": 45142000786,
+    "status": "success"
+  },
+  "phraseAndOfflineUpgrade": {
+    "run": 45142000763,
+    "status": "success"
+  },
+  "chromiumDesktop": {
+    "run": 45142000740,
+    "status": "success"
+  },
+  "immersiveChromiumWebKit": {
+    "run": 45142000796,
+    "status": "success"
+  },
+  "publicRuntimeAndDataUnchangedByPr70": true,
+  "pr59RuntimeAndDataUnchangedSince": "642c7535d6649f00662b404b7c8492da2d096fea",
+  "physicalIphoneTest": false,
+  "newMusicalListeningProof": false,
+  "runtimeAndDataSha256": {
+    "app.js": "4c71f698d0cf4fccf8c0d3aa4e3a0e7c39a89340e4ae32e298764957cc712d97",
+    "mix-intelligente.js": "b363e868506e2129e09754b1fd91d70dc7002ace8c5771300f702bc02ad5cbb9",
+    "audio-stretch.js": "db149a393ab29fa1d9344a0d22917ca5a001cab8be233cd5f85ddf7bd620a578",
+    "audio-stretch-core.mjs": "5c29f9c0e728e18e83a62491ff8c0f28ba7e41465af8f8f985534273514cbc86",
+    "sw.js": "e985e470cff5203fb93085722facca2845dac86da3fee2df55e33a5591038dc7",
+    "versione.json": "09936b74749c217f6dd7166c3235e1d1b398928acb71072f469a48dd033b42ac",
+    "dj-deep-analysis.json": "5c0362c3da9e84d99e10d008c3d71810f1f1ae14d7c10e799807de7831fc728c",
+    "stato.json": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f"
+  },
+  "freshMainTrackingRef": "explicit refs/heads/main:refs/remotes/origin/main; default clone refspec only tracks PR branch"
+}

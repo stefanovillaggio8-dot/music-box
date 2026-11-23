@@ -1,0 +1,62 @@
+[
+  {
+    "file": "baseline-full.json",
+    "sha256": "893fd880e6d1269d4be22aa326af8e70d2daa9cfea831a644b6ded3f894fb3a2"
+  },
+  {
+    "file": "cases.json",
+    "sha256": "ec0a573556c5bfa87931ae77a538b182fc168e7a2bbae4f28c7b59360edb1a90"
+  },
+  {
+    "file": "checkpoint-baseline-full.json",
+    "sha256": "dcf05f824b7c06632ada79510943018015019619972f88f8828a02c352889780"
+  },
+  {
+    "file": "context-full-final.json",
+    "sha256": "473a9cac0a8df194b86d356e85067f36c5d6059820919f33aa9c667325bb84f6"
+  },
+  {
+    "file": "context-full.json",
+    "sha256": "7b3e179a9b543a52f132dd1c8a54a07a6a405eee57239f87c91500e5fd8340b8"
+  },
+  {
+    "file": "context-metrical-classified.json",
+    "sha256": "2d415094fe6e0b7af5341ffc88b252e6c9c18200fc48c13e94eab3e3b1bdb39a"
+  },
+  {
+    "file": "context-metrical-final.json",
+    "sha256": "695bede99ad6a9d9ae6121a9a579c32ecae878dbb23d342d78772658798d35e1"
+  },
+  {
+    "file": "context-metrical.json",
+    "sha256": "10127f1939179c4719c847659c890b9e87448b3a90a6a5074090d49e3082061c"
+  },
+  {
+    "file": "preflight-case.json",
+    "sha256": "e9ee7a6ae9e9d7615302e9d6f741f56d361003109a575306acf85ed40afd9eec"
+  },
+  {
+    "file": "previous-case-classification.json",
+    "sha256": "c70c41f4703bd041dd03d0ab47d44b9e07b0c87cbdba855cadc2252f8f27aab0"
+  },
+  {
+    "file": "protocol.json",
+    "sha256": "2311a777196b416641adcb7b13dd504241597c3383deeb4a13eb8bbe345e7f67"
+  },
+  {
+    "file": "report.md",
+    "sha256": "c0669e64da352ba27cd474871aad452bd3b231e4a4714ff5f27c5f958504233a"
+  },
+  {
+    "file": "summary.json",
+    "sha256": "3d9275cb787e1b31fabcca2b4f2f0c046b74c29f0e9be49b51ed31c7d50005d0"
+  },
+  {
+    "file": "verification.json",
+    "sha256": "f9b82f83940570209c4c3614b56303dac8357c014f2b9cbb243285359e22149b"
+  },
+  {
+    "file": "verify-results.cjs",
+    "sha256": "2affa9dc10d3444fd5df649977656490066ab1f393994504cd4a8a6b192653e1"
+  }
+]
