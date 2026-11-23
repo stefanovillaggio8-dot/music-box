@@ -108,7 +108,14 @@ const server=http.createServer((req,res)=>{
     b.onclick=async event=>{
      try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,begin-7);window.__outgoingNative=MusicBoxBridge.audio();
       if(MusicBoxBridge.mixEnqueue([__nativePair.toId])!==1)throw Error('Actual manual queue rejected Ste target');window.__setupDone=true;
-      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{
+      window.__nativeCleanTimeline=[];
+      window.__captureNativeOverlap=()=>{
+       const incoming=window.__incomingNative;
+       if(!window.__observedNativeOverlap&&incoming&&!incoming.paused&&incoming.currentTime>.1&&!__outgoingNative.ended&&MusicBoxBridge.currentId()===__nativePair.fromId)
+        window.__observedNativeOverlap={id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:incoming.volume,sourceTime:__outgoingNative.currentTime,targetTime:incoming.currentTime,lyrics:document.getElementById('lyricsBody').textContent,diagnostics:MusicBoxMix.diagnostics()};
+      };
+      window.__nativeCleanSampling=setInterval(()=>{
+       __captureNativeOverlap();
        if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics());
        if(__nativeTranslationMode&&__nativeLyricSamples.length<110)__nativeLyricSamples.push({beforeAdoption:!window.__beforeNativeAdoption,
         readerOpen:!document.getElementById('lyricsPanel').hidden,id:MusicBoxBridge.currentId(),sourceAt:__outgoingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent});
@@ -138,8 +145,10 @@ const server=http.createServer((req,res)=>{
      await page.click('#btnLyrics');await page.click('#lyricsTraduci');
      for(let i=0;i<50&&!translationRequested;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationRequested,true);
     }
-    await page.waitForFunction(()=>window.__incomingNative&&!__incomingNative.paused&&__incomingNative.currentTime>.1,null,{timeout:20000});
-    const overlap=await page.evaluate(()=>({id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:__incomingNative.volume,sourceTime:__outgoingNative.currentTime,targetTime:__incomingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent,diagnostics:MusicBoxMix.diagnostics()}));
+    // Capture the actual overlap in the browser's media clock. A delayed CDP
+    // round-trip after EOF must not mislabel an already verified live overlap.
+    await page.waitForFunction(()=>window.__observedNativeOverlap,null,{timeout:20000});
+    const overlap=await page.evaluate(()=>__observedNativeOverlap);
     assert.equal(overlap.id,fromId);assert.equal(overlap.sourceEnded,false);assert.equal(overlap.newVolume,overlap.oldVolume);
     if(translationMode){assert.ok(overlap.lyrics.includes('Native outgoing phrase'));assert.ok(!overlap.lyrics.includes('Native incoming phrase'))}
     await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId,null,{timeout:10000});
