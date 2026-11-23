@@ -1,17 +1,8 @@
 name: Full transition PCM feature extraction
 on:
-  pull_request:
-    paths:
-      - 'tools/dj-transition-features.py'
-      - 'tools/test-dj-transition-features.py'
-      - 'tools/build-full-beat-plans.cjs'
-      - 'tools/retrack-dj-pcm.py'
-      - 'tools/audit-full-beat-audio.py'
-      - 'tools/test-dj-audio-render.py'
-      - 'tools/apply-full-beat-audio-proof.cjs'
-      - 'tools/dj-verify-stretch.cjs'
-      - 'mix-intelligente.js'
-      - '.github/workflows/dj-pcm-transition-features.yml'
+  # Full-catalog research is never an automatic PR regression. Current
+  # research is Ste-only and must use a validated personal snapshot and
+  # a bounded case list; do not dispatch the legacy global pipeline.
   workflow_dispatch:
 permissions:
   contents: read

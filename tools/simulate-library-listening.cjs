@@ -9,9 +9,13 @@ const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(p,'utf8');
 const index=JSON.parse(read(arg('index',path.join(root,'dj-deep-analysis.json'))));
 const source=read(arg('engine',path.join(root,'mix-intelligente.js'))),appSource=read(arg('app',path.join(root,'app.js')));
 const lyricBoundaries=JSON.parse(read(path.join(root,'dj-lyric-boundaries.json'))).entries;
-const state=JSON.parse(read(path.join(root,'stato.json'))),playlists=JSON.parse(read(path.join(root,'playlist.json')));
+const state=JSON.parse(read(arg('state',path.join(root,'stato.json')))),playlists=JSON.parse(read(arg('playlists',path.join(root,'playlist.json'))));
 const a=appSource.indexOf('const BUILTIN = ['),b=appSource.indexOf('];',a);
-const rawCatalog=vm.runInNewContext(appSource.slice(a,b+2)+';BUILTIN');
+const embeddedCatalog=vm.runInNewContext(appSource.slice(a,b+2)+';BUILTIN');
+const importsFile=arg('imports',path.join(root,'online-imports.json'));
+const importBytes=read(importsFile),publishedImports=JSON.parse(importBytes);
+const {publishedCatalog}=require(path.join(root,'tools/published-personal-catalog.cjs'));
+const rawCatalog=publishedCatalog(appSource,embeddedCatalog,publishedImports);
 const idStart=appSource.indexOf('function _idBranoStabile('),idEnd=appSource.indexOf('// Queste funzioni',idStart);
 const stableId=new Function('BUILTIN',appSource.slice(idStart,idEnd)+'return _idBranoStabile;')(rawCatalog);
 const catalog=rawCatalog.map(t=>({...t,id:stableId(t)}));
@@ -41,7 +45,8 @@ if(!source.includes('function playbackTransition(')){
 }
 const sampleRate=48000,isIOS=arg('platform','safari')==='safari';
 const commonScope={Map,Set,Number,Array,Uint8Array,Float32Array};commonScope.window=commonScope;vm.createContext(commonScope);
-vm.runInContext(read(path.join(root,'audio-composite-mix.js')),commonScope);
+const compositeSource=read(arg('composite',path.join(root,'audio-composite-mix.js')));
+vm.runInContext(compositeSource,commonScope);
 const microtask=fn=>{queueMicrotask(fn);return 0;};
 const program=`const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const enabled=true,style='auto',djLyricBoundaries=boundaries,cache=new Map(),deepIndex={analyzed:1176};
@@ -237,10 +242,12 @@ function inventory(profile,list,audit){
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
   runtimeEvidence:{engineSha256:crypto.createHash('sha256').update(source).digest('hex'),
    indexSha256:crypto.createHash('sha256').update(read(arg('index',path.join(root,'dj-deep-analysis.json')))).digest('hex'),
+   compositeSha256:crypto.createHash('sha256').update(compositeSource).digest('hex'),
    applicationSha256:crypto.createHash('sha256').update(appSource).digest('hex')},
   audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
   sessionHistoryAssumption:arg('continuous-shuffle','false')==='true'?'Continuous shuffle exhausts the personal library before starting a new cycle, without resetting every 40 changes. Initial device history is empty, not reconstructed.':'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',
-  sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
+  sourceSnapshot:'Unchanged BUILTIN + validated published online-imports + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
+  publishedImports:{sha256:crypto.createHash('sha256').update(importBytes).digest('hex'),manifestRows:publishedImports.length},
   auditExclusions:excludedPlaylists.map(p=>({profile:p.profile,playlist:p.name})),
   personalLibrariesOnly:arg('personal-only','false')==='true',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
@@ -256,7 +263,10 @@ function inventory(profile,list,audit){
    fs.writeFileSync(path.join(folder,profile+'.json'),JSON.stringify({name:profile,tracks,
     unavailable:library.filter(t=>!lookup(t)).map(t=>t.id),
     source:'Actual personal library snapshot; audit-only exclusions; no user data modified',
-    auditExclusions:report.auditExclusions.filter(p=>p.profile===profile),runtimeEvidence:report.runtimeEvidence},null,2)+'\n');
+    auditExclusions:report.auditExclusions.filter(p=>p.profile===profile),runtimeEvidence:report.runtimeEvidence,
+    membershipEvidence:{stateSha256:crypto.createHash('sha256').update(read(arg('state',path.join(root,'stato.json')))).digest('hex'),
+     playlistsSha256:crypto.createHash('sha256').update(read(arg('playlists',path.join(root,'playlist.json')))).digest('hex'),
+     importsSha256:report.publishedImports.sha256}},null,2)+'\n');
   }
   if(audit)report.inventories.push(inventory(profile,library,audit));
   if(arg('inventory-only','false')==='true')continue;

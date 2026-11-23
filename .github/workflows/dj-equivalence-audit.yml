@@ -1,16 +1,8 @@
 name: Music Box - exhaustive Mixa pair audit
 on:
-  push:
-    branches: ['audit/**', 'improve/**']
-    paths:
-      - 'tools/dj-equivalence-audit.cjs'
-      - '.github/workflows/dj-equivalence-audit.yml'
-  pull_request:
-    paths:
-      - 'tools/dj-equivalence-audit.cjs'
-      - 'mix-intelligente.js'
-      - 'dj-lyric-boundaries.json'
-      - '.github/workflows/dj-equivalence-audit.yml'
+  # Full-catalog research is never an automatic PR regression. Current
+  # research is Ste-only and must use a validated personal snapshot and
+  # a bounded case list; do not dispatch the legacy global pipeline.
   workflow_dispatch:
 permissions:
   contents: read
