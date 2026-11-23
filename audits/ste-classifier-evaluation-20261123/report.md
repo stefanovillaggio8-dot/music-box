@@ -136,3 +136,103 @@ Next mandatory checkpoint: actual-app native-element tests on Linux AND
 macOS Chromium/WebKit, via opt-in `native_clean_player`. Until those and
 isolated release checks pass, public Ste availability remains 1 full +
 1 partial, no newly certified/runtime-installed clean pair, no release.
+
+## Completed actual-player trial and isolated release candidate PR71
+
+The above checkpoint is now complete: run 45168978967 passes all four
+actual-app shadow trials (Chromium/WebKit, Linux/macOS). Release-index run
+45170406906 independently passes all four on the isolated main-based
+candidate WITHOUT shadow injection. Source EOF precedes adoption in every
+case; source volumes and target volumes are one; incoming starts at zero
+and the SAME element is retained. Zero incoming seek writes. Incoming
+position before adoption is 2.27..2.36 seconds; source launch 158.769..
+158.789 seconds with the declared container-clock mapping where applicable.
+This is a natural clean transition, never a full or partial beatmatch.
+
+The actual legacy mode snapshot is `frozen-legacy-mode-gates.json`: 38->4
+has `protectedEnding=true`, `confidentTail=true` and
+`incomingImmediateIntro=false`; both old clean proposers return null.
+Their proxy requirements exclude this entire-EOF/native-intro solution.
+The separate category fixes THIS demonstrated mode false negative. It
+does not establish that the full-beat agreement, +/-5% tempo or .70 key
+confidence criteria should be relaxed. 705->50 remains the positive full
+control. Current cached-feature harmonic proxies also pass its preserved
+entrance (confidence .705643); the stored published certificate .735269
+uses its own recorded analysis view. Raw-proxy rejection alone was not an
+actual failure of the full fallback chain.
+
+PR71 is isolated from main b0b4f34a and contains no broad PR59 merge. Public
+availability is STILL 1 full + 1 partial until a release is actually made.
+The isolated desktop candidate adds ONE clean 38->4 junction. iPhone does
+not select the category; its native-adoption restriction is unchanged.
+No 800-change daily-session simulation or global catalog sweep is claimed.
+The real shuffle selector's bounded regression places a verified clean
+cue in the postlude tier, not the full/partial tiers; manual queues remain
+unchanged. This is selection-policy proof, not a new acoustic certificate
+for synthetic test tracks.
+
+Review found another fail-safe requirement: a prepared native target with
+readyState=4 can still expose provisional .002-second metadata. The new
+route now waits for its SHA-bound target duration within 2ms before arming.
+Fault injection demonstrates no intro play/outgoing pause on provisional
+metadata and reuse after genuine metadata arrives. This does not claim
+to resolve the older unrelated Linux full-mix smoke failure.
+
+Final PR59 full suite after these changes: 786/788, with the SAME two
+historical fixture failures, not suppressed. Isolated release full suite:
+767/769 before the final metadata guard; 47/47 relevant final class/queue/
+structure regressions after that guard. Windows actual release playback
+also passes with the guard. No physical iPhone measurement or human
+musical listening has been made.
+
+The first isolated release run exposed an absent `sw-6739.js` TEST fixture,
+not loss of downloads. An exact copy of the published worker enabled the
+real WebKit 6.739->6.740 upgrade test: saved-profile sentinels, legacy
+audio, foreign cache, localStorage and IndexedDB survive; new player opens
+offline; DJ index revalidates. Production cache deletion/migration logic,
+Karaoke phrase assets, personal data and original recordings are unchanged.
+The candidate remains in PR71 draft while release checks are incomplete.
+
+## Additional frozen uncertain-harmony rendering
+
+The predeclared LONG 50->705 window (begin 297.769333, 7.921667s, entry
+zero, rate .9836066, original EOF retained) was rendered offline for the
+FIRST time in this protocol, despite its uncertain-key veto. No window
+search or retries; original Ste membership/SHA validated before decoding.
+`render-uncertain-evaluation.py` reproduces it in a NEW output directory.
+`uncertain-long-render.json` contains actual measurements, not a plan.
+
+Rendered sample peak .985760, 4x oversampled .989337, overlap .96. Shared
+headroom .781405 (about -2.14 dB), pitch preservation/timing checks pass
+the renderer's own processor test. Its -10ms self-comparison lag is NOT
+a pairwise musical beat-alignment measurement. Exposure screen accepts
+with 1.5 seconds total intermittently masked / longest .5 seconds of five
+meaningful seconds. Passing that screen does not prove musical quality.
+Harmony, independent pulse/bars and native rendering remain unverified;
+NO new full/partial certification or runtime installation is granted.
+Low key confidence is still uncertainty, not demonstrated dissonance.
+
+Across the FOUR selected pairs, one full positive stays valid, one rejected
+pair gains the independently tested clean alternative in the isolated
+candidate, one remains tonally uncertain (its SHORT alternative fails
+energy/level guards), and one fixed native alternative is too short.
+Zero pairs are proven intrinsically unmixable in EVERY possible window.
+The long negative 38->4 control and the short 50->705 window remain rejected.
+These counts must not be extrapolated into rejection totals for 222 songs.
+
+## Resource policy correction
+
+Found a fifth legacy workflow, dj-audio-spotcheck.yml, still launching a
+130k-pair selection and sampled raw decoding on every push. Requested
+cancellation of active out-of-scope runs and superseded PR71 runs. It is
+now manual in the working branches and proposed separately as PR72, with
+the fifth workflow covered by the no-automatic-global-research contract.
+Essential player regressions and fixed Ste native regression remain.
+This infrastructure correction is not an increase in musical coverage.
+
+Next exact resume point: finish PR71 release validation (including the
+duration guard), resolve/explicitly account for the pre-existing failing
+release contracts without restoring retired unsafe pairs, and only then
+publish a verified isolated change. Musical research remains limited to
+the frozen Ste cases; 50->705 still needs an independent harmonic/native
+certificate, not another repetition of failed global estimators.

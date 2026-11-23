@@ -1,0 +1,50 @@
+{
+  "evaluationOnly": true,
+  "metadataOnly": true,
+  "rows": [
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "baselineKind": "beat",
+      "baselineFull": true,
+      "sourceProtectedEnding": false,
+      "sourceConfidentTail": true,
+      "incomingImmediateIntro": true,
+      "legacyPostlude": false,
+      "legacySilentBridge": false
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "baselineKind": null,
+      "baselineFull": false,
+      "sourceProtectedEnding": true,
+      "sourceConfidentTail": true,
+      "incomingImmediateIntro": false,
+      "legacyPostlude": false,
+      "legacySilentBridge": false
+    },
+    {
+      "from": "audio/songs/track-50.mp3",
+      "to": "audio/songs/track-705.mp3",
+      "baselineKind": null,
+      "baselineFull": false,
+      "sourceProtectedEnding": false,
+      "sourceConfidentTail": false,
+      "incomingImmediateIntro": true,
+      "legacyPostlude": false,
+      "legacySilentBridge": false
+    },
+    {
+      "from": "audio/songs/track-210.mp3",
+      "to": "audio/songs/track-38.mp3",
+      "baselineKind": null,
+      "baselineFull": false,
+      "sourceProtectedEnding": false,
+      "sourceConfidentTail": false,
+      "incomingImmediateIntro": false,
+      "legacyPostlude": false,
+      "legacySilentBridge": false
+    }
+  ]
+}

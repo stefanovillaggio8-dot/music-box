@@ -18,7 +18,7 @@ function build(folder,proofs,output){
  const level=JSON.parse(fs.readFileSync(path.join(folder,'preview-measurements.json'))).results.find(r=>r.label==='clean-38-4'&&r.sampleRate===48000);
  const cue={kind:'postlude',nativeCleanTail:true,measuredFullBeat:false,metricalRhythmic:false,structuralBeat:false,
   preserveTail:true,nativeTailFullBeat:true,silenceTrim:false,gain:1,
-  sourceSha:c.sourceSha,targetSha:c.targetSha,begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:1,
+  sourceSha:c.sourceSha,targetSha:c.targetSha,begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:1,targetDuration:index.entries[c.to].duration,
   nativeCleanEvidence:{method:'original-native-near-silent-tail-v1',sourceSha:c.sourceSha,targetSha:c.targetSha,begin:c.begin,end:c.end,
    noDecoderSplice:true,sourceUnityThroughEOF:true,incomingUnityFromZero:true,notHumanListening:true,
    sourceClock:c.nativeClocks.source,nativeMeasurements,eofLevelChangeDb:level?.eofRmsChangeDb,

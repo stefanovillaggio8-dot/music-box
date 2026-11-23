@@ -51,10 +51,10 @@
             "peak": 0.9447730183601379,
             "overlapPeak": 0.37293386459350586,
             "sourceTailPeak": 0.0001379056047881022,
-            "sourceTailRmsMax": 0.0000363050937184139,
+            "sourceTailRmsMax": 3.63050937184139e-05,
             "targetNativeOverlapPeak": 0.37295302748680115,
             "correlation": 0.9999999989343493,
-            "relativeRms": 0.00004691117192878074,
+            "relativeRms": 4.691117192878074e-05,
             "sourceDecodedOffset": 0,
             "sourceMediaOffset": 0,
             "targetDecodedOffset": 0,
@@ -72,10 +72,10 @@
             "peak": 0.962621808052063,
             "overlapPeak": 0.3761146068572998,
             "sourceTailPeak": 0.0001376281288685277,
-            "sourceTailRmsMax": 0.0000363607435796943,
+            "sourceTailRmsMax": 3.63607435796943e-05,
             "targetNativeOverlapPeak": 0.3761063814163208,
             "correlation": 0.9999999991321327,
-            "relativeRms": 0.00004216767063326892,
+            "relativeRms": 4.216767063326892e-05,
             "sourceDecodedOffset": 0,
             "sourceMediaOffset": 0,
             "targetDecodedOffset": 0,
@@ -93,7 +93,7 @@
             "peak": 0.9475656747817993,
             "overlapPeak": 0.3665296137332916,
             "sourceTailPeak": 0.00013112313172314316,
-            "sourceTailRmsMax": 0.000036976242839279894,
+            "sourceTailRmsMax": 3.6976242839279894e-05,
             "targetNativeOverlapPeak": 0.372955322265625,
             "correlation": 0.9993899941713976,
             "relativeRms": 0.034929182036446633,
@@ -114,7 +114,7 @@
             "peak": 0.962621808052063,
             "overlapPeak": 0.3761146068572998,
             "sourceTailPeak": 0.000152587890625,
-            "sourceTailRmsMax": 0.000037174546168768564,
+            "sourceTailRmsMax": 3.7174546168768564e-05,
             "targetNativeOverlapPeak": 0.3699779510498047,
             "correlation": 0.9992775728770469,
             "relativeRms": 0.0380105925066459,
@@ -135,10 +135,10 @@
             "peak": 0.9447730183601379,
             "overlapPeak": 0.37293386459350586,
             "sourceTailPeak": 0.0001379056047881022,
-            "sourceTailRmsMax": 0.00003630509369464485,
+            "sourceTailRmsMax": 3.630509369464485e-05,
             "targetNativeOverlapPeak": 0.37295302748680115,
             "correlation": 0.9999999989343904,
-            "relativeRms": 0.000046910130658405424,
+            "relativeRms": 4.6910130658405424e-05,
             "sourceDecodedOffset": 0,
             "sourceMediaOffset": 0,
             "targetDecodedOffset": 0,
@@ -156,10 +156,10 @@
             "peak": 0.962621808052063,
             "overlapPeak": 0.3761146068572998,
             "sourceTailPeak": 0.0001376281288685277,
-            "sourceTailRmsMax": 0.0000363607435796943,
+            "sourceTailRmsMax": 3.63607435796943e-05,
             "targetNativeOverlapPeak": 0.3761063516139984,
             "correlation": 0.9999999991321697,
-            "relativeRms": 0.00004216681092711117,
+            "relativeRms": 4.216681092711117e-05,
             "sourceDecodedOffset": 0,
             "sourceMediaOffset": 0,
             "targetDecodedOffset": 0,
@@ -177,7 +177,7 @@
             "peak": 0.9447871446609497,
             "overlapPeak": 0.3729551136493683,
             "sourceTailPeak": 0.00012865362805314362,
-            "sourceTailRmsMax": 0.0000367526913962822,
+            "sourceTailRmsMax": 3.67526913962822e-05,
             "targetNativeOverlapPeak": 0.372955322265625,
             "correlation": 0.031624049846962266,
             "relativeRms": 1.3936410838544535,
@@ -198,7 +198,7 @@
             "peak": 0.962621808052063,
             "overlapPeak": 0.3761146068572998,
             "sourceTailPeak": 0.0001220703125,
-            "sourceTailRmsMax": 0.00003704383357638615,
+            "sourceTailRmsMax": 3.704383357638615e-05,
             "targetNativeOverlapPeak": 0.372214138507843,
             "correlation": 0.031624732894999265,
             "relativeRms": 1.3936374725392018,
@@ -253,30 +253,30 @@
             {
               "at": 0,
               "originalAt": 0,
-              "originalRms": 0.000019612390677669226,
-              "outgoingRms": 0.00001528363460092379,
-              "incomingRms": 0.00001670647196794331,
+              "originalRms": 1.9612390677669226e-05,
+              "outgoingRms": 1.528363460092379e-05,
+              "incomingRms": 1.670647196794331e-05,
               "relativeDb": 0.7731620047707193,
               "attenuationDb": -1.3929157891154214,
               "bands": [
                 {
                   "lowHz": 40,
                   "highHz": 250,
-                  "originalRms": 0.0000018878753960726361,
+                  "originalRms": 1.8878753960726361e-06,
                   "meaningful": false,
                   "relativeDb": -2.3294838085845497
                 },
                 {
                   "lowHz": 250,
                   "highHz": 2500,
-                  "originalRms": 0.0000049587482826866744,
+                  "originalRms": 4.9587482826866744e-06,
                   "meaningful": false,
                   "relativeDb": -6.662233316697827
                 },
                 {
                   "lowHz": 2500,
                   "highHz": 12000,
-                  "originalRms": 0.00000960089847257622,
+                  "originalRms": 9.60089847257622e-06,
                   "meaningful": false,
                   "relativeDb": -0.23175681282662663
                 }
@@ -286,30 +286,30 @@
             {
               "at": 0.25,
               "originalAt": 0.25,
-              "originalRms": 0.000056777480243719224,
-              "outgoingRms": 0.000019007668732606403,
-              "incomingRms": 0.000048364903467796,
+              "originalRms": 5.6777480243719224e-05,
+              "outgoingRms": 1.9007668732606403e-05,
+              "incomingRms": 4.8364903467796e-05,
               "relativeDb": 8.112029417052941,
               "attenuationDb": -1.3929157909832315,
               "bands": [
                 {
                   "lowHz": 40,
                   "highHz": 250,
-                  "originalRms": 0.000006236788867370139,
+                  "originalRms": 6.236788867370139e-06,
                   "meaningful": false,
                   "relativeDb": 5.81753404075816
                 },
                 {
                   "lowHz": 250,
                   "highHz": 2500,
-                  "originalRms": 0.000048048716754542665,
+                  "originalRms": 4.8048716754542665e-05,
                   "meaningful": false,
                   "relativeDb": 11.040910398330972
                 },
                 {
                   "lowHz": 2500,
                   "highHz": 12000,
-                  "originalRms": 0.000012920146196230101,
+                  "originalRms": 1.2920146196230101e-05,
                   "meaningful": false,
                   "relativeDb": 0.5559794186572977
                 }
@@ -320,7 +320,7 @@
               "at": 0.5,
               "originalAt": 0.5,
               "originalRms": 0.0006863551238730384,
-              "outgoingRms": 0.000015342085658458855,
+              "outgoingRms": 1.5342085658458855e-05,
               "incomingRms": 0.0005846596071933173,
               "relativeDb": 31.620373745360318,
               "attenuationDb": -1.3929157946536355,
@@ -328,7 +328,7 @@
                 {
                   "lowHz": 40,
                   "highHz": 250,
-                  "originalRms": 0.00005529829318837412,
+                  "originalRms": 5.529829318837412e-05,
                   "meaningful": false,
                   "relativeDb": 26.586044071383764
                 },
@@ -353,7 +353,7 @@
               "at": 0.75,
               "originalAt": 0.75,
               "originalRms": 0.0035200002602740164,
-              "outgoingRms": 0.00002111659653791961,
+              "outgoingRms": 2.111659653791961e-05,
               "incomingRms": 0.002998450654573739,
               "relativeDb": 43.04545967720063,
               "attenuationDb": -1.3929157906231395,
@@ -386,7 +386,7 @@
               "at": 1,
               "originalAt": 1,
               "originalRms": 0.008519709794584765,
-              "outgoingRms": 0.000015383126680739058,
+              "outgoingRms": 1.5383126680739058e-05,
               "incomingRms": 0.007257365770116048,
               "relativeDb": 53.474687910329365,
               "attenuationDb": -1.3929157942404307,
@@ -551,7 +551,8 @@
           "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
           "targetSha": "004e594c10688869197f21e31e748c1dd82901b4"
         }
-      }
+      },
+      "targetDuration": 126.877
     },
     "cues": [
       {
@@ -596,10 +597,10 @@
               "peak": 0.9447730183601379,
               "overlapPeak": 0.37293386459350586,
               "sourceTailPeak": 0.0001379056047881022,
-              "sourceTailRmsMax": 0.0000363050937184139,
+              "sourceTailRmsMax": 3.63050937184139e-05,
               "targetNativeOverlapPeak": 0.37295302748680115,
               "correlation": 0.9999999989343493,
-              "relativeRms": 0.00004691117192878074,
+              "relativeRms": 4.691117192878074e-05,
               "sourceDecodedOffset": 0,
               "sourceMediaOffset": 0,
               "targetDecodedOffset": 0,
@@ -617,10 +618,10 @@
               "peak": 0.962621808052063,
               "overlapPeak": 0.3761146068572998,
               "sourceTailPeak": 0.0001376281288685277,
-              "sourceTailRmsMax": 0.0000363607435796943,
+              "sourceTailRmsMax": 3.63607435796943e-05,
               "targetNativeOverlapPeak": 0.3761063814163208,
               "correlation": 0.9999999991321327,
-              "relativeRms": 0.00004216767063326892,
+              "relativeRms": 4.216767063326892e-05,
               "sourceDecodedOffset": 0,
               "sourceMediaOffset": 0,
               "targetDecodedOffset": 0,
@@ -638,7 +639,7 @@
               "peak": 0.9475656747817993,
               "overlapPeak": 0.3665296137332916,
               "sourceTailPeak": 0.00013112313172314316,
-              "sourceTailRmsMax": 0.000036976242839279894,
+              "sourceTailRmsMax": 3.6976242839279894e-05,
               "targetNativeOverlapPeak": 0.372955322265625,
               "correlation": 0.9993899941713976,
               "relativeRms": 0.034929182036446633,
@@ -659,7 +660,7 @@
               "peak": 0.962621808052063,
               "overlapPeak": 0.3761146068572998,
               "sourceTailPeak": 0.000152587890625,
-              "sourceTailRmsMax": 0.000037174546168768564,
+              "sourceTailRmsMax": 3.7174546168768564e-05,
               "targetNativeOverlapPeak": 0.3699779510498047,
               "correlation": 0.9992775728770469,
               "relativeRms": 0.0380105925066459,
@@ -680,10 +681,10 @@
               "peak": 0.9447730183601379,
               "overlapPeak": 0.37293386459350586,
               "sourceTailPeak": 0.0001379056047881022,
-              "sourceTailRmsMax": 0.00003630509369464485,
+              "sourceTailRmsMax": 3.630509369464485e-05,
               "targetNativeOverlapPeak": 0.37295302748680115,
               "correlation": 0.9999999989343904,
-              "relativeRms": 0.000046910130658405424,
+              "relativeRms": 4.6910130658405424e-05,
               "sourceDecodedOffset": 0,
               "sourceMediaOffset": 0,
               "targetDecodedOffset": 0,
@@ -701,10 +702,10 @@
               "peak": 0.962621808052063,
               "overlapPeak": 0.3761146068572998,
               "sourceTailPeak": 0.0001376281288685277,
-              "sourceTailRmsMax": 0.0000363607435796943,
+              "sourceTailRmsMax": 3.63607435796943e-05,
               "targetNativeOverlapPeak": 0.3761063516139984,
               "correlation": 0.9999999991321697,
-              "relativeRms": 0.00004216681092711117,
+              "relativeRms": 4.216681092711117e-05,
               "sourceDecodedOffset": 0,
               "sourceMediaOffset": 0,
               "targetDecodedOffset": 0,
@@ -722,7 +723,7 @@
               "peak": 0.9447871446609497,
               "overlapPeak": 0.3729551136493683,
               "sourceTailPeak": 0.00012865362805314362,
-              "sourceTailRmsMax": 0.0000367526913962822,
+              "sourceTailRmsMax": 3.67526913962822e-05,
               "targetNativeOverlapPeak": 0.372955322265625,
               "correlation": 0.031624049846962266,
               "relativeRms": 1.3936410838544535,
@@ -743,7 +744,7 @@
               "peak": 0.962621808052063,
               "overlapPeak": 0.3761146068572998,
               "sourceTailPeak": 0.0001220703125,
-              "sourceTailRmsMax": 0.00003704383357638615,
+              "sourceTailRmsMax": 3.704383357638615e-05,
               "targetNativeOverlapPeak": 0.372214138507843,
               "correlation": 0.031624732894999265,
               "relativeRms": 1.3936374725392018,
@@ -798,30 +799,30 @@
               {
                 "at": 0,
                 "originalAt": 0,
-                "originalRms": 0.000019612390677669226,
-                "outgoingRms": 0.00001528363460092379,
-                "incomingRms": 0.00001670647196794331,
+                "originalRms": 1.9612390677669226e-05,
+                "outgoingRms": 1.528363460092379e-05,
+                "incomingRms": 1.670647196794331e-05,
                 "relativeDb": 0.7731620047707193,
                 "attenuationDb": -1.3929157891154214,
                 "bands": [
                   {
                     "lowHz": 40,
                     "highHz": 250,
-                    "originalRms": 0.0000018878753960726361,
+                    "originalRms": 1.8878753960726361e-06,
                     "meaningful": false,
                     "relativeDb": -2.3294838085845497
                   },
                   {
                     "lowHz": 250,
                     "highHz": 2500,
-                    "originalRms": 0.0000049587482826866744,
+                    "originalRms": 4.9587482826866744e-06,
                     "meaningful": false,
                     "relativeDb": -6.662233316697827
                   },
                   {
                     "lowHz": 2500,
                     "highHz": 12000,
-                    "originalRms": 0.00000960089847257622,
+                    "originalRms": 9.60089847257622e-06,
                     "meaningful": false,
                     "relativeDb": -0.23175681282662663
                   }
@@ -831,30 +832,30 @@
               {
                 "at": 0.25,
                 "originalAt": 0.25,
-                "originalRms": 0.000056777480243719224,
-                "outgoingRms": 0.000019007668732606403,
-                "incomingRms": 0.000048364903467796,
+                "originalRms": 5.6777480243719224e-05,
+                "outgoingRms": 1.9007668732606403e-05,
+                "incomingRms": 4.8364903467796e-05,
                 "relativeDb": 8.112029417052941,
                 "attenuationDb": -1.3929157909832315,
                 "bands": [
                   {
                     "lowHz": 40,
                     "highHz": 250,
-                    "originalRms": 0.000006236788867370139,
+                    "originalRms": 6.236788867370139e-06,
                     "meaningful": false,
                     "relativeDb": 5.81753404075816
                   },
                   {
                     "lowHz": 250,
                     "highHz": 2500,
-                    "originalRms": 0.000048048716754542665,
+                    "originalRms": 4.8048716754542665e-05,
                     "meaningful": false,
                     "relativeDb": 11.040910398330972
                   },
                   {
                     "lowHz": 2500,
                     "highHz": 12000,
-                    "originalRms": 0.000012920146196230101,
+                    "originalRms": 1.2920146196230101e-05,
                     "meaningful": false,
                     "relativeDb": 0.5559794186572977
                   }
@@ -865,7 +866,7 @@
                 "at": 0.5,
                 "originalAt": 0.5,
                 "originalRms": 0.0006863551238730384,
-                "outgoingRms": 0.000015342085658458855,
+                "outgoingRms": 1.5342085658458855e-05,
                 "incomingRms": 0.0005846596071933173,
                 "relativeDb": 31.620373745360318,
                 "attenuationDb": -1.3929157946536355,
@@ -873,7 +874,7 @@
                   {
                     "lowHz": 40,
                     "highHz": 250,
-                    "originalRms": 0.00005529829318837412,
+                    "originalRms": 5.529829318837412e-05,
                     "meaningful": false,
                     "relativeDb": 26.586044071383764
                   },
@@ -898,7 +899,7 @@
                 "at": 0.75,
                 "originalAt": 0.75,
                 "originalRms": 0.0035200002602740164,
-                "outgoingRms": 0.00002111659653791961,
+                "outgoingRms": 2.111659653791961e-05,
                 "incomingRms": 0.002998450654573739,
                 "relativeDb": 43.04545967720063,
                 "attenuationDb": -1.3929157906231395,
@@ -931,7 +932,7 @@
                 "at": 1,
                 "originalAt": 1,
                 "originalRms": 0.008519709794584765,
-                "outgoingRms": 0.000015383126680739058,
+                "outgoingRms": 1.5383126680739058e-05,
                 "incomingRms": 0.007257365770116048,
                 "relativeDb": 53.474687910329365,
                 "attenuationDb": -1.3929157942404307,
@@ -1096,7 +1097,8 @@
             "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
             "targetSha": "004e594c10688869197f21e31e748c1dd82901b4"
           }
-        }
+        },
+        "targetDuration": 126.877
       }
     ]
   }

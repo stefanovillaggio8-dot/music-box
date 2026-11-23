@@ -3069,6 +3069,7 @@ function validateNativeCleanTailCue(record,p,a,b,dur){
     p.nativeCleanTail!==true||p.kind!=='postlude'||p.measuredFullBeat!==false||p.metricalRhythmic!==false||p.structuralBeat!==false||
     p.composite!=null||p.entry!==0||p.tempo!==1||p.gain!==1||p.preserveTail!==true||p.nativeTailFullBeat!==true||p.silenceTrim!==false||
     ![p.begin,p.end,p.fade].every(Number.isFinite)||p.begin<26||p.fade<.5||p.fade>3||
+    !Number.isFinite(p.targetDuration)||Math.abs(p.targetDuration-b.duration)>.001||
     Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     e?.method!=='original-native-near-silent-tail-v1'||e.sourceSha!==a.sha||e.targetSha!==b.sha||
     e.noDecoderSplice!==true||e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
@@ -5805,7 +5806,8 @@ function beginNativeCleanTail(app,old,next,p){
  const offset=window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration);
  if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
  const incoming=prepared.audio;
- if(!incoming.paused||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2)return false;
+ if(!incoming.paused||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2||
+    !Number.isFinite(incoming.duration)||Math.abs(incoming.duration-p.targetDuration)>.002)return false;
  const act={original:old,upcoming:incoming,track:next,fromId:app.currentId(),entry:0,
   nativeTailFullBeat:true,nativeCleanTail:true,kind:'postlude',fade:p.fade,handingOff:false,timer:null};
  active=act;mixing=true;prepared=null;
