@@ -4,6 +4,7 @@
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
 let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
 let lastLyricsSignature="",lyricRows=[],lyricTimed=false,lastLyricScrollAt=0;
+let lyricPointer=null,suppressLyricTapUntil=0;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
  const value=t?.cover;
@@ -48,6 +49,7 @@ function fillCurrent(){
  lastLyrics=null;
  lastLine=-1;
  lastLyricsSignature="";lyricRows=[];lyricTimed=false;lastLyricScrollAt=0;
+ lyricPointer=null;suppressLyricTapUntil=0;
  $("imKaraoke").textContent="";
  $("imKaraoke").classList.remove("has-lines");
  renderLyrics(true);
@@ -90,11 +92,20 @@ function renderLyrics(force){
     plainRows.map(text=>({text}))).slice(0,500);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
    const fragment=document.createDocumentFragment();
-   for(const data of lyricRows){
-    const row=document.createElement("p");
+   for(let i=0;i<lyricRows.length;i++){
+    const data=lyricRows[i],row=document.createElement("p");
     row.className="im-line";
     data._elements=[]; // Display full phrases, never estimated word progress.
     row.textContent=data.text;
+    // Only timed cues can seek; never guess locations from plain lyrics.
+    if(lyricTimed&&Number.isFinite(data.t)&&data.t>=0){
+     row.classList.add("im-seekable");
+     row.dataset.seekIndex=String(i);
+     row.tabIndex=0;
+     row.setAttribute("role","button");
+     row.setAttribute("aria-label","Vai a "+fmt(data.t)+": "+data.text);
+     row.title="Vai a "+fmt(data.t);
+    }
     fragment.appendChild(row);
    }
    karaoke.replaceChildren(fragment);
@@ -270,6 +281,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
+ lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
  if(lyricAnimation)cancelAnimationFrame(lyricAnimation);
  lyricAnimation=0;
@@ -287,6 +299,27 @@ function toggleFocus(){
  button.innerHTML=enabled?'Mostra copertina <span aria-hidden="true">⤡</span>':
   'Focus testo <span aria-hidden="true">⤢</span>';
  lastLine=-1;renderLyrics(false);
+}
+function seekToPhrase(target){
+ if(!opened||!lyricTimed)return;
+ const karaoke=$("imKaraoke"),line=target?.closest?.(".im-line[data-seek-index]");
+ if(!line||line.parentElement!==karaoke)return;
+ const index=Number(line.dataset.seekIndex),id=api()?.currentId?.();
+ if(!Number.isSafeInteger(index)||index<0||index>=lyricRows.length||
+    String(id)!==String(lastLyricsId))return; // Handoff or stale text.
+ const cue=lyricRows[index],b=api(),a=b?.audio?.();
+ const start=Number(cue?.t),duration=Number(a?.duration);
+ if(!a||!Number.isFinite(start)||start<0||!Number.isFinite(duration)||duration<=0)return;
+ // Positive lyric delay means a phrase is shown later than the raw LRC onset.
+ const delay=Number(b?.lyricsDelay?.(id));
+ const seconds=Math.max(0,Math.min(duration,start+(Number.isFinite(delay)?delay:0)));
+ const room=window.MusicBoxRoom;
+ if(room?.isActive?.())room.control("seek",{seconds});
+ else{try{a.currentTime=seconds}catch(e){return}}
+ // Keep the same paused/playing state. Room seeks become visible when
+ // the room's authoritative media clock catches up.
+ $("imCurrent").textContent=fmt(seconds);
+ if(!room?.isActive?.())renderLyrics(false);
 }
 function seekTo(){
  const b=api(),a=b?.audio?.();if(!a||!Number.isFinite(a.duration)||a.duration<=0)return;
@@ -319,6 +352,62 @@ function start(){
  $("imLyrics")?.addEventListener("click",textPanel);
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSeek")?.addEventListener("change",seekTo);
+ const karaoke=$("imKaraoke");
+ // Use event delegation because lyric rows are replaced when the track changes.
+ // Pointer movement protects manual scrolling from becoming accidental seeks.
+ karaoke?.addEventListener("pointerdown",e=>{
+  if(!e.target?.closest?.(".im-seekable")||e.button!==0)return;
+  lyricPointer={x:e.clientX,y:e.clientY,scroll:karaoke.scrollTop};
+ });
+ karaoke?.addEventListener("pointermove",e=>{
+  if(lyricPointer&&(Math.abs(e.clientX-lyricPointer.x)>12||
+      Math.abs(e.clientY-lyricPointer.y)>12))
+   suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("pointerup",e=>{
+  if(lyricPointer&&(Math.abs(e.clientX-lyricPointer.x)>12||
+      Math.abs(e.clientY-lyricPointer.y)>12||
+      Math.abs(karaoke.scrollTop-lyricPointer.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+  lyricPointer=null;
+ });
+ karaoke?.addEventListener("pointercancel",()=>{
+  lyricPointer=null;suppressLyricTapUntil=performance.now()+600;
+ });
+ // Safari may issue touch events even when pointer events are coalesced.
+ let touchStart=null;
+ karaoke?.addEventListener("touchstart",e=>{
+  const t=e.touches?.[0];
+  touchStart=t?{x:t.clientX,y:t.clientY,scroll:karaoke.scrollTop}:null;
+ },{passive:true});
+ karaoke?.addEventListener("touchmove",e=>{
+  const t=e.touches?.[0];
+  if(touchStart&&(Math.abs(t.clientX-touchStart.x)>12||
+      Math.abs(t.clientY-touchStart.y)>12||
+      Math.abs(karaoke.scrollTop-touchStart.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("touchend",e=>{
+  const t=e.changedTouches?.[0];
+  if(t&&touchStart&&(Math.abs(t.clientX-touchStart.x)>12||
+      Math.abs(t.clientY-touchStart.y)>12||
+      Math.abs(karaoke.scrollTop-touchStart.scroll)>12))
+   suppressLyricTapUntil=performance.now()+600;
+  touchStart=null;
+ },{passive:true});
+ karaoke?.addEventListener("touchcancel",()=>{
+  touchStart=null;suppressLyricTapUntil=performance.now()+600;
+ },{passive:true});
+ karaoke?.addEventListener("click",e=>{
+  if(performance.now()<suppressLyricTapUntil)return;
+  seekToPhrase(e.target);
+ });
+ karaoke?.addEventListener("keydown",e=>{
+  if(e.key!=="Enter"&&e.key!==" ")return;
+  if(!e.target?.matches?.(".im-seekable"))return;
+  e.preventDefault();
+  seekToPhrase(e.target);
+ });
  $("imSeek")?.addEventListener("input",()=>{
   const a=api()?.audio?.(),seek=$("imSeek");
   $("imCurrent").textContent=fmt((Number(a?.duration)||0)*Number(seek.value)/1000);
