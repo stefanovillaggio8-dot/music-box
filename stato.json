@@ -1121,7 +1121,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 83,
-    "s": 2058,
+    "s": 2072,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1745,7 +1745,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 82,
-    "s": 2050,
+    "s": 2064,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -8597,7 +8597,7 @@
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 337,
+    "s": 364,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -8831,7 +8831,7 @@
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 332,
+    "s": 359,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -9407,7 +9407,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 364,
+    "s": 407,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -9551,13 +9551,13 @@
    },
    "[\"la musica non c'Ã¨\",\"coez\"]": {
     "v": 3,
-    "s": 746,
+    "s": 773,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'Ã¨\",\"coez\"]": {
     "v": 3,
-    "s": 746,
+    "s": 773,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
    },
@@ -9641,7 +9641,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 359,
+    "s": 402,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -10361,13 +10361,13 @@
    },
    "[\"la musica non c'è\",\"coez\"]": {
     "v": 3,
-    "s": 773,
+    "s": 841,
     "t": "La musica non c'è",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'è\",\"coez\"]": {
     "v": 3,
-    "s": 773,
+    "s": 841,
     "t": "La musica non c'è",
     "a": "Coez"
    },
