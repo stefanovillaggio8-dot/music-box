@@ -19,12 +19,22 @@ const diagnose=arg('diagnostics','false')==='true',pulseRejections=[],octavePair
 const exactSilence=arg('exact-silence','')?JSON.parse(fs.readFileSync(arg('exact-silence',''))).entries:{};
 if(![4,8].includes(initialBarLimit))throw Error('Supported initial-bar candidate limits: 4 or 8 seconds');
 const root=path.resolve(__dirname,'..'),index=JSON.parse(fs.readFileSync(arg('index',path.join(root,'dj-deep-analysis.json'))));
+const casesFile=arg('cases','');
+let selectedCases=null,currentSte=null,selectedKeys=null;
+if(casesFile){
+ const {currentSteScope,validateSteCases}=require('./ste-research-scope.cjs');
+ currentSte=currentSteScope();
+ const cases=validateSteCases(JSON.parse(fs.readFileSync(casesFile,'utf8')),currentSte,index);
+ selectedCases=new Set(cases.map(c=>c.from+'|'+c.to));selectedKeys=new Set(cases.flatMap(c=>[c.from,c.to]));
+ if(!arg('output','')||fs.existsSync(arg('output','')))throw Error('Bounded research requires a new explicit output path; existing evidence is preserved');
+}
 const allFiles=(dir,re)=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?allFiles(path.join(dir,e.name),re):re.test(e.name)?[path.join(dir,e.name)]:[]);
 const whole=new Map(),pcm=new Map();
 const edges=new Map();
 if(arg('edges',''))for(const f of allFiles(arg('edges',''),/^edge-\d+\.json$/)){
  const d=JSON.parse(fs.readFileSync(f));if(d.errors?.length)throw Error('Failed edge source');
  for(const [k,e] of Object.entries(d.entries||{})){
+  if(selectedKeys&&!selectedKeys.has(k))continue;
   if(edges.has(k)||e.sha!==index.entries[k]?.sha||e.modelSha256!=='8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331')throw Error('Unbound edge evidence');edges.set(k,e);
  }
 }
@@ -32,14 +42,17 @@ const extraEdges=new Map();
 if(arg('extra-edges',''))for(const f of allFiles(arg('extra-edges',''),/^edge-\d+\.json$/)){
  const d=JSON.parse(fs.readFileSync(f));if(d.errors?.length)throw Error('Failed alternate edge source');
  for(const [k,e] of Object.entries(d.entries||{})){
+  if(selectedKeys&&!selectedKeys.has(k))continue;
   if(e.sha!==index.entries[k]?.sha||e.modelSha256!=='8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331'||e.analysisView!=='percussive'||e.pcmFromUnmodifiedOriginal!==true)throw Error('Unbound alternate edge evidence');
   if(extraEdges.has(k))throw Error('Duplicate alternate edge source');extraEdges.set(k,e);
  }
 }
 for(const f of allFiles(arg('structure','structure'),/^structure-.*\.json$/))for(const [k,e] of Object.entries(JSON.parse(fs.readFileSync(f)).entries||{})){
+ if(selectedKeys&&!selectedKeys.has(k))continue;
  if(whole.has(k)||e.sha!==index.entries[k]?.sha)throw Error('Unbound or duplicate structure');whole.set(k,e);
 }
 if(arg('pcm',''))for(const f of allFiles(arg('pcm',''),/^pcm-\d+\.json$/))for(const [k,e] of Object.entries(JSON.parse(fs.readFileSync(f)).entries||{})){
+ if(selectedKeys&&!selectedKeys.has(k))continue;
  if(pcm.has(k)||e.sha!==index.entries[k]?.sha||e.pcmTransition?.sha!==e.sha)throw Error('Unbound or duplicate PCM');pcm.set(k,e.pcmTransition);
 }
 const tool=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
@@ -52,10 +65,10 @@ for(const song of catalog){
  for(const profile of ['Ste','Diego','Emanuele'])if(((song.profile||'Ste')===profile||(state.miei?.[profile]||[]).includes(id))&&
   !(state.eliminati||[]).includes(profile+'.'+id)&&!(profile==='Ste'&&(state.eliminati||[]).includes(id)))owners.get(song.file).add(profile);
 }
-const scopeFile=arg('scope',''),scope=scopeFile?JSON.parse(fs.readFileSync(scopeFile)):null;
+const scopeFile=arg('scope',''),scope=currentSte||(scopeFile?JSON.parse(fs.readFileSync(scopeFile)):null);
 if(scope&&(!scope.name||!Array.isArray(scope.tracks)||scope.tracks.some(t=>typeof t.key!=='string'||index.entries[t.key]?.status!=='ok'||!t.sha||index.entries[t.key]?.sha!==t.sha)))throw Error('Unbound library audit scope');
 const scopeKeys=new Set(scope?.tracks.map(t=>t.key)||[]);
-const owner=k=>scope?(scopeKeys.has(k)?new Set([scope.name]):new Set()):owners.get(k.replace(/^[^/]+\//,'').replace('/bassi/','/'))||new Set();
+const owner=k=>selectedKeys&&!selectedKeys.has(k)?new Set():scope?(scopeKeys.has(k)?new Set([scope.name]):new Set()):owners.get(k.replace(/^[^/]+\//,'').replace('/bassi/','/'))||new Set();
 const clear=(e,start,end)=>{
  const lo=Math.floor(start*10),hi=Math.ceil(end*10);if(hi>e.vocalRms.length||hi>e.mixRms.length||hi-lo<5)return null;
  let max=0,relative=0;
@@ -81,7 +94,7 @@ for(const [key,raw] of Object.entries(index.entries)){
  if(!e||!p)throw Error('Missing source evidence '+key);
  const source=[],target=[];
  for(const role of ['intro','outro']){
- for(const variant of [{bars:e.reliableBars,...(separateGrids?{view:'whole-original',observed:observedGrid(p[role],whole.get(key))}:{})},...(edge?[{bars:edge[role].bars,...(separateGrids?{view:'edge-original',observed:observedGrid(edge[role].pcm,{beats:edge[role].beats})}:{})}]:[]),...(extraEdges.has(key)?[{bars:extraEdges.get(key)[role].bars,view:'percussive',observed:observedGrid(extraEdges.get(key)[role].pcm,{beats:separateGrids?extraEdges.get(key)[role].beats:[...whole.get(key).beats,...extraEdges.get(key)[role].beats].sort((a,b)=>a-b)})}]:[])]){
+ for(const variant of [{bars:e.reliableBars,...(separateGrids?{view:'whole-original',observed:observedGrid(p[role],whole.get(key))}:{})},...(edge?[{bars:edge[role].bars,...(separateGrids?{view:'edge-original',observed:observedGrid(edge[role].pcm,{beats:edge[role].beats})}:{})}]:[]),...(extraEdges.get(key)?.[role]?[{bars:extraEdges.get(key)[role].bars,view:'percussive',observed:observedGrid(extraEdges.get(key)[role].pcm,{beats:separateGrids?extraEdges.get(key)[role].beats:[...whole.get(key).beats,...extraEdges.get(key)[role].beats].sort((a,b)=>a-b)})}]:[])]){
  const bars=variant.bars;
  for(let stop=2;stop<=bars.length;stop++)for(const n of [2,4,8]){
   const chain=bars.slice(stop-n,stop);if(stop<n||chain.length!==n||chain.some((r,i)=>i&&(Math.abs(chain[i-1].end-r.start)>.08||r.beatsPerBar!==chain[0].beatsPerBar)))continue;
@@ -94,9 +107,10 @@ for(const [key,raw] of Object.entries(index.entries)){
  }
  prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
 }
-const report={version:1,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,unavailableMembers:scope.unavailable?.length||0,source:scope.source}:null};
+const report={version:1,caseRestricted:!!selectedCases,requestedCases:selectedCases?.size??null,membershipEvidence:currentSte?.membershipEvidence??null,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,unavailableMembers:scope.unavailable?.length||0,source:scope.source}:null};
 const count=(profiles,key)=>{for(const p of profiles){report.profileFunnel[p]??={};report.profileFunnel[p][key]=(report.profileFunnel[p][key]||0)+1;}};
 for(const a of prepared)for(const b of prepared){
+ if(selectedCases&&!selectedCases.has(a.key+'|'+b.key))continue;
  if(a.key===b.key||a.raw.sha===b.raw.sha||a.key.replace('/bassi/','/')===b.key.replace('/bassi/','/'))continue;
  const profiles=[...a.owners].filter(x=>b.owners.has(x));if(!profiles.length)continue;count(profiles,'pairs');
  if(!a.source.length){count(profiles,'noCoherentEndingBars');continue;}
