@@ -90,11 +90,19 @@ async function run(){
    const atmosphere=await page.evaluate(()=>({
     hue:getComputedStyle(document.getElementById("immersivePanel")).getPropertyValue("--im-hue").trim(),
     halo:!!document.querySelector(".im-aura"),
+    satellites:document.querySelectorAll(".im-aura i").length,
+    glowDisplay:getComputedStyle(document.querySelector(".im-ambient-bloom")).display,
+    glowOpacity:parseFloat(getComputedStyle(document.querySelector(".im-ambient-bloom")).opacity),
+    spectrumWidth:document.querySelector(".im-mini-spectrum").getBoundingClientRect().width,
     spectrum:document.querySelectorAll(".im-mini-spectrum span").length,
     entering:document.getElementById("immersivePanel").classList.contains("im-track-enter")
    }));
    assert.match(atmosphere.hue,/^\d+$/,"track has a themed color");
    assert.equal(atmosphere.halo,true);
+   assert.equal(atmosphere.satellites,2,"orbit dots are included in stage");
+   assert.equal(atmosphere.glowDisplay,"block","glow must actually render on phones");
+   assert.ok(atmosphere.glowOpacity>=.5,"glow must not be almost transparent");
+   assert.ok(atmosphere.spectrumWidth>=65,"decorative spectrum must be noticeable");
    assert.equal(atmosphere.spectrum,9);
    assert.equal(atmosphere.entering,true);
    assert.equal(state.lyricMode,"SINCRONIZZATO PER FRASI");
@@ -268,11 +276,15 @@ async function run(){
     document.getElementById("immersivePanel").classList.contains("im-track-enter"));
    const animation=await motionPage.evaluate(()=>({
     orbit:getComputedStyle(document.querySelector(".im-aura"),"::before").animationName,
+    satellite:getComputedStyle(document.querySelector(".im-aura i")).animationName,
+    ambient:getComputedStyle(document.querySelector(".im-ambient-bloom")).animationName,
     art:getComputedStyle(document.querySelector(".im-cover")).animationName,
     rootOverflow:document.querySelector(".im-root").scrollWidth-document.querySelector(".im-root").clientWidth
    }));
    assert.match(animation.orbit,/im-orbit/,"mobile halo rotates in normal motion");
-   assert.match(animation.art,/im-art-breathe/,"mobile cover breathes in normal motion");
+   assert.match(animation.satellite,/im-orbit/,"mobile orbiting light rotates");
+   assert.match(animation.ambient,/im-aurora-alive/,"mobile ambient scene actually moves");
+   assert.match(animation.art,/im-album-breathe-visible/,"mobile cover motion must be visible");
    assert.ok(animation.rootOverflow<=3,"motion layers do not widen mobile page");
    await motionPage.locator("#imToggle").click();
    await motionPage.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
