@@ -4498,7 +4498,7 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
   }
   .im-backdrop{filter:blur(49px) saturate(1.22) brightness(.58);opacity:.79;}
   .im-ambient-bloom{display:none;}
-  .im-art-zone::before{animation:none;opacity:.37;}
+  .im-art-zone::before{inset:0;animation:none;opacity:.37;}
   .im-aura{width:clamp(225px,78vw,340px);top:48%;transform:translate(-50%,-50%);}
   .im-aura::before{animation-duration:28s;}
   .im-aura::after{box-shadow:0 0 38px hsl(var(--im-hue) 75% 56% / .16);}
