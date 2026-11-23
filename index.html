@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6742&amp;lyrics=4" />
+  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=4&amp;immersive=1" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -963,6 +963,7 @@
 <div id="immersivePanel" class="im-root" hidden role="dialog" aria-modal="true" aria-label="Immersive Mode: player cinematografico">
   <div id="imBackdrop" class="im-backdrop" aria-hidden="true"></div>
   <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="im-ambient-bloom" aria-hidden="true"></div>
   <div class="im-shell">
     <header class="im-head">
       <div class="im-identity">
@@ -978,10 +979,12 @@
     </header>
     <section class="im-main">
       <div class="im-art-zone">
+        <div class="im-aura" aria-hidden="true"></div>
         <div class="im-disc" aria-hidden="true"></div>
         <div class="im-cover-wrap">
           <div id="imCover" class="im-cover im-no-cover" role="img" aria-label="Copertina della canzone in riproduzione"><span>✦</span></div>
         </div>
+        <div class="im-mini-spectrum" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="im-art-reflection" aria-hidden="true"></div>
         <p class="im-art-tag"><span aria-hidden="true">✧</span> THE MUSIC IS THE MOMENT</p>
       </div>
@@ -1622,6 +1625,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <script src="audio-composite-mix.js?v=14"></script>
 <script src="mix-intelligente.js?v=6742&amp;dj=63"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6734&amp;words=10"></script>
+<script src="immersive.js?v=6743&amp;words=10"></script>
 </body>
 </html>
