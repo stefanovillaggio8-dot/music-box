@@ -1375,10 +1375,10 @@ test("empty timed LRC lines preserve the next phrase's original timestamp",()=>{
  let checked=0;
  for(const entry of Object.values(catalog)){
   const synced=entry.synced||"";
-  if(!/\\[\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?\\][ \\t]*\\r?\\n[ \\t]*\\[\\d{1,3}:\\d{2}/.test(synced)||/<\\d{1,3}:\\d{2}/.test(synced))continue;
+  if(!/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\][ \t]*\r?\n[ \t]*\[\d{1,3}:\d{2}/.test(synced)||/<\d{1,3}:\d{2}/.test(synced))continue;
   const rows=parse(synced);
-  assert.equal(rows.length,[...synced.matchAll(/\\[\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?\\]/g)].length);
-  assert.ok(rows.every(row=>!/^\\[\\d{1,3}:\\d{2}/.test(row.text)));
+  assert.equal(rows.length,[...synced.matchAll(/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]/g)].length);
+  assert.ok(rows.every(row=>!/^\[\d{1,3}:\d{2}/.test(row.text)));
   checked++;
  }
  assert.ok(checked>0,"catalog contains real blank-cue regression examples");
