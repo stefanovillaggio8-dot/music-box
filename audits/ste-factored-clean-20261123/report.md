@@ -158,3 +158,45 @@ NOT from a merge of PR59: only v2/priority fixes, new Ste cue, their proofs,
 regressions and shell revision. Installed-index audio/player, phrase-only
 Karaoke and exact 6.740 worker-upgrade CI must finish before publication.
 No other-account/Gym research or user-data deletion performed.
+
+
+## Release-candidate verification and source-clock observation
+
+PR73 candidate a5c64a26, based only on main: installed-index macOS Chromium
+and WebKit PASS for both the retained and new natural junction. The first
+macOS attempt also passed actual audio/player assertions but its runner used
+an EOF duration estimate to validate the earlier launch clock. WebKit can
+refine that estimate at EOF (e.g. 161.136 -> 161.124). The launch trace now
+captures sourceDuration at actual incoming play(), with the existing exact
+container-clock policy. No new EOF clock form or arbitrary tolerance is
+accepted. The runtime ALSO rechecks source clock identity immediately before
+launch; a changed or unknown source clock aborts before playing the intro.
+A targeted negative covers this change alongside queue/seek/pause/hidden.
+
+Final original-player app assertions remain independent: source ended=true
+and sourceAt=sourceDuration at adoption, incoming from zero/native volume,
+no seek, same incoming element retained. The late EOF estimate is not reused
+to fit a start offset or claimed as a newly certified container mapping.
+
+The installed Linux job hit its four-minute DEPENDENCY INSTALL timeout,
+without running audio tests. Only that failed infrastructure job is retried;
+no musical limits, setup budget or selected cases are expanded. Obsolete
+in-progress CI for the older candidate was cancelled to avoid duplicate work.
+
+Candidate full-suite CI: 776/778, exactly the two historical missing-plan
+and dependent future-selection failures, no suppressed tests. The seven
+existing real-audio regression checks and phrase/offline/session regressions
+pass. The known two failures are not called resolved or evidence of safe
+intentional revocation. No new other-profile pairs were analyzed or proposed.
+Local exact 6.740 -> 6.741 WebKit worker update preserves all profile download
+sentinels, legacy audio, unrelated cache, localStorage and IndexedDB; the new
+player opens offline. Real iPhone downloads have not been examined.
+
+A contextual listening export includes seven preceding source seconds and
+the unskipped incoming intro. Its common EXPORT-only level is -3 dB because
+the original source context before the certified overlap decodes above 1.0.
+The transition measurements and application gains remain UNITY; the contextual
+master peak is not introduced by this quiet-tail overlap. The export is PCM
+reconstruction, not browser output capture, and has not been human-listened.
+See context-listening-sample.json. Do not use its normalized file as proof of
+unity-gain certification: use the archived original rendering/native receipts.

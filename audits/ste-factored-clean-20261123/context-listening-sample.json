@@ -1,0 +1,13 @@
+{
+  "file": "../ste-factored-20261123/listening-context/gilgamesh-grignani-listening-minus3db.mp3",
+  "sourceContextFrom": 151.75,
+  "incomingStartsAt": 7,
+  "incomingEntry": 0,
+  "exportCommonGainDb": -3,
+  "applicationGainChanged": false,
+  "originalContextSamplePeak": 1.1269820928573608,
+  "contextPeakBeforeCertifiedOverlap": true,
+  "certifiedOverlapPeakMax": 0.6081337332725525,
+  "notBrowserCapture": true,
+  "humanListeningPerformed": false
+}
