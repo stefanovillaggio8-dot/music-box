@@ -34,9 +34,55 @@ on:
         description: 'Actual-app Ste native-element SHADOW trial only; does not install or certify plans'
         type: boolean
         default: false
+      factored_native_study:
+        description: 'Frozen Ste recording-prefix and isolated iPhone-bootstrap study; never installs or publishes a plan'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
+  factored-native-study:
+    if: github.event_name == 'workflow_dispatch' && inputs.factored_native_study
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bounded browser setup
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Linux native audio output
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=ste_factored rate=48000 channels=2
+          pactl set-default-sink ste_factored
+      - run: node --test tests/factored-native-clean.test.cjs
+      - name: Only selected Ste originals, hot rejected candidate excluded
+        run: node tools/fetch-ste-clean-recordings.cjs audits/ste-factored-clean-20261123/recordings.json
+      - name: Independent new target prefix receipts
+        run: node tools/ste-clean-prefix-native.cjs audits/ste-factored-clean-20261123/recordings.json factored-prefix-native.json
+      - name: Isolated native dual-deck bootstrap, not iPhone certification
+        run: node tests/ste-ios-native-prototype.cjs audits/ste-factored-clean-20261123/recordings.json ios-native-prototype.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-factored-native-${{ runner.os }}
+          path: |
+            factored-prefix-native.json
+            ios-native-prototype.json
   native-clean-evaluation:
     if: github.event_name == 'workflow_dispatch' && (inputs.native_clean_evaluation || inputs.native_clean_player)
     strategy:
