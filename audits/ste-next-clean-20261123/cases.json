@@ -1,0 +1,12 @@
+[
+  {
+    "from": "audio/songs/track-38.mp3",
+    "to": "audio/songs/track-4.mp3",
+    "role": "reused-published-positive-no-new-render"
+  },
+  {
+    "from": "audio/songs/track-38.mp3",
+    "to": "audio/songs/track-34.mp3",
+    "role": "new-frozen-Kid-Yugi-entry"
+  }
+]

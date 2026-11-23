@@ -15,7 +15,10 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),{chromium,webki
     userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
    const page=await context.newPage(),receipt={browser:name,version:browser.version(),mode};
    try{
-    await page.goto('http://127.0.0.1:'+env.server.address().port+'/observed');await page.click('#prime');
+    const variant=process.env.MUSICBOX_OBSERVED_VARIANT||'original';receipt.variant=variant;
+    assert.ok(['original','silent','observe','silent-observe'].includes(variant));
+    const query=(variant.includes('silent')?'silent=1&':'')+(variant.includes('observe')?'observe=1':'');
+    await page.goto('http://127.0.0.1:'+env.server.address().port+'/observed?'+query);await page.click('#prime');
     await page.waitForFunction(()=>window.probe&&['primed','stopped'].includes(probe.snapshot().phase),null,{timeout:10000});
     receipt.prime=await page.evaluate(()=>probe.snapshot());assert.equal(receipt.prime.phase,'primed');assert.equal(receipt.prime.sourceNeverPlayedDuringPrime,true);
     await page.click('#run');
@@ -30,7 +33,8 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),{chromium,webki
     receipt.result=await page.evaluate(()=>probe.snapshot());
     if(mode==='natural'){
      assert.ok(['adopted','complete'].includes(receipt.result.phase));assert.equal(receipt.result.beforeAdoption.sourceEnded,true);
-     assert.equal(receipt.result.sameIncomingElement,true);assert.equal(receipt.result.incomingStart,0);positive=true;
+     assert.equal(receipt.result.sameIncomingElement,true);assert.equal(receipt.result.incomingStart,0);assert.equal(receipt.result.sourcePlayRequests,1);positive=true;
+     if(variant.includes('silent'))assert.equal(receipt.result.originalLoadedOnSamePrimedElement,true);
     }else{
      assert.equal(receipt.result.phase,'stopped');assert.equal(receipt.result.reason,mode==='seek'?'source-seek':'hidden');
      assert.equal(receipt.result.incomingPaused,true);assert.equal(receipt.result.sourcePaused,mode==='hidden-after-adopt');

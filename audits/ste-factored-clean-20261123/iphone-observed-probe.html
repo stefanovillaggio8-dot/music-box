@@ -10,7 +10,9 @@
 const el=id=>document.getElementById(id);let probe,fixture,timer;
 fetch('/fixture.json').then(r=>r.json()).then(f=>{fixture=f;el('prime').disabled=false});
 function show(){if(probe)el('status').textContent=JSON.stringify(probe.snapshot(),null,2);clearTimeout(timer);if(!document.hidden)timer=setTimeout(show,300)}
-el('prime').onclick=e=>{probe?.dispose();window.probe=probe=createObservedNativeProbe(fixture,{hidden:()=>window.__testHidden===true});el('run').disabled=true;show();probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{})};
+el('prime').onclick=e=>{probe?.dispose();const query=new URL(location.href).searchParams;
+ window.probe=probe=createObservedNativeProbe(fixture,{hidden:()=>window.__testHidden===true,silentPrimer:query.get('silent')==='1',observeSourceAfterPlay:query.get('observe')==='1'});
+ el('run').disabled=true;show();probe.prime(e).then(()=>el('run').disabled=false).catch(()=>{})};
 el('run').onclick=e=>{el('run').disabled=true;probe.run(e).catch(()=>{})};el('stop').onclick=()=>probe?.stop('user-stop');document.addEventListener('visibilitychange',show);
 el('save').onclick=()=>{if(!probe)return;const report={...probe.snapshot(),operatorDeclaredDevice:el('device').value,capturedAt:new Date().toISOString()};
  const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='ste-observed-clock-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};

@@ -49,6 +49,7 @@ def analyze(protocol_file, output):
                         'native':[{k:m[k] for k in ['platform','browser','rate','targetNativeOverlapPeak',
                                                    'targetDecodedOffset','targetMediaOffset','targetDecodedDuration','targetMediaDuration']}
                                   for m in cue['nativeCleanEvidence']['nativeMeasurements']]}
+    new_decodes=0
     for key in p['targets']:
         entry=index[key]; sha=entry['sha']
         if sha==positive['sourceSha']: continue
@@ -57,6 +58,7 @@ def analyze(protocol_file, output):
             raw=subprocess.check_output(['ffmpeg','-nostdin','-v','error','-i',str(file),'-t',str(p['nativePrefixSeconds']),
                                          '-ac','2','-ar',str(rate),'-f','f32le','pipe:1'])
             x=np.frombuffer(raw,dtype='<f4').reshape(-1,2)
+            new_decodes+=1
             if len(x)<round(p['nativePrefixSeconds']*rate) or not np.isfinite(x).all():raise ValueError('Incomplete original prefix')
             (output/(sha+'-'+str(rate)+'-prefix.f32')).write_bytes(raw)
             rms=lambda a:float(np.sqrt(np.mean(np.asarray(a,dtype=np.float64)**2)))
@@ -71,7 +73,8 @@ def analyze(protocol_file, output):
         r['prefix']={'method':'original-stereo-prefix-factored-v1','sourceSha':sha,'through':p['nativePrefixSeconds'],
                      'rates':rates,'native':[],'notNativeCertified':True}
     report={'version':1,'evaluationOnly':True,'notPlaybackCertified':True,'recordings':recordings,
-            'sourceDecodes':0,'newPrefixDecodes':4,'positiveControlReused':True,'protocolSha256':hashlib.sha256(protocol_file.read_bytes()).hexdigest()}
+            'sourceDecodes':0,'newPrefixDecodes':new_decodes,'positiveControlReused':True,'protocolSha256':hashlib.sha256(protocol_file.read_bytes()).hexdigest(),
+            'cases':json.loads((protocol_file.parent/'cases.json').read_bytes())}
     (output/'recordings.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
     print(json.dumps([{'key':r['key'],'prefix':r.get('prefix',{}).get('rates'),'sourceProofReused':bool(r.get('quietSuffix'))}
                       for r in recordings.values()]))

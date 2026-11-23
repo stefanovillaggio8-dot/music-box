@@ -3,14 +3,16 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const {clockOffset}=require('../tools/factored-native-clean.cjs');
 const data=require('../audits/ste-factored-clean-20261123/recordings.json');
 const a=Object.values(data.recordings).find(r=>r.quietSuffix),b=Object.values(data.recordings).find(r=>r.prefix?.reusedPublishedEvidence);
-function fixture(){
+function fixture(options={}){
  const audios=[],timers=new Map(),events=new Map();let now=0,serial=0;
  class Audio{
-  constructor(){this.currentTime=0;this.duration=(audios.length?b:a).clock.decodedFrames/(audios.length?b:a).clock.sampleRate;
+  constructor(src){this.src=src;this.currentTime=0;this.duration=(audios.length?b:a).clock.decodedFrames/(audios.length?b:a).clock.sampleRate;
+   if(!audios.length&&options.provisionalSource)this.duration=161.16;
    this.paused=true;this.readyState=4;this.seeking=false;this.ended=false;this.plays=0;this.events=new Map();audios.push(this)}
   load(){}removeAttribute(){}addEventListener(e,fn){if(!this.events.has(e))this.events.set(e,new Set());this.events.get(e).add(fn)}
   removeEventListener(e,fn){this.events.get(e)?.delete(fn)}emit(e){for(const fn of this.events.get(e)||[])fn()}
-  play(){this.plays++;this.paused=false;if(this===audios[1]&&this.plays===1)this.currentTime=.03;
+  play(){this.plays++;this.paused=false;if(this===audios[0]&&options.refineOnPlay)this.duration=a.clock.decodedFrames/a.clock.sampleRate;
+   if(this===audios[1]&&this.plays===1)this.currentTime=.03;
    return new Promise(resolve=>{this.resolvePlay=resolve})}
   pause(){this.paused=true;this.emit('pause')}
  }
@@ -19,7 +21,7 @@ function fixture(){
  vm.runInNewContext(fs.readFileSync('tools/ios-native-observed-probe.js','utf8'),{window,document,Audio,navigator:{userAgent:'deterministic test, not a browser'},performance:{now:()=>now},
   setTimeout:(fn,ms)=>{const id=++serial;timers.set(id,{fn,at:now+ms});return id},clearTimeout:id=>timers.delete(id)});
  const f={sourceSha:a.sourceSha,targetSha:b.sourceSha,begin:a.quietSuffix.begin,end:a.duration,sourceClock:a.clock,targetClock:b.clock};
- const probe=window.createObservedNativeProbe(f);
+ const probe=window.createObservedNativeProbe(f,options);
  return {probe,f,document,old:audios[0],incoming:audios[1],advance(){const [id,t]=[...timers.entries()].sort((a,b)=>a[1].at-b[1].at)[0]||[];if(t){now=t.at;timers.delete(id);t.fn()}},hide(){document.hidden=true;events.get('visibilitychange')?.()}};
 }
 test('actual media clock can launch and complete while BOTH play promises remain unresolved',async()=>{
@@ -55,4 +57,23 @@ test('hidden after adoption and deliberate completion also close the secondary l
 test('a cancelled primer cannot resume through its late play promise',async()=>{
  const t=fixture();await t.probe.prime({isTrusted:true});t.hide();t.incoming.paused=false;t.incoming.resolvePlay();await new Promise(setImmediate);
  assert.equal(t.incoming.paused,true);assert.equal(t.old.plays,0);assert.equal(t.probe.snapshot().phase,'stopped');t.probe.dispose();
+});
+test('silent priming keeps the same incoming element; declared source clock is observed after first play, never fitted',async()=>{
+ const t=fixture({silentPrimer:true,observeSourceAfterPlay:true,provisionalSource:true,refineOnPlay:true}),incoming=t.incoming;
+ assert.equal(incoming.src,'/silent-primer.wav');await t.probe.prime({isTrusted:true});
+ assert.equal(t.old.plays,0);assert.equal(t.old.currentTime,0);assert.equal(t.probe.snapshot().prePlaySourceDuration,161.16);
+ assert.equal(incoming.src,'/original/'+t.f.targetSha+'.mp3');assert.equal(t.probe.incoming,incoming);
+ await t.probe.run({isTrusted:true});assert.equal(t.old.plays,1);assert.equal(t.probe.snapshot().phase,'waiting');
+ assert.equal(t.probe.snapshot().positioning.offset,0);assert.equal(t.old.currentTime,t.f.begin-3);
+ t.old.currentTime=t.f.begin;t.advance();assert.equal(t.probe.snapshot().phase,'overlap');assert.equal(t.incoming.currentTime,0);
+ t.old.ended=true;t.old.currentTime=t.old.duration;t.old.paused=true;t.incoming.currentTime=2.2;t.advance();
+ assert.equal(t.probe.snapshot().phase,'adopted');assert.equal(t.probe.incoming,incoming);t.probe.dispose();
+});
+test('source clock which stays unsupported never launches the incoming; hiding while positioning cancels it',async()=>{
+ for(const mode of ['timeout','hidden']){
+  const t=fixture({observeSourceAfterPlay:true,provisionalSource:true});await t.probe.prime({isTrusted:true});await t.probe.run({isTrusted:true});
+  assert.equal(t.probe.snapshot().phase,'positioning');if(mode==='hidden')t.hide();else for(let i=0;i<202;i++)t.advance();
+  assert.equal(t.probe.snapshot().phase,'stopped');assert.equal(t.probe.snapshot().reason,mode==='hidden'?'hidden':'bounded-source-clock-refinement-timeout');
+  assert.equal(t.incoming.plays,1);assert.equal(t.old.plays,1);assert.equal(t.old.paused,false);assert.equal(t.incoming.paused,true);t.probe.dispose();
+ }
 });

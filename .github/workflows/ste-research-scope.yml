@@ -54,9 +54,18 @@ on:
         description: 'Bounded isolated observer modes; no new musical search'
         type: string
         default: 'natural,seek,hidden'
+      bounded_next_stage:
+        description: 'Frozen single new Ste prefix plus silent primer (prepare), or its SHADOW player; never installs cues'
+        type: string
+        default: 'none'
 permissions:
   contents: read
 jobs:
+  bounded-next:
+    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'prepare' || inputs.bounded_next_stage == 'player')
+    uses: ./.github/workflows/ste-bounded-next.yml
+    with:
+      stage: ${{ inputs.bounded_next_stage }}
   observed-native-study:
     if: github.event_name == 'workflow_dispatch' && inputs.observed_native_study
     uses: ./.github/workflows/ste-observed-native-study.yml

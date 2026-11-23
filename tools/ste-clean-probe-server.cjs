@@ -3,7 +3,8 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {currentSteScope,validateSteCases}=require('./ste-research-scope.cjs');
 const root=path.resolve(__dirname,'..');
 function prepare(data){
- const cases=JSON.parse(fs.readFileSync(path.join(root,'audits/ste-factored-clean-20261123/cases.json')));
+ const cases=data.cases||JSON.parse(fs.readFileSync(path.join(root,'audits/ste-factored-clean-20261123/cases.json')));
+ if(!Array.isArray(cases)||!cases.length||cases.length>4)throw Error('At most four explicitly frozen Ste pairs');
  const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
  validateSteCases(cases,currentSteScope(),index);
  const allowed=new Set(cases.flatMap(c=>[c.from,c.to]));
@@ -34,6 +35,12 @@ function server(data){
    }else{res.setHeader('Content-Length',bytes.length);res.end(bytes);}return;
   }
   if(url.pathname==='/fixture.json'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(prepared.fixture));return;}
+  if(url.pathname==='/silent-primer.wav'){
+   const samples=24000,bytes=Buffer.alloc(44+samples*4);bytes.write('RIFF');bytes.writeUInt32LE(bytes.length-8,4);bytes.write('WAVEfmt ',8);
+   bytes.writeUInt32LE(16,16);bytes.writeUInt16LE(1,20);bytes.writeUInt16LE(2,22);bytes.writeUInt32LE(48000,24);bytes.writeUInt32LE(192000,28);
+   bytes.writeUInt16LE(4,32);bytes.writeUInt16LE(16,34);bytes.write('data',36);bytes.writeUInt32LE(samples*4,40);
+   res.setHeader('Content-Type','audio/wav');res.setHeader('Content-Length',bytes.length);res.end(bytes);return;
+  }
   const files={'/audio-composite-mix.js':'audio-composite-mix.js','/dual-deck.js':'tools/ios-native-dual-deck-prototype.js',
    '/observed-probe.js':'tools/ios-native-observed-probe.js','/observed':'audits/ste-factored-clean-20261123/iphone-observed-probe.html',
    '/':'audits/ste-factored-clean-20261123/iphone-probe.html'};
