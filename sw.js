@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6743";
+const CACHE = "spotifynonavraiimieisoldi-v6742-aurora1";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6743&lyrics=4&immersive=1",
+  "./style.css?v=6742&lyrics=4&immersive=1",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -71,7 +71,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6743&words=10",
+  "./immersive.js?v=6734&words=10&aurora=1",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -96,7 +96,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6743&lyrics=4&immersive=1",
+  "./style.css?v=6742&lyrics=4&immersive=1",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -118,7 +118,7 @@ const OFFLINE_SHELL = [
   "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6742&dj=63",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6743&words=10"
+  "./immersive.js?v=6734&words=10&aurora=1"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
