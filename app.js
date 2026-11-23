@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.738";
+  const APP_VERSION = "6.739";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9676,6 +9676,19 @@ function openProfile() {
       else high=mid;
     }
     const result=low-1;
+    // Match Immersive's phrase-only behavior: an explicit end can leave
+    // a genuine instrumental gap before the next line. Never derive that
+    // gap from LRC starts, estimated words or isolated partial observations.
+    if(result>=0&&result<lyricLines.length-1){
+      const row=_lyricWordParts?.[result]?.row;
+      const start=Number(lyricLines[result].dataset.t);
+      const end=row?.end!=null?Number(row.end):
+        row?.estimated!==true&&row?.words?.length?
+          Number(row.words[row.words.length-1]?.end):NaN;
+      const next=Number(lyricLines[result+1].dataset.t);
+      if(Number.isFinite(end)&&end>=start&&Number.isFinite(next)&&
+         next-end>4&&time>end+1.5)return -1;
+    }
     if(result===lyricLines.length-1&&lyricLines.length){
       const row=_lyricWordParts?.[result]?.row;
       const last=Number(lyricLines[result].dataset.t);

@@ -1,0 +1,37 @@
+name: Phrase karaoke display and offline upgrade
+on:
+  pull_request:
+    paths: ['app.js', 'immersive.js', 'word-karaoke.js', 'index.html', 'sw.js', 'versione.json', 'tests/karaoke-phrase*', '.github/workflows/phrase-karaoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  phrase-display:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Phrase ends, seeking, phrase-only rendering and existing player regressions
+        run: |
+          node --test tests/karaoke-phrase-gap.test.cjs tests/karaoke-rapid-handoff.test.cjs tests/playback-session-expiry.test.cjs tests/dj-lyrics-regression.test.cjs
+          node tests/karaoke-dj-regression.cjs
+      - name: Both actual application views at a controlled media clock
+        run: node tests/karaoke-phrase-browser.cjs > phrase-display-browser.json
+        env:
+          MUSICBOX_COMPOSITE_BROWSERS: chromium,webkit
+      - name: Preserve published offline audio and personal data through worker upgrade
+        run: node tests/offline-upgrade.cjs > phrase-offline-upgrade.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phrase-display-and-offline
+          path: |
+            phrase-display-browser.json
+            phrase-offline-upgrade.json
+          retention-days: 30
