@@ -693,7 +693,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"||file==="style.css"?release:"6734";
   const cacheSuffix=file==="style.css"?"lyrics=8":
-    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"13":"21");
+    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"13":"22");
   const assetUrl=file+"?v="+revision+"&"+cacheSuffix;
   assert.ok(html.includes(assetUrl.replace("&","&amp;")));
   assert.equal(sw.split(assetUrl).length-1,2);
@@ -1358,4 +1358,28 @@ test("real word ASR starts before slow LRCLIB fallback, and verified words survi
   app.indexOf("async function _salvaParoleDallAudio("));
  assert.match(provider,/const newest=_testoLocaleVerificato\(id\);/);
  assert.match(provider,/if\(newest\?\.audioWordSynced&&newest\.wordRows\?\.some/);
+});
+
+
+test("empty timed LRC lines preserve the next phrase's original timestamp",()=>{
+ const start=app.indexOf("  function parseSynced(synced) {");
+ const end=app.indexOf("  function _righeTestoConParole(",start);
+ assert.ok(start>=0&&end>start);
+ const parse=new Function("window",app.slice(start,end)+"return parseSynced;")({});
+ for(const newline of ["\n","\r\n"]){
+  assert.deepEqual(parse(["[00:01.20] Prima","[00:04.00]  ","[00:08.10] Seconda","[00:12.00]"].join(newline)),[
+   {t:1.2,text:"Prima"},{t:4,text:""},{t:8.1,text:"Seconda"},{t:12,text:""}
+  ]);
+ }
+ const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ let checked=0;
+ for(const entry of Object.values(catalog)){
+  const synced=entry.synced||"";
+  if(!/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\][ \t]*\r?\n[ \t]*\[\d{1,3}:\d{2}/.test(synced)||/<\d{1,3}:\d{2}/.test(synced))continue;
+  const rows=parse(synced);
+  assert.equal(rows.length,[...synced.matchAll(/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]/g)].length);
+  assert.ok(rows.every(row=>!/^\[\d{1,3}:\d{2}/.test(row.text)));
+  checked++;
+ }
+ assert.ok(checked>0,"catalog contains real blank-cue regression examples");
 });
