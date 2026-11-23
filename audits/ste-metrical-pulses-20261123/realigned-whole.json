@@ -1,0 +1,376 @@
+{
+  "version": 1,
+  "caseRestricted": true,
+  "requestedCases": 1,
+  "membershipEvidence": {
+    "stateSha256": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 2,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 1,
+      "independentBeatFit": 1
+    }
+  },
+  "pairConditions": {
+    "Ste": {
+      "independentBeatFit": 1
+    }
+  },
+  "windowExclusions": {
+    "Ste": {
+      "harmony": 32,
+      "affineDownbeatFit": 14,
+      "barSpan": 28,
+      "overlapDuration": 2,
+      "observedPulseAgreement": 4
+    }
+  },
+  "plans": [],
+  "windows": 4,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Ste",
+    "tracks": 222,
+    "unavailableMembers": 0,
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+  },
+  "diagnostics": {
+    "notPlaybackCertificates": true,
+    "pulseRejections": [
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "audio/songs/track-7.mp3",
+        "begin": 158.33581395348838,
+        "fade": 10.517186046511625,
+        "rate": 1.011764705882354,
+        "reason": "observedPulseAgreement",
+        "source": {
+          "start": 160.9,
+          "end": 166,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            160.9,
+            161.54,
+            162.18,
+            162.82,
+            163.46,
+            164.1,
+            164.74,
+            165.38
+          ],
+          "downbeats": [
+            160.9,
+            163.46,
+            166
+          ],
+          "observed": [
+            158.28,
+            159.02,
+            160.3,
+            160.96,
+            161.58,
+            162.84,
+            163.5,
+            164.12,
+            164.8,
+            165.4,
+            166.06,
+            166.7,
+            167.32
+          ]
+        },
+        "target": {
+          "start": 2.68,
+          "end": 7.84,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            2.68,
+            3.32,
+            3.96,
+            4.6,
+            5.24,
+            5.88,
+            6.56,
+            7.2
+          ],
+          "downbeats": [
+            2.68,
+            5.24,
+            7.84
+          ],
+          "observed": [
+            0.14,
+            0.78,
+            1.46,
+            1.96,
+            2.66,
+            3.36,
+            3.98,
+            5.22,
+            5.92,
+            6.6,
+            7.86,
+            8.54,
+            9.18,
+            9.84,
+            10.46
+          ]
+        }
+      },
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "audio/songs/track-7.mp3",
+        "begin": 158.32078125,
+        "fade": 10.532218749999998,
+        "rate": 1.0078740157480346,
+        "reason": "observedPulseAgreement",
+        "source": {
+          "start": 160.9,
+          "end": 166,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            160.9,
+            161.54,
+            162.18,
+            162.82,
+            163.46,
+            164.1,
+            164.74,
+            165.38
+          ],
+          "downbeats": [
+            160.9,
+            163.46,
+            166
+          ],
+          "observed": [
+            158.28,
+            159.02,
+            160.3,
+            160.96,
+            161.58,
+            162.84,
+            163.5,
+            164.12,
+            164.8,
+            165.4,
+            166.06,
+            166.7,
+            167.32
+          ]
+        },
+        "target": {
+          "start": 2.68,
+          "end": 7.84,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            2.68,
+            3.32,
+            3.96,
+            4.6,
+            5.24,
+            5.88,
+            6.56,
+            7.2
+          ],
+          "downbeats": [
+            2.68,
+            5.24,
+            7.84
+          ],
+          "observed": [
+            0.14,
+            0.78,
+            1.46,
+            1.96,
+            2.66,
+            3.36,
+            3.98,
+            5.22,
+            5.92,
+            6.6,
+            7.86,
+            8.54,
+            9.18,
+            9.84,
+            10.46
+          ]
+        }
+      },
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "audio/songs/track-7.mp3",
+        "begin": 158.34100386100386,
+        "fade": 10.511996138996153,
+        "rate": 1.015686274509805,
+        "reason": "observedPulseAgreement",
+        "source": {
+          "start": 163.46,
+          "end": 168.56,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            163.46,
+            164.1,
+            164.74,
+            165.38,
+            166,
+            166.64,
+            167.3,
+            167.92
+          ],
+          "downbeats": [
+            163.46,
+            166,
+            168.56
+          ],
+          "observed": [
+            158.28,
+            159.02,
+            160.3,
+            160.96,
+            161.58,
+            162.84,
+            163.5,
+            164.12,
+            164.8,
+            165.4,
+            166.06,
+            166.7,
+            167.32
+          ]
+        },
+        "target": {
+          "start": 5.24,
+          "end": 10.42,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            5.24,
+            5.88,
+            6.56,
+            7.2,
+            7.84,
+            8.5,
+            9.12,
+            9.78
+          ],
+          "downbeats": [
+            5.24,
+            7.84,
+            10.42
+          ],
+          "observed": [
+            0.14,
+            0.78,
+            1.46,
+            1.96,
+            2.66,
+            3.36,
+            3.98,
+            5.22,
+            5.92,
+            6.6,
+            7.86,
+            8.54,
+            9.18,
+            9.84,
+            10.46
+          ]
+        }
+      },
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "audio/songs/track-7.mp3",
+        "begin": 158.43818181818182,
+        "fade": 10.414818181818191,
+        "rate": 1.0312499999999993,
+        "reason": "observedPulseAgreement",
+        "source": {
+          "start": 163.46,
+          "end": 168.56,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            163.46,
+            164.1,
+            164.74,
+            165.38,
+            166,
+            166.64,
+            167.3,
+            167.92
+          ],
+          "downbeats": [
+            163.46,
+            166,
+            168.56
+          ],
+          "observed": [
+            159.02,
+            160.3,
+            160.96,
+            161.58,
+            162.84,
+            163.5,
+            164.12,
+            164.8,
+            165.4,
+            166.06,
+            166.7,
+            167.32
+          ]
+        },
+        "target": {
+          "start": 5.24,
+          "end": 10.42,
+          "bars": 2,
+          "meter": 4,
+          "modelBeats": [
+            5.24,
+            5.88,
+            6.56,
+            7.2,
+            7.84,
+            8.5,
+            9.12,
+            9.78
+          ],
+          "downbeats": [
+            5.24,
+            7.84,
+            10.42
+          ],
+          "observed": [
+            0.14,
+            0.78,
+            1.46,
+            1.96,
+            2.66,
+            3.36,
+            3.98,
+            5.22,
+            5.92,
+            6.6,
+            7.86,
+            8.54,
+            9.18,
+            9.84,
+            10.46
+          ]
+        }
+      }
+    ],
+    "octaveTempoPairs": 0,
+    "octaveSamples": []
+  }
+}

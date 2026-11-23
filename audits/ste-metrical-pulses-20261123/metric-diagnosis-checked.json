@@ -1,0 +1,827 @@
+{
+  "method": "independent-bar-hypothesis-observed-PCM-diagnosis-v1",
+  "profile": "Ste",
+  "scopeHash": "515414d2c4c1e8577d87b480489941d4d3927cb54b64da5cc01efc91390892cc",
+  "membershipEvidence": {
+    "stateSha256": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "criteriaUnchanged": true,
+  "newCertifiedPairs": 0,
+  "modelEvidenceNotHumanTruth": true,
+  "geometryRetuned": false,
+  "rows": [
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "audio/songs/track-7.mp3",
+      "role": "development",
+      "geometry": {
+        "begin": 161.76107669333334,
+        "entry": 0,
+        "fade": 7.056923306666675,
+        "rate": 1.0077502714207398
+      },
+      "metricFit": null,
+      "diagnosis": {
+        "sourcePulses": 8,
+        "targetPulses": 10,
+        "matches": 0,
+        "ratio": 0,
+        "first": 0,
+        "second": 0,
+        "rms": null,
+        "reason": "observedPulseAgreement"
+      },
+      "harmony": null,
+      "source": {
+        "observed": [
+          160.96,
+          161.58,
+          162.84,
+          163.5,
+          164.12,
+          164.8,
+          165.4,
+          166.06,
+          166.7,
+          167.32
+        ],
+        "evidence": [
+          {
+            "predictedAt": 160.9,
+            "observedAt": 160.96,
+            "strength": 1.489,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 161.54,
+            "observedAt": 161.58,
+            "strength": 1.428,
+            "offsetMs": 40.000000000020464
+          },
+          {
+            "predictedAt": 162.82,
+            "observedAt": 162.84,
+            "strength": 1.891,
+            "offsetMs": 20.000000000010232
+          },
+          {
+            "predictedAt": 163.46,
+            "observedAt": 163.5,
+            "strength": 1.135,
+            "offsetMs": 39.99999999999204
+          },
+          {
+            "predictedAt": 164.1,
+            "observedAt": 164.12,
+            "strength": 1.849,
+            "offsetMs": 20.000000000010232
+          },
+          {
+            "predictedAt": 164.74,
+            "observedAt": 164.8,
+            "strength": 0.525,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 165.38,
+            "observedAt": 165.4,
+            "strength": 1.88,
+            "offsetMs": 20.000000000010232
+          },
+          {
+            "predictedAt": 166,
+            "observedAt": 166.06,
+            "strength": 1.481,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 166.64,
+            "observedAt": 166.7,
+            "strength": 1.181,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 167.3,
+            "observedAt": 167.32,
+            "strength": 1.705,
+            "offsetMs": 19.99999999998181
+          }
+        ],
+        "missing": [
+          {
+            "predictedAt": 162.18,
+            "observedAt": 162.24,
+            "strength": 0.111,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 167.92,
+            "observedAt": 167.98,
+            "strength": 0.12,
+            "offsetMs": 60.000000000002274
+          }
+        ],
+        "bars": [
+          {
+            "start": 160.9,
+            "end": 163.46,
+            "meter": 4,
+            "bpm": 93.74999999999991,
+            "phase": 1,
+            "modelBeats": [
+              160.9,
+              161.54,
+              162.18,
+              162.82
+            ]
+          },
+          {
+            "start": 163.46,
+            "end": 166,
+            "meter": 4,
+            "bpm": 93.750000000002,
+            "phase": 1,
+            "modelBeats": [
+              163.46,
+              164.1,
+              164.74,
+              165.38
+            ]
+          },
+          {
+            "start": 166,
+            "end": 168.56,
+            "meter": 4,
+            "bpm": 93.74999999999991,
+            "phase": 1,
+            "modelBeats": [
+              166,
+              166.64,
+              167.3,
+              167.92
+            ]
+          }
+        ]
+      },
+      "target": {
+        "observed": [
+          0.14,
+          0.78,
+          1.46,
+          1.96,
+          2.66,
+          3.36,
+          3.98,
+          5.22,
+          5.92,
+          6.6
+        ],
+        "evidence": [
+          {
+            "predictedAt": 0.08,
+            "observedAt": 0.14,
+            "strength": 1.643,
+            "offsetMs": 60.000000000000014
+          },
+          {
+            "predictedAt": 0.74,
+            "observedAt": 0.78,
+            "strength": 0.343,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 1.4,
+            "observedAt": 1.46,
+            "strength": 0.725,
+            "offsetMs": 60.00000000000006
+          },
+          {
+            "predictedAt": 2.02,
+            "observedAt": 1.96,
+            "strength": 0.364,
+            "offsetMs": -60.00000000000006
+          },
+          {
+            "predictedAt": 2.68,
+            "observedAt": 2.66,
+            "strength": 0.671,
+            "offsetMs": -20.000000000000018
+          },
+          {
+            "predictedAt": 3.32,
+            "observedAt": 3.36,
+            "strength": 0.338,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 3.96,
+            "observedAt": 3.98,
+            "strength": 1.42,
+            "offsetMs": 20.000000000000018
+          },
+          {
+            "predictedAt": 5.24,
+            "observedAt": 5.22,
+            "strength": 0.852,
+            "offsetMs": -20.000000000000462
+          },
+          {
+            "predictedAt": 5.88,
+            "observedAt": 5.92,
+            "strength": 0.472,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 6.56,
+            "observedAt": 6.6,
+            "strength": 1.388,
+            "offsetMs": 40.000000000000036
+          }
+        ],
+        "missing": [
+          {
+            "predictedAt": 4.6,
+            "observedAt": 4.54,
+            "strength": 0.199,
+            "offsetMs": -59.99999999999961
+          },
+          {
+            "predictedAt": 7.2,
+            "observedAt": 7.14,
+            "strength": 0.083,
+            "offsetMs": -60.0000000000005
+          }
+        ],
+        "bars": [
+          {
+            "start": 0.08,
+            "end": 2.68,
+            "meter": 4,
+            "bpm": 90.90909090909092,
+            "phase": 1,
+            "modelBeats": [
+              0.08,
+              0.74,
+              1.4,
+              2.02
+            ]
+          },
+          {
+            "start": 2.68,
+            "end": 5.24,
+            "meter": 4,
+            "bpm": 93.75000000000001,
+            "phase": 1,
+            "modelBeats": [
+              2.68,
+              3.32,
+              3.96,
+              4.6
+            ]
+          },
+          {
+            "start": 5.24,
+            "end": 7.84,
+            "meter": 4,
+            "bpm": 93.74999999999999,
+            "phase": 1,
+            "modelBeats": [
+              5.24,
+              5.88,
+              6.56,
+              7.2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "from": "audio/songs/track-50.mp3",
+      "to": "audio/songs/track-39.mp3",
+      "role": "development",
+      "geometry": {
+        "begin": 299.28,
+        "entry": 0,
+        "fade": 6.375999999999976,
+        "rate": 1
+      },
+      "metricFit": null,
+      "diagnosis": {
+        "reason": "observedPulseCount"
+      },
+      "harmony": null,
+      "source": {
+        "observed": [
+          297.92,
+          298.68,
+          299.46,
+          300.18,
+          300.96,
+          301.7,
+          302.5,
+          303.24
+        ],
+        "evidence": [
+          {
+            "predictedAt": 297.9,
+            "observedAt": 297.92,
+            "strength": 1.522,
+            "offsetMs": 20.000000000038654
+          },
+          {
+            "predictedAt": 298.64,
+            "observedAt": 298.68,
+            "strength": 1.231,
+            "offsetMs": 40.000000000020464
+          },
+          {
+            "predictedAt": 299.42,
+            "observedAt": 299.46,
+            "strength": 0.266,
+            "offsetMs": 39.99999999996362
+          },
+          {
+            "predictedAt": 300.16,
+            "observedAt": 300.18,
+            "strength": 1.852,
+            "offsetMs": 19.99999999998181
+          },
+          {
+            "predictedAt": 300.92,
+            "observedAt": 300.96,
+            "strength": 1.479,
+            "offsetMs": 39.99999999996362
+          },
+          {
+            "predictedAt": 301.68,
+            "observedAt": 301.7,
+            "strength": 1.915,
+            "offsetMs": 19.99999999998181
+          },
+          {
+            "predictedAt": 302.44,
+            "observedAt": 302.5,
+            "strength": 0.422,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 303.2,
+            "observedAt": 303.24,
+            "strength": 1.835,
+            "offsetMs": 40.000000000020464
+          }
+        ],
+        "missing": [],
+        "bars": [
+          {
+            "start": 297.9,
+            "end": 300.92,
+            "meter": 4,
+            "bpm": 80,
+            "phase": 1,
+            "modelBeats": [
+              297.9,
+              298.64,
+              299.42,
+              300.16
+            ]
+          },
+          {
+            "start": 300.92,
+            "end": 303.98,
+            "meter": 4,
+            "bpm": 78.94736842105358,
+            "phase": 1,
+            "modelBeats": [
+              300.92,
+              301.68,
+              302.44,
+              303.2
+            ]
+          }
+        ]
+      },
+      "target": {
+        "observed": [
+          3.06,
+          3.92,
+          4.68,
+          5.36
+        ],
+        "evidence": [
+          {
+            "predictedAt": 3.12,
+            "observedAt": 3.06,
+            "strength": 0.633,
+            "offsetMs": -60.00000000000006
+          },
+          {
+            "predictedAt": 3.88,
+            "observedAt": 3.92,
+            "strength": 0.268,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 4.64,
+            "observedAt": 4.68,
+            "strength": 0.356,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 5.4,
+            "observedAt": 5.36,
+            "strength": 0.505,
+            "offsetMs": -40.000000000000036
+          }
+        ],
+        "missing": [],
+        "bars": [
+          {
+            "start": 3.12,
+            "end": 6.14,
+            "meter": 4,
+            "bpm": 78.94736842105266,
+            "phase": 0.9999999340023563,
+            "modelBeats": [
+              3.12,
+              3.88,
+              4.64,
+              5.4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "from": "audio/songs/track-210.mp3",
+      "to": "audio/songs/track-206.mp3",
+      "role": "held-out",
+      "geometry": {
+        "begin": 129.88484864,
+        "entry": 0,
+        "fade": 15.402151360000005,
+        "rate": 1.0312510312510312
+      },
+      "metricFit": null,
+      "diagnosis": {
+        "sourcePulses": 13,
+        "targetPulses": 16,
+        "matches": 0,
+        "ratio": 0,
+        "first": 0,
+        "second": 0,
+        "rms": null,
+        "reason": "observedPulseAgreement"
+      },
+      "harmony": null,
+      "source": {
+        "observed": [
+          129.08,
+          129.72,
+          130.4,
+          131.02,
+          131.66,
+          132.3,
+          132.98,
+          136.82,
+          137.5,
+          138.12,
+          138.8,
+          139.4,
+          140.08,
+          140.7,
+          141.36
+        ],
+        "evidence": [
+          {
+            "predictedAt": 129.04,
+            "observedAt": 129.08,
+            "strength": 0.312,
+            "offsetMs": 40.000000000020464
+          },
+          {
+            "predictedAt": 129.68,
+            "observedAt": 129.72,
+            "strength": 1.07,
+            "offsetMs": 39.99999999999204
+          },
+          {
+            "predictedAt": 130.34,
+            "observedAt": 130.4,
+            "strength": 0.337,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 130.98,
+            "observedAt": 131.02,
+            "strength": 1.245,
+            "offsetMs": 40.000000000020464
+          },
+          {
+            "predictedAt": 131.62,
+            "observedAt": 131.66,
+            "strength": 0.779,
+            "offsetMs": 39.99999999999204
+          },
+          {
+            "predictedAt": 132.26,
+            "observedAt": 132.3,
+            "strength": 1.148,
+            "offsetMs": 40.000000000020464
+          },
+          {
+            "predictedAt": 132.92,
+            "observedAt": 132.98,
+            "strength": 0.824,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 136.8,
+            "observedAt": 136.82,
+            "strength": 0.692,
+            "offsetMs": 19.99999999998181
+          },
+          {
+            "predictedAt": 137.44,
+            "observedAt": 137.5,
+            "strength": 1.058,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 138.1,
+            "observedAt": 138.12,
+            "strength": 0.879,
+            "offsetMs": 20.000000000010232
+          },
+          {
+            "predictedAt": 138.74,
+            "observedAt": 138.8,
+            "strength": 0.275,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 139.38,
+            "observedAt": 139.4,
+            "strength": 1.314,
+            "offsetMs": 20.000000000010232
+          },
+          {
+            "predictedAt": 140.02,
+            "observedAt": 140.08,
+            "strength": 0.675,
+            "offsetMs": 60.000000000002274
+          },
+          {
+            "predictedAt": 140.66,
+            "observedAt": 140.7,
+            "strength": 0.674,
+            "offsetMs": 39.99999999999204
+          },
+          {
+            "predictedAt": 141.3,
+            "observedAt": 141.36,
+            "strength": 0.527,
+            "offsetMs": 60.000000000002274
+          }
+        ],
+        "missing": [
+          {
+            "predictedAt": 133.56,
+            "observedAt": 133.62,
+            "strength": 0.213,
+            "offsetMs": 60.000000000002274
+          }
+        ],
+        "bars": [
+          {
+            "start": 129.04,
+            "end": 131.62,
+            "meter": 4,
+            "bpm": 93.74999999999784,
+            "phase": 1,
+            "modelBeats": [
+              129.04,
+              129.68,
+              130.34,
+              130.98
+            ]
+          },
+          {
+            "start": 131.62,
+            "end": 134.2,
+            "meter": 4,
+            "bpm": 93.74999999999991,
+            "phase": 1,
+            "modelBeats": [
+              131.62,
+              132.26,
+              132.92,
+              133.56
+            ]
+          },
+          {
+            "start": 136.8,
+            "end": 139.38,
+            "meter": 4,
+            "bpm": 93.74999999999991,
+            "phase": 1,
+            "modelBeats": [
+              136.8,
+              137.44,
+              138.1,
+              138.74
+            ]
+          },
+          {
+            "start": 139.38,
+            "end": 141.96,
+            "meter": 4,
+            "bpm": 93.74999999999784,
+            "phase": 1,
+            "modelBeats": [
+              139.38,
+              140.02,
+              140.66,
+              141.3
+            ]
+          }
+        ]
+      },
+      "target": {
+        "observed": [
+          2.84,
+          3.5,
+          4.18,
+          4.84,
+          8.18,
+          8.84,
+          9.52,
+          10.18,
+          10.84,
+          11.5,
+          12.18,
+          12.82,
+          13.48,
+          14.16,
+          14.86,
+          15.5
+        ],
+        "evidence": [
+          {
+            "predictedAt": 2.82,
+            "observedAt": 2.84,
+            "strength": 0.487,
+            "offsetMs": 20.000000000000018
+          },
+          {
+            "predictedAt": 3.48,
+            "observedAt": 3.5,
+            "strength": 0.567,
+            "offsetMs": 20.000000000000018
+          },
+          {
+            "predictedAt": 4.14,
+            "observedAt": 4.18,
+            "strength": 1.132,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 4.8,
+            "observedAt": 4.84,
+            "strength": 0.37,
+            "offsetMs": 40.000000000000036
+          },
+          {
+            "predictedAt": 8.14,
+            "observedAt": 8.18,
+            "strength": 0.924,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 8.8,
+            "observedAt": 8.84,
+            "strength": 0.554,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 9.48,
+            "observedAt": 9.52,
+            "strength": 1.513,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 10.14,
+            "observedAt": 10.18,
+            "strength": 0.602,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 10.8,
+            "observedAt": 10.84,
+            "strength": 0.953,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 11.46,
+            "observedAt": 11.5,
+            "strength": 1.343,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 12.14,
+            "observedAt": 12.18,
+            "strength": 0.768,
+            "offsetMs": 39.99999999999915
+          },
+          {
+            "predictedAt": 12.8,
+            "observedAt": 12.82,
+            "strength": 2.189,
+            "offsetMs": 19.999999999999574
+          },
+          {
+            "predictedAt": 13.46,
+            "observedAt": 13.48,
+            "strength": 1.195,
+            "offsetMs": 19.999999999999574
+          },
+          {
+            "predictedAt": 14.14,
+            "observedAt": 14.16,
+            "strength": 1.872,
+            "offsetMs": 19.999999999999574
+          },
+          {
+            "predictedAt": 14.8,
+            "observedAt": 14.86,
+            "strength": 0.328,
+            "offsetMs": 59.99999999999872
+          },
+          {
+            "predictedAt": 15.46,
+            "observedAt": 15.5,
+            "strength": 2.633,
+            "offsetMs": 39.99999999999915
+          }
+        ],
+        "missing": [],
+        "bars": [
+          {
+            "start": 2.82,
+            "end": 5.48,
+            "meter": 4,
+            "bpm": 90.90909090909089,
+            "phase": 1,
+            "modelBeats": [
+              2.82,
+              3.48,
+              4.14,
+              4.8
+            ]
+          },
+          {
+            "start": 8.14,
+            "end": 10.8,
+            "meter": 4,
+            "bpm": 90.90909090909089,
+            "phase": 1,
+            "modelBeats": [
+              8.14,
+              8.8,
+              9.48,
+              10.14
+            ]
+          },
+          {
+            "start": 10.8,
+            "end": 13.46,
+            "meter": 4,
+            "bpm": 90.90909090909089,
+            "phase": 1,
+            "modelBeats": [
+              10.8,
+              11.46,
+              12.14,
+              12.8
+            ]
+          },
+          {
+            "start": 13.46,
+            "end": 16.14,
+            "meter": 4,
+            "bpm": 89.55223880597016,
+            "phase": 1,
+            "modelBeats": [
+              13.46,
+              14.14,
+              14.8,
+              15.46
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

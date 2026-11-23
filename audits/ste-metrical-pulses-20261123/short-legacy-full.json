@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "caseRestricted": true,
+  "requestedCases": 1,
+  "membershipEvidence": {
+    "stateSha256": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 2,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 1,
+      "noCoherentInitialBars": 1
+    }
+  },
+  "pairConditions": {},
+  "windowExclusions": {},
+  "plans": [],
+  "windows": 0,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Ste",
+    "tracks": 222,
+    "unavailableMembers": 0,
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+  },
+  "diagnostics": {
+    "notPlaybackCertificates": true,
+    "pulseRejections": [],
+    "octaveTempoPairs": 0,
+    "octaveSamples": []
+  }
+}

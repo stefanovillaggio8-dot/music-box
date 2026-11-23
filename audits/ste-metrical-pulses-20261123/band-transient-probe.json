@@ -1,0 +1,87 @@
+{
+  "key": "audio/songs/track-34.mp3",
+  "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+  "method": "unmodified-original-band-energy-rise-20ms-diagnostic-only",
+  "notCertification": true,
+  "sampleRate": 44100,
+  "rows": {
+    "30-180": [
+      {
+        "modelT": 0.22,
+        "bandRiseTime": 0.2744,
+        "rmsRise": 0.035583,
+        "relativeToBandP95": 1.4119
+      },
+      {
+        "modelT": 2.84,
+        "bandRiseTime": 2.7837,
+        "rmsRise": 0.006828,
+        "relativeToBandP95": 0.2709
+      },
+      {
+        "modelT": 5.48,
+        "bandRiseTime": 5.5075,
+        "rmsRise": 0.089777,
+        "relativeToBandP95": 3.5622
+      },
+      {
+        "modelT": 8.12,
+        "bandRiseTime": 8.0816,
+        "rmsRise": 0.023231,
+        "relativeToBandP95": 0.9218
+      }
+    ],
+    "180-1800": [
+      {
+        "modelT": 0.22,
+        "bandRiseTime": 0.2245,
+        "rmsRise": 0.177475,
+        "relativeToBandP95": 4.1808
+      },
+      {
+        "modelT": 2.84,
+        "bandRiseTime": 2.7887,
+        "rmsRise": 0.009006,
+        "relativeToBandP95": 0.2121
+      },
+      {
+        "modelT": 5.48,
+        "bandRiseTime": 5.5075,
+        "rmsRise": 0.123738,
+        "relativeToBandP95": 2.9149
+      },
+      {
+        "modelT": 8.12,
+        "bandRiseTime": 8.1265,
+        "rmsRise": 0.030096,
+        "relativeToBandP95": 0.709
+      }
+    ],
+    "1800-5000": [
+      {
+        "modelT": 0.22,
+        "bandRiseTime": 0.2195,
+        "rmsRise": 0.004439,
+        "relativeToBandP95": 0.7446
+      },
+      {
+        "modelT": 2.84,
+        "bandRiseTime": 2.7887,
+        "rmsRise": 0.001163,
+        "relativeToBandP95": 0.195
+      },
+      {
+        "modelT": 5.48,
+        "bandRiseTime": 5.4925,
+        "rmsRise": 0.004609,
+        "relativeToBandP95": 0.7732
+      },
+      {
+        "modelT": 8.12,
+        "bandRiseTime": 8.0767,
+        "rmsRise": 9.9e-05,
+        "relativeToBandP95": 0.0166
+      }
+    ]
+  }
+}

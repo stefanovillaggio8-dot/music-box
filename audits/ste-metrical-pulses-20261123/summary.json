@@ -1,0 +1,174 @@
+{
+  "checkpoint": "06058c441f122f50b71a8f01afe01070235d9338",
+  "implementationCommit": "96a20fb1a2a4d31ab0f1f00ea87701aee7b5ac53",
+  "profile": "Ste",
+  "scopeRecordings": 222,
+  "membershipEvidence": {
+    "stateSha256": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "distinctOrderedCases": 6,
+  "sources": [
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "sha": "91880f7106a62122af82cff60cc00541b500369f"
+    },
+    {
+      "key": "audio/songs/track-205.mp3",
+      "sha": "611c879b4c80ba12a1a415f2225a8cea89cf1416"
+    },
+    {
+      "key": "audio/songs/track-206.mp3",
+      "sha": "592f4db9c95c76cc002683f347fa0ab675eb00b4"
+    },
+    {
+      "key": "audio/songs/track-210.mp3",
+      "sha": "e832097a514113e7328912b824fb257365fc9fdb"
+    },
+    {
+      "key": "audio/songs/track-33.mp3",
+      "sha": "87ac95c6c1e141a822414e3a16aacd7d9020824f"
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd"
+    },
+    {
+      "key": "audio/songs/track-39.mp3",
+      "sha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd"
+    },
+    {
+      "key": "audio/songs/track-50.mp3",
+      "sha": "c6852c3787cd781b3e806ac9b97559ac57c439ea"
+    },
+    {
+      "key": "audio/songs/track-7.mp3",
+      "sha": "30c7dd0e01e288fdee55c9a92973855f5e98be9f"
+    }
+  ],
+  "percussiveModelExperiments": [
+    {
+      "key": "audio/songs/track-39.mp3",
+      "sha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd",
+      "modelSha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+      "analysisView": "percussive",
+      "roles": [
+        "intro"
+      ],
+      "introBars": 0,
+      "pcmFromUnmodifiedOriginal": true
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "modelSha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+      "analysisView": "percussive",
+      "roles": [
+        "intro"
+      ],
+      "introBars": 0,
+      "pcmFromUnmodifiedOriginal": true
+    }
+  ],
+  "certifiedBefore": {
+    "complete": 1,
+    "partial": 1
+  },
+  "newCertified": {
+    "complete": 0,
+    "partial": 0
+  },
+  "certifiedAfter": {
+    "complete": 1,
+    "partial": 1
+  },
+  "productionVersion": "6.739",
+  "newPublicRelease": false,
+  "newTransitionRendering": false,
+  "newShuffleSimulation": false,
+  "localTests": {
+    "nodeTargeted": {
+      "passed": 134,
+      "failed": 0
+    },
+    "pythonStructure": {
+      "passed": 10,
+      "failed": 0
+    },
+    "pythonCache": {
+      "passed": 4,
+      "failed": 0
+    }
+  },
+  "files": [
+    {
+      "file": "band-transient-probe.json",
+      "sha256": "c008697a19560c53474444de1bbf21493bfc652af079c859aa0ed718c9fc6e1b"
+    },
+    {
+      "file": "bar-gates.json",
+      "sha256": "dc6fca3edd7092f6ecd0e78487e240bb75daba8f125409f364c6e45bcee9871d"
+    },
+    {
+      "file": "frozen-diagnostic-cases.json",
+      "sha256": "883ccd9c6012f2b2b009bcd85230d4c148339fd69bde99bdf01c8dd0b76662b0"
+    },
+    {
+      "file": "lilith-cases.json",
+      "sha256": "3e9987a8a6aeff12fbbc456d86018755044176ac1203012b3885a018cebdcc61"
+    },
+    {
+      "file": "lilith-context.json",
+      "sha256": "85d6a4670cb1fa20b10ae453a42d969fcd02fe152312572826488b5ea7fe2024"
+    },
+    {
+      "file": "lilith-whole.json",
+      "sha256": "bd7700e4d27b5c078745ae2cb8243797f1ec7ed15f7eed325cbb92e2cab548e8"
+    },
+    {
+      "file": "metric-diagnosis-checked.json",
+      "sha256": "3219c21110f945abe7cd12afae682238758750b0a4d64948468bfb94b1e9b1b5"
+    },
+    {
+      "file": "metrical-case.json",
+      "sha256": "2a5a74305a0c86ca79a853a80a632cb6703bf2edce3eeb26c7489b0eb16a509f"
+    },
+    {
+      "file": "other-context.json",
+      "sha256": "e83a18dc93a1ff48c000f48fe3659130c8c645767891ef84bab79af1695d9ff3"
+    },
+    {
+      "file": "other-two-cases.json",
+      "sha256": "31f8cb201c93f509c30533cb84c1c15510cbd956de25bbffdeddb5a758d63d01"
+    },
+    {
+      "file": "phase-cases.json",
+      "sha256": "8b6316a4422c1053cd0adbe8ddb9db7a35af3c5f13938a0605b42c8a355e0b64"
+    },
+    {
+      "file": "phase-gap-results.json",
+      "sha256": "07b0ea707de2cfbb0da4d7c4c6d8e93eedafe580ca40c76ef5a03960d1f4e7ca"
+    },
+    {
+      "file": "realigned-context.json",
+      "sha256": "4753c79f1befc32b9d2a62b5a23f5463d92b30026ccbf3999f887e62194ab70a"
+    },
+    {
+      "file": "realigned-whole.json",
+      "sha256": "1f45bcc9de0a6ab33b3047a0638577d9791d2d273dd6077cbd078934f35f422d"
+    },
+    {
+      "file": "short-case.json",
+      "sha256": "b3f7e99636a75775499ea5e5a72c2f796f154edc8d2fee7a3b265b56aed9d36a"
+    },
+    {
+      "file": "short-eva-candidates.json",
+      "sha256": "e1df31566a300bf4e431c24ddff2ebcd38e2286c117223f55ca32943ee54e891"
+    },
+    {
+      "file": "short-legacy-full.json",
+      "sha256": "27cf8ee66e5b8db08613fae9f26f246d41d2eb564c73c394a7acfc5fec7118b7"
+    }
+  ]
+}
