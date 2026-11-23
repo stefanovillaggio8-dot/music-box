@@ -19,7 +19,7 @@ test('bounded cases reject outside membership, changed audio, duplicate files an
  assert.throws(()=>validateSteCases(Array(2).fill({from:'first',to:'second'}),scope,index),/Duplicate/);
 });
 test('global research cannot run automatically from a PR; essential regressions and existing import analysis stay enabled',()=>{
- for(const f of ['dj-equivalence-audit.yml','dj-pcm-transition-features.yml','dj-structural-integration.yml','dj-real-audio-audit.yml']){
+ for(const f of ['dj-equivalence-audit.yml','dj-pcm-transition-features.yml','dj-structural-integration.yml','dj-real-audio-audit.yml','dj-audio-spotcheck.yml']){
   const text=fs.readFileSync(path.join(root,'.github/workflows',f),'utf8'),trigger=text.slice(text.indexOf('on:\n'),text.indexOf('permissions:'));
   assert.ok(trigger.includes('workflow_dispatch:'));assert.doesNotMatch(trigger,/^  (pull_request|push):/m);
  }
