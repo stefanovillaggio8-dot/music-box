@@ -46,9 +46,16 @@ on:
         description: 'Isolated sequential bootstrap only, preserves failed trials and never enables iPhone playback'
         type: boolean
         default: false
+      observed_native_study:
+        description: 'New isolated readiness/clock observer; never enables iPhone or installs a musical cue'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
+  observed-native-study:
+    if: github.event_name == 'workflow_dispatch' && inputs.observed_native_study
+    uses: ./.github/workflows/ste-observed-native-study.yml
   factored-native-study:
     if: github.event_name == 'workflow_dispatch' && (inputs.factored_native_study || inputs.factored_player || inputs.ios_sequential_study)
     strategy:
