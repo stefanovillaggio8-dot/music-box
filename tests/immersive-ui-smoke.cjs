@@ -15,7 +15,7 @@ const lyricsEnd=html.indexOf('<div class="import-overlay" id="spotifyPanel"',lyr
 assert.ok(lyricsBegin>0&&lyricsEnd>lyricsBegin,"full lyrics markup must exist");
 const lyricsFragment=html.slice(lyricsBegin,lyricsEnd);
 assert.match(css,/\.im-root\.im-focus \.im-karaoke/);
-assert.match(css,/env\\(safe-area-inset-top\\)/);
+assert.match(css,/env\(safe-area-inset-top\)/);
 assert.match(fragment,/class="im-aura"/,"album artwork has its animated halo");
 assert.match(fragment,/class="im-mini-spectrum"/,"decorative mini spectrum exists");
 assert.match(css,/@keyframes im-orbit/,"cinematic orbit has a keyframe");
