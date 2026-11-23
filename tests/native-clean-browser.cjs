@@ -5,6 +5,7 @@ const {chromium,webkit}=require('playwright'),{currentSteScope,validateSteCases}
 const root=path.resolve(__dirname,'..'),fixture=JSON.parse(fs.readFileSync(process.env.MUSICBOX_NATIVE_CLEAN_FIXTURE||path.join(root,'audits/ste-classifier-evaluation-20261123/native-element-shadow.json')));
 const fromId='b-'+path.basename(fixture.from,'.mp3'),toId='b-'+path.basename(fixture.to,'.mp3'),targetFile='/'+path.basename(fixture.to);
 const translationMode=process.env.MUSICBOX_NATIVE_TRANSLATION==='true';
+const phoneNaturalMode=process.env.MUSICBOX_PHONE_NATIVE_INTRO==='true';
 const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 validateSteCases([fixture],currentSteScope(),index);
 for(const key of [fixture.from,fixture.to]){
@@ -49,7 +50,7 @@ const server=http.createServer((req,res)=>{
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
   const browser=await engine.launch({headless:true});
   try{
-   const context=await browser.newContext({serviceWorkers:'block'}),page=await context.newPage();
+   const context=await browser.newContext({serviceWorkers:'block',...(phoneNaturalMode?{isMobile:true,hasTouch:true,viewport:{width:390,height:844},userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'}:{})}),page=await context.newPage();
    const logs=[];let translationRequested=false,translationAborted=false;const wordModels=[];
    page.on('console',m=>{if(m.text().includes('Music Box DJ'))logs.push(m.text())});page.on('pageerror',e=>logs.push(e.message));
    page.on('request',r=>{if(/audio-lyrics-worker|\.onnx(?:\?|$)|huggingface/.test(r.url()))wordModels.push(r.url())});
@@ -81,8 +82,16 @@ const server=http.createServer((req,res)=>{
    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.MusicBoxMix?.diagnostics().deepIndexLoaded&&[__nativePair.fromId,__nativePair.toId].every(id=>MusicBoxBridge.playable().some(t=>t.id===id)),null,{timeout:20000});
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
-   assert.equal(inspection.approved,true);assert.equal(inspection.beatCertified,false);assert.equal(inspection.cue.nativeCleanTail,true);
+   if(phoneNaturalMode){assert.ok(!inspection.cue?.neutralAmbientUnderlay);}
+   else{assert.equal(inspection.approved,true);assert.equal(inspection.beatCertified,false);assert.equal(inspection.cue.nativeCleanTail,true);}
    await page.evaluate(begin=>{
+    window.__phoneHandoffs=[];window.__overlapEvents=[];
+    addEventListener('musicbox:mix-overlap',e=>__overlapEvents.push(e.detail));
+    const normal=MusicBoxBridge.mixHandoff;
+    MusicBoxBridge.mixHandoff=(id,entry,options)=>{
+     if(id===__nativePair.toId)__phoneHandoffs.push({sourceId:MusicBoxBridge.currentId(),sourceAt:MusicBoxBridge.audio().currentTime,sourceDuration:MusicBoxBridge.audio().duration,entry});
+     return normal(id,entry,options);
+    };
     const adopt=MusicBoxBridge.mixAdoptHandoff;
     MusicBoxBridge.mixAdoptHandoff=(id,audio)=>{
      window.__beforeNativeAdoption={oldEnded:__outgoingNative.ended,sourceAt:__outgoingNative.currentTime,sourceDuration:__outgoingNative.duration,
@@ -105,6 +114,20 @@ const server=http.createServer((req,res)=>{
    try{
     await page.waitForFunction(()=>window.__setupDone||window.__setupError,null,{timeout:15000});
     assert.equal(await page.evaluate(()=>window.__setupError||null),null);
+    if(phoneNaturalMode){
+     await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId&&!MusicBoxBridge.audio().paused&&MusicBoxBridge.audio().currentTime>.25,null,{timeout:20000});
+     const state=await page.evaluate(()=>({calls:__phoneHandoffs,trace:__nativeCleanTrace,overlapEvents:__overlapEvents,
+      current:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime,volume:MusicBoxBridge.audio().volume,muted:MusicBoxBridge.audio().muted,rate:MusicBoxBridge.audio().playbackRate}));
+     assert.equal(state.calls.length,1);assert.equal(state.calls[0].entry,0);assert.equal(state.overlapEvents.length,0);
+     const call=state.calls[0],clock=fixture.record.cue.nativeCleanEvidence.sourceClock;
+     const offset=await page.evaluate(({clock,sha,duration})=>MusicBoxCompositeMix.nativeClockOffset(clock,sha,duration),{clock,sha:fixture.record.fromSha,duration:call.sourceDuration});
+     assert.notEqual(offset,null);assert.ok(call.sourceAt-offset>=fixture.record.cue.begin-.3,'complete independently quiet suffix');
+     assert.ok(call.sourceAt<call.sourceDuration-1.5,'audible native successor before encoded EOF');
+     assert.ok(state.trace.find(t=>t.event==='target-play').at<=.02);assert.ok(state.trace.filter(t=>t.event==='target-seek').every(t=>t.value===0));
+     assert.equal(state.muted,false);assert.equal(state.volume,1);assert.equal(state.rate,1);
+     report.results.push({browser:name,platform:process.platform,phoneNativeIntro:true,physicalIPhone:false,state,logs});
+     await page.evaluate(()=>MusicBoxBridge.audio().pause());await context.close();continue;
+    }
     if(translationMode){
      await page.click('#btnLyrics');await page.click('#lyricsTraduci');
      for(let i=0;i<50&&!translationRequested;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationRequested,true);

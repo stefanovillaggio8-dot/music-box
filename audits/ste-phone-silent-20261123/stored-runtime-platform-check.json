@@ -1,0 +1,167 @@
+{
+  "boundedStoredPairs": 4,
+  "noNewCertification": true,
+  "physicalIPhone": false,
+  "results": [
+    {
+      "platform": "pc",
+      "from": "b-track-705",
+      "to": "b-track-50",
+      "result": {
+        "kind": "full",
+        "overlap": 10.77661184210524,
+        "commonAssetSha": "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311",
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 159.301,
+        "incomingAudibleUpperBound": 0,
+        "begin": 148.52438815789475,
+        "end": 159.301,
+        "earlyOverlapStart": true,
+        "early": false,
+        "safariFull": true,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "pc",
+      "from": "b-track-4",
+      "to": "b-track-38",
+      "result": {
+        "kind": "partial",
+        "overlap": 7.250282685512346,
+        "commonAssetSha": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 126.877,
+        "incomingAudibleUpperBound": 0,
+        "begin": 119.62671731448765,
+        "end": 126.877,
+        "earlyOverlapStart": false,
+        "early": false,
+        "safariFull": false,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "pc",
+      "from": "b-track-38",
+      "to": "b-track-4",
+      "result": {
+        "kind": "postlude",
+        "overlap": 2.3389999999999986,
+        "commonAssetSha": null,
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 161.089,
+        "incomingAudibleUpperBound": 0,
+        "begin": 158.75,
+        "end": 161.089,
+        "earlyOverlapStart": false,
+        "early": false,
+        "safariFull": false,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "pc",
+      "from": "b-track-38",
+      "to": "b-track-50",
+      "result": {
+        "kind": "postlude",
+        "overlap": 2.3389999999999986,
+        "commonAssetSha": null,
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 161.089,
+        "incomingAudibleUpperBound": 0,
+        "begin": 158.75,
+        "end": 161.089,
+        "earlyOverlapStart": false,
+        "early": false,
+        "safariFull": false,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "safari",
+      "from": "b-track-705",
+      "to": "b-track-50",
+      "result": {
+        "kind": "full",
+        "overlap": 10.77661184210524,
+        "commonAssetSha": "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311",
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 159.301,
+        "incomingAudibleUpperBound": 0,
+        "begin": 148.52438815789475,
+        "end": 159.301,
+        "earlyOverlapStart": true,
+        "early": false,
+        "safariFull": true,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "safari",
+      "from": "b-track-4",
+      "to": "b-track-38",
+      "result": {
+        "kind": "partial",
+        "overlap": 7.250282685512346,
+        "commonAssetSha": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 126.877,
+        "incomingAudibleUpperBound": 0,
+        "begin": 119.62671731448765,
+        "end": 126.877,
+        "earlyOverlapStart": false,
+        "early": false,
+        "safariFull": false,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    },
+    {
+      "platform": "safari",
+      "from": "b-track-38",
+      "to": "b-track-4",
+      "result": {
+        "kind": "normal",
+        "overlap": 0,
+        "skipped": 0,
+        "missingAnalysis": false,
+        "incomingOmitted": 0,
+        "incomingAudibleUpperBound": 0
+      }
+    },
+    {
+      "platform": "safari",
+      "from": "b-track-38",
+      "to": "b-track-50",
+      "result": {
+        "kind": "underlay",
+        "overlap": 5.453999999999979,
+        "commonAssetSha": null,
+        "skipped": 0,
+        "incomingOmitted": 0,
+        "outgoingReadThrough": 161.089,
+        "incomingAudibleUpperBound": 0,
+        "begin": 155.60000000000002,
+        "end": 161.054,
+        "earlyOverlapStart": false,
+        "early": false,
+        "safariFull": false,
+        "significantContentSkippedSeconds": null,
+        "semanticContentUnknown": true
+      }
+    }
+  ]
+}

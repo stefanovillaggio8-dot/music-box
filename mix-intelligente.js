@@ -418,12 +418,7 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    Math.abs(plan.end-ending.duration)<.1;
 
  if(plan?.neutralAmbientUnderlay===true)
-  return !!ending&&plan.kind==="underlay"&&
-   plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
-   ending.durationMismatch!==true&&
-   Number.isFinite(ending.duration)&&Number.isFinite(plan.end)&&
-   Math.abs(ending.duration-plan.end)<.20&&
-   plan.fade>=3.15&&plan.fade<=6.8&&plan.underlayVolume<=.09;
+  return false; // <=9% plus low-pass is not proof the original intro was heard.
  if(plan?.postMusicalTailUnderlay===true)
   return !!ending&&plan.kind==="postlude"&&plan.preserveTail===true&&
    ending.protectedEnding!==true&&Number.isFinite(ending.last)&&
@@ -4075,10 +4070,10 @@ function musicallyCompatibleOverlay(a,b,cue){
    Math.abs(expected.end-cue.end)<.085;
  }
  if(cue.neutralAmbientUnderlay===true){
-  const p=adaptiveLowBandContinuity(a,b,a?.duration);
-  return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
-   cue.drumOnlyUnderlay===true&&Math.abs(p.begin-cue.begin)<.085&&
-   Math.abs(p.end-cue.end)<.085;
+  // The old fallback consumed several native seconds after only a filtered,
+  // <=9% teaser, then sought past that unverified introduction. Preserve
+  // entry zero through the existing native/quiet-tail handoff instead.
+  return false;
  }
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);

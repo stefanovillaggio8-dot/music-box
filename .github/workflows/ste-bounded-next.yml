@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         # Standard Intel pool is a bounded alternative to a queued ARM latest.
-        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel') && '["macos-15-intel"]' || inputs.stage == 'source-quiet' && '["ubuntu-24.04","macos-15-intel"]' || inputs.stage == 'player' && '["ubuntu-24.04"]' || '["ubuntu-24.04","macos-latest"]') }}
+        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel') && '["macos-15-intel"]' || (inputs.stage == 'source-quiet' || inputs.stage == 'finish') && '["ubuntu-24.04","macos-15-intel"]' || inputs.stage == 'player' && '["ubuntu-24.04"]' || '["ubuntu-24.04","macos-latest"]') }}
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
     timeout-minutes: 10
@@ -49,7 +49,7 @@ jobs:
       - name: Preserve scope, cancellation and existing natural controls
         run: node --test tests/ios-native-observed.test.cjs tests/ste-research-scope.test.cjs tests/factored-native-clean.test.cjs
       - name: Three frozen Ste originals only, one new prefix
-        if: inputs.stage != 'source-quiet'
+        if: inputs.stage != 'source-quiet' && inputs.stage != 'finish'
         run: node tools/fetch-ste-clean-recordings.cjs audits/ste-next-clean-20261123/recordings.json
       - name: Frozen alternative Ste source only, with reused incoming evidence
         if: inputs.stage == 'source-quiet'
@@ -72,11 +72,33 @@ jobs:
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-next-clean-20261123/new-pair-shadow.json
           MUSICBOX_NATIVE_CLEAN_OUTPUT: new-pair-shadow-player.json
         run: node tests/native-clean-browser.cjs
+      - name: Exact originals for the new second-source and existing phone junction
+        if: inputs.stage == 'finish'
+        run: |
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+          node --test tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs
+      - name: New frozen second-source actual-app SHADOW
+        if: inputs.stage == 'finish'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: source6-shadow-player.json
+        run: node tests/native-clean-browser.cjs
+      - name: Actual iPhone-path player preserves unconsumed original intro before encoded EOF
+        if: inputs.stage == 'finish'
+        env:
+          MUSICBOX_PHONE_NATIVE_INTRO: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: phone-native-intro.json
+        run: node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-bounded-next-${{ runner.os }}
           path: |
+            phone-native-intro.json
+            source6-shadow-player.json
             source-quiet-native.json
             next-prefix.json
             silent-observed.json
