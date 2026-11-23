@@ -3239,13 +3239,13 @@
    },
    "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 5,
-    "s": 393,
+    "s": 459,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 5,
-    "s": 393,
+    "s": 459,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
@@ -3622,14 +3622,14 @@
     "a": "tha supreme"
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 4,
-    "s": 560,
+    "v": 5,
+    "s": 584,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 4,
-    "s": 560,
+    "v": 5,
+    "s": 584,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -6167,7 +6167,7 @@
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 4,
-    "s": 547,
+    "s": 614,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -6893,7 +6893,7 @@
    },
    "m:2026-11|[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
-    "s": 544,
+    "s": 611,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -6971,7 +6971,7 @@
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 4,
-    "s": 614,
+    "s": 653,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -7703,7 +7703,7 @@
    },
    "m:2026-11|[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 3,
-    "s": 611,
+    "s": 650,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -9136,14 +9136,14 @@
     "a": "LuchÃÂ¨, Da Blonde"
    },
    "[\"stella cadente\",\"modÃÂ \"]": {
-    "v": 2,
-    "s": 511,
+    "v": 3,
+    "s": 550,
     "t": "Stella Cadente",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂ \"]": {
-    "v": 2,
-    "s": 511,
+    "v": 3,
+    "s": 550,
     "t": "Stella Cadente",
     "a": "ModÃÂ "
    },
@@ -9947,13 +9947,13 @@
    },
    "[\"stella cadente\",\"modÃ \"]": {
     "v": 3,
-    "s": 550,
+    "s": 615,
     "t": "Stella Cadente",
     "a": "ModÃ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃ \"]": {
     "v": 3,
-    "s": 550,
+    "s": 615,
     "t": "Stella Cadente",
     "a": "ModÃ "
    },
