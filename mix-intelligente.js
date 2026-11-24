@@ -777,7 +777,11 @@ function loadDeepIndex(force=false){
     "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/dj-deep-analysis.json?mb-dj-refresh=1":
     "dj-deep-analysis.json?pcm=1&structure=18";
    const resp=await fetch(indexUrl,{
-    cache:"no-cache",signal:ctrl.signal
+    cache:"no-cache",signal:ctrl.signal,
+    // Same-origin worker cache otherwise returns the PREVIOUS certificate
+    // index immediately, even after app update. Revalidate the same key;
+    // keep its offline fallback and do not add headers to raw GitHub CORS.
+    ...(!force?{headers:{"X-MusicBox-DJ-Revalidate":"1"}}:{})
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
    const json=await resp.json();

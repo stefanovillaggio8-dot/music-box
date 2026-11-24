@@ -120,7 +120,18 @@ const server=http.createServer((req,res)=>{
     };
     const b=document.createElement('button');b.id='start-native-clean';b.textContent='Start Ste native clean trial';b.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
     b.onclick=async event=>{
-     try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,begin-7);window.__outgoingNative=MusicBoxBridge.audio();
+     try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,0);window.__outgoingNative=MusicBoxBridge.audio();
+      // Test a transition from an ALREADY PLAYING original, as in listening.
+      // Cold-start/nonzero-seek decoder failures are separate player results;
+      // they must not masquerade as a failed overlap or a successful startup.
+      const progress=async(predicate,label)=>{const at=performance.now();while(!predicate()){
+       if(performance.now()-at>15000)throw Error(label);await new Promise(r=>setTimeout(r,20));
+      }};
+      await progress(()=>!__outgoingNative.paused&&!__outgoingNative.seeking&&__outgoingNative.currentTime>.25,'Original source failed to start from native zero');
+      window.__sourceStartProof={fromZero:true,advancedBeforeSeek:__outgoingNative.currentTime,duration:__outgoingNative.duration};
+      window.dispatchEvent(new CustomEvent('musicbox-native-control',{detail:{action:'seek',time:begin-7}}));
+      await progress(()=>!__outgoingNative.paused&&!__outgoingNative.seeking&&__outgoingNative.currentTime>=begin-7+.05,'Original source failed to progress after actual seek control');
+      __sourceStartProof.advancedAfterSeek=__outgoingNative.currentTime;
       if(MusicBoxBridge.mixEnqueue([__nativePair.toId])!==1)throw Error('Actual manual queue rejected Ste target');window.__setupDone=true;
       window.__nativeCleanTimeline=[];
       window.__captureNativeOverlap=()=>{
@@ -160,7 +171,7 @@ const server=http.createServer((req,res)=>{
      assert.ok(call.sourceAt<call.sourceDuration-1.5,'audible native successor before encoded EOF');
      assert.ok(state.trace.find(t=>t.event==='target-play').at<=.02);assert.ok(state.trace.filter(t=>t.event==='target-seek').every(t=>t.value===0));
      assert.equal(state.sameNativeElement,true);assert.equal(state.muted,false);assert.equal(state.volume,1);assert.equal(state.rate,1);
-     report.results.push({browser:name,platform:process.platform,phoneNativeIntro:true,physicalIPhone:false,state,logs});
+     report.results.push({browser:name,platform:process.platform,phoneNativeIntro:true,physicalIPhone:false,state,sourceStart:await page.evaluate(()=>__sourceStartProof),logs});
      await page.evaluate(()=>MusicBoxBridge.audio().pause());await context.close();continue;
     }
     if(translationMode){
@@ -212,7 +223,7 @@ const server=http.createServer((req,res)=>{
      const stall=await page.evaluate(()=>window.__nativeStall);assert.ok(stall?.seconds>=.35);assert.ok(actualBegin>p.begin+.08,'exercise a real media-clock delay beyond the legacy timing point');
     }
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
-    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),stall:await page.evaluate(()=>window.__nativeStall||null),
+    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,sourceStart:await page.evaluate(()=>__sourceStartProof),eofChecks:await page.evaluate(()=>__eofChecks),stall:await page.evaluate(()=>window.__nativeStall||null),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),clockAttempts:window.__nativeClockAttempts,timeline:window.__nativeCleanTimeline}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}

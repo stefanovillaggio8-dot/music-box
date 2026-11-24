@@ -61,6 +61,11 @@ on:
 permissions:
   contents: read
 jobs:
+  exact-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'release-final'
+    uses: ./.github/workflows/ste-release-final.yml
+    with:
+      release_sha: '2957332f1ec483810e25cf5bb228bc4a8439749a'
   bounded-next:
     if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'prepare' || inputs.bounded_next_stage == 'player' || inputs.bounded_next_stage == 'prepare-mac-intel' || inputs.bounded_next_stage == 'player-mac-intel' || inputs.bounded_next_stage == 'source-quiet' || inputs.bounded_next_stage == 'filmografo-quiet' || inputs.bounded_next_stage == 'filmografo-player' || inputs.bounded_next_stage == 'finish' || inputs.bounded_next_stage == 'phone' || inputs.bounded_next_stage == 'debug-source6')
     uses: ./.github/workflows/ste-bounded-next.yml

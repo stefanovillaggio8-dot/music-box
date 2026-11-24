@@ -67,11 +67,20 @@ const server=http.createServer((req,res)=>{
   const refreshed=await page.evaluate(async prefix=>{
    const url=new URL('/dj-deep-analysis.json?pcm=1&structure=18',location.href).href;
    await(await caches.open(prefix+'-dj-index')).put(url,new Response(JSON.stringify({version:2,entries:{},fixture:'stale-index'}),{headers:{'Content-Type':'application/json'}}));
+   window.__djIndexKeyCountBefore=(await(await caches.open(prefix+'-dj-index')).keys()).length;
    const r=await fetch(url,{headers:{'X-MusicBox-DJ-Revalidate':'1'}}),data=await r.json();
    return r.status===200&&!data.fixture&&data.analyzed>0;
   },prefix);
   assert.equal(refreshed,true,'explicit new-recording analysis refresh must return the fresh network metadata');
+  await page.waitForFunction(async prefix=>{
+   const c=await caches.open(prefix+'-dj-index'),url=new URL('/dj-deep-analysis.json?pcm=1&structure=18',location.href).href,r=await c.match(url);
+   if(!r)return false;const data=await r.json();return !data.fixture&&data.analyzed>0;
+  },prefix);
+  assert.equal(await page.evaluate(async prefix=>(await(await caches.open(prefix+'-dj-index')).keys()).length,prefix),await page.evaluate(()=>__djIndexKeyCountBefore),'fresh analysis replaces the same metadata key without duplicate copies');
   await context.setOffline(true);
+  assert.equal(await page.evaluate(async()=>{
+   const r=await fetch('/dj-deep-analysis.json?pcm=1&structure=18',{headers:{'X-MusicBox-DJ-Revalidate':'1'}}),d=await r.json();return r.status===200&&!d.fixture&&d.analyzed>0;
+  }),true,'the revalidated index remains available through the same loader request while offline');
   const offline=await page.evaluate(async appAsset=>{const r=await fetch('/'+appAsset);return {status:r.status,body:await r.text()};},appAsset);
   assert.equal(offline.status,200);assert.ok(offline.body.includes('const APP_VERSION = "'+release+'";'));
   assert.equal(offline.body,fs.readFileSync(path.join(root,'app.js'),'utf8'),'Offline response must be the actual NEW player, even when the release number is unchanged');

@@ -1,0 +1,2800 @@
+{
+  "counterfactual": [
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "targetSha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+      "begin": 155.55262295081968,
+      "end": 168.853,
+      "fade": 13.300377049180327,
+      "tempo": 0.9606299212598455,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.076740157480353,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.317403,
+        "maxRelativeVocal": 0.9869104173456724,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 155.25262295081967,
+        "end": 168.853,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.322828,
+        "maxRelativeVocal": 0.9421522287198685,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": false,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "targetSha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+      "begin": 153.10261904761907,
+      "end": 168.853,
+      "fade": 15.750380952380937,
+      "tempo": 0.9882352941176482,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.86508235294118,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.317403,
+        "maxRelativeVocal": 0.9869104173456724,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 152.80261904761906,
+        "end": 168.853,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.348243,
+        "maxRelativeVocal": 0.9421522287198685,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": false,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "targetSha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+      "begin": 152.99177419354842,
+      "end": 168.853,
+      "fade": 15.861225806451586,
+      "tempo": 0.9763779527559084,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.786551181102382,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.317403,
+        "maxRelativeVocal": 0.9869104173456724,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 152.6917741935484,
+        "end": 168.853,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.348243,
+        "maxRelativeVocal": 0.9421522287198685,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": false,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "targetSha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+      "begin": 155.46903225806452,
+      "end": 168.853,
+      "fade": 13.383967741935493,
+      "tempo": 0.968749999999999,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.265718749999996,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.317403,
+        "maxRelativeVocal": 0.9869104173456724,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 155.1690322580645,
+        "end": 168.853,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.348243,
+        "maxRelativeVocal": 0.9421522287198685,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": false,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.4,
+      "end": 174.045,
+      "fade": 13.644999999999982,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.944999999999983,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.1,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.41032520325203,
+      "end": 174.045,
+      "fade": 13.634674796747959,
+      "tempo": 1.00408163265306,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.990326530612219,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.11032520325202,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.35836065573767,
+      "end": 174.045,
+      "fade": 13.686639344262318,
+      "tempo": 0.9838709677419281,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.765887096774115,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.05836065573766,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.36618852459014,
+      "end": 174.045,
+      "fade": 13.678811475409844,
+      "tempo": 0.9838709677419281,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.758185483870875,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.06618852459013,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.86,
+      "end": 174.045,
+      "fade": 11.184999999999974,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.484999999999975,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.56,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.8725,
+      "end": 174.045,
+      "fade": 11.172499999999985,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.472499999999986,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.5725,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.88065040650406,
+      "end": 174.045,
+      "fade": 11.164349593495928,
+      "tempo": 1.0081967213114764,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.555860655737709,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.58065040650405,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.90042682926827,
+      "end": 174.045,
+      "fade": 11.144573170731718,
+      "tempo": 1.0081967213114764,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.535922131147563,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.60042682926826,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.8930081300813,
+      "end": 174.045,
+      "fade": 11.151991869918675,
+      "tempo": 1.0081967213114764,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.54340163934425,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.5930081300813,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 162.90588466811127,
+      "end": 174.045,
+      "fade": 11.139115331888718,
+      "tempo": 1.0183971717444684,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 11.644043549730917,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.60588466811126,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.42000000000002,
+      "end": 174.045,
+      "fade": 13.624999999999972,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.924999999999972,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.12,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.52,
+      "end": 174.045,
+      "fade": 13.524999999999977,
+      "tempo": 1.0204918032786894,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 14.102151639344251,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.22,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 160.49847473404256,
+      "end": 174.045,
+      "fade": 13.546525265957428,
+      "tempo": 1.016010268188883,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 14.063408768492886,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 160.19847473404255,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.10928,
+      "end": 174.045,
+      "fade": 15.935719999999975,
+      "tempo": 1.0245901639344273,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.627581967213107,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.80928,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.10672,
+      "end": 174.045,
+      "fade": 15.938279999999992,
+      "tempo": 1.0245901639344273,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.630204918032796,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.80671999999998,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.10389286522224,
+      "end": 174.045,
+      "fade": 15.941107134777752,
+      "tempo": 1.0238336501931742,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.62104190591996,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.80389286522222,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.10020784109193,
+      "end": 174.045,
+      "fade": 15.944792158908058,
+      "tempo": 1.0238336501931742,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.62481475762634,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.80020784109192,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.1346575342466,
+      "end": 174.045,
+      "fade": 15.910342465753388,
+      "tempo": 1.0281690140845092,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.65852112676056,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.8346575342466,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.1376369863014,
+      "end": 174.045,
+      "fade": 15.907363013698586,
+      "tempo": 1.0281690140845092,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.655457746478863,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.8376369863014,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.224094488189,
+      "end": 174.045,
+      "fade": 15.820905511810992,
+      "tempo": 1.040983606557378,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.769303278688508,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.92409448818898,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "sourceSha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "targetSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "begin": 158.23820866141733,
+      "end": 174.045,
+      "fade": 15.806791338582656,
+      "tempo": 1.040983606557378,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 16.7546106557377,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.260439,
+        "maxRelativeVocal": 1,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 157.93820866141732,
+        "end": 174.045,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.228962,
+        "maxRelativeVocal": 0.9549506045247971,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.06,
+      "end": 178.167,
+      "fade": 13.107,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.407,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.76,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.02442687747035,
+      "end": 178.167,
+      "fade": 13.142573122529654,
+      "tempo": 0.9768339768339754,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.13811196911196,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.72442687747034,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.04066442348704,
+      "end": 178.167,
+      "fade": 13.126335576512957,
+      "tempo": 0.9872736630327997,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.259285406821705,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.74066442348703,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.0365625,
+      "end": 178.167,
+      "fade": 13.1304375,
+      "tempo": 0.9846153846153978,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.228430769230942,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.7365625,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.03619047619048,
+      "end": 178.167,
+      "fade": 13.130809523809518,
+      "tempo": 0.984374999999999,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.225640624999981,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.73619047619047,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.53,
+      "end": 178.167,
+      "fade": 15.637,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.937000000000001,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.23,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.52,
+      "end": 178.167,
+      "fade": 15.646999999999991,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.946999999999992,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.22,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.43442687747034,
+      "end": 178.167,
+      "fade": 15.732573122529658,
+      "tempo": 0.9768339768339757,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.668111969111965,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.13442687747033,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.50209036087819,
+      "end": 178.167,
+      "fade": 15.664909639121817,
+      "tempo": 0.9931221634772857,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.857168951480846,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.20209036087817,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.49645340619995,
+      "end": 178.167,
+      "fade": 15.670546593800054,
+      "tempo": 0.9931221634772857,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.86276713610632,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.19645340619994,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.48712765957447,
+      "end": 178.167,
+      "fade": 15.679872340425533,
+      "tempo": 0.9894736842105233,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.814821052631533,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.18712765957446,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.48031914893616,
+      "end": 178.167,
+      "fade": 15.68668085106384,
+      "tempo": 0.9894736842105233,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.821557894736806,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.18031914893615,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.49826771653542,
+      "end": 178.167,
+      "fade": 15.668732283464578,
+      "tempo": 0.9921874999999991,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.846320312499998,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1982677165354,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.4932283464567,
+      "end": 178.167,
+      "fade": 15.673771653543298,
+      "tempo": 0.9921874999999991,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.851320312499977,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1932283464567,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 167.60442687747036,
+      "end": 178.167,
+      "fade": 10.562573122529642,
+      "tempo": 0.9768339768339754,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 10.617880308880293,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.217808,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 167.30442687747035,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 167.59238095238095,
+      "end": 178.167,
+      "fade": 10.574619047619052,
+      "tempo": 0.9692307692307712,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 10.54924615384618,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.217808,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 167.29238095238094,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.01442687747033,
+      "end": 178.167,
+      "fade": 13.152573122529674,
+      "tempo": 0.9768339768339757,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.147880308880323,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.71442687747032,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.0148031496063,
+      "end": 178.167,
+      "fade": 13.152196850393693,
+      "tempo": 0.9769230769230791,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.148684615384637,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.7148031496063,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.42442687747035,
+      "end": 178.167,
+      "fade": 15.742573122529649,
+      "tempo": 0.9768339768339757,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.677880308880296,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.12442687747034,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.37174603174606,
+      "end": 178.167,
+      "fade": 15.795253968253945,
+      "tempo": 0.9692307692307716,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.609246153846168,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.07174603174604,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.46035573122526,
+      "end": 178.167,
+      "fade": 15.706644268774738,
+      "tempo": 0.9806201550387578,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.702251937984501,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.16035573122525,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.4475569826011,
+      "end": 178.167,
+      "fade": 15.719443017398902,
+      "tempo": 0.9775756712685351,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.666945059701218,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1475569826011,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.45804164641063,
+      "end": 178.167,
+      "fade": 15.708958353589367,
+      "tempo": 0.9800682919082067,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.695851981259485,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.15804164641062,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.4549340369393,
+      "end": 178.167,
+      "fade": 15.712065963060695,
+      "tempo": 0.9793281653746758,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.68726873385012,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1549340369393,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 170.2122134387352,
+      "end": 178.167,
+      "fade": 7.954786561264797,
+      "tempo": 0.988281249999999,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseCount"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 8.161566406249968,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.005483,
+        "maxRelativeVocal": 0.06048927816369677,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 169.9122134387352,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 170.1942857142857,
+      "end": 178.167,
+      "fade": 7.972714285714289,
+      "tempo": 0.9767441860465067,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseCount"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 8.08730232558136,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.005483,
+        "maxRelativeVocal": 0.06048927816369677,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 169.8942857142857,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 167.7,
+      "end": 178.167,
+      "fade": 10.467000000000013,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 10.767000000000014,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.217808,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 167.39999999999998,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 167.6522134387352,
+      "end": 178.167,
+      "fade": 10.514786561264799,
+      "tempo": 0.9882812499999992,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 10.69156640624997,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.217808,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 167.3522134387352,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 167.63653543307086,
+      "end": 178.167,
+      "fade": 10.53046456692914,
+      "tempo": 0.984496124031003,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 10.667201550387553,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.217808,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 167.33653543307085,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.8568709700005728,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.0922134387352,
+      "end": 178.167,
+      "fade": 13.074786561264801,
+      "tempo": 0.9882812499999992,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.22156640624997,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.7922134387352,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.0138095238095,
+      "end": 178.167,
+      "fade": 13.153190476190503,
+      "tempo": 0.976744186046507,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.14730232558136,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.7138095238095,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.64000000000001,
+      "end": 178.167,
+      "fade": 15.526999999999987,
+      "tempo": 1,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.826999999999988,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.34,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.5684251968504,
+      "end": 178.167,
+      "fade": 15.598574803149603,
+      "tempo": 0.992187499999999,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.776710937499981,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.2684251968504,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.49685039370075,
+      "end": 178.167,
+      "fade": 15.670149606299248,
+      "tempo": 0.9844961240310026,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 2,
+      "targetBars": 2,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.727201550387552,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.19685039370074,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.04073122529644,
+      "end": 178.167,
+      "fade": 13.126268774703561,
+      "tempo": 0.9825242718446592,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.196877669902904,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.74073122529643,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.03899698347783,
+      "end": 178.167,
+      "fade": 13.128003016522172,
+      "tempo": 0.981920254525261,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.190652063391846,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.73899698347782,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.04018911993467,
+      "end": 178.167,
+      "fade": 13.126810880065335,
+      "tempo": 0.9823353826962491,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.194930789450268,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.74018911993466,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 165.03153034300792,
+      "end": 178.167,
+      "fade": 13.135469656992086,
+      "tempo": 0.9793281653746758,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 13.163935400516783,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.251832,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 164.7315303430079,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.48648915187374,
+      "end": 178.167,
+      "fade": 15.68051084812626,
+      "tempo": 0.9844660194174745,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.736930097087388,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.18648915187373,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.4801569327586,
+      "end": 178.167,
+      "fade": 15.686843067241398,
+      "tempo": 0.9835313865507751,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.728502512528346,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1801569327586,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.4864210526316,
+      "end": 178.167,
+      "fade": 15.680578947368389,
+      "tempo": 0.9844559585492265,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.736839378238368,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.1864210526316,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    },
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "targetSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "begin": 162.46915789473684,
+      "end": 178.167,
+      "fade": 15.697842105263163,
+      "tempo": 0.9819121447028412,
+      "sourceView": "whole-original",
+      "targetView": "whole-original",
+      "sourceBars": 4,
+      "targetBars": 4,
+      "wouldMeetCachedHarmony": false,
+      "wouldMeetCachedFullPulse": false,
+      "pulseDiagnostic": {
+        "reason": "observedPulseAgreement"
+      },
+      "incomingGuard": {
+        "start": 0,
+        "end": 15.713901808785517,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.285545,
+        "maxRelativeVocal": 0.8242794389962383,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "outgoingGuard": {
+        "start": 162.16915789473683,
+        "end": 178.167,
+        "method": "spleeter-2stems-energy-v1",
+        "maxVocalRms": 0.134617,
+        "maxRelativeVocal": 0.9553050943498747,
+        "clear": false,
+        "notHumanVerified": true
+      },
+      "knownOutgoing": true,
+      "neverCertifiesAbsenceOfVoice": true,
+      "installed": false
+    }
+  ],
+  "version": 1,
+  "caseRestricted": true,
+  "contextBarChains": false,
+  "requestedCases": 3,
+  "membershipEvidence": {
+    "stateSha256": "8e2b03f05109008aef86b57bdc3ad2963783ae332ebc0a8d879245eedcca62d9",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 6,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 3,
+      "incomingVocalOrLyric": 3
+    }
+  },
+  "pairConditions": {
+    "Ste": {
+      "voice": 3
+    }
+  },
+  "windowExclusions": {
+    "Ste": {
+      "voice": 67,
+      "observedDownbeat": 17,
+      "barSpan": 57,
+      "overlapDuration": 59,
+      "affineDownbeatFit": 9
+    }
+  },
+  "plans": [],
+  "windows": 0,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Ste",
+    "tracks": 222,
+    "unavailableMembers": 0,
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+  },
+  "diagnostics": {
+    "notPlaybackCertificates": true,
+    "pulseRejections": [],
+    "caseDiagnostics": [
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+        "windowExclusions": {
+          "voice": 4,
+          "observedDownbeat": 17,
+          "barSpan": 28,
+          "overlapDuration": 2,
+          "affineDownbeatFit": 7
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      },
+      {
+        "from": "audio/songs/track-213.mp3",
+        "to": "audio/songs/track-87.mp3",
+        "windowExclusions": {
+          "voice": 21,
+          "overlapDuration": 21,
+          "barSpan": 9,
+          "affineDownbeatFit": 2
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      },
+      {
+        "from": "audio/songs/track-138.mp3",
+        "to": "audio/songs/track-33.mp3",
+        "windowExclusions": {
+          "voice": 42,
+          "overlapDuration": 36,
+          "barSpan": 20
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      }
+    ],
+    "octaveTempoPairs": 0,
+    "octaveSamples": []
+  },
+  "counterfactualProtocol": {
+    "boundedCases": 3,
+    "unchangedVoiceVeto": true,
+    "newPcmDecodes": 0,
+    "newInference": 0,
+    "compilerSha256": "a2272361b41277e099f5887825bd823effde393685c91eb70a961296a7a3ed13"
+  }
+}
