@@ -1,0 +1,537 @@
+{
+  "evaluationOnly": true,
+  "results": [
+    {
+      "evaluationOnly": true,
+      "notPlaybackCertified": true,
+      "sampleRate": 44100,
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "begin": 144.593,
+      "end": 146.333,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1,
+      "sourceGain": 1,
+      "incomingGain": 1,
+      "sourceUnityThroughEof": true,
+      "incomingUnityFromZero": true,
+      "sourceReadThrough": 146.3333401360544,
+      "samplePeak": 0.6814976334571838,
+      "overlapPeak": 0.6814976334571838,
+      "oversampledPeak": 0.6819314360618591,
+      "eofLevelChangeDb": -5.456063910047452,
+      "notHumanListening": true,
+      "originalLevelReference": {
+        "method": "original-native-eof-relative-level-v1",
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "halfWindowSeconds": 0.5,
+        "originalBeforeRms": 0.10424175276603426,
+        "originalAfterRms": 0.055620904244658355,
+        "mixedBeforeRms": 0.10424164123910139,
+        "mixedAfterRms": 0.055620904244658355
+      },
+      "introductionExposure": {
+        "method": "rendered-introduction-band-masking-screen-v2",
+        "accepted": true,
+        "reason": "no-sustained-mask-detected",
+        "caveat": "Passing this screen does not establish perceptual audibility; human listening remains necessary.",
+        "protocol": {
+          "originalSeconds": 5,
+          "windowSeconds": 0.25,
+          "minimumOriginalRms": 0.001,
+          "bandsHz": [
+            [
+              40,
+              250
+            ],
+            [
+              250,
+              2500
+            ],
+            [
+              2500,
+              12000
+            ]
+          ],
+          "minimumOriginalBandRms": 0.0005,
+          "minimumOriginalBandPowerFraction": 0.1,
+          "maximumRelativeDb": -18,
+          "rejectedContinuousSeconds": 0.75
+        },
+        "measuredSeconds": 1.5,
+        "meaningfulSeconds": 1.5,
+        "maskedSeconds": 0,
+        "longestMaskedSeconds": 0,
+        "unknownBandSeconds": 0,
+        "rows": [
+          {
+            "at": 0,
+            "originalAt": 0,
+            "originalRms": 0.07318532068439114,
+            "outgoingRms": 4.2952243439743595e-05,
+            "incomingRms": 0.07318532068439114,
+            "relativeDb": 64.62876255526565,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.015127570274558627,
+                "meaningful": false,
+                "relativeDb": 73.32717387262718
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.06442922057570633,
+                "meaningful": true,
+                "relativeDb": 66.8654447069252
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.0017793397303743543,
+                "meaningful": false,
+                "relativeDb": 41.02987275219376
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.25,
+            "originalAt": 0.25,
+            "originalRms": 0.17204371710599084,
+            "outgoingRms": 3.4869770409909886e-05,
+            "incomingRms": 0.17204371710599084,
+            "relativeDb": 73.86379458550076,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.057710978603059924,
+                "meaningful": true,
+                "relativeDb": 86.8811745732318
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.14324053950781632,
+                "meaningful": true,
+                "relativeDb": 76.9559062503207
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.0028833234582117053,
+                "meaningful": false,
+                "relativeDb": 45.61667553926402
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.5,
+            "originalAt": 0.5,
+            "originalRms": 0.10572494205514554,
+            "outgoingRms": 2.9819179250809458e-05,
+            "incomingRms": 0.10572494205514554,
+            "relativeDb": 70.99363540246318,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.03546553162729256,
+                "meaningful": true,
+                "relativeDb": 83.52502704355604
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.08623157438100536,
+                "meaningful": true,
+                "relativeDb": 76.1811626315434
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.0013103280451220295,
+                "meaningful": false,
+                "relativeDb": 39.20511903059795
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.75,
+            "originalAt": 0.75,
+            "originalRms": 0.08976461878934458,
+            "outgoingRms": 2.829222717147042e-05,
+            "incomingRms": 0.08976461878934458,
+            "relativeDb": 70.02876108589716,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.024029117082257564,
+                "meaningful": false,
+                "relativeDb": 81.27911667994294
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.07713858068633007,
+                "meaningful": true,
+                "relativeDb": 76.9678807785259
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.001567226538244747,
+                "meaningful": false,
+                "relativeDb": 40.880167521969575
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 1,
+            "originalAt": 1,
+            "originalRms": 0.13650488973859462,
+            "outgoingRms": 2.442638051041791e-05,
+            "incomingRms": 0.13650488973859462,
+            "relativeDb": 74.94578180639176,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.02689148687936507,
+                "meaningful": false,
+                "relativeDb": 82.7583015910055
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.12642364850349075,
+                "meaningful": true,
+                "relativeDb": 85.45957970246091
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.002474591036343748,
+                "meaningful": false,
+                "relativeDb": 45.62877680662923
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 1.25,
+            "originalAt": 1.25,
+            "originalRms": 0.12535757788098723,
+            "outgoingRms": 2.428591640061799e-05,
+            "incomingRms": 0.12535757788098723,
+            "relativeDb": 74.25592193061163,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.06113729844012892,
+                "meaningful": true,
+                "relativeDb": 90.79783599468121
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.10122178343051595,
+                "meaningful": true,
+                "relativeDb": 83.6597184625677
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.002242972623410701,
+                "meaningful": false,
+                "relativeDb": 44.80337039742267
+              }
+            ],
+            "obscured": false
+          }
+        ]
+      }
+    },
+    {
+      "evaluationOnly": true,
+      "notPlaybackCertified": true,
+      "sampleRate": 48000,
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "begin": 144.593,
+      "end": 146.333,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1,
+      "sourceGain": 1,
+      "incomingGain": 1,
+      "sourceUnityThroughEof": true,
+      "incomingUnityFromZero": true,
+      "sourceReadThrough": 146.33333333333331,
+      "samplePeak": 0.6814401149749756,
+      "overlapPeak": 0.6814401149749756,
+      "oversampledPeak": 0.6818739175796509,
+      "eofLevelChangeDb": -5.456365118572797,
+      "notHumanListening": true,
+      "originalLevelReference": {
+        "method": "original-native-eof-relative-level-v1",
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "halfWindowSeconds": 0.5,
+        "originalBeforeRms": 0.10424420289630569,
+        "originalAfterRms": 0.055620283353024186,
+        "mixedBeforeRms": 0.10424409250302454,
+        "mixedAfterRms": 0.055620283353024186
+      },
+      "introductionExposure": {
+        "method": "rendered-introduction-band-masking-screen-v2",
+        "accepted": true,
+        "reason": "no-sustained-mask-detected",
+        "caveat": "Passing this screen does not establish perceptual audibility; human listening remains necessary.",
+        "protocol": {
+          "originalSeconds": 5,
+          "windowSeconds": 0.25,
+          "minimumOriginalRms": 0.001,
+          "bandsHz": [
+            [
+              40,
+              250
+            ],
+            [
+              250,
+              2500
+            ],
+            [
+              2500,
+              12000
+            ]
+          ],
+          "minimumOriginalBandRms": 0.0005,
+          "minimumOriginalBandPowerFraction": 0.1,
+          "maximumRelativeDb": -18,
+          "rejectedContinuousSeconds": 0.75
+        },
+        "measuredSeconds": 1.5,
+        "meaningfulSeconds": 1.5,
+        "maskedSeconds": 0,
+        "longestMaskedSeconds": 0,
+        "unknownBandSeconds": 0,
+        "rows": [
+          {
+            "at": 0,
+            "originalAt": 0,
+            "originalRms": 0.07318545578278027,
+            "outgoingRms": 4.296326703448336e-05,
+            "incomingRms": 0.07318545578278027,
+            "relativeDb": 64.62654966156335,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.015128505262909346,
+                "meaningful": false,
+                "relativeDb": 73.32652905620583
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.0644269289510462,
+                "meaningful": true,
+                "relativeDb": 66.86521119054133
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.0017826510503524582,
+                "meaningful": false,
+                "relativeDb": 41.088449614678204
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.25,
+            "originalAt": 0.25,
+            "originalRms": 0.1720435901820462,
+            "outgoingRms": 3.488541464569496e-05,
+            "incomingRms": 0.1720435901820462,
+            "relativeDb": 73.85989214866858,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.05771115820689028,
+                "meaningful": true,
+                "relativeDb": 86.88207731045644
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.14323495571407732,
+                "meaningful": true,
+                "relativeDb": 76.95638703113362
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.002889966843192715,
+                "meaningful": false,
+                "relativeDb": 45.68329247858992
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.5,
+            "originalAt": 0.5,
+            "originalRms": 0.10572508583617679,
+            "outgoingRms": 2.9833978260416243e-05,
+            "incomingRms": 0.10572508583617679,
+            "relativeDb": 70.98933754971911,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.03546581450211492,
+                "meaningful": true,
+                "relativeDb": 83.5249041233271
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.08622866988510251,
+                "meaningful": true,
+                "relativeDb": 76.18122404908698
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.001313324688078469,
+                "meaningful": false,
+                "relativeDb": 39.27065283396843
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 0.75,
+            "originalAt": 0.75,
+            "originalRms": 0.08976449796128962,
+            "outgoingRms": 2.8309344663536375e-05,
+            "incomingRms": 0.08976449796128962,
+            "relativeDb": 70.02349580683838,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.02402938017379573,
+                "meaningful": false,
+                "relativeDb": 81.2790333739894
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.07713615657021741,
+                "meaningful": true,
+                "relativeDb": 76.96790484953242
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.0015704462285752953,
+                "meaningful": false,
+                "relativeDb": 40.94281036786662
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 1,
+            "originalAt": 1,
+            "originalRms": 0.1365054174510484,
+            "outgoingRms": 2.4446435089339322e-05,
+            "incomingRms": 0.1365054174510484,
+            "relativeDb": 74.93868701037877,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.026891889053035457,
+                "meaningful": false,
+                "relativeDb": 82.75822033846957
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.12641735039026103,
+                "meaningful": true,
+                "relativeDb": 85.45916588976695
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.002480722562903351,
+                "meaningful": false,
+                "relativeDb": 45.69833199422617
+              }
+            ],
+            "obscured": false
+          },
+          {
+            "at": 1.25,
+            "originalAt": 1.25,
+            "originalRms": 0.1253565599894221,
+            "outgoingRms": 2.4308191803727847e-05,
+            "incomingRms": 0.1253565599894221,
+            "relativeDb": 74.24788822620351,
+            "attenuationDb": 0,
+            "bands": [
+              {
+                "lowHz": 40,
+                "highHz": 250,
+                "originalRms": 0.061137510020646296,
+                "meaningful": true,
+                "relativeDb": 90.79803357599899
+              },
+              {
+                "lowHz": 250,
+                "highHz": 2500,
+                "originalRms": 0.10121766412839218,
+                "meaningful": true,
+                "relativeDb": 83.65963904421166
+              },
+              {
+                "lowHz": 2500,
+                "highHz": 12000,
+                "originalRms": 0.002248067764346192,
+                "meaningful": false,
+                "relativeDb": 44.86917123789781
+              }
+            ],
+            "obscured": false
+          }
+        ]
+      }
+    }
+  ]
+}

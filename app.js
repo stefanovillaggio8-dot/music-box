@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.742";
+  const APP_VERSION = "6.743";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8233,6 +8233,11 @@ box.innerHTML = "";
   } catch (e) { /* noop */ }
 
 async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, silentDjStart = false) {
+      const quietContinuation=audio?._mbQuietNativeContinuation;
+      const quietContinuationAudio=audio;
+      const canContinueQuietNative=!!quietContinuation&&_usaControlliNativiIos()&&startAt===0&&!liveDjAudio&&
+        quietContinuation.fromId===currentId&&quietContinuation.toId===id&&audio.paused&&
+        quietContinuation.url===(audio.currentSrc||audio.src)&&Math.abs(audio.currentTime-quietContinuation.at)<.001;
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
@@ -8358,7 +8363,9 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       // may pause a newly autoplayed element as soon as it is unmuted.
       const keepCommonSession=silentDjStart===true&&previous&&
         window.MusicBoxCompositeMix?.owns?.(previous)===true&&!document.hidden;
-      const keepNativeSession=keepCommonSession||(_iosInstallataComeApp()&&document.hidden&&
+      const keepQuietSession=canContinueQuietNative&&previous===quietContinuationAudio;
+      if(quietContinuation&&previous?._mbQuietNativeContinuation===quietContinuation)delete previous._mbQuietNativeContinuation;
+      const keepNativeSession=keepCommonSession||keepQuietSession||(_iosInstallataComeApp()&&document.hidden&&
         previous&&!liveDjAudio);
       audio = keepNativeSession ? previous : createAudio();
       if (previous && previous !== audio) {

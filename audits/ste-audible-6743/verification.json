@@ -1,0 +1,14 @@
+{
+  "tests": 794,
+  "pass": 792,
+  "fail": 2,
+  "newFailures": 0,
+  "knownFailures": [
+    "missing historical bassi/track-53 -> bassi/track-51 certified plan",
+    "dependent historical Gym future-pick assertion"
+  ],
+  "rawLogSha256": "0ae346f3c264f2a3c22b069904a5292e439ca678fdefae51930e2fdebd9808c2",
+  "nativeRegressionRun": 45289802549,
+  "physicalIPhone": false,
+  "humanListening": false
+}

@@ -149,9 +149,9 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
  assert.ok(begin>=0&&end>begin);
  const code=source.slice(begin,end);
  const clock={now:100000},queued=[];
- let requests=0;const urls=[];
- const fetch=async url=>{
-  urls.push(url);
+ let requests=0;const urls=[],options=[];
+ const fetch=async (url,config)=>{
+  urls.push(url);options.push(config);
   requests++;
   if(requests===1)throw Error("slow network");
   return {ok:true,json:async()=>({version:2,introExposureRevision:requests<=2?2:undefined,entries:{}})};
@@ -180,8 +180,11 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
  assert.equal(api.stat().loaded,true);
  assert.equal((await api.loadDeepIndex()).version,2);
  assert.equal(requests,2,"successful index is reused");
+ assert.equal(options[0].headers?.['X-MusicBox-DJ-Revalidate'],'1','normal initial metadata load must bypass a stale persistent worker response');
+ assert.equal(options[1].headers?.['X-MusicBox-DJ-Revalidate'],'1');
  assert.equal((await api.loadDeepIndex(true)).introExposureRevision,2,'a stale CDN index cannot downgrade the compatible measurements');
  assert.match(urls.at(-1),/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box\/main\/dj-deep-analysis\.json\?mb-dj-refresh=1$/);
+ assert.equal(options.at(-1).headers,undefined,'raw cross-origin refresh must not introduce a custom-header CORS preflight');
 });
 test("continue button never cancels playback intention while audio already plays",()=>{
  assert.ok(app.includes("if (audio && !audio.paused) { _nascondiAiuto(); return; }"));

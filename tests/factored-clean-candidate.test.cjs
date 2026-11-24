@@ -34,7 +34,7 @@ test('actual planner preserves the separate natural class and never upgrades the
  assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,false);assert.equal(engine.fullBeatCueCertified(added,f.b,p),false);
 });
 test('native runtime recognizes declared raw metadata and cancels stale preparation without moving the incoming clock',async()=>{
- const a=source.indexOf('function beginNativeCleanTail('),b=source.indexOf('// The normal Music Box EOF path',a);
+ const a=source.indexOf('function nativeCleanLaunchLimit('),b=source.indexOf('// The normal Music Box EOF path',a);
  const {clockOffset}=require('../tools/factored-native-clean.cjs');
  const make=new Function('snippet','cue','clockOffset',`
   const isIOS=false,document={hidden:false},window={MusicBoxCompositeMix:{nativeClockOffset:(c,sha,d)=>c?.sourceSha===sha?clockOffset(c,d):null}};

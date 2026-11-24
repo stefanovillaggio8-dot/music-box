@@ -162,7 +162,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
  const continuous=arg('continuous-shuffle','false')==='true'&&mode==='shuffle';
  const permitted=new Set(list.map(t=>t.id));
  if(permitted.size!==list.length)throw Error('Duplicated personal-library identity');
- const usedPairs=new Map();let completedCycles=0;
+ const usedPairs=new Map();let completedCycles=0,continuity=null;
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
   overlapSum:0,fullOverlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
   earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0,longestWithoutRhythmic:0,partialOverlapSum:0,outsideLibraryAttempts:0};
@@ -170,10 +170,11 @@ async function simulate(profile,mode,list,sessions,steps,seed){
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
   const ordered=mode==='ordered'||mode==='playlist'||mode==='manual-queue';
-  let fresh=ordered?list.slice():shuffled(list,random);
+  let fresh=continuous&&continuity?continuity.fresh:ordered?list.slice():shuffled(list,random);
   if(scenarioOffline&&offlineFilterImplemented)fresh=fresh.filter(t=>available.has(t.id));
   const start=scenarioOffline?fresh.findIndex(t=>available.has(t.id)):0;
-  let current=start>=0?fresh.splice(start,1)[0]:null,streak=0,rhythmicStreak=0;
+  let current=continuous&&continuity?continuity.current:start>=0?fresh.splice(start,1)[0]:null,
+    streak=continuous&&continuity?continuity.streak:0,rhythmicStreak=continuous&&continuity?continuity.rhythmicStreak:0;
   for(let step=0;current&&step<steps;step++){
    if(!fresh.length){
     if(!continuous)break;
@@ -213,6 +214,8 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    if(trace.length<40||decision?.futurePartnerReservation)trace.push({session,step,from:current.id,to:next.id,...result,...(decision?.futurePartnerReservation?{futurePartnerReservation:decision.futurePartnerReservation}:{})});
    fresh=fresh.filter(t=>t.id!==next.id);current=next;
   }
+  // Sessions partition the report, not the actual continuous listening history.
+  if(continuous)continuity={fresh,current,streak,rhythmicStreak};
  }
  const mixed=totals.attempts-totals.normal-totals.unavailable;
  return {profile,mode,members:list.length,boostedMembers:list.filter(t=>t.boosted).length,sessions,steps,seed,totals,

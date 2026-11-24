@@ -67,10 +67,10 @@ test('the actual Safari shuffle promotes an exposed partial while keeping full c
  assert.equal(selected.pickId,target.id);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,1);
 });
 
-test('the listening audit uses the actual live fallback resolver, including quiet filtered introductions',()=>{
+test('the listening audit does not count a quiet filtered teaser as a consumed original introduction',()=>{
  const a=entries.get('audio/songs/bassi/track-259.mp3'),b=entries.get('audio/songs/bassi/track-51.mp3');
- const p=engine.playbackTransition(a,b,a.duration);assert.equal(p.kind,'underlay');assert.equal(p.neutralAmbientUnderlay,true);
- assert.equal(p.preserveTail,true);assert.equal(p.entry,0);assert.ok(p.underlayVolume<=.09);assert.notEqual(p.measuredFullBeat,true);
+ const p=engine.playbackTransition(a,b,a.duration);assert.ok(!p||!p.neutralAmbientUnderlay);
+ if(p){assert.equal(p.entry,0);assert.notEqual(p.measuredFullBeat,true);}
 });
 test('the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed',async()=>{
  const source=fs.readFileSync(path.join(root,'tools/simulate-library-listening.cjs'),'utf8').replace(/^#![^\n]*\n/,'');
