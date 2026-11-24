@@ -1,0 +1,19 @@
+{
+  "simulationEngineCommit": "b582df3a",
+  "actualSelectionSlicesUnchangedByCacheDeliveryFix": {
+    "function withGuardedLRC(": "bc03af71c412c9404236870242c31c41759de4b1986979cc5f811d7f09b8c1a0",
+    "function verifiedIndexedGridTempo(": "732ca70e92cc5326c9258710e4cf769a8469cf1aaddde5fc6ada00a84fb5bd0d",
+    "function withValidatedVoice(": "fdba8c7b4aea475fc1e1c161c4740b69e8c2a90f26878b132673bbc79a9d9e3a",
+    "function onsetPairAgreement(": "0dc2e93e25ec1b1791f66c4351cd56e6fdfe48d80e644f3c108d08a168864e1a",
+    "function iphoneBeatPairCertified(": "910fc527b84daa9262f998d2533c0e7bc80fd6ce2f9b46c1f4ae3b443ebd7ac6",
+    "function desktopBeatPairCertified(": "c896cb838e7acddf45025055f60a4759955370f9f7ba8e361b1f563b3fe909f5",
+    "function grooveAgreement(": "65b43055adb800b9ee659aa799be314fb5e2cef5f7d23850bde6242395528161",
+    "function certifiedNeutralBridge(": "ab4e5b99745143abda23ddfbe1cb40b766fc4f5cca1b459eea052d2e9d1cd94c",
+    "function mobileMixAllowed(": "7cfc098c951a4839c876a2584a260eac29d172a60d3046e417923574967784b9",
+    "function compatibility(": "e2830660204afc882ff3a3b04060742b9a061613bb11a6de6528e64947a7ee30",
+    "function hasReliableHarmony(": "b9607c7017d493d9684499796f5650b9118f3ac1b548cf20f49585bbfa55167d",
+    "function desktopBeatStartDelay(": "59b17e3e32510227bde4b577f5d229c7b365746544f4473a37dcae27975f3bca",
+    "async function intelligentShuffle(": "38144241515c9e3fd3a30da6a074e12c2a780693e5f29e45707595952fad37bf"
+  },
+  "newAppSelectionOrAudioSimulationRequired": false
+}

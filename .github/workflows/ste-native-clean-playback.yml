@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-latest]
+        os: [ubuntu-24.04, macos-15-intel]
     runs-on: ${{ matrix.os }}
     # Keep the Linux decoder dependencies in a versioned, prebuilt image.
     # The empty macOS value means native host execution, as before.
@@ -59,22 +59,61 @@ jobs:
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
       - name: Verify the newly installed Ste pair originals
         run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+      - name: Two newly installed Ste original fixtures only
+        run: |
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-next-clean-20261123/new-pair-shadow.json
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
       - name: Check class, queue, seek and preserved controls
-        run: node --test tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+        run: node --test tests/native-clean-launch-window.test.cjs tests/native-eof-ownership.test.cjs tests/quiet-native-continuation.test.cjs tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
       - name: Exercise ACTUAL release index without shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
           MUSICBOX_NATIVE_TRANSLATION: 'true'
+        run: node tests/native-clean-browser.cjs
+      - name: Proven quiet suffix tolerates a delayed main-thread turn without consuming the intro
+        env:
+          MUSICBOX_NATIVE_CUE_STALL: 'true'
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-delayed-player.json
         run: node tests/native-clean-browser.cjs
       - name: New installed natural junction, no shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
           MUSICBOX_NATIVE_CLEAN_OUTPUT: factored-clean-release-player.json
         run: node tests/native-clean-browser.cjs
+      - name: New installed Gilgamesh to Eva, actual release index
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-next-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: gilgamesh-eva-installed.json
+        run: node tests/native-clean-browser.cjs
+      - name: New installed second source, actual release index
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: mashup-eva-installed.json
+        run: node tests/native-clean-browser.cjs
+      - name: Three newly installed Il Filmografo junctions, no shadow injection
+        run: |
+          for id in 4 34 50; do
+            fixture="audits/ste-filmografo-quiet-20261124/track-${id}-shadow.json"
+            node tools/fetch-ste-clean-evaluation.cjs "$fixture"
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="$fixture" MUSICBOX_NATIVE_CLEAN_OUTPUT="filmografo-${id}-installed.json" node tests/native-clean-browser.cjs
+          done
+      - name: Actual Safari path keeps the primary native player and unconsumed intro
+        env:
+          MUSICBOX_PHONE_NATIVE_INTRO: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: safari-native-intro-installed.json
+        run: node tests/native-clean-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-native-clean-release-${{ runner.os }}
           path: |
+            gilgamesh-eva-installed.json
+            mashup-eva-installed.json
+            safari-native-intro-installed.json
+            filmografo-4-installed.json
+            filmografo-34-installed.json
+            filmografo-50-installed.json
             native-clean-release-player.json
+            native-clean-delayed-player.json
             factored-clean-release-player.json
