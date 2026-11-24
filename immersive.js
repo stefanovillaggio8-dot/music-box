@@ -34,7 +34,81 @@ function atmosphereForTrack(id,title,artist){
  root.classList.add("im-track-enter");
 }
 
-function closeSyncControls(){
+// Only an explicitly associated, directly playable video is eligible.
+ // No YouTube iframe, audio extraction, search guess or unrelated video.
+ let videoSource="",videoEnabled=false,videoFailed=false,videoPlayingRequest=null;
+ function directVideoSource(track){
+  const raw=track?.videoUrl||track?.musicVideoUrl||"";
+  if(typeof raw!=="string"||!raw.trim())return "";
+  try{
+   const url=new URL(raw,document.baseURI);
+   if(url.protocol!=="https:"&&!(url.origin===location.origin&&url.protocol==="http:"))return "";
+   if(!/\.(mp4|webm|m4v)$/i.test(url.pathname))return "";
+   return url.href;
+  }catch(_){return ""}
+ }
+ function stopVideo(){
+  const video=$("imVideo"),root=$("immersivePanel");
+  root?.classList.remove("im-video-live");
+  if(!video)return;
+  videoPlayingRequest=null;
+  video.pause();
+  if(video.hasAttribute("src")){video.removeAttribute("src");video.load()}
+  video.hidden=true;
+ }
+ function videoButton(){
+  const button=$("imVideoToggle");if(!button)return;
+  button.hidden=!videoSource||videoFailed;
+  button.setAttribute("aria-pressed",String(videoEnabled&&!videoFailed));
+  button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
+ }
+ function configureVideo(track){
+  stopVideo();videoSource=directVideoSource(track);videoFailed=false;
+  // Mobile opts in: its native audio decoder must remain the priority.
+  videoEnabled=!!videoSource&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
+  videoButton();
+ }
+ function failVideo(){
+  videoFailed=true;videoEnabled=false;stopVideo();videoButton();
+ }
+ function updateVideo(audio){
+  const video=$("imVideo");if(!video||!opened||!videoEnabled||videoFailed||!videoSource)return;
+  // Never start a second media decoder during a shared listening session,
+  // an inactive page, or while audio is paused/has no valid media clock.
+  if(document.hidden||window.MusicBoxRoom?.isActive?.()){stopVideo();return}
+  if(!audio||audio.paused||audio.ended||audio.seeking||!Number.isFinite(audio.currentTime)){
+   video.pause();return;
+  }
+  if(!video.hasAttribute("src")){
+   video.muted=true;video.defaultMuted=true;video.volume=0;
+   video.hidden=false;video.src=videoSource;
+  }
+  if(video.readyState<1)return;
+  const time=audio.currentTime;
+  // Do not loop a short clip or play unrelated video beyond its end.
+  if(Number.isFinite(video.duration)&&time>=video.duration-.15){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
+  if(Math.abs(video.currentTime-time)>.45&&!video.seeking){
+   try{video.currentTime=time}catch(_){failVideo();return}
+  }
+  if(Number.isFinite(audio.playbackRate)&&audio.playbackRate>0&&video.playbackRate!==audio.playbackRate)
+   video.playbackRate=audio.playbackRate;
+  if(video.paused&&!videoPlayingRequest){
+   const source=videoSource;
+   const request=Promise.resolve(video.play());
+   videoPlayingRequest=request;
+   request.then(()=>{if(videoPlayingRequest===request)videoPlayingRequest=null},
+    ()=>{if(videoPlayingRequest===request){videoPlayingRequest=null;if(source===videoSource&&videoEnabled)failVideo()}});
+  }
+  if(video.readyState>=2&&!video.seeking&&Math.abs(video.currentTime-time)<.7)
+   $("immersivePanel")?.classList.add("im-video-live");
+ }
+ function toggleVideo(){
+  if(!opened||!videoSource||videoFailed)return;
+  videoEnabled=!videoEnabled;
+  if(!videoEnabled)stopVideo();else updateVideo(api()?.audio?.());
+  videoButton();
+ }
+ function closeSyncControls(){
  const panel=$("imSyncPanel"),button=$("imSyncToggle");
  if(panel)panel.hidden=true;
  button?.setAttribute("aria-expanded","false");
@@ -79,6 +153,7 @@ function fillCurrent(){
  $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
  atmosphereForTrack(id,title,artist);
+ configureVideo(t);
  closeSyncControls();
  lastLyricsId="";
  lastLyrics=null;
@@ -300,6 +375,7 @@ function paint(){
  if(!$("imSyncPanel")?.hidden)updateSyncValue();
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
+ updateVideo(a);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
  else renderLyrics(false);
  if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!a.seeking)
@@ -325,6 +401,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
+ stopVideo();videoSource="";videoEnabled=false;videoButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -397,6 +474,10 @@ function start(){
  $("imLyrics")?.addEventListener("click",textPanel);
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
+ $("imVideoToggle")?.addEventListener("click",toggleVideo);
+ $("imVideo")?.addEventListener("error",()=>{if(opened&&videoEnabled&&$("imVideo")?.hasAttribute("src"))failVideo()});
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)stopVideo();else if(opened)updateVideo(api()?.audio?.())});
+ window.addEventListener("pagehide",stopVideo);
  $("imSyncEarlier")?.addEventListener("click",()=>changeSyncDelay(-.2));
  $("imSyncLater")?.addEventListener("click",()=>changeSyncDelay(.2));
  $("imSyncReset")?.addEventListener("click",()=>{
