@@ -39,7 +39,7 @@ test('actual planner adds only the native clean shadow case while preserving the
  for(const [from,to,full] of original){const x=engine.withGuardedLRC(engine.verifiedIndexedGridTempo(index.entries[from])),y=engine.withGuardedLRC(engine.verifiedIndexedGridTempo(index.entries[to]));const p=engine.playbackTransition(x,y,x.duration);assert.equal(p.measuredFullBeat,full);assert.equal(p.metricalRhythmic,!full);assert.equal(p.entry,0);}
 });
 test('the native-only path aborts on queue changes and seeks without pausing the outgoing song or starting an intro',async()=>{
- const a=source.indexOf('function beginNativeCleanTail('),b=source.indexOf('// The normal Music Box EOF path',a);
+ const a=source.indexOf('function nativeCleanLaunchLimit('),b=source.indexOf('// The normal Music Box EOF path',a);
  const make=new Function('source',`
   const isIOS=false,document={hidden:false},window={MusicBoxCompositeMix:{nativeClockOffset:()=>0}};
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));let active=null,mixing=false,aborted=0;

@@ -5832,13 +5832,45 @@ function claimLiveTransitionEOF(app,audio,id){
 }
 // Native-only natural tail: no Web Audio decoding, stretch, gain envelope,
 // low-pass intro or binary decoder switch. Existing queue adoption owns EOF.
+// This class has no rhythmic phase to preserve: both originals stay at unity.
+// A late launch may use only a SUBSET of the independently near-silent suffix,
+// leaving >=750 ms of meaningful original intro plus 100 ms decoder margin.
+// Beat, partial, unknown-clock and unsupported evidence keep their old bounds.
+function nativeCleanLaunchLimit(p){
+ const legacy=Number(p?.begin)+.08,e=p?.nativeCleanEvidence,screen=e?.introductionExposure;
+ if(!p?.nativeCleanTail||p.measuredFullBeat||p.metricalRhythmic||p.entry!==0||p.tempo!==1||
+    e?.sourceSha!==p.sourceSha||e?.targetSha!==p.targetSha||
+    e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
+    screen?.accepted!==true||screen.method!=='rendered-introduction-band-masking-screen-v2'||
+    screen.sourceSha!==p.sourceSha||screen.targetSha!==p.targetSha||
+    screen.protocol?.windowSeconds!==.25||screen.protocol?.minimumOriginalRms!==.001||
+    !Array.isArray(e.nativeMeasurements)||e.nativeMeasurements.length!==8||
+    new Set(e.nativeMeasurements.map(m=>m.platform+'/'+m.browser+'/'+m.rate)).size!==8||
+    e.nativeMeasurements.some(m=>!['linux','darwin'].includes(m.platform)||!['chromium','webkit'].includes(m.browser)||![44100,48000].includes(m.rate)||
+      ![m.sourceTailPeak,m.sourceTailRmsMax,m.targetNativeOverlapPeak].every(Number.isFinite)||m.sourceTailPeak<0||m.sourceTailPeak>.001||
+      m.sourceTailRmsMax<0||Math.SQRT2*m.sourceTailRmsMax>.0001||m.targetNativeOverlapPeak<0||m.targetNativeOverlapPeak+m.sourceTailPeak>.96)||
+    !Array.isArray(screen.rows))return legacy;
+ let through=0,meaningful=0;
+ for(const row of screen.rows){
+  if(!Number.isFinite(row.at)||Math.abs(row.at-through)>.000001||Math.abs(row.originalAt-row.at)>.000001||
+     !Number.isFinite(row.originalRms)||row.originalRms<0||row.obscured!==false)return legacy;
+  through+=.25;if(through>p.fade+.000001)break;
+  if(row.originalRms>=.001)meaningful+=.25;
+  if(meaningful>=.75){
+   // The maximum declared target priming is a conservative native-zero lead.
+   const priming=Math.max(0,...e.nativeMeasurements.map(m=>m.targetDecodedOffset||0),...e.nativeMeasurements.map(m=>m.targetMediaOffset||0));
+   return Math.max(legacy,p.end-through-.1-priming);
+  }
+ }
+ return legacy;
+}
 function beginNativeCleanTail(app,old,next,p){
  if(isIOS||active||mixing||document.hidden||typeof app.mixAdoptHandoff!=='function'||
     !prepared?.ready||prepared.failed||prepared.id!==next.id||prepared.fromId!==app.currentId()||
     prepared.naturalEntry!==0||old.paused||old.seeking)return false;
  const sourceClock=()=>window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration);
- const offset=sourceClock();
- if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>p.begin+offset+.08)return false;
+ const offset=sourceClock(),latest=nativeCleanLaunchLimit(p);
+ if(offset==null||old.currentTime<p.begin+offset-3||old.currentTime>latest+offset)return false;
  const incoming=prepared.audio;
  const targetClock=()=>['original-native-near-silent-tail-v2','original-native-near-silent-tail-v3'].includes(p.nativeCleanEvidence?.method)?
   window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence.targetClock,p.targetSha,incoming.duration):
@@ -5864,7 +5896,8 @@ function beginNativeCleanTail(app,old,next,p){
    incoming.volume=clamp(Number(app.volume())||0,0,1);
    if(old.ended){handoff();return;}
   }else if(old.currentTime>=p.begin+offset){
-   if(old.currentTime>p.begin+offset+.08||sourceClock()!==offset||targetClock()==null||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2){abort();return;}
+   if(old.currentTime>latest+offset||sourceClock()!==offset||targetClock()==null||incoming.seeking||incoming.currentTime>.02||incoming.readyState<2){abort();return;}
+   act.fade=Math.min(p.fade,p.end+offset-old.currentTime);act.actualBegin=old.currentTime;
    incoming.volume=clamp(Number(app.volume())||0,0,1);incoming.playbackRate=1;
    act.playPending=true;act.playRequestedAt=performance.now();
    Promise.resolve(incoming.play()).then(()=>{if(active===act){act.playPending=false;act.started=true;act.at=performance.now()}}).catch(abort);

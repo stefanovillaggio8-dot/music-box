@@ -64,11 +64,16 @@ jobs:
           node tools/fetch-ste-clean-evaluation.cjs audits/ste-next-clean-20261123/new-pair-shadow.json
           node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
       - name: Check class, queue, seek and preserved controls
-        run: node --test tests/native-eof-ownership.test.cjs tests/quiet-native-continuation.test.cjs tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+        run: node --test tests/native-clean-launch-window.test.cjs tests/native-eof-ownership.test.cjs tests/quiet-native-continuation.test.cjs tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
       - name: Exercise ACTUAL release index without shadow injection
         env:
           MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-release-player.json
           MUSICBOX_NATIVE_TRANSLATION: 'true'
+        run: node tests/native-clean-browser.cjs
+      - name: Proven quiet suffix tolerates a delayed main-thread turn without consuming the intro
+        env:
+          MUSICBOX_NATIVE_CUE_STALL: 'true'
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-delayed-player.json
         run: node tests/native-clean-browser.cjs
       - name: New installed natural junction, no shadow injection
         env:
@@ -100,4 +105,5 @@ jobs:
             mashup-eva-installed.json
             safari-native-intro-installed.json
             native-clean-release-player.json
+            native-clean-delayed-player.json
             factored-clean-release-player.json
