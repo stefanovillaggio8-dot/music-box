@@ -530,8 +530,21 @@ async function run(){
      frameBefore,{polling:120,timeout:4000});
     assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationName),"none",
      "the scene itself is animated in canvas pixels");
+    await page.evaluate(()=>{
+     const prototype=CanvasRenderingContext2D.prototype,drawImage=prototype.drawImage;
+     window.photoCrops=[];
+     prototype.drawImage=function(image,...rect){
+      if(image instanceof HTMLImageElement&&image.src.includes("immersive-ste.webp")&&rect.length===8){
+       window.photoCrops.push({tile:image.naturalWidth/3,width:rect[2],height:rect[3]});
+      }
+      return drawImage.call(this,image,...rect);
+     };
+    });
     await switchTrack("b-track-25","Poter scegliere","songs/track-25.mp3","nayt");
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
+    const crops=await page.evaluate(()=>window.photoCrops);
+    assert.ok(crops.some(({tile,width,height})=>width>=tile*.98&&height>=tile*.98),
+     "a portrait or wide viewport must show the almost complete source photo");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
