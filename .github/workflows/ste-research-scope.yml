@@ -62,8 +62,10 @@ permissions:
   contents: read
 jobs:
   four-prefixes:
-    if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'kidyugi-prefixes'
+    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'kidyugi-prefixes' || inputs.bounded_next_stage == 'kidyugi-player')
     uses: ./.github/workflows/ste-prefix-study.yml
+    with:
+      stage: ${{ inputs.bounded_next_stage == 'kidyugi-player' && 'player' || 'prefixes' }}
   exact-release:
     if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'release-final'
     uses: ./.github/workflows/ste-release-final.yml

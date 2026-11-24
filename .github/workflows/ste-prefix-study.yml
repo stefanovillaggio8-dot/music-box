@@ -1,6 +1,10 @@
 name: Four frozen Ste incoming prefixes, no installed plans
 on:
   workflow_call:
+    inputs:
+      stage:
+        type: string
+        default: prefixes
 permissions:
   contents: read
 jobs:
@@ -45,9 +49,19 @@ jobs:
       - name: Five SHA-verified current Ste originals only
         run: node tools/fetch-ste-clean-recordings.cjs audits/ste-kidyugi-prefixes-20261124/recordings.json
       - name: Four incoming prefixes, two rates and two native decoders
+        if: inputs.stage == 'prefixes'
         run: node tools/ste-clean-prefix-native.cjs audits/ste-kidyugi-prefixes-20261124/recordings.json kidyugi-prefix-native.json
+      - name: Four frozen Ste junctions in the actual app, SHADOW only
+        if: inputs.stage == 'player'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+        run: |
+          for id in 33 87 1187 138; do
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="audits/ste-kidyugi-prefixes-20261124/track-${id}-shadow.json" \
+            MUSICBOX_NATIVE_CLEAN_OUTPUT="kidyugi-${id}-player.json" node tests/native-clean-browser.cjs
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: kidyugi-prefix-${{ runner.os }}
-          path: kidyugi-prefix-native.json
+          name: kidyugi-${{ inputs.stage }}-${{ runner.os }}
+          path: kidyugi-*.json
