@@ -2603,14 +2603,14 @@
     "a": "Jovanotti"
    },
    "[\"davide e golia\",\"kid yugi\"]": {
-    "v": 2,
-    "s": 591,
+    "v": 3,
+    "s": 592,
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"davide e golia\",\"kid yugi\"]": {
-    "v": 2,
-    "s": 591,
+    "v": 3,
+    "s": 592,
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
@@ -2766,13 +2766,13 @@
    },
    "[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 3,
-    "s": 475,
+    "s": 486,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 3,
-    "s": 475,
+    "s": 486,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
@@ -4140,13 +4140,13 @@
    },
    "[\"amelie\",\"kid yugi\"]": {
     "v": 9,
-    "s": 746,
+    "s": 750,
     "t": "Amelie",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"amelie\",\"kid yugi\"]": {
     "v": 9,
-    "s": 746,
+    "s": 750,
     "t": "Amelie",
     "a": "Kid Yugi"
    },
@@ -4356,13 +4356,13 @@
    },
    "[\"il filmografo\",\"kid yugi\"]": {
     "v": 7,
-    "s": 260,
+    "s": 264,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
     "v": 7,
-    "s": 260,
+    "s": 264,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
@@ -8568,13 +8568,13 @@
    },
    "[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
     "v": 3,
-    "s": 316,
+    "s": 347,
     "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
     "v": 3,
-    "s": 316,
+    "s": 347,
     "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂ "
    },
@@ -9378,13 +9378,13 @@
    },
    "[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
     "v": 3,
-    "s": 347,
+    "s": 425,
     "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
     "v": 3,
-    "s": 347,
+    "s": 425,
     "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂ "
    },
@@ -9606,13 +9606,13 @@
    },
    "[\"zitti e buoni\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 407,
+    "s": 431,
     "t": "ZITTI E BUONI",
     "a": "MÃ¥neskin"
    },
    "m:2026-11|[\"zitti e buoni\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 407,
+    "s": 431,
     "t": "ZITTI E BUONI",
     "a": "MÃ¥neskin"
    },
@@ -10416,13 +10416,13 @@
    },
    "[\"zitti e buoni\",\"måneskin\"]": {
     "v": 2,
-    "s": 431,
+    "s": 439,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
    "m:2026-11|[\"zitti e buoni\",\"måneskin\"]": {
     "v": 2,
-    "s": 431,
+    "s": 439,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
@@ -10637,14 +10637,14 @@
     "a": "Luchè"
    },
    "[\"arriverà\",\"modà\"]": {
-    "v": 1,
-    "s": 507,
+    "v": 2,
+    "s": 528,
     "t": "Arriverà",
     "a": "Modà"
    },
    "m:2026-11|[\"arriverà\",\"modà\"]": {
-    "v": 1,
-    "s": 507,
+    "v": 2,
+    "s": 528,
     "t": "Arriverà",
     "a": "Modà"
    },
