@@ -1,0 +1,9 @@
+# Frozen long lead-in rejected on actual audio
+
+Only personal Ste, Il Filmografo→Eva; no global scan. Exact geometry137.36–146.333,entry0,tempo1,source/incomingunity. Cached model bar end is a hypothesis, not semantic truth. Both existing harmony gates reject: full-key path includes low-RMS source tail; preserved-tail path measures max added chroma roughness0.0604239 above unchanged0.05. Four-probe similarity0.220884, no shared top-note probes. The limiting roughness frame is NOT near silence: sourceRms0.32942,target0.10528 (9.91dB difference). Thus removing silent frames alone would not recover this case. Diagnostic power-weighting is NOT an adopted criterion.
+
+Independent original unity render:44.1kHz4xpeak1.336239;48kHz1.336439. Both clip. Exposure screen passes, which demonstrates why introduction audibility alone cannot certify a safe transition. No shared gain, tempo, harmonic or LRC threshold was adjusted to rescue it. No certificate/installation/publication. Raw first LRC9.91s versus conservative7.11s guard remains unchanged; Spleeter quiet-prefix10s is an automatic evidence source, not a human vocal boundary.
+
+Reproduce trace from repo root: node audits/ste-musical-leadin-20261124/diagnose-harmony.cjs NEW_OUTPUT.json. Owning gate decisions are asserted identical before/after tracing; original input SHA hashes must match. Render evaluation protocol retained, local audio at ../ste-leadin-13736-evaluation/{44100,48000}/evaluation.mp3. These samples are REJECTED and not normalised into apparent safety.
+
+Next approach executed instead: four new native zero-entry clean prefixes using independently certified near-silent source27 suffix144.593. This is a distinct geometry/class, never a recovered beatmatch. See ste-kidyugi-prefixes-20261124. Do not rerender this long lead-in or lower its thresholds.
