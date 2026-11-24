@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "browser": "webkit",
+      "method": "actual-personal-app-unmasked-natural-introduction-v1",
+      "physicalIPhone": false,
+      "sourceSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+      "targetSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "trace": {
+        "plays": [
+          {
+            "at": 0,
+            "volume": 1,
+            "muted": false,
+            "afterEof": true,
+            "requestedSource": "http://127.0.0.1:36863/songs/track-181.mp3",
+            "currentSource": "http://127.0.0.1:36863/songs/track-181.mp3"
+          },
+          {
+            "at": 0,
+            "volume": 1,
+            "muted": false,
+            "afterEof": true,
+            "requestedSource": "http://127.0.0.1:36863/songs/track-181.mp3",
+            "currentSource": "http://127.0.0.1:36863/songs/track-181.mp3"
+          }
+        ],
+        "oldEnded": true,
+        "overlays": []
+      },
+      "currentId": "b-track-181",
+      "time": 1.30679,
+      "nativeVolume": 1,
+      "requestedVolume": 1,
+      "muted": false,
+      "tempo": 1,
+      "personal": true
+    }
+  ]
+}

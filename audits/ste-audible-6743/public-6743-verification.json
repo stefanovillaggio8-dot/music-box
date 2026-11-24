@@ -1,0 +1,86 @@
+{
+  "version": "6.743",
+  "releasePR": 81,
+  "releaseMerge": "a523ae51f0cf98048749f8fb7ea36b552f660f01",
+  "assets": {
+    "index.html": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/index.html",
+      "bytes": 107572,
+      "expectedSha256": "148c315483db2a052eafd4959f1dc89a3c87e206e264b24d0b6a9f39d05af9da",
+      "publicSha256": "148c315483db2a052eafd4959f1dc89a3c87e206e264b24d0b6a9f39d05af9da",
+      "matches": true
+    },
+    "versione.json": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/versione.json",
+      "bytes": 43,
+      "expectedSha256": "74f1fa87f414bf8d21052e8424efb009348d468f0f0e030e6791229a7631b7fe",
+      "publicSha256": "74f1fa87f414bf8d21052e8424efb009348d468f0f0e030e6791229a7631b7fe",
+      "matches": true
+    },
+    "app.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/app.js?v=6743&words=22",
+      "bytes": 1119854,
+      "expectedSha256": "aadbd838474707cacf24bcf74e681f3db2c9d9951ff77004ca69328d625edad9",
+      "publicSha256": "aadbd838474707cacf24bcf74e681f3db2c9d9951ff77004ca69328d625edad9",
+      "matches": true
+    },
+    "mix-intelligente.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/mix-intelligente.js?v=6743&dj=63",
+      "bytes": 482582,
+      "expectedSha256": "f8da80999c964e7476a2974284245c35a3e47e7f5aca063f4dec88fbaf266f1d",
+      "publicSha256": "f8da80999c964e7476a2974284245c35a3e47e7f5aca063f4dec88fbaf266f1d",
+      "matches": true
+    },
+    "sw.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/sw.js",
+      "bytes": 128228,
+      "expectedSha256": "3e44bd9df8b0ed33d20530ec8c182a0d46dd7a473e9a9b63abcefd5394e99b87",
+      "publicSha256": "3e44bd9df8b0ed33d20530ec8c182a0d46dd7a473e9a9b63abcefd5394e99b87",
+      "matches": true
+    },
+    "dj-deep-analysis.json": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/dj-deep-analysis.json?pcm=1&structure=18",
+      "bytes": 13404743,
+      "expectedSha256": "a4c07cd556c28b74d3d02d338d7af09beb775ce2929bbb5307b60c965357cfe6",
+      "publicSha256": "a4c07cd556c28b74d3d02d338d7af09beb775ce2929bbb5307b60c965357cfe6",
+      "matches": true
+    },
+    "word-karaoke.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/word-karaoke.js?v=6734&words=13",
+      "bytes": 14028,
+      "expectedSha256": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "publicSha256": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "matches": true
+    },
+    "immersive.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/immersive.js?v=6734&words=13",
+      "bytes": 22514,
+      "expectedSha256": "7d859f9a7bbc2a53db91316ea941c453f0b01c1886964a94d11f71611cb59074",
+      "publicSha256": "7d859f9a7bbc2a53db91316ea941c453f0b01c1886964a94d11f71611cb59074",
+      "matches": true
+    },
+    "audio-composite-mix.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/audio-composite-mix.js?v=14",
+      "bytes": 16008,
+      "expectedSha256": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+      "publicSha256": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+      "matches": true
+    },
+    "audio-stretch.js": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/audio-stretch.js?v=5",
+      "bytes": 2872,
+      "expectedSha256": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+      "publicSha256": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+      "matches": true
+    },
+    "style.css": {
+      "url": "https://stefanovillaggio8-dot.github.io/music-box/style.css?v=6743&lyrics=8",
+      "bytes": 198228,
+      "expectedSha256": "62a9db105802fad25d0d03292ec8ca4bff9ea77e85aaa52fa8793051f4677d2f",
+      "publicSha256": "62a9db105802fad25d0d03292ec8ca4bff9ea77e85aaa52fa8793051f4677d2f",
+      "matches": true
+    }
+  },
+  "allMatch": true,
+  "physicalIPhone": false
+}
