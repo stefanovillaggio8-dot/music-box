@@ -56,7 +56,7 @@ const fixture=[
 // Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
 const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
 const vimeoSdk=fs.readFileSync(path.join(root,"vendor","vimeo","player.min.js"));
-const vimeoFixture=`<!doctype html><html><body><output id="status"></output><script>
+const vimeoFixture=(duration=208.689)=>`<!doctype html><html><body><output id="status"></output><script>
 let time=Number(location.hash.match(/^#t=([0-9]+)s$/)?.[1])||0,paused=true,muted=false;
 window.addEventListener("message",event=>{
  if(event.source!==parent)return;
@@ -65,7 +65,7 @@ window.addEventListener("message",event=>{
  let result;
  if(method==="ping")result=true;
  else if(method==="setMuted")result=muted=value;
- else if(method==="getDuration")result=208.689;
+ else if(method==="getDuration")result=${duration};
  else if(method==="getCurrentTime")result=time;
  else if(method==="setCurrentTime")result=time=value;
  else if(method==="play")paused=false;
@@ -393,7 +393,7 @@ async function run(){
      assert.equal(params.get("controls"),"0");
      assert.equal(params.get("muted"),"1");
      assert.equal(params.get("autoplay"),"1");
-     return route.fulfill({contentType:"text/html",body:vimeoFixture});
+     return route.fulfill({contentType:"text/html",body:vimeoFixture()});
     });
     await page.evaluate(()=>{
      Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt"});
@@ -412,9 +412,28 @@ async function run(){
     await page.evaluate(()=>{fakeSong.id="no-video";fakeSong.title="Brano senza filmato"});
     await page.waitForFunction(()=>!document.querySelector("#imVimeo iframe")&&
       !document.getElementById("immersivePanel").classList.contains("im-video-live"));
-    await page.evaluate(()=>{fakeProfile="Diego";fakeSong.id="b-track-179";fakeSong.title="Certe bugie"});
+
+    await page.route("https://player.vimeo.com/video/919117318?*",route=>{
+     const params=new URL(route.request().url()).searchParams;
+     assert.equal(params.keys().next().value,"h");
+     assert.equal(params.get("h"),"30a90a146d");
+     return route.fulfill({contentType:"text/html",body:vimeoFixture(253.376)});
+    });
+    await page.evaluate(()=>{
+     Object.assign(fakeSong,{id:"b-track-478",file:"songs/track-478.mp3",title:"VENTANNI",artist:"Måneskin"});
+     Object.assign(fakeAudio,{currentTime:28,duration:253.376,paused:false});
+    });
+    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
+    await page.locator("#imVideoToggle").click();
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    await page.evaluate(()=>{
+     fakeProfile="Diego";
+     Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie"});
+     fakeAudio.duration=208.689;
+    });
     await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Certe bugie");
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.equal(await page.locator("#imVimeo iframe").count(),0);
     assert.equal(embedRequests,1);
 
     if(process.env.IMMERSIVE_LIVE_VIMEO==="1"&&size.name==="desktop"){

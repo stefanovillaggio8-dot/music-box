@@ -40,14 +40,27 @@ function atmosphereForTrack(id,title,artist){
   "b-track-179":{
    file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt",
    vimeoId:"1028937342",offsetSeconds:0
+  },
+  "b-track-188":{
+   file:"songs/track-188.mp3",title:"Prima che",artist:"nayt",
+   vimeoId:"1169917470",embedHash:"be8861987b",offsetSeconds:0
+  },
+  "b-track-478":{
+   file:"songs/track-478.mp3",title:"VENT'ANNI",alternateTitle:"VENTANNI",artist:"Måneskin",
+   vimeoId:"919117318",embedHash:"30a90a146d",offsetSeconds:0
+  },
+  "b-track-520":{
+   file:"songs/track-520.mp3",title:"ZITTI E BUONI",artist:"Måneskin",
+   vimeoId:"890571298",offsetSeconds:0
   }
  });
  let videoSource="",videoOffset=0,videoEnabled=false,videoFailed=false,videoPlayingRequest=null,videoLoadStarted=0;
- let vimeoId="",vimeoSession=null,vimeoSdk=null;
+ let vimeoSource=null,vimeoSession=null,vimeoSdk=null;
  function reviewedVideoFor(track){
   if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedVideoCatalog,String(track.id)))return null;
   const entry=reviewedVideoCatalog[String(track.id)];
-  if(!entry||entry.file!==track.file||entry.title!==track.title||entry.artist!==track.artist)return null;
+  if(!entry||entry.file!==track.file||entry.artist!==track.artist)return null;
+  if(entry.title!==track.title&&(!entry.alternateTitle||entry.alternateTitle!==track.title))return null;
   return entry;
  }
  function directVideoSource(track){
@@ -76,8 +89,12 @@ function atmosphereForTrack(id,title,artist){
  function startVimeo(audio){
   const holder=$("imVimeo");
   if(!holder)return;
-  const src=new URL("https://player.vimeo.com/video/"+vimeoId);
-  src.search=new URLSearchParams({controls:"0",muted:"1",autoplay:"1",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"});
+  const src=new URL("https://player.vimeo.com/video/"+vimeoSource.vimeoId);
+  const embedHash=vimeoSource.embedHash;
+  src.search=new URLSearchParams({
+   ...(embedHash?{h:embedHash}:{}),
+   controls:"0",muted:"1",autoplay:"1",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"
+  });
   const initialTime=Math.max(0,Math.floor(audio.currentTime+videoOffset));
   if(initialTime>0)src.hash="t="+initialTime+"s";
   const iframe=document.createElement("iframe");
@@ -177,29 +194,29 @@ function atmosphereForTrack(id,title,artist){
  }
  function videoButton(){
   const button=$("imVideoToggle");if(!button)return;
-  button.hidden=!(videoSource||vimeoId)||videoFailed;
+  button.hidden=!(videoSource||vimeoSource)||videoFailed;
   button.setAttribute("aria-pressed",String(videoEnabled&&!videoFailed));
   button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
  }
  function configureVideo(track){
   stopVideo();
   const reviewed=reviewedVideoFor(track);
-  vimeoId=reviewed?.vimeoId||"";videoSource=vimeoId?"":directVideoSource(track);
+  vimeoSource=reviewed;videoSource=vimeoSource?"":directVideoSource(track);
   videoOffset=reviewed?.offsetSeconds||0;videoFailed=false;
   // Mobile opts in: its native audio decoder must remain the priority.
-  videoEnabled=!!(videoSource||vimeoId)&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
+  videoEnabled=!!(videoSource||vimeoSource)&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
   videoButton();
  }
  function failVideo(){
   videoFailed=true;videoEnabled=false;stopVideo();videoButton();
  }
  function updateVideo(audio){
-  if(!opened||!videoEnabled||videoFailed||!(videoSource||vimeoId))return;
+  if(!opened||!videoEnabled||videoFailed||!(videoSource||vimeoSource))return;
   // Never start a second media decoder during a shared listening session,
   // an inactive page, or while audio is paused/has no valid media clock.
   if(document.hidden||window.MusicBoxRoom?.isActive?.()){stopVideo();return}
   if(!audio||audio.ended||!Number.isFinite(audio.currentTime)){stopVideo();return}
-  if(vimeoId){syncVimeo(audio);return}
+  if(vimeoSource){syncVimeo(audio);return}
   const video=$("imVideo");if(!video)return;
   if(audio.paused||audio.seeking){video.pause();return}
   if(!video.hasAttribute("src")){
@@ -231,7 +248,7 @@ function atmosphereForTrack(id,title,artist){
    $("immersivePanel")?.classList.add("im-video-live");
  }
  function toggleVideo(){
-  if(!opened||!(videoSource||vimeoId)||videoFailed)return;
+  if(!opened||!(videoSource||vimeoSource)||videoFailed)return;
   videoEnabled=!videoEnabled;
   if(!videoEnabled)stopVideo();else updateVideo(api()?.audio?.());
   videoButton();
@@ -529,7 +546,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopVideo();videoSource="";vimeoId="";videoEnabled=false;videoButton();
+ stopVideo();videoSource="";vimeoSource=null;videoEnabled=false;videoButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
