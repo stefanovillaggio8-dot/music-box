@@ -22,7 +22,7 @@ assert.match(css,/@keyframes im-orbit/,"cinematic orbit has a keyframe");
 assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
  "Immersive cannot create a second audio engine");
 const fixture=[
- '<!doctype html><html lang="it"><head>',
+ '<!doctype html><html lang="it"><head><meta charset="utf-8">',
  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">',
  '<link rel="stylesheet" href="/style.css"></head><body>',
  '<button id="btnImmersive" hidden>Immersive</button>',
