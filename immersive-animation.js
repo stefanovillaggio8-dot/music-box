@@ -298,18 +298,17 @@ function loadTextures(atlas){
  image.src=new URL(atlas.file,assetRoot);
 }
 
-function drawEnvironment(c,kind,w,h,grade,atlas,photo){
- if(!atlas.ready)return;
- const {image}=atlas;
- const index=photo?.[0]??kind;
+function drawEnvironment(c,kind,w,h,grade){
+ if(!textures.ready)return;
+ const {image}=textures;
  const tile=image.naturalWidth/3,aspect=w/h;
  // Center crop a tile. The inset avoids filtering pixels from its neighbours.
  const usable=tile-8,sw=usable*Math.min(aspect,1),sh=usable/Math.max(aspect,1);
- const sx=index%3*tile+(tile-sw)*(photo?.[1]??(kind===0 ? .25 : .5));
- const sy=Math.floor(index/3)*tile+(tile-sh)*(photo?.[2]??(kind===0 ? .38 : .5));
- c.globalAlpha=photo ? 1 : .94;
+ const sx=kind%3*tile+(tile-sw)*(kind===0 ? .25 : .5);
+ const sy=Math.floor(kind/3)*tile+(tile-sh)*(kind===0 ? .38 : .5);
+ c.globalAlpha=.94;
  c.drawImage(image,sx,sy,sw,sh,0,0,w,h);
- c.globalAlpha=photo ? .05 : .18;c.fillStyle=grade;c.fillRect(0,0,w,h);
+ c.globalAlpha=.18;c.fillStyle=grade;c.fillRect(0,0,w,h);
  c.globalAlpha=1;
  return {sx,sy,sw,sh,tile};
 }
@@ -323,7 +322,8 @@ function draw(shot){
  const [world,ink]=stage.querySelectorAll("canvas");
  const bounds=stage.getBoundingClientRect(),aspect=bounds.width/bounds.height;
  if(!world||!ink||!Number.isFinite(aspect)||aspect<=0)return false;
- const w=Math.max(1,Math.round(Math.min(640,440*aspect)));
+ const photo=shot.photoAtlas.ready?shot.photoView:null;
+ const w=Math.max(1,Math.round(Math.min(640,(photo ? 560 : 440)*aspect)));
  const h=Math.max(1,Math.round(w/aspect));
  world.width=ink.width=w;
  world.height=ink.height=h;
@@ -332,15 +332,19 @@ function draw(shot){
  const [dark,mid,color,light]=palettes[scene.lyricPalette??scene.palette],r=random(scene.seed);
  const subject=scene.lyricSubject??scene.subject;
  const wide=aspect>1.15,kind=environments[subject]??8;
- const photo=shot.photoAtlas.ready?shot.photoView:null;
- stage.toggleAttribute("data-photographed-scene",!!photo);
+ if(photo&&preparePhotograph(shot,world,c,f,w,h,wide,dark,photo)){
+  stage.setAttribute("data-photographed-scene","");
+  paint(shot,0);
+  return true;
+ }
+ stage.removeAttribute("data-photographed-scene");
  const x=w*((wide ? .30 : .50)+(r()-.5)*(wide ? .07 : .11));
  const y=h*((wide ? .45 : .36)+(r()-.5)*.07);
  const size=Math.min(w*.33,h*(wide ? .39 : .20));
  const glow=c.createRadialGradient(x,y,size*.1,x,y,Math.max(w*.7,h*.59));
  glow.addColorStop(0,mid);glow.addColorStop(1,dark);
  c.fillStyle=glow;c.fillRect(0,0,w,h);
- const crop=drawEnvironment(c,kind,w,h,dark,photo?shot.photoAtlas:textures,photo);
+ const crop=drawEnvironment(c,kind,w,h,dark);
  const veil=c.createLinearGradient(0,0,wide?w:0,wide?0:h);
  veil.addColorStop(0,"#0001");veil.addColorStop(.48,"#0002");veil.addColorStop(1,"#030309ed");
  c.fillStyle=veil;c.fillRect(0,0,w,h);
@@ -353,14 +357,43 @@ function draw(shot){
  const particles=Array.from({length:22},()=>[r(),r(),r(),r()]);
  const wash=f.createLinearGradient(0,0,w*.28,0);
  wash.addColorStop(0,"transparent");wash.addColorStop(.55,color);wash.addColorStop(1,"transparent");
- const localLight=photo?f.createRadialGradient(w*.45,h*.42,0,w*.45,h*.42,w*.56):null;
- if(localLight){
-  localLight.addColorStop(0,photo[5]);
-  localLight.addColorStop(1,"transparent");
- }
- Object.assign(shot,{world,f,w,h,x,y,size,kind,color,light,particles,wash,crop,photo,localLight,
-  detail:photo?prepareSceneDetail(world,photo):null,tilt:(r()-.5)*.22});
+ Object.assign(shot,{world,f,w,h,x,y,size,kind,color,light,particles,wash,crop,photo:null,photoFrame:null,tilt:(r()-.5)*.22});
  paint(shot,0);
+ return true;
+}
+
+function preparePhotograph(shot,world,c,f,w,h,wide,dark,photo){
+ const {image}=shot.photoAtlas;
+ const tile=image.naturalWidth/3;
+ const index=photo[0],light=photo[5];
+ const sx=index%3*tile+3,sy=Math.floor(index/3)*tile+3,span=tile-6;
+ const side=Math.max(1,Math.round(Math.min(w*(wide ? .61 : .96),h*(wide ? .88 : .62))));
+ const centerX=w*(wide ? .31 : .50),centerY=h*(wide ? .47 : .32);
+ const canvas=document.createElement("canvas");
+ const ambient=document.createElement("canvas");
+ canvas.width=canvas.height=side;
+ ambient.width=ambient.height=12;
+ const imageContext=canvas.getContext("2d"),ambientContext=ambient.getContext("2d");
+ if(!imageContext||!ambientContext)return false;
+ imageContext.drawImage(image,sx,sy,span,span,0,0,side,side);
+
+ // The same photograph gives the background its colors outside the full frame.
+ ambientContext.drawImage(image,sx,sy,span,span,0,0,12,12);
+ c.drawImage(ambient,0,0,w,h);
+ c.globalAlpha=.75;c.fillStyle=dark;c.fillRect(0,0,w,h);c.globalAlpha=1;
+
+ const detail=prepareSceneDetail(canvas,photo);
+ imageContext.globalCompositeOperation="destination-in";
+ for(const [endX,endY] of [[side,0],[0,side]]){
+  const edge=imageContext.createLinearGradient(0,0,endX,endY);
+  edge.addColorStop(0,"transparent");edge.addColorStop(.09,"#000");
+  edge.addColorStop(.91,"#000");edge.addColorStop(1,"transparent");
+  imageContext.fillStyle=edge;
+  imageContext.fillRect(0,0,side,side);
+ }
+ const localLight=f.createRadialGradient(centerX,centerY,0,centerX,centerY,side*.55);
+ localLight.addColorStop(0,light);localLight.addColorStop(1,"transparent");
+ Object.assign(shot,{world,f,w,h,photo,photoFrame:{canvas,side,centerX,centerY,detail,localLight}});
  return true;
 }
 
@@ -384,21 +417,16 @@ function prepareSceneDetail(world,photo){
  return {image,left,top};
 }
 function paintScenery(shot,t){
- const {world,f,w,h,kind,scene,photo,detail}=shot;
+ const {world,f,w,h,kind,scene}=shot;
  const arc=Math.sin(t),depth=(1-Math.cos(t))*.5;
  const push=scene.camera==="push"||scene.camera==="pulse";
  const scale=1.16+(push ? .19 : .095)*depth;
  const width=w*scale,height=h*scale;
- const driftX=photo?.[3]??(push ? .023 : .043),driftY=photo?.[4]??.026;
+ const driftX=push ? .023 : .043,driftY=.026;
  const left=(w-width)*.5+w*arc*driftX;
  const top=(h-height)*.47+h*Math.sin(t+.65)*driftY;
  f.drawImage(world,left,top,width,height);
- if(detail){
-  // Move a feathered, in-scene detail against the background by a few pixels.
-  const {image,left:x,top:y}=detail;
-  f.drawImage(image,left+x*scale+arc*driftX*w*.34,top+y*scale+Math.sin(t*2)*driftY*h*.34,
-   image.width*scale,image.height*scale);
- }else if(kind===1||kind===3){
+ if(kind===1||kind===3){
   // Moving reflections are drawn from the scenery itself.
   const band=h*.10;
   for(let row=0;row<3;row++){
@@ -408,10 +436,21 @@ function paintScenery(shot,t){
   }
  }
 }
-function exposeScene(shot,t){
- const {f,w,h,photo,localLight}=shot;
+function paintPhotograph(shot,t){
+ const {world,f,w,h,photo,photoFrame}=shot;
+ const {canvas,side,centerX,centerY,detail,localLight}=photoFrame;
+ const scale=.985+.025*(1-Math.cos(t))*.5;
+ const length=side*scale;
+ const dx=Math.sin(t)*photo[3]*side,dy=Math.sin(t+.65)*photo[4]*side;
+ const x=centerX-length*.5+dx*.4,y=centerY-length*.5+dy*.4;
+ f.drawImage(world,0,0);
+ f.drawImage(canvas,x,y,length,length);
+ if(detail){
+  const {image,left,top}=detail;
+  f.drawImage(image,x+left*scale+dx*.18,y+top*scale+dy*.18,image.width*scale,image.height*scale);
+ }
  f.save();
- f.translate(Math.sin(t)*photo[3]*w*3,Math.sin(t+.65)*h*.08);
+ f.translate(dx,dy);
  f.globalCompositeOperation="soft-light";
  f.fillStyle=localLight;
  f.globalAlpha=.18+.32*(.5+.5*Math.sin(t*2+.75));
@@ -493,10 +532,11 @@ function paint(shot,t){
   if(kind===0&&crop)turnReels(shot,t);
   atmosphere(shot,t);
   if(!crop)paintFilmStrip(shot,t);
+ }else if(shot.photo){
+  paintPhotograph(shot,t);
  }else{
   paintScenery(shot,t);
-  if(shot.photo)exposeScene(shot,t);
-  else atmosphere(shot,t);
+  atmosphere(shot,t);
  }
  f.globalAlpha=1;
 }
