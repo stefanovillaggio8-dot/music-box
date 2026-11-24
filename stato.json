@@ -1816,13 +1816,13 @@
     "a": "Negromaro"
    },
    "[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 2,
+    "v": 3,
     "s": 311,
     "t": "Tuttok",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 2,
+    "v": 3,
     "s": 311,
     "t": "Tuttok",
     "a": "nayt, 3D"
@@ -2734,13 +2734,13 @@
     "a": "TonyPitony"
    },
    "[\"m@star\",\"thasup\"]": {
-    "v": 4,
+    "v": 5,
     "s": 536,
     "t": "m@star",
     "a": "thasup"
    },
    "m:2026-11|[\"m@star\",\"thasup\"]": {
-    "v": 4,
+    "v": 5,
     "s": 536,
     "t": "m@star",
     "a": "thasup"
@@ -3064,13 +3064,13 @@
     "a": "paky"
    },
    "[\"eva\",\"kid yugi, tedua & junior k\"]": {
-    "v": 2,
+    "v": 3,
     "s": 597,
     "t": "Eva",
     "a": "Kid Yugi, Tedua & Junior K"
    },
    "m:2026-11|[\"eva\",\"kid yugi, tedua & junior k\"]": {
-    "v": 2,
+    "v": 3,
     "s": 597,
     "t": "Eva",
     "a": "Kid Yugi, Tedua & Junior K"
@@ -3976,13 +3976,13 @@
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "[\"noi due\",\"nayt, 3d\"]": {
-    "v": 4,
+    "v": 5,
     "s": 221,
     "t": "Noi due",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"noi due\",\"nayt, 3d\"]": {
-    "v": 4,
+    "v": 5,
     "s": 221,
     "t": "Noi due",
     "a": "nayt, 3D"
@@ -4354,14 +4354,14 @@
     "a": "LP"
    },
    "[\"il filmografo\",\"kid yugi\"]": {
-    "v": 4,
-    "s": 233,
+    "v": 5,
+    "s": 240,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
-    "v": 4,
-    "s": 233,
+    "v": 5,
+    "s": 240,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
@@ -10492,13 +10492,13 @@
     "a": "Fabrizio De André"
    },
    "[\"star\",\"luchè\"]": {
-    "v": 0,
+    "v": 1,
     "s": 72,
     "t": "Star",
     "a": "Luchè"
    },
    "m:2026-11|[\"star\",\"luchè\"]": {
-    "v": 0,
+    "v": 1,
     "s": 72,
     "t": "Star",
     "a": "Luchè"
@@ -10516,13 +10516,13 @@
     "a": "nayt, 3D"
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
-    "v": 0,
+    "v": 1,
     "s": 145,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
-    "v": 0,
+    "v": 1,
     "s": 145,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
@@ -10940,6 +10940,18 @@
     "s": 1,
     "t": "Non è mai abbastanza - Videoclip Ufficiale",
     "a": "Modà"
+   },
+   "[\"il pescatore\",\"fabrizio de andré\"]": {
+    "v": 2,
+    "s": 0,
+    "t": "Il pescatore",
+    "a": "Fabrizio De André"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andré\"]": {
+    "v": 2,
+    "s": 0,
+    "t": "Il pescatore",
+    "a": "Fabrizio De André"
    }
   },
   "Diego": {
