@@ -51,8 +51,22 @@ const fixture=[
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
+// Four-second synthetic silent H.264 fixture, generated with FFmpeg and ffprobe-verified.
+const clip=Buffer.from("AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAANBbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAD6AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAmx0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAD6AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACAAAAAgAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAA+gAAAAAAABAAAAAAHkbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAABAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABj21pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAU9zdGJsAAAAt3N0c2QAAAAAAAAAAQAAAKdhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACAAIABIAAAASAAAAAAAAAABFUxhdmM2MS4xOS4xMDEgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALWF2Y0MBQsAK/+EAFmdCwAraJbARAAADAAEAAAMABA8SJqABAARozg/IAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAAAL4AAAAAAAAAGHN0dHMAAAAAAAAAAQAAAAgAACAAAAAAFHN0c3MAAAAAAAAAAQAAAAEAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAgAAAABAAAANHN0c3oAAAAAAAAAAAAAAAgAAAAZAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAABRzdGNvAAAAAAAAAAEAAANxAAAAYXVkdGEAAABZbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAsaWxzdAAAACSpdG9vAAAAHGRhdGEAAAABAAAAAExhdmY2MS43LjEwMwAAAAhmcmVlAAAAZ21kYXQAAAAVZYiEOhGKAAIlMcAAQOI4AAgpSddeAAAABkGaIBKiwAAAAAZBmkATosAAAAAGQZpgE6LAAAAABkGagBOiwAAAAAZBmqATosAAAAAGQZrAE6LAAAAABkGa4BOiwA==","base64");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
+ if(loc==="/fixture.mp4"){
+  const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
+  const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
+  if(range){
+   const start=Number(range[1]),end=Math.min(clip.length-1,range[2]?Number(range[2]):clip.length-1);
+   if(start>end){res.writeHead(416,{"Content-Range":"bytes */"+clip.length});res.end();return}
+   res.writeHead(206,{...headers,"Content-Length":end-start+1,"Content-Range":"bytes "+start+"-"+end+"/"+clip.length});
+   res.end(clip.subarray(start,end+1));return;
+  }
+  res.writeHead(200,{...headers,"Content-Length":clip.length});res.end(clip);return;
+ }
+
  const contents=loc==="/style.css"?css:loc==="/immersive.js"?immersive:fixture;
  res.writeHead(200,{"Content-Type":loc.endsWith(".css")?"text/css":
   loc.endsWith(".js")?"text/javascript":"text/html","Cache-Control":"no-store"});
@@ -306,25 +320,35 @@ async function run(){
    assert.equal(await page.evaluate(()=>window.MusicBoxImmersive.isOpen()),true,
     "swiping the lyrics cannot dismiss immersive mode");
 
-   if(size.name==="desktop"){
-    // A real synthetic silent clip (not any user's media) tests the decoder.
-    const clip=Buffer.from("AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAMxbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAD6AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAlx0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAD6AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACAAAAAgAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAA+gAAAAAAABAAAAAAHUbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAABAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABf21pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAT9zdGJsAAAAt3N0c2QAAAAAAAAAAQAAAKdhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACAAIABIAAAASAAAAAAAAAABFUxhdmM2MS4xOS4xMDEgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALWF2Y0MBQsAK/+EAFmdCwAraJbARAAADAAEAAAMAAg8SJqABAARozg/IAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAABRwAAAAAAAAAGHN0dHMAAAAAAAAAAQAAAAQAAEAAAAAAFHN0c3MAAAAAAAAAAQAAAAEAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAQAAAABAAAAJHN0c3oAAAAAAAAAAAAAAAQAAAJwAAAACgAAAAoAAAAKAAAAFHN0Y28AAAAAAAAAAQAAA2EAAABhdWR0YQAAAFltZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAACxpbHN0AAAAJKl0b28AAAAcZGF0YQAAAAEAAAAATGF2ZjYxLjcuMTAzAAAACGZyZWUAAAKWbWRhdAAAAlMGBf//T9xF6b3m2Ui3lizYINkj7u94MjY0IC0gY29yZSAxNjQgcjMxMDggMzFlMTlmOSAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMjMgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0wIHJlZj0xIGRlYmxvY2s9MDowOjAgYW5hbHlzZT0wOjAgbWU9ZGlhIHN1Ym1lPTAgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MCBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTAgOHg4ZGN0PTAgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9MCB0aHJlYWRzPTEgbG9va2FoZWFkX3RocmVhZHM9MSBzbGljZWRfdGhyZWFkcz0wIG5yPTAgZGVjaW1hdGU9MSBpbnRlcmxhY2VkPTAgYmx1cmF5X2NvbXBhdD0wIGNvbnN0cmFpbmVkX2ludHJhPTAgYmZyYW1lcz0wIHdlaWdodHA9MCBrZXlpbnQ9MjUwIGtleWludF9taW49MSBzY2VuZWN1dD0wIGludHJhX3JlZnJlc2g9MCByYz1jcmYgbWJ0cmVlPTAgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MACAAAAAFWWIhDoRigACJTHAAEDiOAAIKUnXXgAAAAZBmiAUosAAAAAGQZpAFaLAAAAABkGaYBWiwA==","base64");
-    await page.evaluate(()=>{fakeAudio.currentTime=1;fakeAudio.paused=false;});
-    const chooser=page.waitForEvent("filechooser");
-    await page.locator("#imVideoManage").click();
-    await (await chooser).setFiles({name:"fixture.mp4",mimeType:"video/mp4",buffer:clip});
-    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Rimuovi filmato locale");
+   if(size.name==="desktop"||size.name==="iphone13"){
+    // Unsupported links are intentionally invisible and never loaded.
+    await page.evaluate(()=>{fakeSong.id="external-video";fakeSong.videoUrl="https://www.youtube.com/watch?v=example";});
+    await page.waitForTimeout(250);
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
+    await page.evaluate(()=>{fakeSong.id="verified-video";fakeSong.videoUrl="/fixture.mp4";
+     fakeAudio.currentTime=.5;fakeAudio.duration=4;fakeAudio.paused=false;});
+    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
+    // The test context uses reduced motion; explicit activation is required.
+    await page.locator("#imVideoToggle").click();
     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:12000});
-    assert.equal(await page.locator("#imVideo").evaluate(v=>v.muted),true);
+    const visual=await page.evaluate(()=>{
+     const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade"),cover=document.getElementById("imCover");
+     const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+     return {muted:v.muted,volume:v.volume,videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),cover:getComputedStyle(cover).visibility,hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents};
+    });
+    assert.equal(visual.muted,true);
+    assert.equal(visual.volume,0);
+    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ,"video stays beneath shade and controls");
+    assert.equal(visual.cover,"hidden","cover must not overlay the video");
+    assert.equal(visual.hit,true,"play button remains the top clickable element");
+    assert.equal(visual.pointer,"none");
     await page.evaluate(()=>fakeAudio.paused=true);
     await page.waitForFunction(()=>document.getElementById("imVideo").paused);
-    await page.keyboard.press("Escape");
-    assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
-    await page.locator("#btnImmersive").click();
-    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Rimuovi filmato locale");
-    await page.locator("#imVideoManage").click();
-    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Associa filmato locale al brano");
-    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    await page.evaluate(()=>{fakeSong.id="no-video";delete fakeSong.videoUrl;});
+    await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden&&
+      !document.getElementById("immersivePanel").classList.contains("im-video-live")&&
+      !document.getElementById("imVideo").hasAttribute("src"));
    }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");
