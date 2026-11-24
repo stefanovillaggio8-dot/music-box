@@ -11,10 +11,10 @@ test('a late clean launch is bounded by actually meaningful original prefix and 
  assert.ok(through>=.75);assert.equal(p.tempo,1);assert.equal(p.entry,0);
 });
 test('rhythmic, altered, incomplete and insufficient evidence never expands the legacy 80ms launch bound',()=>{
- const mutations=[p=>p.nativeCleanTail=false,p=>p.measuredFullBeat=true,p=>p.metricalRhythmic=true,p=>p.entry=.1,p=>p.tempo=1.01,
+ const mutations=[p=>p.nativeCleanTail=false,p=>p.measuredFullBeat=true,p=>p.metricalRhythmic=true,p=>p.entry=.1,p=>p.tempo=1.01,p=>p.gain=.5,
   p=>p.nativeCleanEvidence.sourceSha='f'.repeat(40),p=>p.nativeCleanEvidence.introductionExposure.targetSha='f'.repeat(40),
   p=>p.nativeCleanEvidence.sourceUnityThroughEOF=false,p=>p.nativeCleanEvidence.incomingUnityFromZero=false,
-  p=>p.nativeCleanEvidence.nativeMeasurements.pop(),p=>p.nativeCleanEvidence.nativeMeasurements[0].rate=96000,
+  p=>p.nativeCleanEvidence.nativeMeasurements.pop(),p=>p.nativeCleanEvidence.nativeMeasurements[0].targetDecodedOffset=NaN,p=>delete p.nativeCleanEvidence.introductionExposure.rows[0].originalAt,p=>p.nativeCleanEvidence.nativeMeasurements[0].rate=96000,
   p=>p.nativeCleanEvidence.nativeMeasurements[0].sourceTailPeak=.00101,p=>p.nativeCleanEvidence.nativeMeasurements[0].sourceTailRmsMax=.0001,
   p=>p.nativeCleanEvidence.nativeMeasurements[0].targetNativeOverlapPeak=.96,
   p=>p.nativeCleanEvidence.introductionExposure.rows.forEach(r=>r.originalRms=0),

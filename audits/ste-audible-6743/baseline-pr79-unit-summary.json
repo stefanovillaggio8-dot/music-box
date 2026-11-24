@@ -1,0 +1,13 @@
+{
+  "pr": 79,
+  "head": "226e4c02a849f9f0911b7f46718bbc6177e7918e",
+  "run": 45287466175,
+  "job": 138087395667,
+  "summary": [
+    "2026-11-23T23:19:22.3998338Z not ok 410 - protected rhythmic tail preserves the actual recording: audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3",
+    "2026-11-23T23:19:22.4016457Z not ok 415 - the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed",
+    "2026-11-23T23:19:22.4782322Z # tests 786",
+    "2026-11-23T23:19:22.4782610Z # pass 784",
+    "2026-11-23T23:19:22.4782692Z # fail 2"
+  ]
+}
