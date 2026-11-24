@@ -81,7 +81,8 @@ function atmosphereForTrack(id,title,artist){
   if(audio.paused||audio.seeking){video.pause();return}
   if(!video.hasAttribute("src")){
    video.muted=true;video.defaultMuted=true;video.volume=0;
-   video.hidden=false;video.src=videoSource;
+   // Request metadata explicitly: preload=none plus waiting for readyState before play deadlocks.
+   video.preload="metadata";video.hidden=false;video.src=videoSource;video.load();
   }
   if(video.error){failVideo();return}
   if(video.readyState<1)return;
