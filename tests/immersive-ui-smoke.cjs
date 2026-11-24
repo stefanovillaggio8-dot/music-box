@@ -305,6 +305,28 @@ async function run(){
    });
    assert.equal(await page.evaluate(()=>window.MusicBoxImmersive.isOpen()),true,
     "swiping the lyrics cannot dismiss immersive mode");
+
+   if(size.name==="desktop"){
+    // A real synthetic silent clip (not any user's media) tests the decoder.
+    const clip=require("node:child_process").spawnSync("ffmpeg",["-hide_banner","-loglevel","error","-f","lavfi","-i","color=c=purple:s=32x32:r=5:d=4","-an","-c:v","libx264","-pix_fmt","yuv420p","-movflags","frag_keyframe+empty_moov","-f","mp4","pipe:1"]);
+    assert.equal(clip.status,0,"synthetic video fixture must encode");
+    await page.evaluate(()=>{fakeAudio.currentTime=1;fakeAudio.paused=false;});
+    const chooser=page.waitForEvent("filechooser");
+    await page.locator("#imVideoManage").click();
+    await (await chooser).setFiles({name:"fixture.mp4",mimeType:"video/mp4",buffer:clip.stdout});
+    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Rimuovi filmato locale");
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:12000});
+    assert.equal(await page.locator("#imVideo").evaluate(v=>v.muted),true);
+    await page.evaluate(()=>fakeAudio.paused=true);
+    await page.waitForFunction(()=>document.getElementById("imVideo").paused);
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
+    await page.locator("#btnImmersive").click();
+    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Rimuovi filmato locale");
+    await page.locator("#imVideoManage").click();
+    await page.waitForFunction(()=>document.getElementById("imVideoManage").getAttribute("aria-label")==="Associa filmato locale al brano");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+   }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");
    await page.waitForFunction(()=>!window.MusicBoxImmersive.isOpen());

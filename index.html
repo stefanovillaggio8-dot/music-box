@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=9" />
+  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=10" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -975,6 +975,8 @@
       <div class="im-head-right">
         <span class="im-mode"><span class="im-live-dot" aria-hidden="true"></span> IMMERSIVE</span>
         <button id="imVideoToggle" type="button" class="im-focus-toggle im-video-toggle" aria-pressed="false" hidden>Filmato</button>
+        <button id="imVideoManage" type="button" class="im-focus-toggle im-video-manage" aria-label="Associa filmato locale al brano" title="Associa filmato locale" hidden>＋ video</button>
+        <input id="imVideoFile" type="file" accept="video/mp4,video/webm,video/x-m4v,.mp4,.webm,.m4v" hidden />
         <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode" title="Chiudi">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
         </button>
@@ -1641,6 +1643,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <script src="audio-composite-mix.js?v=14"></script>
 <script src="mix-intelligente.js?v=6743&amp;dj=63"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6734&amp;words=14"></script>
+<script src="immersive.js?v=6734&amp;words=15"></script>
 </body>
 </html>

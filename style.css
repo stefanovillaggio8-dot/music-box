@@ -4788,3 +4788,10 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 }
 @media(max-width:420px){.im-video-toggle{padding:6px 8px}.im-root:has(.im-video-toggle:not([hidden])) .im-mode{display:none}}
 @media(prefers-reduced-motion:reduce){.im-video,.im-video-shade{transition:none}}
+
+/* Device-local video association, compact and separate from playback. */
+.im-video-manage[hidden],#imVideoFile[hidden]{display:none!important}
+.im-video-manage{white-space:nowrap;flex:none;opacity:.85}
+.im-video-manage:disabled{opacity:.45}
+@media(max-width:850px){.im-root:has(.im-video-manage:not([hidden])) .im-mode{display:none}.im-video-manage{font-size:10px;padding:6px 8px}.im-root .im-head-right{gap:6px}}
+@media(max-width:420px){.im-root:has(.im-video-toggle:not([hidden])) .im-brand-block small{display:none}.im-root .im-video-toggle{padding:6px 8px}}
