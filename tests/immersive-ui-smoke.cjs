@@ -534,6 +534,7 @@ async function run(){
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
+    await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});
     await stage.waitFor({state:"hidden"});
     assert.equal(await stage.evaluate(node=>node.lastElementChild.width),0,"pause releases the drawn planes");

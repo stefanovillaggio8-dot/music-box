@@ -1,0 +1,1512 @@
+{
+  "profile": "Ste",
+  "scope": "Published recordings and non-Gym playlists. Gym-only and device-only recordings are excluded.",
+  "method": "Read public gallery indexes and compare public Spotify embed title, credited artists and duration to the app catalog. Review several frames of candidate loops. A close duration is corroborating evidence; it does not fingerprint audio or prove an original Canvas is unavailable.",
+  "artistNamesSearched": 97,
+  "galleryEntriesInspectedForMetadata": 1277,
+  "spotifyTrackMetadataResolved": 1276,
+  "titleArtistCandidates": 81,
+  "maxDurationDifferenceSecondsForVisualMatch": 0.5,
+  "summary": {
+    "preserved": 1,
+    "canvas-inspired": 43,
+    "song-inspired-photograph": 13,
+    "song-inspired-environment": 165
+  },
+  "tracks": [
+    {
+      "id": "b-track-6",
+      "title": "Kid Yugi x Lil Peep MASHUP",
+      "artist": "Kid Yugi / Lil Peep",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-27",
+      "title": "Il Filmografo",
+      "artist": "Kid Yugi",
+      "scene": "preserved"
+    },
+    {
+      "id": "b-track-29",
+      "title": "terr1",
+      "artist": "kid yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7jTgA81ZcPWchUvhYBfXB6",
+      "durationDifferenceSeconds": 0.082
+    },
+    {
+      "id": "b-track-30",
+      "title": "Sintetico",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-33",
+      "title": "Lilith",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-34",
+      "title": "Eva",
+      "artist": "Kid Yugi, Tedua & Junior K",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-37",
+      "title": "La Violenza Necessaria",
+      "artist": "Kid Yugi & Shiva",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/4gYOPsRynx7hXQm5q47o04",
+      "durationDifferenceSeconds": 0.117
+    },
+    {
+      "id": "b-track-38",
+      "title": "Gilgamesh",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/09wmUkefYD7B2IWpHP6v3P",
+      "durationDifferenceSeconds": 0.125
+    },
+    {
+      "id": "b-track-39",
+      "title": "Tristano e Isotta",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7dFfkSJrAHnUdKM5jaUOLt",
+      "durationDifferenceSeconds": 0.164
+    },
+    {
+      "id": "b-track-40",
+      "title": "Donna",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5t0pLWfUeP5fYVxKaMB2MD",
+      "candidateDurationDifferenceSeconds": 6.049
+    },
+    {
+      "id": "b-track-41",
+      "title": "Lucifero",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/4QqTFHD7cvM0LtTcHipSjW",
+      "durationDifferenceSeconds": 0.151
+    },
+    {
+      "id": "b-track-49",
+      "title": "Mostro (Visual)",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-87",
+      "title": "Bullet Ballet",
+      "artist": "Kid Yugi, Artie 5ive",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1ljOXO8cgSa8qntDVlP9uu",
+      "durationDifferenceSeconds": 0.127
+    },
+    {
+      "id": "b-track-134",
+      "title": "TUTTO FUORI CONTROLLO",
+      "artist": "MACE, Kid Yugi, IzI, Franco126",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/56aNXzJAZbI1j6jJeEampd",
+      "durationDifferenceSeconds": 0.159
+    },
+    {
+      "id": "b-track-138",
+      "title": "Ex Angelo",
+      "artist": "Kid Yugi, Sfera Ebbasta, Shablo",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1LcAwUvsiWJqTgV9vDs0oq",
+      "durationDifferenceSeconds": 0.103
+    },
+    {
+      "id": "b-track-205",
+      "title": "Amelie",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0O5KcmgOeEgublW6ySQ6Vc",
+      "durationDifferenceSeconds": 0.121
+    },
+    {
+      "id": "b-track-206",
+      "title": "Per il Sangue Versato",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5KgCXKLAuDmeuE9xqW7H0y",
+      "durationDifferenceSeconds": 0.127
+    },
+    {
+      "id": "b-track-207",
+      "title": "Per te che Lotto",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-208",
+      "title": "Davide e Golia",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0qGIqm3xGuugqoXzpnP6sX",
+      "durationDifferenceSeconds": 0.098
+    },
+    {
+      "id": "b-track-213",
+      "title": "Jolly",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0UtRV28MHg17EvNBKRrt17",
+      "durationDifferenceSeconds": 0.14
+    },
+    {
+      "id": "b-track-215",
+      "title": "Il Ferro di Echov",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-488",
+      "title": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
+      "artist": "MACE, Kid Yugi, Izi, Franco126",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/56aNXzJAZbI1j6jJeEampd",
+      "durationDifferenceSeconds": 0.159
+    },
+    {
+      "id": "b-track-1187",
+      "title": "Stratos",
+      "artist": "Kid Yugi",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3OWSRPRku9fkcrJbPoTcSv",
+      "durationDifferenceSeconds": 0.184
+    },
+    {
+      "id": "b-youtube-S8oUoa0pwpo",
+      "title": "Sentire La Musica",
+      "artist": "Kid Yugi",
+      "scene": "song-inspired-photograph",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/70m2SuBHRCkxVpgqpXZPDk",
+      "candidateDurationDifferenceSeconds": null
+    },
+    {
+      "id": "b-track-2",
+      "title": "QUANTO FORTE TI PENSAVO",
+      "artist": "Madame",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-4",
+      "title": "Sono Ok",
+      "artist": "XCarme",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-7",
+      "title": "Star Shopping",
+      "artist": "Lil Peep",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-8",
+      "title": "Malpensa",
+      "artist": "G.Mineiro, Flatpearl, Succo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-9",
+      "title": "LA CITTÀ",
+      "artist": "MOSTRO",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-10",
+      "title": "CIGNO NERO RMX",
+      "artist": "Nayt / Frah Quintale / Tony Boy",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-11",
+      "title": "Romantici Terroni",
+      "artist": "SAITTA",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-12",
+      "title": "s!r!",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-13",
+      "title": "Victoria",
+      "artist": "Tony Boy",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1r5WCFulDtvAdCNmJfH1wA",
+      "candidateDurationDifferenceSeconds": -1.224
+    },
+    {
+      "id": "b-track-14",
+      "title": "Un mondo a parte (Visual)",
+      "artist": "Jovanotti",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5niBKNtMNJTSPLTCBTc3wr",
+      "durationDifferenceSeconds": 0.172
+    },
+    {
+      "id": "b-track-15",
+      "title": "Sogni Appesi",
+      "artist": "Ultimo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-16",
+      "title": "Exit",
+      "artist": "nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-17",
+      "title": "Hai visto mai",
+      "artist": "Frah Quintale",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-18",
+      "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-19",
+      "title": "Stella Cadente",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-20",
+      "title": "Kid Yugi x Nuts - Lil Peep",
+      "artist": "Ferro di checov",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-23",
+      "title": "Lastronauta (Visual)",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5SKziDfyRfyHgqjvDFWcJ9",
+      "durationDifferenceSeconds": 0.471
+    },
+    {
+      "id": "b-track-25",
+      "title": "Poter scegliere",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/35s4cmZFjwxJ2fhcsEwAiC",
+      "durationDifferenceSeconds": 0.249
+    },
+    {
+      "id": "b-track-26",
+      "title": "NON MI RICONOSCO",
+      "artist": "MACE",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/02qmjMWNK9hiO9PsndeLLQ",
+      "candidateDurationDifferenceSeconds": 1.612
+    },
+    {
+      "id": "b-track-31",
+      "title": "ROMANTICA",
+      "artist": "Ultimo",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3jG1o72wNvvjQn2kDoNsIu",
+      "candidateDurationDifferenceSeconds": 6.501
+    },
+    {
+      "id": "b-track-35",
+      "title": "l'anima",
+      "artist": "madame",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-36",
+      "title": "IL GIORNO CHE ASPETTAVO",
+      "artist": "Ultimo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-43",
+      "title": "solo domande",
+      "artist": "nayt & 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-44",
+      "title": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
+      "artist": "nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-46",
+      "title": "sailor song",
+      "artist": "gigi perez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/2262bWmqomIaJXwCRHr13j",
+      "candidateDurationDifferenceSeconds": 3.979
+    },
+    {
+      "id": "b-track-47",
+      "title": "nuts",
+      "artist": "Lil Peep",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-48",
+      "title": "NEON",
+      "artist": "Sfera Ebbasta & Shiva",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0jkAr7eZsvWDLYiQCfaxak",
+      "candidateDurationDifferenceSeconds": 0.731
+    },
+    {
+      "id": "b-track-50",
+      "title": "la mia storia tra le dita",
+      "artist": "gianluca grignani",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-69",
+      "title": "Albachiara",
+      "artist": "Vasco Rossi",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-76",
+      "title": "Wonderwall",
+      "artist": "Oasis",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-72",
+      "title": "HO SBAGLIATO ANCORA",
+      "artist": "Chiello",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/33LYvdSbeXaVc5PEIsjR6Z",
+      "candidateDurationDifferenceSeconds": 11.332
+    },
+    {
+      "id": "b-track-68",
+      "title": "siLLy cUp",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-67",
+      "title": "carusi do sud",
+      "artist": "l'elfo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-73",
+      "title": "nei treni la notte",
+      "artist": "frah quintale",
+      "scene": "song-inspired-photograph"
+    },
+    {
+      "id": "b-track-74",
+      "title": "Dimmi Che C''",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-75",
+      "title": "stupido",
+      "artist": "massimo pericolo",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6HVRRlc2sBlkcKEkhlsp86",
+      "durationDifferenceSeconds": 0.26
+    },
+    {
+      "id": "b-track-77",
+      "title": "Spettri",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-78",
+      "title": "Memoria di uno sconfitto, pt. 2",
+      "artist": "Mostro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-79",
+      "title": "G&V",
+      "artist": "ivanBì",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-80",
+      "title": "Da zero",
+      "artist": "nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-81",
+      "title": "Gli occhi della tigre",
+      "artist": "nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-88",
+      "title": "SOGNO AMERICANO",
+      "artist": "Artie 5ive",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7i0zYckMTyvLyKAFxfOKIS",
+      "candidateDurationDifferenceSeconds": 2.643
+    },
+    {
+      "id": "b-track-89",
+      "title": "Niente Canzoni D'Amore",
+      "artist": "Elodie",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3Pqm4BPjluxMX3afwDlKy5",
+      "durationDifferenceSeconds": 0
+    },
+    {
+      "id": "b-track-90",
+      "title": "Odi et Amo",
+      "artist": "Blake el Diablo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-92",
+      "title": "Scale",
+      "artist": "Night Skinny, Luchè",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1odrZy5kTuj3SGdfgzhMzq",
+      "durationDifferenceSeconds": 0.161
+    },
+    {
+      "id": "b-track-93",
+      "title": "oh 9od",
+      "artist": "thasup, nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-94",
+      "title": "Doom",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-95",
+      "title": "Ballon d'Or",
+      "artist": "Gemitaiz, nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-96",
+      "title": "un'idea",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-97",
+      "title": "guerra dentro",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-98",
+      "title": "Cigno nero",
+      "artist": "Fedez, Francesca Michelini",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-99",
+      "title": "Se Piovesse Il Tuo Nome - con Calcutta",
+      "artist": "Elisa, Calcutta",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-100",
+      "title": "Chic",
+      "artist": "Izi",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-101",
+      "title": "molecole (interlude)",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-102",
+      "title": "Il Tuo Sorriso",
+      "artist": "Medy",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-103",
+      "title": "AIRFORCE",
+      "artist": "Massimo Pericolo, Crookers, Madame",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/4MTlIhliwFJnTfbEoctDyB",
+      "durationDifferenceSeconds": 0.181
+    },
+    {
+      "id": "b-track-105",
+      "title": "Striscia",
+      "artist": "TonyPitony",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/4wuvtQXG78xGljvMRbHefc",
+      "durationDifferenceSeconds": 0.389
+    },
+    {
+      "id": "b-track-106",
+      "title": "MI PIACCIONO LE NERE",
+      "artist": "TonyPitony",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-107",
+      "title": "CULO",
+      "artist": "TonyPitony",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-108",
+      "title": "BALÙ - Acoustic Version",
+      "artist": "TonyPitony",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6pjgJnEeReIWRtcqYjPkvH",
+      "durationDifferenceSeconds": 0.092
+    },
+    {
+      "id": "b-track-109",
+      "title": "OCCHI MEI",
+      "artist": "thasup, Mara Sattei",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-110",
+      "title": "Non Abbiamo Età",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0NwuXciw6eQc4edjwSBnV3",
+      "candidateDurationDifferenceSeconds": 0.952
+    },
+    {
+      "id": "b-track-111",
+      "title": "Voodoo",
+      "artist": "Guè",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-112",
+      "title": "Concedimi",
+      "artist": "Matteo Romano",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5v4HwZG7b30ORymByjjqY8",
+      "candidateDurationDifferenceSeconds": -0.553
+    },
+    {
+      "id": "b-track-113",
+      "title": "INTRO (La Bella Vita)",
+      "artist": "Artie 5ive",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-114",
+      "title": "GIOVANNI",
+      "artist": "TonyPitony",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-115",
+      "title": "15 Piani",
+      "artist": "Sfera Ebbasta, Marracash",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-116",
+      "title": "Labirinto",
+      "artist": "Luchè",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/11C1h0tuCW9qRa1QGPV9Vj",
+      "durationDifferenceSeconds": 0.002
+    },
+    {
+      "id": "b-track-117",
+      "title": "Nessuna",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1ZOC7H5JfPtj8OW9lRz6pm",
+      "candidateDurationDifferenceSeconds": 2.7
+    },
+    {
+      "id": "b-track-118",
+      "title": "Babydoll",
+      "artist": "Dominic Fike",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-119",
+      "title": "Baby Mama",
+      "artist": "Don Pero",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-120",
+      "title": "Lo So Che",
+      "artist": "Capo Plaza",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3w73qvCSGWPCx7w1UMIh6e",
+      "durationDifferenceSeconds": 0.004
+    },
+    {
+      "id": "b-track-121",
+      "title": "Scrivendo",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6s8WITlFjDt6TUEsGHN1V6",
+      "durationDifferenceSeconds": 0.362
+    },
+    {
+      "id": "b-track-122",
+      "title": "Vibe",
+      "artist": "Guè",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6cGhVnQAJRxGVsltCU06vF",
+      "durationDifferenceSeconds": 0.064
+    },
+    {
+      "id": "b-track-124",
+      "title": "marte",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-125",
+      "title": "mi @mio è f@ke",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-126",
+      "title": "slrl",
+      "artist": "thasup, Lazza, Sfera Ebbasta",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-127",
+      "title": "Hey There Delilah",
+      "artist": "Plain White T's",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7Bir39CmMEvCXZSY6lpr8l",
+      "durationDifferenceSeconds": -0.255
+    },
+    {
+      "id": "b-track-128",
+      "title": "STANOTTE",
+      "artist": "TY1, Coez, Massimo Pericolo",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-129",
+      "title": "CRUDELIA - Inervi",
+      "artist": "Marracash",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
+      "candidateDurationDifferenceSeconds": 0.976
+    },
+    {
+      "id": "b-track-130",
+      "title": "ADRENALINA",
+      "artist": "Samurai Jay, Vito Salamarca",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/2pULqfE2k1DHr24dtJwMRh",
+      "candidateDurationDifferenceSeconds": 1.071
+    },
+    {
+      "id": "b-track-131",
+      "title": "romantici",
+      "artist": "Tommaso Paradiso",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-133",
+      "title": "RUGGINE",
+      "artist": "MACE, chiello, Coez",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/67GlveEzJe2GEit7AhYNUH",
+      "durationDifferenceSeconds": 0.08
+    },
+    {
+      "id": "b-track-135",
+      "title": "DAVVERODAVVERO",
+      "artist": "Artie 5ive",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-136",
+      "title": "Frosinone",
+      "artist": "Calcutta",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/18NBoQ9SyURVcsPW6sP8tv",
+      "durationDifferenceSeconds": -0.232
+    },
+    {
+      "id": "b-track-139",
+      "title": "Faccio un casino",
+      "artist": "Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-140",
+      "title": "La musica non c'è",
+      "artist": "Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-143",
+      "title": "La tua canzone",
+      "artist": "Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-144",
+      "title": "E yo mamma",
+      "artist": "Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-146",
+      "title": "Qualcosa di grande",
+      "artist": "Coez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7LHCJnWkQgmHGUhQyZeoW5",
+      "candidateDurationDifferenceSeconds": -1.388
+    },
+    {
+      "id": "b-track-147",
+      "title": "È sempre bello",
+      "artist": "Coez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6IdiuMw1FSAvU3e6bgWQVX",
+      "candidateDurationDifferenceSeconds": 2.31
+    },
+    {
+      "id": "b-track-148",
+      "title": "Domenica",
+      "artist": "Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-149",
+      "title": "8 miliardi di persone",
+      "artist": "Frah Quintale",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-150",
+      "title": "Quel sorriso in volto",
+      "artist": "Modà",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/4KNumtDS7aWRwDZDmWJ2lN",
+      "candidateDurationDifferenceSeconds": 85.259
+    },
+    {
+      "id": "b-track-152",
+      "title": "Come un pittore",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-153",
+      "title": "Le luci della città",
+      "artist": "Coez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7LS77jToQuVN99n5IU9W3J",
+      "candidateDurationDifferenceSeconds": 8.481
+    },
+    {
+      "id": "b-track-154",
+      "title": "Le parole più grandi",
+      "artist": "Coez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1G7qMuH6Fu1Zz37hGbFGIa",
+      "candidateDurationDifferenceSeconds": 33.786
+    },
+    {
+      "id": "b-track-155",
+      "title": "Tappeto di fragole",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-157",
+      "title": "Arriverà",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-158",
+      "title": "Ti amo ma non posso dirlo",
+      "artist": "Modà, Bianca Atzei",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-159",
+      "title": "La notte",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-160",
+      "title": "Per una notte insieme",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-161",
+      "title": "E non c'è mai una fine",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-163",
+      "title": "Dove è sempre sole",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-164",
+      "title": "Se si potesse non morire",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-165",
+      "title": "Lasciami",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-166",
+      "title": "Passione maledetta",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-168",
+      "title": "Quelli come me",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-169",
+      "title": "Salvami",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-170",
+      "title": "Quello che non ti ho detto",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-171",
+      "title": "Favola",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-173",
+      "title": "Mi Fido Di Te",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-175",
+      "title": "Baciami Ancora - Radio Edit",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-176",
+      "title": "Ragazza Magica",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-178",
+      "title": "Autoritratto",
+      "artist": "Charlie Charles, nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-179",
+      "title": "Certe bugie",
+      "artist": "nayt",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/51nYuZtAfpx4XZaWCAeFPw",
+      "candidateDurationDifferenceSeconds": 21.742
+    },
+    {
+      "id": "b-track-180",
+      "title": "se ne va",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-181",
+      "title": "Non ti dimentico",
+      "artist": "Modà",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3xZW8lrovQJj6xszgLSg1S",
+      "candidateDurationDifferenceSeconds": 4.232
+    },
+    {
+      "id": "b-track-182",
+      "title": "Le Tasche Piene Di Sassi",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-184",
+      "title": "Tuttok",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-185",
+      "title": "Dimenticare",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5EOJ7bFZhGQv61R7vTFXk3",
+      "candidateDurationDifferenceSeconds": -1.077
+    },
+    {
+      "id": "b-track-187",
+      "title": "Cose che non vuoi sentirti dire",
+      "artist": "nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-188",
+      "title": "Prima che",
+      "artist": "nayt",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1bXER40RxwNWTf9fnQOY64",
+      "candidateDurationDifferenceSeconds": 15.206
+    },
+    {
+      "id": "b-track-189",
+      "title": "Di abbattere le mura (18 Donne)",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7epj7aCJVc64qGuQBCfcIU",
+      "durationDifferenceSeconds": 0.324
+    },
+    {
+      "id": "b-track-190",
+      "title": "Mortale",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-191",
+      "title": "Bad vibes",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/45H1AuA4Qr3qGFuq1QepEp",
+      "durationDifferenceSeconds": 0.298
+    },
+    {
+      "id": "b-track-192",
+      "title": "Ci nasci, ci muori",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0yZFaFWcH1B9HlTFxPgdxb",
+      "durationDifferenceSeconds": 0.399
+    },
+    {
+      "id": "b-track-193",
+      "title": "Punto d'incontro",
+      "artist": "nayt",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6d76kTlyGcBSeOP2DjraHt",
+      "candidateDurationDifferenceSeconds": 0.845
+    },
+    {
+      "id": "b-track-194",
+      "title": "Forte",
+      "artist": "nayt",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6apJOtqLZ0IhzX3dW7scxy",
+      "candidateDurationDifferenceSeconds": 0.807
+    },
+    {
+      "id": "b-track-195",
+      "title": "Noi due",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-196",
+      "title": "Esistere (più di me)",
+      "artist": "nayt",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5ZKZZpxznehDO5LK6ai466",
+      "candidateDurationDifferenceSeconds": 0.567
+    },
+    {
+      "id": "b-track-198",
+      "title": "Tutti il resto è noi",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-200",
+      "title": "Essere noi",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/02tTm5VvUM5RadhgpuEkKJ",
+      "durationDifferenceSeconds": 0.43
+    },
+    {
+      "id": "b-track-201",
+      "title": "Lullu - Acoustic Version",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-203",
+      "title": "ily",
+      "artist": "thasup, Coez",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-209",
+      "title": "cosa conta davvero",
+      "artist": "nayt, 3D",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-210",
+      "title": "Paraguai",
+      "artist": "nayt, Canova",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3bkfnsCQ5QMQ5rTU4NPiAo",
+      "durationDifferenceSeconds": -0.054
+    },
+    {
+      "id": "b-track-211",
+      "title": "m@star",
+      "artist": "thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-212",
+      "title": "gRAZie A Dio",
+      "artist": "yungest Moonstar, thasup",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-216",
+      "title": "La guerra di Piero",
+      "artist": "Fabrizio De André",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1lNop22I4dLz5MYuc60fUX",
+      "candidateDurationDifferenceSeconds": 23.107
+    },
+    {
+      "id": "b-track-217",
+      "title": "Bocca di rosa",
+      "artist": "Fabrizio De André",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-218",
+      "title": "Via del campo",
+      "artist": "Fabrizio De André",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-220",
+      "title": "Il pescatore",
+      "artist": "Fabrizio De André",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-221",
+      "title": "Ti Amo",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-222",
+      "title": "Miami Vice",
+      "artist": "Luchè, Sfera Ebbasta, Simba La Rue",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/76iZw9dIF3hdT0dYLKBai5",
+      "candidateDurationDifferenceSeconds": 2.67
+    },
+    {
+      "id": "b-track-225",
+      "title": "Star",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-226",
+      "title": "Torna Da Me",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5iSHLCuc0K3pUW16b7sSP4",
+      "candidateDurationDifferenceSeconds": 28.567
+    },
+    {
+      "id": "b-track-227",
+      "title": "Lo Stesso Viso",
+      "artist": "Luchè, Da Blonde",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-228",
+      "title": "Cosa mi manchi a fare",
+      "artist": "Calcutta",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7L8cIUKXToCr6PV9hFoX3Q",
+      "candidateDurationDifferenceSeconds": 3.102
+    },
+    {
+      "id": "b-track-229",
+      "title": "Tutti",
+      "artist": "Calcutta",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3G5VUAzCpvaaWEMk9NkHFT",
+      "candidateDurationDifferenceSeconds": 1.53
+    },
+    {
+      "id": "b-track-230",
+      "title": "Oroscopo",
+      "artist": "Calcutta, Takagi & Ketra",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7yJZlPui7PYh2L9UXmtQWc",
+      "durationDifferenceSeconds": 0.044
+    },
+    {
+      "id": "b-track-232",
+      "title": "Estate",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-233",
+      "title": "Meraviglioso",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-234",
+      "title": "L'immenso",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-236",
+      "title": "Solo 3 min",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-237",
+      "title": "Solo Per Te",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-239",
+      "title": "A mano a mano",
+      "artist": "Rino Gaetano",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-240",
+      "title": "Ma il cielo è sempre più blu",
+      "artist": "Rino Gaetano",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/2C4DwZKxkzv3HHNZq1mm5v",
+      "durationDifferenceSeconds": -0.338
+    },
+    {
+      "id": "b-track-241",
+      "title": "Tiscatterò una foto",
+      "artist": "Tiziano Ferro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-242",
+      "title": "Il Regalo Più Grande",
+      "artist": "Tiziano Ferro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-243",
+      "title": "L'universo tranne noi",
+      "artist": "Max Pezzali",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-244",
+      "title": "FW/SS25 (Freestyle)",
+      "artist": "Artie 5ive",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-245",
+      "title": "Mentre Tutto Score",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-246",
+      "title": "Sono già solo",
+      "artist": "Modà",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-248",
+      "title": "So solo che la vita",
+      "artist": "Jovanotti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-249",
+      "title": "La prima volta",
+      "artist": "Negromaro",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-250",
+      "title": "we fell in love in october",
+      "artist": "girl in red",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6IPwKM3fUUzlElbvKw2sKl",
+      "candidateDurationDifferenceSeconds": 3.111
+    },
+    {
+      "id": "b-track-304",
+      "title": "QUELLI CHE NON PENSANO - Il cervello",
+      "artist": "Marracash, Coez",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1VOi03r3FelbsYHJXFjphg",
+      "candidateDurationDifferenceSeconds": 1.309
+    },
+    {
+      "id": "b-track-309",
+      "title": "Morirò da Re",
+      "artist": "Måneskin",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-315",
+      "title": "Futuri Possibili",
+      "artist": "Franco126",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-349",
+      "title": "her",
+      "artist": "JVKE",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6G9YlbU3ByPJQvOFDRdwyM",
+      "durationDifferenceSeconds": 0.013
+    },
+    {
+      "id": "b-track-390",
+      "title": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+      "artist": "THYNA, Nuova Scena",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-406",
+      "title": "CRUDELIA - I nervi",
+      "artist": "Marracash",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
+      "candidateDurationDifferenceSeconds": 0.976
+    },
+    {
+      "id": "b-track-440",
+      "title": "Morto Mai (Piano Solo)",
+      "artist": "Lazza",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-457",
+      "title": "Funghi in salsa rosa",
+      "artist": "L'Elfo, Funkymann",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-466",
+      "title": "Senza Di Me (feat. Venerus & Franco126)",
+      "artist": "Gemitaiz, Venerus, Franco126",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/24AowPNxQUXZynz8yrZ9bP",
+      "candidateDurationDifferenceSeconds": -6.658
+    },
+    {
+      "id": "b-track-478",
+      "title": "VENT'ANNI",
+      "artist": "Måneskin",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/34r4voojt51Kk6ax5FJI1M",
+      "durationDifferenceSeconds": -0.068
+    },
+    {
+      "id": "b-track-483",
+      "title": "Addio xx",
+      "artist": "nayt",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5uqqtENVvjMHwJjwhA0ygT",
+      "durationDifferenceSeconds": 0.324
+    },
+    {
+      "id": "b-track-485",
+      "title": "Hai visto mai",
+      "artist": "Frah Quintale",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-509",
+      "title": "verdi nei viola",
+      "artist": "lazza",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1tJ53CZZdkyirTLrc31NzJ",
+      "durationDifferenceSeconds": 0.074
+    },
+    {
+      "id": "b-track-513",
+      "title": "mi manchi",
+      "artist": "paky",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7Jgi200kgCNvAuZw2W8Nxq",
+      "durationDifferenceSeconds": 0.11
+    },
+    {
+      "id": "b-track-514",
+      "title": "Disfruto - Carla Morrison",
+      "artist": "Carla Morrison",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-515",
+      "title": "Jovanotti - A Te",
+      "artist": "le tasche piene di sassi",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-518",
+      "title": "CORALINE",
+      "artist": "Måneskin",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-520",
+      "title": "ZITTI E BUONI",
+      "artist": "Måneskin",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-574",
+      "title": "A Lei",
+      "artist": "Papa V, Nerissima Serpe, Fritu",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-627",
+      "title": "SWAG MUSIC",
+      "artist": "Artie 5ive",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-658",
+      "title": "Che Dio Mi Benedica",
+      "artist": "Luchè",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-664",
+      "title": "Poetica",
+      "artist": "Cesare Cremonini",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-670",
+      "title": "Con Te Partirò",
+      "artist": "Andrea Bocelli",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-705",
+      "title": "End of Beginning",
+      "artist": "Djo",
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3qhlB30KknSejmIvZZLjOD",
+      "durationDifferenceSeconds": 0.056
+    },
+    {
+      "id": "b-track-724",
+      "title": "Angela",
+      "artist": "Checco Zalone, Mitili Ignoti",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-855",
+      "title": "Superclassico",
+      "artist": "Ernia",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6Ahg1hncxUdK0ICqU03BCu",
+      "candidateDurationDifferenceSeconds": 7.569
+    },
+    {
+      "id": "b-track-954",
+      "title": "Buon Viaggio (Share The Love)",
+      "artist": "Cesare Cremonini",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-963",
+      "title": "Occhi Lucidi",
+      "artist": "Leon Faun, Duffy",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0viz6QyUJatttRM40GnXsN",
+      "candidateDurationDifferenceSeconds": 57.082
+    },
+    {
+      "id": "b-track-977",
+      "title": "oh 9od - feat. Nayt",
+      "artist": "tha Supreme, nayt",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-1197",
+      "title": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+      "artist": "Adriano Celentano",
+      "scene": "song-inspired-environment"
+    },
+    {
+      "id": "b-track-516",
+      "title": "non avere paura",
+      "artist": "tommaso paradiso",
+      "scene": "song-inspired-environment",
+      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1qMx707PFdFXdwLvcUTNz3",
+      "candidateDurationDifferenceSeconds": 5.364
+    }
+  ]
+}

@@ -41,7 +41,7 @@ Object.assign(environments,{
 const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
 const kidYugiTextures={file:"immersive-kid-yugi.webp?v=1",image:null,ready:false};
-const libraryTextures={file:"immersive-ste.webp?v=1",image:null,ready:false};
+const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
  "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
@@ -62,8 +62,6 @@ const kidYugiScenes={
  "b-track-34":[14,.58,.55,-.035,.024,"#ee9e50"],
  "b-track-40":[15,.59,.43,.034,-.035,"#e0dcce"],
  "b-track-49":[16,.48,.57,.059,.023,"#66a3ac"],
- "b-track-134":[17,.46,.55,.035,-.035,"#699fbb"],
- "b-track-488":[17,.64,.60,-.046,.044,"#a17481"],
  "b-track-207":[18,.41,.52,-.039,.015,"#b98252"],
  "b-track-215":[19,.49,.54,-.055,.020,"#99bbca"],
  "b-youtube-S8oUoa0pwpo":[20,.37,.61,.063,.026,"#719eae"],
@@ -81,7 +79,29 @@ const libraryScenes={
  "b-track-189":[8,.53,.51,.025,-.029,"#dcb381"],
  "b-track-191":[9,.49,.51,-.044,.027,"#a1b3b9"],
  "b-track-210":[10,.56,.52,.065,.019,"#ca6a85"],
- "b-track-230":[11,.48,.50,-.054,-.026,"#e59453"]
+ "b-track-230":[11,.48,.50,-.054,-.026,"#e59453"],
+ "b-track-75":[12,.51,.44,.032,-.023,"#dc9e56"],
+ "b-track-89":[13,.52,.42,-.045,.036,"#d6d5d2"],
+ "b-track-120":[14,.54,.50,.058,.018,"#eeb848"],
+ "b-track-121":[15,.49,.59,-.046,-.022,"#76b6d2"],
+ "b-track-122":[16,.46,.52,.029,.032,"#c5924d"],
+ "b-track-192":[17,.61,.53,-.048,-.036,"#709dda"],
+ "b-track-200":[18,.32,.58,.060,.030,"#75ab8f"],
+ "b-track-240":[19,.55,.56,-.035,.021,"#efd1aa"],
+ "b-track-478":[20,.42,.53,.043,-.019,"#babac4"],
+ "b-track-483":[21,.51,.50,-.057,.028,"#7ed1e4"],
+ "b-track-509":[22,.43,.58,.045,-.027,"#be608e"],
+ "b-track-705":[23,.43,.45,-.051,.031,"#8d6ab4"],
+ "b-track-134":[24,.43,.55,.069,-.027,"#c3c5c1"],
+ "b-track-488":[24,.57,.59,-.050,.033,"#ccceca"],
+ "b-track-92":[25,.46,.49,.045,.027,"#5fbbb4"],
+ "b-track-103":[26,.53,.51,-.043,.035,"#dae4dd"],
+ "b-track-127":[27,.47,.53,.037,.020,"#8d83d8"],
+ "b-track-349":[28,.54,.50,-.066,.016,"#a8c888"],
+ "b-track-513":[29,.57,.55,.050,-.033,"#e98a44"],
+ "b-track-7":[30,.49,.41,-.039,.021,"#7386ba"],
+ "b-track-69":[31,.44,.51,.049,-.028,"#dfb66f"],
+ "b-track-73":[32,.60,.56,-.063,.024,"#c2888d"]
 };
 let active=null,frame=0,lastFrame=0;
 function hash(id){
