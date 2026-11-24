@@ -7,6 +7,7 @@ const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
 const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
 const scenes=fs.readFileSync(path.join(root,"immersive-scenes.js"),"utf8");
 const animation=fs.readFileSync(path.join(root,"immersive-animation.js"),"utf8");
+const textures=fs.readFileSync(path.join(root,"immersive-textures.webp"));
 const css=fs.readFileSync(path.join(root,"style.css"),"utf8");
 const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
@@ -72,6 +73,10 @@ const testScenes=scenes.replace("const scenes=Object.freeze({",match=>match+
  ]))).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
+ if(loc==="/immersive-textures.webp"){
+  res.writeHead(200,{"Content-Type":"image/webp","Content-Length":textures.length}).end(textures);
+  return;
+ }
  if(loc==="/fixture.mp4"){
   const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
   const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
@@ -341,6 +346,7 @@ async function run(){
    if(size.name==="desktop"||size.name==="iphone13"){
     const video=page.locator("#imVideo");
     const stage=page.locator("#imSongAnimation");
+    const textureResponse=page.waitForResponse(res=>res.url().includes("/immersive-textures.webp")&&res.ok());
     const switchTrack=async(trackId,title="Brano di prova",file="songs/canvas-fixture.mp3",artist="Artista di prova")=>{
      await page.evaluate(({trackId,title,file,artist})=>{
       Object.assign(fakeSong,{id:trackId,file,title,artist});
@@ -456,7 +462,15 @@ async function run(){
      for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
      return hash;
     });
+    await textureResponse;
     const film=await fingerprint();
+    await page.waitForFunction(previous=>{
+     // Read actual canvas pixels. CSS panning alone would leave this bitmap unchanged.
+     const pixels=document.querySelector("#imSongAnimation canvas:last-child").toDataURL();
+     let hash=0;
+     for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
+     return hash!==previous;
+    },film,{polling:120,timeout:4000});
     await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
     await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
     assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");

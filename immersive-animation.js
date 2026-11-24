@@ -1,5 +1,5 @@
-/* Original, silent Music Box animations. Draw two still planes once and let
-   the compositor move them. The music player remains the only audio clock. */
+/* Silent Music Box scenes. Cache the environment and redraw the moving
+   foreground at a bounded frame rate while the immersive stage is visible. */
 (function(){
 "use strict";
 const palettes={
@@ -22,7 +22,16 @@ const palettes={
  fuchsia:["#1b101f","#54254e","#ef73b7","#ffe0f1"]
 };
 const tau=Math.PI*2;
-let active=null;
+const motionStep=1000/24;
+const environments={
+ film:0,city:1,rail:1,stairs:1,window:2,mirror:2,clock:2,fold:2,
+ water:3,storm:3,rain:3,gate:4,crown:4,maze:4,mask:4,shield:4,blade:4,stone:4,
+ rose:5,branch:5,heart:5,leaf:5,peak:6,sun:6,wings:6,ember:6,
+ moon:7,orbit:7,stars:7
+};
+const textures={image:null,ready:false};
+const textureUrl=new URL("immersive-textures.webp?v=1",document.currentScript?.src||document.baseURI);
+let active=null,frame=0,lastFrame=0;
 function hash(id){
  let value=2166136261;
  for(const letter of id)value=Math.imul(value^letter.charCodeAt(0),16777619);
@@ -62,28 +71,28 @@ function curveGrid(c,n,strength){
  }
 }
 const subjects={
- film(c){
+ film(c,_random,t){
   c.rotate(-.15);
   c.strokeRect(-.8,-.84,1.6,1.68);
-  for(const sign of [-1,1])for(let i=0;i<8;i++)c.strokeRect(sign*.72-.042,-.75+i*.2,.084,.1);
+  for(const sign of [-1,1])for(let i=0;i<8;i++)c.strokeRect(sign*.72-.042,-.79+(i*.2+t/tau*.4+.2)%1.6,.084,.1);
   ellipse(c,0,0,.56,.56);ellipse(c,0,0,.46,.46);
   const mark=c.fillStyle;
-  for(let i=0;i<5;i++){const a=i*tau/5;circle(c,.3*Math.cos(a),.3*Math.sin(a),.105)}
+  for(let i=0;i<5;i++){const a=i*tau/5+2*t;circle(c,.3*Math.cos(a),.3*Math.sin(a),.105)}
   c.fillStyle=mark;circle(c,0,0,.055);
   line(c,[[-.58,-.68],[.58,-.68]]);line(c,[[-.58,.68],[.58,.68]]);
  },
- gate(c){
+ gate(c,_random,t){
   for(let i=0;i<5;i++){
-   const s=1-i*.135;
+   const s=.96-i*.135+.045*Math.sin(t+i*.6);
    c.beginPath();c.moveTo(-s,.9*s);c.lineTo(-s,-.22*s);
    c.bezierCurveTo(-s,-1.17*s,s,-1.17*s,s,-.22*s);c.lineTo(s,.9*s);c.stroke();
   }
   line(c,[[-.35,.91],[0,-.36],[.35,.91]]);
  },
- branch(c,r){
+ branch(c,r,t){
   curve(c,[0,1],[-.35,.3,.27,-.42],[0,-.96]);
   for(let i=0;i<8;i++){
-   const y=.66-i*.21,x=(i%2?-1:1)*(.47+r()*.37)*(1-i*.045);
+   const y=.66-i*.21,x=(i%2?-1:1)*(.47+r()*.37)*(1-i*.045)+.095*Math.sin(t+i*.4);
    curve(c,[0,y],[x*.35,y+.1,x*.71,y-.1],[x,y-.22]);
    ellipse(c,x*.84,y-.2,.18,.048,x>0?-.42:.42);
   }
@@ -110,18 +119,18 @@ const subjects={
   line(c,[[-.66,.36],[.67,.36]]);
   for(let i=-2;i<=2;i++)circle(c,i*.24,.18,.033);
  },
- rose(c){
+ rose(c,_random,t){
   for(let i=0;i<12;i++){
-   const a=i*2.399963,s=.16+i*.044;
+   const a=i*2.399963+.19*Math.sin(t+i*.3),s=.16+i*.044+Math.sin(t+i*.24)*.045;
    ellipse(c,Math.cos(a)*s*.52,Math.sin(a)*s*.52,s,s*.57,a);
   }
   curve(c,[.24,.53],[.17,.82,-.53,.57],[-.52,1]);
   ellipse(c,-.3,.67,.25,.071,-.45);
  },
- wings(c){
+ wings(c,_random,t){
   for(const sign of [-1,1])for(let i=0;i<8;i++){
    const n=i*.09;
-   curve(c,[0,.57],[sign*(.38+n),.35-n,sign*(1.11-n*.21),-.11-n],[sign*(.95-n*.93),-.86+n*.76]);
+   curve(c,[0,.57],[sign*(.38+n),.35-n,sign*(1.11-n*.21),-.11-n],[sign*(.95-n*.93),-.86+n*.76+.27*Math.sin(t+n)]);
   }
   ellipse(c,0,-.66,.19,.08);
  },
@@ -168,10 +177,11 @@ const subjects={
   line(c,[[-.44,.68],[-.08,.11],[.33,-.09],[.8,.24]]);
   ellipse(c,-.02,-.02,1,.73,-.22);
  },
- orbit(c){
+ orbit(c,_random,t){
   circle(c,0,0,.245);
   for(let i=0;i<6;i++)ellipse(c,0,0,.69+i*.045,.29+i*.021,i*.57);
-  circle(c,.76,-.27,.076);circle(c,-.62,.46,.044);
+  circle(c,.81*Math.cos(t),.39*Math.sin(t),.076);
+  circle(c,.58*Math.cos(2*t+1.7),.61*Math.sin(2*t+1.7),.044);
  },
  notes(c){
   for(let i=0;i<5;i++)line(c,[[-.89,(i-2)*.18],[.89,(i-2)*.18]]);
@@ -180,9 +190,9 @@ const subjects={
    ellipse(c,x,y,.116,.072,-.3);line(c,[[x+.109,y],[x+.109,y-.54],[x+.25,y-.43]]);
   }
  },
- heart(c){
+ heart(c,_random,t){
   for(let i=0;i<5;i++){
-   const b=1-i*.12;
+   const b=1-i*.12+.07*Math.sin(2*t-i*.6);
    c.beginPath();c.moveTo(0,.7*b);c.bezierCurveTo(-1.61*b,-.29*b,-.46*b,-.99*b,0,-.43*b);
    c.bezierCurveTo(.46*b,-.99*b,1.61*b,-.29*b,0,.7*b);c.stroke();
   }
@@ -195,18 +205,22 @@ const subjects={
   }
   ellipse(c,0,0,.48,.48);
  },
- city(c,r){
+ city(c,r,t){
   for(let i=0;i<9;i++){
    const y=.64-r()*1.37,x=-.92+i*.21;
    c.strokeRect(x,y,.16,.81-y);
-   for(let sy=y+.13;sy<.72;sy+=.13)line(c,[[x+.046,sy],[x+.11,sy]]);
+   for(let sy=y+.13;sy<.72;sy+=.13){
+    c.globalAlpha=.24+.38*(.5+.5*Math.sin(2*t+i*.6+sy*4));
+    line(c,[[x+.046,sy],[x+.11,sy]]);
+   }
+   c.globalAlpha=.56;
   }
   line(c,[[-1,.81],[1,.81]]);
  },
- rail(c){
+ rail(c,_random,t){
   line(c,[[-.72,.84],[-.1,-.62]]);line(c,[[.72,.84],[.1,-.62]]);
   for(let i=0;i<10;i++){
-   const e=(i/9)**1.6,y=-.61+1.42*e,x=.12+.56*e;
+   const e=((i/10+t/tau)%1)**1.6,y=-.61+1.42*e,x=.12+.56*e;
    line(c,[[-x,y],[x,y]]);
   }
   ellipse(c,0,-.65,.22,.22);
@@ -228,7 +242,12 @@ const subjects={
   ellipse(c,0,-.14,.49,.49);c.save();c.translate(0,-.14);rays(c,22,.53,.83);c.restore();
   for(let i=0;i<4;i++)line(c,[[-.78+i*.09,.47+i*.09],[.78-i*.09,.47+i*.09]]);
  },
- water(c){curveGrid(c,8,.71)},
+ water(c,_random,t){
+  for(let i=0;i<8;i++){
+   const y=(i-3.5)*.21+.045*Math.sin(t+i);
+   curve(c,[-1.05,y],[-.45,y-.49+.22*Math.cos(t+i*.5),.35,y+.38+.2*Math.sin(t+i*.8)],[1.05,y]);
+  }
+ },
  peak(c){
   line(c,[[-1,.64],[-.5,-.16],[-.23,.18],[.24,-.85],[1,.63]]);
   line(c,[[-.05,-.27],[.23,-.46],[.47,-.27]]);
@@ -240,8 +259,8 @@ const subjects={
   line(c,points);line(c,[[.856,-.856],[.98,-.856]]);
   for(let i=0;i<6;i++)line(c,[[-.55+i*.24,.9],[.97,.9-i*.24]]);
  },
- storm(c,r){
-  curveGrid(c,7,.88);
+ storm(c,r,t){
+  curveGrid(c,7,.79+.22*Math.cos(t));
   for(let i=0;i<6;i++){const x=-1+r()*2,y=-.78+r()*1.4;line(c,[[x,y],[x+.13,y-.27]])}
  },
  rain(c,r){
@@ -251,13 +270,13 @@ const subjects={
   }
   ellipse(c,0,.65,.72,.16);ellipse(c,0,.65,.46,.095);
  },
- lens(c){for(let i=0;i<12;i++)ellipse(c,0,0,.22+i*.055,.21+i*.06,i*.14);rays(c,8,.64,.86)},
+ lens(c,_random,t){for(let i=0;i<12;i++)ellipse(c,0,0,.22+i*.055,.21+i*.06,i*.14+.14*Math.sin(t));rays(c,8,.64,.86,t/4)},
  maze(c){
   for(let i=0;i<8;i++){const n=.92-i*.104;line(c,[[-n,.17],[-n,-n],[n,-n],[n,n],[-n+.067,n],[-n+.067,.33]])}
  },
- clock(c){
+ clock(c,_random,t){
   ellipse(c,0,0,.86,.86);ellipse(c,0,0,.72,.72);rays(c,12,.73,.83);
-  line(c,[[.37,-.33],[0,0],[-.14,-.44]]);circle(c,0,0,.055);
+  line(c,[[.51*Math.sin(t),-.51*Math.cos(t)],[0,0],[-.14,-.44]]);circle(c,0,0,.055);
  },
  ember(c,r){
   for(let i=0;i<11;i++){const x=(i-5)*.12;curve(c,[x,.81],[x-.38,-.07,x+.31,-.32],[x*.48,-.5-r()*.45])}
@@ -284,7 +303,34 @@ function find(track,profile){
  if(track.title!==title&&(!alternateTitle||track.title!==alternateTitle))return null;
  return {subject,palette,camera,seed:hash(track.id)};
 }
-function draw({stage,scene}){
+function loadTextures(){
+ if(textures.image)return;
+ const image=new Image();
+ textures.image=image;
+ image.onload=()=>{
+  textures.ready=true;
+  if(active)draw(active);
+ };
+ image.src=textureUrl;
+}
+
+function drawEnvironment(c,kind,w,h,grade){
+ if(!textures.ready)return;
+ const {image}=textures;
+ const tile=image.naturalWidth/3,aspect=w/h;
+ // Center crop a tile. The inset avoids filtering pixels from its neighbours.
+ const usable=tile-8,sw=usable*Math.min(aspect,1),sh=usable/Math.max(aspect,1);
+ const sx=kind%3*tile+(tile-sw)*(kind===0 ? .25 : .5);
+ const sy=Math.floor(kind/3)*tile+(tile-sh)*(kind===0 ? .38 : .5);
+ c.globalAlpha=kind===0 ? .94 : .78;
+ c.drawImage(image,sx,sy,sw,sh,0,0,w,h);
+ c.globalAlpha=.32;c.fillStyle=grade;c.fillRect(0,0,w,h);
+ c.globalAlpha=1;
+ return {sx,sy,sw,sh,tile};
+}
+
+function draw(shot){
+ const {stage,scene}=shot;
  const [world,ink]=stage.querySelectorAll("canvas");
  const bounds=stage.getBoundingClientRect(),aspect=bounds.width/bounds.height;
  if(!world||!ink||!Number.isFinite(aspect)||aspect<=0)return false;
@@ -295,77 +341,146 @@ function draw({stage,scene}){
  const c=world.getContext("2d"),f=ink.getContext("2d");
  if(!c||!f)return false;
  const [dark,mid,color,light]=palettes[scene.palette],r=random(scene.seed);
- const wide=aspect>1.15;
- const x=w*((wide ? .325 : .50)+(r()-.5)*(wide ? .06 : .12));
- const y=h*((wide ? .45 : .40)+(r()-.5)*.07);
- const size=Math.min(w*.34,h*(wide ? .39 : .21));
- const glow=c.createRadialGradient(x,y,size*.08,x,y,Math.max(w*.7,h*.59));
- glow.addColorStop(0,mid);glow.addColorStop(.32,mid);glow.addColorStop(1,dark);
+ const wide=aspect>1.15,kind=environments[scene.subject]??8;
+ const x=w*((wide ? .30 : .50)+(r()-.5)*(wide ? .07 : .11));
+ const y=h*((wide ? .45 : .36)+(r()-.5)*.07);
+ const size=Math.min(w*.33,h*(wide ? .39 : .20));
+ const glow=c.createRadialGradient(x,y,size*.1,x,y,Math.max(w*.7,h*.59));
+ glow.addColorStop(0,mid);glow.addColorStop(1,dark);
  c.fillStyle=glow;c.fillRect(0,0,w,h);
- c.globalAlpha=.10;c.lineWidth=1;c.strokeStyle=color;
- c.save();c.translate(x,y);c.scale(size,size);c.lineWidth=.008;
- c.rotate((r()-.5)*.29);
- if(scene.subject==="film"){
-  c.fillStyle=light;c.globalAlpha=.12;
-  line(c,[[.16,-.29],[2.8,-1.6],[2.8,.86],[.16,.26]],true);
-  for(let i=0;i<6;i++)line(c,[[.45,.55],[2.8,.32+i*.21]]);
-  c.strokeRect(-1.28,-1.29,2.56,2.58);
- }else if(["city","window","stairs","rail","gate","peak"].includes(scene.subject)){
-  for(let i=-10;i<=10;i++)line(c,[[i*.11,.21],[i*.68,2.5]]);
-  for(let i=0;i<14;i++){
-   const y=.29+i*i*.017;
-   line(c,[[-2.7,y],[2.7,y]]);
-  }
- }else if(["water","rain","storm","ribbon","ink","ember"].includes(scene.subject)){
-  c.scale(2.5,1.6);curveGrid(c,14,1.35);
- }else{
-  for(let i=0;i<14;i++){
-   const ring=.8+i*.15;
-   ellipse(c,0,0,ring,ring*.70,i*.03);
-  }
-  rays(c,28,.92,2.5,r()*.2);
- }
- c.restore();
+ const crop=drawEnvironment(c,kind,w,h,dark);
+ const veil=c.createLinearGradient(0,0,wide?w:0,wide?0:h);
+ veil.addColorStop(0,"#0001");veil.addColorStop(.48,"#0002");veil.addColorStop(1,"#030309ed");
+ c.fillStyle=veil;c.fillRect(0,0,w,h);
  c.fillStyle=light;
- for(let i=0;i<400;i++){
-  c.globalAlpha=.035+r()*.15;
-  const px=r()*w,py=r()*h;
-  c.fillRect(px,py,i%32?1:2,i%32?1:2);
+ for(let i=0;i<250;i++){
+  c.globalAlpha=.03+r()*.095;
+  c.fillRect(r()*w,r()*h,1,1);
  }
  c.globalAlpha=1;
- const vignette=c.createRadialGradient(x,y,size*.18,x,y,Math.max(w*.76,h*.8));
- vignette.addColorStop(0,"#0000");vignette.addColorStop(1,"#030309dd");
- c.fillStyle=vignette;c.fillRect(0,0,w,h);
- f.translate(x,y);f.scale(size,size);
- f.rotate((r()-.5)*.16);
- const metallic=f.createLinearGradient(-.95,-.9,.95,.9);
- metallic.addColorStop(0,color);metallic.addColorStop(.45,light);metallic.addColorStop(1,color);
- f.strokeStyle=metallic;f.fillStyle=metallic;f.globalAlpha=.72;f.lineWidth=.0115;
- f.lineJoin="round";f.lineCap="round";
- subjects[scene.subject](f,r);
- f.strokeStyle=color;f.globalAlpha=.28;f.lineWidth=.006;
- ellipse(f,0,0,1.12,1.12);
- f.globalAlpha=.53;rays(f,32,1.12,1.175);
+ const particles=Array.from({length:22},()=>[r(),r(),r(),r()]);
+ const wash=f.createLinearGradient(0,0,w*.28,0);
+ wash.addColorStop(0,"transparent");wash.addColorStop(.55,color);wash.addColorStop(1,"transparent");
+ Object.assign(shot,{f,w,h,x,y,size,kind,color,light,particles,wash,crop,tilt:(r()-.5)*.22});
+ paint(shot,0);
  return true;
+}
+
+function atmosphere(shot,t){
+ const {f,w,h,x,y,kind,particles,wash,crop,light}=shot;
+ // Slow light washes and faster foreground details have different depth and speed.
+ const sweep=.5+.5*Math.sin(t),dx=Math.cos(t);
+ f.save();
+ f.translate(w*(.11+.43*sweep),0);
+ f.fillStyle=wash;
+ f.globalAlpha=.12+.04*sweep;
+ f.fillRect(0,0,w*.28,h);
+ f.restore();
+ if(kind===0){
+  const lampX=crop ? (.428*crop.tile-crop.sx)*w/crop.sw : x;
+  const lampY=crop ? (.500*crop.tile-crop.sy)*h/crop.sh : y;
+  f.fillStyle=light;
+  f.globalAlpha=.065+.047*(.5+.5*Math.sin(3*t));
+  line(f,[[lampX,lampY],[w,h*(.04+.22*sweep)],[w,h*(.49+.14*sweep)],[lampX,lampY+6]],true);
+  f.fillStyle="#70162b";f.globalAlpha=.28;
+  const edge=w*(.12+.12*sweep);
+  line(f,[[0,0],[edge,0],[edge*.45,h*.55],[edge*.62,h],[0,h]],true);
+ }
+ f.fillStyle=light;f.strokeStyle=light;
+ const wet=kind===2||kind===3;
+ for(const [a,b,d,opacity] of particles){
+  const alpha=.5+.5*Math.sin(t+opacity*tau);
+  f.globalAlpha=(.07+d*.15)*alpha;
+  if(wet){
+   const px=w*(a+.023*dx),py=h*((b+t/tau)%1);
+   f.lineWidth=1+d;
+   line(f,[[px,py],[px-2-d*4,py+5+d*14]]);
+  }else{
+   const px=w*(a+.07*Math.cos(t+a*tau)),py=h*(b+.09*Math.sin(t+b*tau));
+   circle(f,px,py,.55+d*2.1);
+  }
+ }
+}
+
+const projectorReels=[
+ [.372,.282,.090,.132],
+ [.177,.535,.105,.154]
+];
+function turnReels(shot,t){
+ const {f,w,h,crop}=shot;
+ const {tile,sx,sy,sw,sh}=crop;
+ for(const [cx,cy,rx,ry] of projectorReels){
+  const x=(cx*tile-sx)*w/sw,y=(cy*tile-sy)*h/sh;
+  f.save();
+  f.translate(x,y);
+  f.scale(rx*tile*w/sw,ry*tile*h/sh);
+  f.beginPath();f.arc(0,0,.96,0,tau);f.clip();
+  f.rotate(t*2);
+  f.globalAlpha=.84;
+  f.drawImage(textures.image,(cx-rx)*tile,(cy-ry)*tile,rx*tile*2,ry*tile*2,-1,-1,2,2);
+  f.restore();
+ }
+}
+function paint(shot,t){
+ const {f,w,h,x,y,size,kind,crop,scene,color,light,tilt}=shot;
+ f.clearRect(0,0,w,h);
+ if(kind===0&&crop){
+  turnReels(shot,t);
+  atmosphere(shot,t);
+  f.globalAlpha=1;
+  return;
+ }
+ atmosphere(shot,t);
+ const lateral=scene.camera==="drift"||scene.camera==="orbit"? .25 : .10;
+ const depth=(textures.ready ? .84 : 1)+(scene.camera==="push" ? .20 : .12)*Math.sin(t);
+ f.save();
+ f.translate(x+size*lateral*Math.sin(t),y+size*.12*Math.cos(t));
+ f.scale(size*depth,size*depth);
+ f.rotate(tilt+.11*Math.sin(t));
+ f.strokeStyle=light;f.fillStyle=color;
+ f.globalAlpha=(textures.ready ? .40 : .66)+.12*Math.cos(t);
+ f.lineWidth=.014;f.lineJoin="round";f.lineCap="round";
+ subjects[scene.subject](f,random(scene.seed),t);
+ f.restore();
+ f.globalAlpha=1;
+}
+function tick(now){
+ if(!active)return;
+ const elapsed=now-lastFrame;
+ if(elapsed>=motionStep){
+  lastFrame=now-elapsed%motionStep;
+  paint(active,((now-active.started)%active.period)/active.period*tau);
+ }
+ frame=requestAnimationFrame(tick);
 }
 function start(stage,scene){
  if(!stage||!scene||!subjects[scene.subject]||!palettes[scene.palette]||!cameras[scene.camera])return false;
  const [x,y,scale,angle]=cameras[scene.camera];
+ const period=6400+scene.seed%1600;
  stage.style.setProperty("--im-shot-x",x);
  stage.style.setProperty("--im-shot-y",y);
  stage.style.setProperty("--im-shot-scale",scale);
  stage.style.setProperty("--im-shot-angle",angle+"deg");
- stage.style.setProperty("--im-shot-time",((6400+scene.seed%1600)/1000)+"s");
+ stage.style.setProperty("--im-shot-time",period+"ms");
+ stage.dataset.environment=scene.subject;
  stage.hidden=false;
- const shot={stage,scene};
+ const shot={stage,scene,period,started:performance.now()};
  if(!draw(shot)){stage.hidden=true;return false}
  active=shot;
+ lastFrame=0;
+ cancelAnimationFrame(frame);
+ frame=requestAnimationFrame(tick);
+ loadTextures();
  return true;
 }
 function stop(stage){
  if(!stage||stage.hidden)return;
  stage.hidden=true;
- active=null;
+ if(active?.stage===stage){
+  active=null;
+  cancelAnimationFrame(frame);
+  frame=0;
+ }
  for(const canvas of stage.querySelectorAll("canvas"))canvas.width=canvas.height=0;
 }
 window.addEventListener("resize",()=>{if(active)draw(active)},{passive:true});
