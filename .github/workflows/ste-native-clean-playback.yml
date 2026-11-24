@@ -90,6 +90,13 @@ jobs:
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
           MUSICBOX_NATIVE_CLEAN_OUTPUT: mashup-eva-installed.json
         run: node tests/native-clean-browser.cjs
+      - name: Three newly installed Il Filmografo junctions, no shadow injection
+        run: |
+          for id in 4 34 50; do
+            fixture="audits/ste-filmografo-quiet-20261124/track-${id}-shadow.json"
+            node tools/fetch-ste-clean-evaluation.cjs "$fixture"
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="$fixture" MUSICBOX_NATIVE_CLEAN_OUTPUT="filmografo-${id}-installed.json" node tests/native-clean-browser.cjs
+          done
       - name: Actual Safari path keeps the primary native player and unconsumed intro
         env:
           MUSICBOX_PHONE_NATIVE_INTRO: 'true'
@@ -104,6 +111,9 @@ jobs:
             gilgamesh-eva-installed.json
             mashup-eva-installed.json
             safari-native-intro-installed.json
+            filmografo-4-installed.json
+            filmografo-34-installed.json
+            filmografo-50-installed.json
             native-clean-release-player.json
             native-clean-delayed-player.json
             factored-clean-release-player.json
