@@ -322,9 +322,9 @@ function drawEnvironment(c,kind,w,h,grade){
  const usable=tile-8,sw=usable*Math.min(aspect,1),sh=usable/Math.max(aspect,1);
  const sx=kind%3*tile+(tile-sw)*(kind===0 ? .25 : .5);
  const sy=Math.floor(kind/3)*tile+(tile-sh)*(kind===0 ? .38 : .5);
- c.globalAlpha=kind===0 ? .94 : .78;
+ c.globalAlpha=.94;
  c.drawImage(image,sx,sy,sw,sh,0,0,w,h);
- c.globalAlpha=.32;c.fillStyle=grade;c.fillRect(0,0,w,h);
+ c.globalAlpha=.18;c.fillStyle=grade;c.fillRect(0,0,w,h);
  c.globalAlpha=1;
  return {sx,sy,sw,sh,tile};
 }
@@ -367,7 +367,7 @@ function draw(shot){
 }
 
 function atmosphere(shot,t){
- const {f,w,h,x,y,kind,particles,wash,crop,light}=shot;
+ const {f,w,h,x,y,kind,particles,wash,crop,color,light}=shot;
  // Slow light washes and faster foreground details have different depth and speed.
  const sweep=.5+.5*Math.sin(t),dx=Math.cos(t);
  f.save();
@@ -395,6 +395,18 @@ function atmosphere(shot,t){
    const px=w*(a+.023*dx),py=h*((b+t/tau)%1);
    f.lineWidth=1+d;
    line(f,[[px,py],[px-2-d*4,py+5+d*14]]);
+  }else if(kind===5&&d>.58){
+   // Petals tumble across the garden at different depths.
+   const px=w*(a+.13*Math.sin(t+a*tau)),py=h*((b+t/tau)%1);
+   f.fillStyle=color;
+   f.globalAlpha=.46*alpha;
+   f.beginPath();f.ellipse(px,py,3+d*6,1+d*3,t+a*tau,0,tau);f.fill();
+   f.fillStyle=light;
+  }else if(kind===1&&d>.63){
+   // Reflections cross the wet street below the horizon.
+   const px=w*((a+t/tau)%1),py=h*(.58+b*.38);
+   f.globalAlpha=.49*alpha;f.lineWidth=.9+d*1.7;
+   line(f,[[px,py],[px+8+d*26,py]]);
   }else{
    const px=w*(a+.07*Math.cos(t+a*tau)),py=h*(b+.09*Math.sin(t+b*tau));
    circle(f,px,py,.55+d*2.1);
@@ -432,13 +444,13 @@ function paint(shot,t){
  }
  atmosphere(shot,t);
  const lateral=scene.camera==="drift"||scene.camera==="orbit"? .25 : .10;
- const depth=(textures.ready ? .84 : 1)+(scene.camera==="push" ? .20 : .12)*Math.sin(t);
+ const depth=(textures.ready ? .71 : 1)+(scene.camera==="push" ? .18 : .12)*Math.sin(t);
  f.save();
  f.translate(x+size*lateral*Math.sin(t),y+size*.12*Math.cos(t));
  f.scale(size*depth,size*depth);
  f.rotate(tilt+.11*Math.sin(t));
  f.strokeStyle=light;f.fillStyle=color;
- f.globalAlpha=(textures.ready ? .40 : .66)+.12*Math.cos(t);
+ f.globalAlpha=(textures.ready ? .30 : .66)+.10*Math.cos(t);
  f.lineWidth=.014;f.lineJoin="round";f.lineCap="round";
  subjects[scene.subject](f,random(scene.seed),t);
  f.restore();
