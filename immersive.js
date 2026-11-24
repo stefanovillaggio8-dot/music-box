@@ -37,108 +37,12 @@ function atmosphereForTrack(id,title,artist){
 // Only an explicitly associated, directly playable video is eligible.
  // No YouTube iframe, audio extraction, search guess or unrelated video.
  let videoSource="",videoEnabled=false,videoFailed=false,videoPlayingRequest=null;
- let localVideoUrl="",localVideoKey="",videoEpoch=0,videoManaging=false,videoFileKey="";
- const videoKey=()=>JSON.stringify([String(api()?.profile?.()||"local"),String(api()?.currentId?.()||"")]);
- // Separate, device-local store. No uploads, no change to music or download caches.
- async function videoStore(mode,operation){
-  const db=await new Promise((resolve,reject)=>{
-   const req=indexedDB.open("mb-immersive-local-video-v1",1);
-   req.onupgradeneeded=()=>req.result.createObjectStore("videos");
-   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
-   req.onblocked=()=>reject(Error("Archivio video occupato"));
-  });
-  try{return await new Promise((resolve,reject)=>{
-   const tx=db.transaction("videos",mode),request=operation(tx.objectStore("videos"));
-   tx.oncomplete=()=>resolve(request.result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
-  })}finally{db.close()}
- }
- function releaseLocalVideo(){
-  if(localVideoUrl){URL.revokeObjectURL(localVideoUrl);localVideoUrl=""}
-  localVideoKey="";
- }
- function videoManageButton(){
-  const button=$("imVideoManage");if(!button)return;
-  button.hidden=!api()?.currentId?.()||!!directVideoSource(api()?.allTracks?.()?.find(t=>t.id===api()?.currentId?.()));
-  button.disabled=videoManaging;
-  button.textContent=localVideoKey?"× video":"＋ video";
-  button.setAttribute("aria-label",localVideoKey?"Rimuovi filmato locale":"Associa filmato locale al brano");
-  button.title=localVideoKey?"Rimuovi solo il filmato da questo dispositivo":"Associa filmato locale";
- }
- async function restoreLocalVideo(epoch,key){
-  try{
-   const blob=await videoStore("readonly",store=>store.get(key));
-   if(!opened||epoch!==videoEpoch||key!==videoKey()||!blob||!(blob instanceof Blob))return;
-   localVideoUrl=URL.createObjectURL(blob);localVideoKey=key;videoSource=localVideoUrl;
-   videoFailed=false;videoEnabled=!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
-   videoButton();videoManageButton();
-  }catch(_){/* unavailable storage: retain cover without altering music */}
- }
- async function manageVideo(){
-  if(!opened||videoManaging||!api()?.currentId?.())return;
-  if(!localVideoKey){
-   videoFileKey=videoKey();$("imVideoFile")?.click();return;
-  }
-  const key=localVideoKey,epoch=videoEpoch;
-  videoManaging=true;videoManageButton();
-  try{
-   await videoStore("readwrite",store=>store.delete(key));
-   if(opened&&epoch===videoEpoch&&key===videoKey()){
-    stopVideo();releaseLocalVideo();videoSource="";videoEnabled=false;videoFailed=false;videoButton();
-   }
-  }catch(_){api()?.toast?.("Impossibile rimuovere il filmato locale.")}
-  finally{videoManaging=false;videoManageButton()}
- }
- async function attachVideo(){
-  const input=$("imVideoFile"),file=input?.files?.[0],key=videoFileKey;
-  if(input)input.value="";videoFileKey="";
-  if(!file||!opened||key!==videoKey()||videoManaging)return;
-  if(!/\.(mp4|webm|m4v)$/i.test(file.name)||!file.size||file.size>64*1024*1024){
-   api()?.toast?.("Scegli un video MP4, WebM o M4V fino a 64 MB.");return;
-  }
-  const epoch=videoEpoch;
-  videoManaging=true;videoManageButton();
-  try{
-   await videoStore("readwrite",store=>store.put(file,key));
-   if(!opened||epoch!==videoEpoch||key!==videoKey())return;
-   stopVideo();releaseLocalVideo();localVideoUrl=URL.createObjectURL(file);localVideoKey=key;
-   videoSource=localVideoUrl;videoFailed=false;videoEnabled=true;
-   videoButton();updateVideo(api()?.audio?.());
-   api()?.toast?.("Filmato associato su questo dispositivo.");
-  }catch(_){api()?.toast?.("Spazio insufficiente o archivio video non disponibile.")}
-  finally{videoManaging=false;videoManageButton()}
- }
- // Verified public artist-channel references, not playable background assets.
- const officialVideos=Object.freeze({
-  "songs/track-28.mp3":["Paganini","Kid Yugi","9alkA8SYQQQ","clip"],
-  "songs/track-29.mp3":["terr1","Kid Yugi","TU72BbShdQ0","visual"],
-  "songs/track-32.mp3":["Eroina","Kid Yugi","QLbyNOY819k","visual"],
-  "songs/track-39.mp3":["Tristano e Isotta","Kid Yugi","hHpGfKYjOEw","visual"],
-  "songs/track-45.mp3":["Porto il Commerciale","Kid Yugi","3ejrcBMxXIE","visual"],
-  "songs/track-49.mp3":["Mostro (Visual)","Kid Yugi","VbsdxQa1UC0","visual"],
-  "songs/track-64.mp3":["dimmi che ce'","thasup","uPeznfsvDW8","clip"],
-  "songs/track-74.mp3":["Dimmi Che C''","thasup","uPeznfsvDW8","clip"]
- });
- const videoIdentity=value=>String(value||"").normalize("NFKD").toLowerCase()
-   .replace(/\p{M}/gu,"").replace(/[^a-z0-9]/g,"");
- function officialVideoFor(track){
-  const entry=officialVideos[track?.file];
-  if(!entry||videoIdentity(track?.title)!==videoIdentity(entry[0])||
-     !videoIdentity(track?.artist).startsWith(videoIdentity(entry[1])))return null;
-  return {url:"https://www.youtube.com/watch?v="+entry[2],kind:entry[3]};
- }
- function updateOfficialVideo(track){
-  const link=$("imOfficialVideo");if(!link)return;
-  const match=officialVideoFor(track);
-  link.hidden=!match;
-  if(!match){link.removeAttribute("href");return}
-  link.href=match.url;
-  link.textContent=match.kind==="visual"?"Visual ufficiale ↗":"Videoclip ufficiale ↗";
- }
  function directVideoSource(track){
   const raw=track?.videoUrl||track?.musicVideoUrl||"";
   if(typeof raw!=="string"||!raw.trim())return "";
   try{
    const url=new URL(raw,document.baseURI);
+   if(url.username||url.password)return "";
    if(url.protocol!=="https:"&&!(url.origin===location.origin&&url.protocol==="http:"))return "";
    if(!/\.(mp4|webm|m4v)$/i.test(url.pathname))return "";
    return url.href;
@@ -160,13 +64,10 @@ function atmosphereForTrack(id,title,artist){
   button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
  }
  function configureVideo(track){
-  const epoch=++videoEpoch;
-  updateOfficialVideo(track);
-  stopVideo();releaseLocalVideo();videoSource=directVideoSource(track);videoFailed=false;
+  stopVideo();videoSource=directVideoSource(track);videoFailed=false;
   // Mobile opts in: its native audio decoder must remain the priority.
   videoEnabled=!!videoSource&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
-  videoButton();videoManageButton();
-  if(!videoSource&&track?.id)restoreLocalVideo(epoch,videoKey());
+  videoButton();
  }
  function failVideo(){
   videoFailed=true;videoEnabled=false;stopVideo();videoButton();
@@ -176,15 +77,14 @@ function atmosphereForTrack(id,title,artist){
   // Never start a second media decoder during a shared listening session,
   // an inactive page, or while audio is paused/has no valid media clock.
   if(document.hidden||window.MusicBoxRoom?.isActive?.()){stopVideo();return}
-  if(!audio||audio.paused||audio.ended||audio.seeking||!Number.isFinite(audio.currentTime)){
-   video.pause();return;
-  }
+  if(!audio||audio.ended||!Number.isFinite(audio.currentTime)){stopVideo();return}
+  if(audio.paused||audio.seeking){video.pause();return}
   if(!video.hasAttribute("src")){
    video.muted=true;video.defaultMuted=true;video.volume=0;
    video.hidden=false;video.src=videoSource;
   }
-  if(video.readyState<1)return;
   if(video.error){failVideo();return}
+  if(video.readyState<1)return;
   const time=audio.currentTime;
   // Do not loop a short clip or play unrelated video beyond its end.
   if(Number.isFinite(video.duration)&&time>=video.duration-.15){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
@@ -201,7 +101,7 @@ function atmosphereForTrack(id,title,artist){
    request.then(()=>{if(videoPlayingRequest===request)videoPlayingRequest=null},
     ()=>{if(videoPlayingRequest===request){videoPlayingRequest=null;if(source===videoSource&&videoEnabled)failVideo()}});
   }
-  if(video.readyState>=2&&!video.seeking&&Math.abs(video.currentTime-time)<.7)
+  if(video.readyState>=2&&!video.seeking&&!video.paused&&Math.abs(video.currentTime-time)<.7)
    $("immersivePanel")?.classList.add("im-video-live");
  }
  function toggleVideo(){
@@ -503,7 +403,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- ++videoEpoch;stopVideo();releaseLocalVideo();videoSource="";videoEnabled=false;videoButton();
+ stopVideo();videoSource="";videoEnabled=false;videoButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -577,8 +477,6 @@ function start(){
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
  $("imVideoToggle")?.addEventListener("click",toggleVideo);
- $("imVideoManage")?.addEventListener("click",manageVideo);
- $("imVideoFile")?.addEventListener("change",attachVideo);
  $("imVideo")?.addEventListener("error",()=>{if(opened&&videoEnabled&&$("imVideo")?.hasAttribute("src"))failVideo()});
  document.addEventListener("visibilitychange",()=>{if(document.hidden)stopVideo();else if(opened)updateVideo(api()?.audio?.())});
  window.addEventListener("pagehide",stopVideo);
