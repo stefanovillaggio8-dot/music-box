@@ -367,8 +367,9 @@ function preparePhotograph(shot,world,c,f,w,h,wide,dark,photo){
  const tile=image.naturalWidth/3;
  const index=photo[0],light=photo[5];
  const sx=index%3*tile+3,sy=Math.floor(index/3)*tile+3,span=tile-6;
- const side=Math.max(1,Math.round(Math.min(w*(wide ? .61 : .96),h*(wide ? .88 : .62))));
- const centerX=w*(wide ? .31 : .50),centerY=h*(wide ? .47 : .32);
+ const side=Math.max(1,Math.round(Math.min(w*(wide ? .67 : 1.06),h*(wide ? .99 : .84))));
+ const left=wide ? -.030*side : (w-side)*.5;
+ const top=wide ? -.026*side : Math.max(-.026*side,h*.32-side*.5);
  const canvas=document.createElement("canvas");
  const ambient=document.createElement("canvas");
  canvas.width=canvas.height=side;
@@ -382,18 +383,31 @@ function preparePhotograph(shot,world,c,f,w,h,wide,dark,photo){
  c.drawImage(ambient,0,0,w,h);
  c.globalAlpha=.75;c.fillStyle=dark;c.fillRect(0,0,w,h);c.globalAlpha=1;
 
- const detail=prepareSceneDetail(canvas,photo);
  imageContext.globalCompositeOperation="destination-in";
- for(const [endX,endY] of [[side,0],[0,side]]){
-  const edge=imageContext.createLinearGradient(0,0,endX,endY);
-  edge.addColorStop(0,"transparent");edge.addColorStop(.09,"#000");
-  edge.addColorStop(.91,"#000");edge.addColorStop(1,"transparent");
-  imageContext.fillStyle=edge;
+ // Blend inward from the screen, leaving the desktop top and left edges
+ // full like Il Filmografo. The opposite edges fade into the lyrics area.
+ if(wide||side<w){
+  const across=imageContext.createLinearGradient(0,0,side,0);
+  across.addColorStop(0,wide ? "#000" : "transparent");
+  across.addColorStop(wide ? .64 : .14,"#000");
+  if(!wide)across.addColorStop(.86,"#000");
+  across.addColorStop(1,"transparent");
+  imageContext.fillStyle=across;
   imageContext.fillRect(0,0,side,side);
  }
+ const down=imageContext.createLinearGradient(0,0,0,side);
+ down.addColorStop(0,wide ? "#000" : "transparent");
+ down.addColorStop(wide ? .74 : .16,"#000");
+ if(!wide)down.addColorStop(.72,"#000");
+ down.addColorStop(1,"transparent");
+ imageContext.fillStyle=down;
+ imageContext.fillRect(0,0,side,side);
+
+ const detail=prepareSceneDetail(canvas,photo);
+ const centerX=left+side*.5,centerY=top+side*.5;
  const localLight=f.createRadialGradient(centerX,centerY,0,centerX,centerY,side*.55);
  localLight.addColorStop(0,light);localLight.addColorStop(1,"transparent");
- Object.assign(shot,{world,f,w,h,photo,photoFrame:{canvas,side,centerX,centerY,detail,localLight}});
+ Object.assign(shot,{world,f,w,h,photo,photoFrame:{canvas,side,left,top,detail,localLight}});
  return true;
 }
 
@@ -438,11 +452,12 @@ function paintScenery(shot,t){
 }
 function paintPhotograph(shot,t){
  const {world,f,w,h,photo,photoFrame}=shot;
- const {canvas,side,centerX,centerY,detail,localLight}=photoFrame;
+ const {canvas,side,left,top,detail,localLight}=photoFrame;
  const scale=.985+.025*(1-Math.cos(t))*.5;
  const length=side*scale;
  const dx=Math.sin(t)*photo[3]*side,dy=Math.sin(t+.65)*photo[4]*side;
- const x=centerX-length*.5+dx*.4,y=centerY-length*.5+dy*.4;
+ const margin=(side-length)*.5;
+ const x=left+margin+dx*.30,y=top+margin+dy*.30;
  f.drawImage(world,0,0);
  f.drawImage(canvas,x,y,length,length);
  if(detail){

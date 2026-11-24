@@ -534,17 +534,27 @@ async function run(){
      const prototype=CanvasRenderingContext2D.prototype,drawImage=prototype.drawImage;
      window.photoCrops=[];
      prototype.drawImage=function(image,...rect){
-      if(image instanceof HTMLImageElement&&image.src.includes("immersive-ste.webp")&&rect.length===8){
-       window.photoCrops.push({tile:image.naturalWidth/3,width:rect[2],height:rect[3]});
+      if(image instanceof HTMLImageElement&&image.src.includes("immersive-ste.webp")&&rect.length===8&&rect[6]>32){
+       window.photoCrops.push({tile:image.naturalWidth/3,width:rect[2],height:rect[3],layer:this});
       }
       return drawImage.call(this,image,...rect);
      };
     });
     await switchTrack("b-track-25","Poter scegliere","songs/track-25.mp3","nayt");
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
-    const crops=await page.evaluate(()=>window.photoCrops);
-    assert.ok(crops.some(({tile,width,height})=>width>=tile*.98&&height>=tile*.98),
+    const photo=await page.evaluate(()=>{
+     const {tile,width,height,layer}=window.photoCrops.at(-1);
+     const side=layer.canvas.width;
+     const alpha=(x,y)=>layer.getImageData(Math.round(x*side),Math.round(y*side),1,1).data[3];
+     return {tile,width,height,left:alpha(.015,.5),right:alpha(.98,.5),top:alpha(.5,.015),bottom:alpha(.5,.98)};
+    });
+    assert.ok(photo.width>=photo.tile*.98&&photo.height>=photo.tile*.98,
      "a portrait or wide viewport must show the almost complete source photo");
+    assert.ok(photo.bottom<45,"the photo fades into the controls and lyrics instead of ending in a hard border");
+    if(size.name==="desktop"){
+     assert.ok(photo.left>250&&photo.top>250&&photo.right<30,
+      "desktop art reaches the screen edges and fades toward the lyrics");
+    }
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
