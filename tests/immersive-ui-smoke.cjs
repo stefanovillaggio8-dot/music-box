@@ -356,13 +356,13 @@ async function run(){
      const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
      const lyrics=document.querySelector("#imKaraoke .im-line");
      return {
-      muted:v.muted,loop:v.loop,inline:v.playsInline,
+      muted:v.muted,inline:v.playsInline,
       videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),
       hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents,
       lyricsVisible:getComputedStyle(lyrics).visibility==="visible",paused:fakeAudio.paused
      };
     });
-    assert.ok(visual.muted&&visual.loop&&visual.inline);
+    assert.ok(visual.muted&&visual.inline);
     assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
     assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
     assert.equal(visual.pointer,"none");
@@ -383,7 +383,7 @@ async function run(){
      v.addEventListener("timeupdate",observe);
     }));
     assert.ok(loopProof.wraps>=2&&!loopProof.paused&&!loopProof.error,
-     "native media clock must advance through two wraps: "+JSON.stringify(loopProof));
+     "the media clock must advance through two wraps: "+JSON.stringify(loopProof));
     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123,"loop does not seek the audio");
 
     await page.evaluate(()=>{fakeAudio.paused=true});

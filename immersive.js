@@ -110,7 +110,9 @@ function atmosphereForTrack(id,title,artist){
    failCanvas();
    return;
   }
-  if(video.paused&&!canvasRequest){
+  if((video.paused||video.ended)&&!canvasRequest){
+   // Restart a finished clip once. WebKit can repeatedly seek with the native loop flag.
+   if(video.ended)video.currentTime=0;
    const request=video.play();
    canvasRequest=request;
    request.then(()=>{
@@ -494,6 +496,7 @@ function start(){
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
  $("imVideoToggle")?.addEventListener("click",toggleCanvas);
+ $("imVideo")?.addEventListener("ended",()=>updateCanvas(api()?.audio?.()));
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden)stopCanvas();
   else if(opened&&lastId===api()?.currentId?.()&&lastProfile===api()?.profile?.())updateCanvas(api()?.audio?.());
