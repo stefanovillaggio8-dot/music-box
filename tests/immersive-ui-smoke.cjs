@@ -30,11 +30,13 @@ const fixture=[
  '<script>',
  'window.fakeAudio={currentTime:12,duration:240,paused:false};',
  'window.fakeSong={id:"track-a",title:"Notte stellata",artist:"Artista di prova",cover:""};',
+ 'window.fakeProfile="Ste";',
  'window.fakeCalls={toggle:0,next:0,prev:0};',
  'window.fakeLyricsOffset=0;',
  'window.fakeDelaySaves=[];',
  'window.fakeLyrics={text:"",synced:Array.from({length:26},(_,i)=>({t:i*8,text:"Riga karaoke originale di prova "+(i+1)}))};',
  'window.MusicBoxBridge={',
+ ' profile:()=>fakeProfile,',
  ' audio:()=>fakeAudio,currentId:()=>fakeSong.id,',
  ' allTracks:()=>[fakeSong],lyricsData:()=>fakeLyrics,',
  ' lyricsDelay:()=>fakeLyricsOffset,',
@@ -51,10 +53,33 @@ const fixture=[
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
-// Real synthetic silent H.264 fixture generated in the workflow, not a music video.
-const clip=fs.readFileSync(process.env.MB_VIDEO_FIXTURE||"/tmp/mb-video-fixture.mp4");
+// Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
+const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
+const vimeoSdk=fs.readFileSync(path.join(root,"vendor","vimeo","player.min.js"));
+const vimeoFixture=`<!doctype html><html><body><output id="status"></output><script>
+let time=0,paused=true,muted=false;
+window.addEventListener("message",event=>{
+ if(event.source!==parent)return;
+ const request=typeof event.data==="string"?JSON.parse(event.data):event.data;
+ const {method,value}=request;
+ let result;
+ if(method==="ping")result=true;
+ else if(method==="setMuted")result=muted=value;
+ else if(method==="getDuration")result=208.689;
+ else if(method==="getCurrentTime")result=time;
+ else if(method==="setCurrentTime")result=time=value;
+ else if(method==="play")paused=false;
+ else if(method==="pause")paused=true;
+ else return;
+ document.getElementById("status").textContent=JSON.stringify({time,paused,muted});
+ parent.postMessage({method,value:result},event.origin);
+});
+</script></body></html>`;
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
+ if(loc==="/vendor/vimeo/player.min.js"){
+  res.writeHead(200,{"Content-Type":"text/javascript"});res.end(vimeoSdk);return;
+ }
  if(loc==="/fixture.mp4"){
   const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
   const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
@@ -356,6 +381,37 @@ async function run(){
     await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden&&
       !document.getElementById("immersivePanel").classList.contains("im-video-live")&&
       !document.getElementById("imVideo").hasAttribute("src"));
+
+    let embedRequests=0;
+    await page.route("https://player.vimeo.com/video/1028937342?*",route=>{
+     embedRequests++;
+     const params=new URL(route.request().url()).searchParams;
+     assert.equal(params.get("controls"),"0");
+     assert.equal(params.get("muted"),"1");
+     assert.equal(params.get("autoplay"),"0");
+     return route.fulfill({contentType:"text/html",body:vimeoFixture});
+    });
+    await page.evaluate(()=>{
+     Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt"});
+     Object.assign(fakeAudio,{currentTime:28,duration:208.689,paused:false});
+    });
+    const vimeo=page.frameLocator("#imVimeo iframe");
+    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
+    assert.equal(embedRequests,0,"mobile and reduced-motion contexts require a tap before loading Vimeo");
+    await page.locator("#imVideoToggle").click();
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    assert.deepEqual(JSON.parse(await vimeo.locator("#status").textContent()),{time:28,paused:false,muted:true});
+    await page.evaluate(()=>{fakeAudio.currentTime=90;fakeAudio.paused=true});
+    await vimeo.getByText('{"time":28,"paused":true,"muted":true}',{exact:true}).waitFor();
+    await page.evaluate(()=>{fakeAudio.paused=false});
+    await vimeo.getByText('{"time":90,"paused":false,"muted":true}',{exact:true}).waitFor();
+    await page.evaluate(()=>{fakeSong.id="no-video";fakeSong.title="Brano senza filmato"});
+    await page.waitForFunction(()=>!document.querySelector("#imVimeo iframe")&&
+      !document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    await page.evaluate(()=>{fakeProfile="Diego";fakeSong.id="b-track-179";fakeSong.title="Certe bugie"});
+    await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Certe bugie");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.equal(embedRequests,1);
    }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");

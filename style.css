@@ -4794,6 +4794,8 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
    competing for attention while the film is actually visible. */
 .im-root.im-video-live{isolation:isolate}
 .im-root.im-video-live .im-video{z-index:0}
+.im-vimeo{overflow:hidden;container-type:size}
+.im-vimeo iframe{position:absolute;top:50%;left:50%;width:max(100cqw,177.78cqh);height:max(100cqh,56.25cqw);transform:translate(-50%,-50%);border:0;pointer-events:none}
 .im-root.im-video-live .im-video-shade{z-index:1;background:linear-gradient(90deg,#05040d18 0%,#07051135 40%,#080612b8 69%,#080612e0 100%),linear-gradient(0deg,#060410e8,transparent 42%)}
 .im-root.im-video-live .im-shell{z-index:2}
 .im-root.im-video-live .im-atmosphere,.im-root.im-video-live .im-ambient-bloom,.im-root.im-video-live .im-backdrop{visibility:hidden}
