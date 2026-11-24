@@ -1,0 +1,39 @@
+{
+  "profile": "Ste",
+  "source": "audio/songs/track-27.mp3",
+  "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+  "reason": "Fresh Kid Yugi source with 5.7 s stored trailing decay; independently test absolute stereo quiet bound before any paired render. No repeat of source6 normalized-onset or WSOLA experiments.",
+  "sampleRates": [
+    44100,
+    48000
+  ],
+  "tailSeconds": 8,
+  "frameSeconds": 0.02,
+  "maximumChannelRms": 0.0001,
+  "maximumPeak": 0.001,
+  "minimumCoveredSuffixSeconds": 0.8,
+  "preRoll": 0.3,
+  "maximumOverlap": 3,
+  "noFittedClock": true,
+  "allowInstallation": false,
+  "sourceGeometry": {
+    "begin": 144.593,
+    "end": 146.333,
+    "from": 144.293,
+    "sourceClock": {
+      "method": "original-mp3-gapless-metadata-v1",
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "sampleRate": 48000,
+      "rawFrames": 7026048,
+      "decodedFrames": 7024000,
+      "primingFrames": 1105,
+      "paddingFrames": 943
+    }
+  },
+  "targets": [
+    "audio/songs/track-4.mp3",
+    "audio/songs/track-34.mp3",
+    "audio/songs/track-50.mp3"
+  ],
+  "targetEvidence": "Reuse already SHA-bound native original prefix observations; no new incoming decodes"
+}

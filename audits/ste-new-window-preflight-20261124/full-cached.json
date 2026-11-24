@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "caseRestricted": true,
+  "contextBarChains": false,
+  "requestedCases": 3,
+  "membershipEvidence": {
+    "stateSha256": "8e2b03f05109008aef86b57bdc3ad2963783ae332ebc0a8d879245eedcca62d9",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "method": "preserved-file-tail-original-pcm-v1",
+  "initialBarCandidateLimitSeconds": 8,
+  "tracks": 6,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 3,
+      "incomingVocalOrLyric": 3
+    }
+  },
+  "pairConditions": {
+    "Ste": {
+      "voice": 3
+    }
+  },
+  "windowExclusions": {
+    "Ste": {
+      "voice": 67,
+      "observedDownbeat": 17,
+      "barSpan": 57,
+      "overlapDuration": 59,
+      "affineDownbeatFit": 9
+    }
+  },
+  "plans": [],
+  "windows": 0,
+  "alternateViewTracks": 0,
+  "scope": {
+    "name": "Ste",
+    "tracks": 222,
+    "unavailableMembers": 0,
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+  },
+  "diagnostics": {
+    "notPlaybackCertificates": true,
+    "pulseRejections": [],
+    "caseDiagnostics": [
+      {
+        "from": "audio/songs/track-1187.mp3",
+        "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+        "windowExclusions": {
+          "voice": 4,
+          "observedDownbeat": 17,
+          "barSpan": 28,
+          "overlapDuration": 2,
+          "affineDownbeatFit": 7
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      },
+      {
+        "from": "audio/songs/track-213.mp3",
+        "to": "audio/songs/track-87.mp3",
+        "windowExclusions": {
+          "voice": 21,
+          "overlapDuration": 21,
+          "barSpan": 9,
+          "affineDownbeatFit": 2
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      },
+      {
+        "from": "audio/songs/track-138.mp3",
+        "to": "audio/songs/track-33.mp3",
+        "windowExclusions": {
+          "voice": 42,
+          "overlapDuration": 36,
+          "barSpan": 20
+        },
+        "firstMissing": "voice",
+        "reached": [
+          "meterAndSpan",
+          "tailEligibility",
+          "bpm",
+          "observedDownbeat",
+          "affineDownbeatFit",
+          "duration"
+        ],
+        "candidateWindows": 0
+      }
+    ],
+    "octaveTempoPairs": 0,
+    "octaveSamples": []
+  }
+}

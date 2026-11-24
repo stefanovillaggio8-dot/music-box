@@ -38,6 +38,19 @@ const server=http.createServer((req,res)=>{
    ]){assert.equal(code.split(marker).length,2);code=code.replace(marker,marker+extra)}
    res.setHeader('Content-Type','text/javascript');res.end(code);return;
   }
+  if(name==='/mix-intelligente.js'){
+   let code=fs.readFileSync(path.join(root,'mix-intelligente.js'),'utf8');
+   const marker='function beginNativeCleanTail(app,old,next,p){';assert.equal(code.split(marker).length,2);
+   code=code.replace(marker,`function beginNativeCleanTail(app,old,next,p){
+    const sample={sourceAt:old.currentTime,sourceDuration:old.duration,begin:p.begin,preparedReady:prepared?.ready,preparedFailed:prepared?.failed,
+     preparedEntry:prepared?.naturalEntry,targetTime:prepared?.audio?.currentTime,targetDuration:prepared?.audio?.duration,targetReady:prepared?.audio?.readyState,
+     sourceClock:window.MusicBoxCompositeMix?.nativeClockOffset?.(p.nativeCleanEvidence?.sourceClock,p.sourceSha,old.duration),active:!!active,mixing};
+    const result=nativeCleanTestImplementation(app,old,next,p);sample.result=result;
+    (window.__nativeClockAttempts??=[]).push(sample);if(__nativeClockAttempts.length>180)__nativeClockAttempts.shift();return result;
+   }
+   function nativeCleanTestImplementation(app,old,next,p){`);
+   res.setHeader('Content-Type','text/javascript');res.end(code);return;
+  }
   const file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
   if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
   if(!fs.existsSync(file)){res.writeHead(404);res.end();return;}
@@ -101,14 +114,21 @@ const server=http.createServer((req,res)=>{
     const adopt=MusicBoxBridge.mixAdoptHandoff;
     MusicBoxBridge.mixAdoptHandoff=(id,audio)=>{
      window.__beforeNativeAdoption={oldEnded:__outgoingNative.ended,sourceAt:__outgoingNative.currentTime,sourceDuration:__outgoingNative.duration,
-      incomingAt:audio.currentTime,incomingPaused:audio.paused,incomingSeeking:audio.seeking};
+      incomingAt:audio.currentTime,incomingPaused:audio.paused,incomingSeeking:audio.seeking,observedAt:performance.now()};
      return adopt(id,audio);
     };
     const b=document.createElement('button');b.id='start-native-clean';b.textContent='Start Ste native clean trial';b.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
     b.onclick=async event=>{
      try{MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(__nativePair.fromId,begin-7);window.__outgoingNative=MusicBoxBridge.audio();
       if(MusicBoxBridge.mixEnqueue([__nativePair.toId])!==1)throw Error('Actual manual queue rejected Ste target');window.__setupDone=true;
-      window.__nativeCleanTimeline=[];window.__nativeCleanSampling=setInterval(()=>{
+      window.__nativeCleanTimeline=[];
+      window.__captureNativeOverlap=()=>{
+       const incoming=window.__incomingNative;
+       if(!window.__observedNativeOverlap&&incoming&&!incoming.paused&&incoming.currentTime>.1&&!__outgoingNative.ended&&MusicBoxBridge.currentId()===__nativePair.fromId)
+        window.__observedNativeOverlap={id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:incoming.volume,sourceTime:__outgoingNative.currentTime,targetTime:incoming.currentTime,lyrics:document.getElementById('lyricsBody').textContent,diagnostics:MusicBoxMix.diagnostics()};
+      };
+      window.__nativeCleanSampling=setInterval(()=>{
+       __captureNativeOverlap();
        if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics());
        if(__nativeTranslationMode&&__nativeLyricSamples.length<110)__nativeLyricSamples.push({beforeAdoption:!window.__beforeNativeAdoption,
         readerOpen:!document.getElementById('lyricsPanel').hidden,id:MusicBoxBridge.currentId(),sourceAt:__outgoingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent});
@@ -138,8 +158,10 @@ const server=http.createServer((req,res)=>{
      await page.click('#btnLyrics');await page.click('#lyricsTraduci');
      for(let i=0;i<50&&!translationRequested;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationRequested,true);
     }
-    await page.waitForFunction(()=>window.__incomingNative&&!__incomingNative.paused&&__incomingNative.currentTime>.1,null,{timeout:20000});
-    const overlap=await page.evaluate(()=>({id:MusicBoxBridge.currentId(),sourceEnded:__outgoingNative.ended,oldVolume:__outgoingNative.volume,newVolume:__incomingNative.volume,sourceTime:__outgoingNative.currentTime,targetTime:__incomingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent,diagnostics:MusicBoxMix.diagnostics()}));
+    // Capture the actual overlap in the browser's media clock. A delayed CDP
+    // round-trip after EOF must not mislabel an already verified live overlap.
+    await page.waitForFunction(()=>window.__observedNativeOverlap,null,{timeout:20000});
+    const overlap=await page.evaluate(()=>__observedNativeOverlap);
     assert.equal(overlap.id,fromId);assert.equal(overlap.sourceEnded,false);assert.equal(overlap.newVolume,overlap.oldVolume);
     if(translationMode){assert.ok(overlap.lyrics.includes('Native outgoing phrase'));assert.ok(!overlap.lyrics.includes('Native incoming phrase'))}
     await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId,null,{timeout:10000});
@@ -151,11 +173,14 @@ const server=http.createServer((req,res)=>{
      assert.ok(samples.length>=8);assert.ok(samples.every(s=>s.id===fromId&&s.lyrics.includes('Native outgoing phrase')&&!s.lyrics.includes('Native incoming phrase')));
     }
     const adopted=await page.evaluate(()=>({sameElement:MusicBoxBridge.audio()===__incomingNative,beforeAdoption:window.__beforeNativeAdoption,
-     targetTime:MusicBoxBridge.audio().currentTime,rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
+     targetTime:MusicBoxBridge.audio().currentTime,observedAt:performance.now(),rate:MusicBoxBridge.audio().playbackRate,trace:__nativeCleanTrace,
      isPlaying:!MusicBoxBridge.audio().paused,sourceEndedAt:__outgoingNative.currentTime}));
     assert.equal(adopted.sameElement,true);assert.equal(adopted.beforeAdoption.oldEnded,true);assert.equal(adopted.isPlaying,true);assert.equal(adopted.rate,1);
     assert.ok(Math.abs(adopted.beforeAdoption.sourceAt-adopted.beforeAdoption.sourceDuration)<.002);
-    assert.ok(adopted.targetTime>1&&adopted.targetTime<4);assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);
+    assert.ok(adopted.beforeAdoption.incomingAt>1&&adopted.beforeAdoption.incomingAt<4,'already heard original prefix at actual EOF adoption');
+    const advanced=adopted.targetTime-adopted.beforeAdoption.incomingAt,wall=(adopted.observedAt-adopted.beforeAdoption.observedAt)/1000;
+    assert.ok(advanced>=-.02&&Math.abs(advanced-wall)<.5,'same native decoder continues from its observed adoption clock');
+    assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);
     const start=adopted.trace.find(t=>t.event==='target-play');assert.ok(start.at<=.02);assert.equal(start.volume,overlap.oldVolume);
     // Validate the actual launch clock at launch, not a later EOF duration
     // estimate. EOF still independently requires ended=true and intact source.
@@ -165,7 +190,7 @@ const server=http.createServer((req,res)=>{
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
-   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),timeline:window.__nativeCleanTimeline?.slice(-8)}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
+   }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),clockAttempts:window.__nativeClockAttempts,timeline:window.__nativeCleanTimeline}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
   }finally{await browser.close()}
  }}finally{server.close();if(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT)fs.writeFileSync(process.env.MUSICBOX_NATIVE_CLEAN_OUTPUT,JSON.stringify(report,null,2)+'\n')}

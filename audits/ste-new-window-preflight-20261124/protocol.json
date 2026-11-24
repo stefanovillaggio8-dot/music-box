@@ -1,0 +1,23 @@
+{
+  "profile": "Ste",
+  "caseSelection": "three new directions with existing whole-file contiguous bar hypotheses at related local BPM; no Cartesian search",
+  "cases": [
+    {
+      "from": "audio/songs/track-138.mp3",
+      "to": "audio/songs/track-33.mp3"
+    },
+    {
+      "from": "audio/songs/track-213.mp3",
+      "to": "audio/songs/track-87.mp3"
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "mobile/songs/youtube-S8oUoa0pwpo.mp3"
+    }
+  ],
+  "newPcmDecodes": 0,
+  "newModels": 0,
+  "purpose": "Evaluate independent voice/harmony/structure barriers before any new rhythm estimator",
+  "unchangedCompilerGates": true,
+  "allowInstallation": false
+}
