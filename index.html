@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=12" />
+  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=13" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -963,6 +963,7 @@
 <div id="immersivePanel" class="im-root" hidden role="dialog" aria-modal="true" aria-label="Immersive Mode: player cinematografico">
   <div id="imBackdrop" class="im-backdrop" aria-hidden="true"></div>
   <video id="imVideo" class="im-video" muted playsinline preload="metadata" disablepictureinpicture aria-hidden="true" hidden></video>
+  <div id="imSongAnimation" class="im-song-animation" aria-hidden="true" hidden><canvas></canvas><canvas></canvas></div>
   <div class="im-video-shade" aria-hidden="true"></div>
   <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="im-ambient-bloom" aria-hidden="true"></div>
@@ -992,7 +993,7 @@
         <p class="im-art-tag"><span aria-hidden="true">✧</span> THE MUSIC IS THE MOMENT</p>
       </div>
       <div class="im-player">
-        <p class="im-eyebrow"><span class="im-song-indicator" aria-hidden="true"></span><span id="imState">ORA IN RIPRODUZIONE</span></p>
+        <p class="im-eyebrow"><span class="im-song-indicator" aria-hidden="true"></span><span id="imState">ORA IN RIPRODUZIONE</span><span id="imAnimationLabel" class="im-animation-label" hidden>Animazione Music Box</span></p>
         <h2 id="imTitle">Music Box</h2>
         <p id="imArtist" class="im-artist"></p>
         <div class="im-cinema-stage">
@@ -1641,6 +1642,8 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <script src="audio-composite-mix.js?v=14"></script>
 <script src="mix-intelligente.js?v=6743&amp;dj=63"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6734&amp;words=19"></script>
+<script src="immersive-scenes.js?v=1"></script>
+<script src="immersive-animation.js?v=1"></script>
+<script src="immersive.js?v=6734&amp;words=20"></script>
 </body>
 </html>

@@ -4794,6 +4794,20 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
    competing for attention while the film is actually visible. */
 .im-root.im-video-live{isolation:isolate}
 .im-root.im-video-live .im-video{z-index:0}
+.im-song-animation,.im-song-animation canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.im-song-animation{position:fixed;z-index:0;overflow:hidden}
+.im-song-animation[hidden],.im-animation-label[hidden]{display:none}
+.im-song-animation canvas:first-child{animation:im-scene-light var(--im-shot-time) ease-in-out infinite}
+.im-song-animation canvas:last-child{animation:im-scene-subject var(--im-shot-time) ease-in-out infinite}
+.im-animation-label{padding:3px 6px;border:1px solid #fff3;border-radius:4px;background:#08091699;color:#fff;font-size:9px;letter-spacing:.025em;white-space:nowrap}
+@keyframes im-scene-light{
+ 0%,100%{transform:scale(1.02)}
+ 50%{transform:scale(1.08) translate(-1.25%,.7%)}
+}
+@keyframes im-scene-subject{
+ 0%,100%{transform:translate(0,0) scale(1);opacity:.86}
+ 50%{transform:translate(var(--im-shot-x),var(--im-shot-y)) rotate(var(--im-shot-angle)) scale(var(--im-shot-scale));opacity:1}
+}
 .im-root.im-video-live .im-video-shade{z-index:1;background:linear-gradient(90deg,#05040d18 0%,#07051135 40%,#080612b8 69%,#080612e0 100%),linear-gradient(0deg,#060410e8,transparent 42%)}
 .im-root.im-video-live .im-atmosphere,.im-root.im-video-live .im-ambient-bloom,.im-root.im-video-live .im-backdrop{visibility:hidden}
 .im-root.im-video-live .im-art-zone{visibility:hidden}
@@ -4804,4 +4818,6 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(max-width:850px){
  .im-root.im-video-live .im-video-shade{background:linear-gradient(180deg,#07051115 0%,#07051135 27%,#070511ba 55%,#070511ed 100%)}
  .im-root.im-video-live .im-player{background:transparent}
+ .im-root.im-video-live .im-eyebrow:has(.im-animation-label:not([hidden])){display:flex;margin:0 0 6px}
+ .im-root.im-video-live .im-eyebrow:has(.im-animation-label:not([hidden])) > :not(.im-animation-label){display:none}
 }
