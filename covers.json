@@ -3934,5 +3934,37 @@
     "album": "23 6451",
     "source": "Deezer catalogo, titolo/artista verificati",
     "date": "2026-11-09"
+  },
+  "jovanottiunmondoaparte": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/500x500-000000-80-0-0.jpg",
+    "title": "Un mondo a parte (Visual)",
+    "artist": "Jovanotti",
+    "album": "Il corpo umano VOL. 1",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-24"
+  },
+  "kidyugimostro": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/500x500-000000-80-0-0.jpg",
+    "title": "Mostro (Visual)",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-24"
+  },
+  "astronersissimaserpechromehearts": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/38f08e4427d1c9fc034f7537553d6f2d/500x500-000000-80-0-0.jpg",
+    "title": "CHROME HEARTS (feat. Nersissima Serpe)",
+    "artist": "Astro, Nersissima Serpe",
+    "album": "WAR",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-24"
+  },
+  "gemitaizvenerusfranco126senzadime": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/5e94596214284e5eec52298554f6a916/500x500-000000-80-0-0.jpg",
+    "title": "Senza Di Me (feat. Venerus & Franco126)",
+    "artist": "Gemitaiz, Venerus, Franco126",
+    "album": "Senza Di Me",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-24"
   }
 }
