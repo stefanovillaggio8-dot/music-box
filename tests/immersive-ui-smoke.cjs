@@ -74,6 +74,7 @@ window.addEventListener("message",event=>{
  document.getElementById("status").textContent=JSON.stringify({time,paused,muted});
  parent.postMessage({method,value:result},event.origin);
 });
+parent.postMessage({event:"ready"},"*");
 </script></body></html>`;
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
