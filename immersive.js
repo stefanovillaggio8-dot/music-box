@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
-let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
+let opened=false,lastId="",lastProfile="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
 let lastLyricsSignature="",lyricRows=[],lyricTimed=false,lastLyricScrollAt=0;
 let lyricPointer=null,suppressLyricTapUntil=0;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
@@ -34,76 +34,204 @@ function atmosphereForTrack(id,title,artist){
  root.classList.add("im-track-enter");
 }
 
-// Only an explicitly associated, directly playable video is eligible.
- // No YouTube iframe, audio extraction, search guess or unrelated video.
- let videoSource="",videoEnabled=false,videoFailed=false,videoPlayingRequest=null;
+// Reviewed associations use the stable recording identity. Vimeo playback
+// uses the uploader-enabled official player in its documented chromeless mode.
+ const reviewedVideoCatalog=Object.freeze({
+  "b-track-179":{
+   file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt",
+   vimeoId:"1028937342",offsetSeconds:0
+  }
+ });
+ let videoSource="",videoOffset=0,videoEnabled=false,videoFailed=false,videoPlayingRequest=null,videoLoadStarted=0;
+ let vimeoId="",vimeoSession=null,vimeoSdk=null;
+ function reviewedVideoFor(track){
+  if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedVideoCatalog,String(track.id)))return null;
+  const entry=reviewedVideoCatalog[String(track.id)];
+  if(!entry||entry.file!==track.file||entry.title!==track.title||entry.artist!==track.artist)return null;
+  return entry;
+ }
  function directVideoSource(track){
   const raw=track?.videoUrl||track?.musicVideoUrl||"";
   if(typeof raw!=="string"||!raw.trim())return "";
   try{
    const url=new URL(raw,document.baseURI);
+   if(url.username||url.password)return "";
    if(url.protocol!=="https:"&&!(url.origin===location.origin&&url.protocol==="http:"))return "";
    if(!/\.(mp4|webm|m4v)$/i.test(url.pathname))return "";
    return url.href;
   }catch(_){return ""}
  }
+ function loadVimeoSdk(){
+  if(!vimeoSdk){
+   vimeoSdk=new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=new URL("vendor/vimeo/player.min.js?v=2.30.4",document.baseURI).href;
+    script.onload=()=>window.Vimeo?.Player?resolve(window.Vimeo.Player):reject(Error("Vimeo Player unavailable"));
+    script.onerror=reject;
+    document.head.append(script);
+   }).catch(error=>{vimeoSdk=null;throw error});
+  }
+  return vimeoSdk;
+ }
+ function startVimeo(audio){
+  const holder=$("imVimeo");
+  if(!holder)return;
+  const src=new URL("https://player.vimeo.com/video/"+vimeoId);
+  src.search=new URLSearchParams({controls:"0",muted:"1",autoplay:"1",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"});
+  const initialTime=Math.max(0,Math.floor(audio.currentTime+videoOffset));
+  if(initialTime>0)src.hash="t="+initialTime+"s";
+  const iframe=document.createElement("iframe");
+  iframe.title="Filmato musicale";
+  iframe.tabIndex=-1;
+  iframe.allow="autoplay; encrypted-media";
+  iframe.referrerPolicy="strict-origin-when-cross-origin";
+  iframe.src=src.href;
+  const session={iframe,player:null,duration:0,started:Date.now(),busy:false,nextPoll:0,paused:true,rate:1,seekDelay:0};
+  vimeoSession=session;
+  holder.append(iframe);
+  holder.hidden=false;
+  loadVimeoSdk().then(async Player=>{
+   if(vimeoSession!==session)return;
+   const player=new Player(iframe);
+   session.player=player;
+   await player.ready();
+   if(vimeoSession!==session)return;
+   await player.setMuted(true);
+   session.duration=await player.getDuration();
+  }).catch(()=>{if(vimeoSession===session)failVideo()});
+ }
+ function syncVimeo(audio){
+  if(!vimeoSession&&!audio.paused&&!audio.seeking)startVimeo(audio);
+  const session=vimeoSession;
+  if(!session)return;
+  const now=Date.now();
+  if((!session.duration||session.busy)&&now-session.started>25000){failVideo();return}
+  if(!session.duration||session.busy||now<session.nextPoll)return;
+  if(Number.isFinite(audio.duration)&&audio.duration>10&&session.duration<audio.duration+videoOffset-2){failVideo();return}
+  const time=audio.currentTime+videoOffset;
+  const inRange=time>=0&&time<session.duration-.15;
+  const shouldPause=audio.paused||audio.seeking||!inRange;
+  const root=$("immersivePanel"),player=session.player;
+  if(!inRange||audio.seeking)root?.classList.remove("im-video-live");
+  if(shouldPause&&session.paused)return;
+  session.busy=true;
+  session.started=now;
+  session.nextPoll=now+250;
+  (async()=>{
+   if(shouldPause){
+    await player.pause();
+    session.paused=true;
+    return;
+   }
+   const rate=audio.playbackRate||1;
+   if(session.rate!==rate){
+    await player.setPlaybackRate(rate);
+    session.rate=rate;
+   }
+   if(vimeoSession!==session||audio.paused||audio.seeking)return;
+   // Start decoding before seeking. The player can keep a pre-play seek
+   // pending while media is being initialized.
+   if(session.paused){
+    await player.play();
+    session.paused=false;
+   }
+   if(vimeoSession!==session||audio.paused||audio.seeking)return;
+   let position=await player.getCurrentTime();
+   if(vimeoSession!==session||audio.paused||audio.seeking)return;
+   const target=audio.currentTime+videoOffset;
+   if(target<0||target>=session.duration-.15)return;
+   if(Math.abs(position-target)>.55){
+    root?.classList.remove("im-video-live");
+    const seekStarted=performance.now();
+    const seekTarget=Math.min(session.duration-.15,target+session.seekDelay*rate);
+    position=await player.setCurrentTime(seekTarget);
+    session.seekDelay=Math.min(1.25,(performance.now()-seekStarted)/1000);
+   }
+   if(vimeoSession!==session)return;
+   if(audio.paused||audio.seeking){
+    await player.pause();
+    session.paused=true;
+    return;
+   }
+   if(vimeoSession===session&&!audio.paused&&!audio.seeking){
+    const drift=Math.abs(position-(audio.currentTime+videoOffset));
+    root?.classList.toggle("im-video-live",drift<=.85);
+   }
+  })().catch(()=>{if(vimeoSession===session)failVideo()}).finally(()=>{session.busy=false});
+ }
  function stopVideo(){
   const video=$("imVideo"),root=$("immersivePanel");
   root?.classList.remove("im-video-live");
+  if(vimeoSession){
+   const session=vimeoSession;
+   vimeoSession=null;
+   session.iframe.remove();
+   if(session.player)session.player.destroy().catch(()=>{});
+   $("imVimeo").hidden=true;
+  }
   if(!video)return;
-  videoPlayingRequest=null;
+  videoPlayingRequest=null;videoLoadStarted=0;
   video.pause();
   if(video.hasAttribute("src")){video.removeAttribute("src");video.load()}
   video.hidden=true;
  }
  function videoButton(){
   const button=$("imVideoToggle");if(!button)return;
-  button.hidden=!videoSource||videoFailed;
+  button.hidden=!(videoSource||vimeoId)||videoFailed;
   button.setAttribute("aria-pressed",String(videoEnabled&&!videoFailed));
   button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
  }
  function configureVideo(track){
-  stopVideo();videoSource=directVideoSource(track);videoFailed=false;
+  stopVideo();
+  const reviewed=reviewedVideoFor(track);
+  vimeoId=reviewed?.vimeoId||"";videoSource=vimeoId?"":directVideoSource(track);
+  videoOffset=reviewed?.offsetSeconds||0;videoFailed=false;
   // Mobile opts in: its native audio decoder must remain the priority.
-  videoEnabled=!!videoSource&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
+  videoEnabled=!!(videoSource||vimeoId)&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
   videoButton();
  }
  function failVideo(){
   videoFailed=true;videoEnabled=false;stopVideo();videoButton();
  }
  function updateVideo(audio){
-  const video=$("imVideo");if(!video||!opened||!videoEnabled||videoFailed||!videoSource)return;
+  if(!opened||!videoEnabled||videoFailed||!(videoSource||vimeoId))return;
   // Never start a second media decoder during a shared listening session,
   // an inactive page, or while audio is paused/has no valid media clock.
   if(document.hidden||window.MusicBoxRoom?.isActive?.()){stopVideo();return}
-  if(!audio||audio.paused||audio.ended||audio.seeking||!Number.isFinite(audio.currentTime)){
-   video.pause();return;
-  }
+  if(!audio||audio.ended||!Number.isFinite(audio.currentTime)){stopVideo();return}
+  if(vimeoId){syncVimeo(audio);return}
+  const video=$("imVideo");if(!video)return;
+  if(audio.paused||audio.seeking){video.pause();return}
   if(!video.hasAttribute("src")){
    video.muted=true;video.defaultMuted=true;video.volume=0;
-   video.hidden=false;video.src=videoSource;
+   // Request metadata explicitly: preload=none plus waiting for readyState before play deadlocks.
+   videoLoadStarted=Date.now();video.preload="metadata";video.hidden=false;video.src=videoSource;video.load();
   }
-  if(video.readyState<1)return;
-  const time=audio.currentTime;
+  if(video.error){failVideo();return}
+  if(video.readyState<1){if(videoLoadStarted&&Date.now()-videoLoadStarted>15000)failVideo();return}
+  const time=audio.currentTime+videoOffset;
+  if(time<0){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
   // Do not loop a short clip or play unrelated video beyond its end.
+  if(Number.isFinite(video.duration)&&Number.isFinite(audio.duration)&&audio.duration>10&&video.duration<Math.max(0,audio.duration+videoOffset)-2){failVideo();return}
   if(Number.isFinite(video.duration)&&time>=video.duration-.15){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
   if(Math.abs(video.currentTime-time)>.45&&!video.seeking){
+   $("immersivePanel")?.classList.remove("im-video-live");
    try{video.currentTime=time}catch(_){failVideo();return}
   }
   if(Number.isFinite(audio.playbackRate)&&audio.playbackRate>0&&video.playbackRate!==audio.playbackRate)
    video.playbackRate=audio.playbackRate;
   if(video.paused&&!videoPlayingRequest){
    const source=videoSource;
-   const request=Promise.resolve(video.play());
+   let request;try{request=Promise.resolve(video.play())}catch(_){failVideo();return}
    videoPlayingRequest=request;
    request.then(()=>{if(videoPlayingRequest===request)videoPlayingRequest=null},
     ()=>{if(videoPlayingRequest===request){videoPlayingRequest=null;if(source===videoSource&&videoEnabled)failVideo()}});
   }
-  if(video.readyState>=2&&!video.seeking&&Math.abs(video.currentTime-time)<.7)
+  if(video.readyState>=2&&!video.seeking&&!video.paused&&Math.abs(video.currentTime-time)<.7)
    $("immersivePanel")?.classList.add("im-video-live");
  }
  function toggleVideo(){
-  if(!opened||!videoSource||videoFailed)return;
+  if(!opened||!(videoSource||vimeoId)||videoFailed)return;
   videoEnabled=!videoEnabled;
   if(!videoEnabled)stopVideo();else updateVideo(api()?.audio?.());
   videoButton();
@@ -341,8 +469,8 @@ function precisionLyrics(){
 }
 function paint(){
  if(!opened)return;
- const b=api(),a=b?.audio?.(),t=b?.allTracks?.()?.find(x=>x.id===b.currentId?.());
- if((b?.currentId?.()||"")!==lastId){lastId=b?.currentId?.()||"";fillCurrent()}
+ const b=api(),a=b?.audio?.(),id=b?.currentId?.()||"",profile=b?.profile?.()||"";
+ if(id!==lastId||profile!==lastProfile){lastId=id;lastProfile=profile;fillCurrent()}
  const length=Number.isFinite(a?.duration)?Math.max(0,Number(a.duration)):0;
  const position=Number.isFinite(a?.currentTime)?Math.max(0,Number(a.currentTime)):0;
  const seek=$("imSeek");
@@ -386,7 +514,7 @@ function open(){
  if(opened||!api()?.audio?.())return;
  const root=$("immersivePanel");if(!root)return;
  focusBefore=document.activeElement;
- opened=true;lastId="";lastLyricsId="";
+ opened=true;lastId="";lastProfile="";lastLyricsId="";
  closeSyncControls();
  root.classList.remove("im-focus");
  $("imFocusToggle").setAttribute("aria-pressed","false");
@@ -401,7 +529,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopVideo();videoSource="";videoEnabled=false;videoButton();
+ stopVideo();videoSource="";vimeoId="";videoEnabled=false;videoButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -476,7 +604,10 @@ function start(){
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
  $("imVideoToggle")?.addEventListener("click",toggleVideo);
  $("imVideo")?.addEventListener("error",()=>{if(opened&&videoEnabled&&$("imVideo")?.hasAttribute("src"))failVideo()});
- document.addEventListener("visibilitychange",()=>{if(document.hidden)stopVideo();else if(opened)updateVideo(api()?.audio?.())});
+ document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)stopVideo();
+  else if(opened&&lastId===api()?.currentId?.()&&lastProfile===api()?.profile?.())updateVideo(api()?.audio?.());
+ });
  window.addEventListener("pagehide",stopVideo);
  $("imSyncEarlier")?.addEventListener("click",()=>changeSyncDelay(-.2));
  $("imSyncLater")?.addEventListener("click",()=>changeSyncDelay(.2));
