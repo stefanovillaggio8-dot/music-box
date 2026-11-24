@@ -349,8 +349,12 @@ async function run(){
     await switchTrack("another-track","Brano senza animazione");
     await switchTrack("short-loop");
     assert.equal(await video.getAttribute("src"),null,"reduced motion requires explicit activation");
-    await page.getByRole("button",{name:"Animazione",exact:true}).click();
-    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    await page.locator("#imClose").click();
+    await page.emulateMedia({reducedMotion:"no-preference"});
+    assert.equal(await video.getAttribute("src"),null,"no clip loads before entering immersive mode");
+    if(size.name==="iphone13")await page.locator("#btnImmersive").tap();
+    else await page.locator("#btnImmersive").click();
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:10000});
     const visual=await page.evaluate(()=>{
      const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade");
      const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
@@ -401,9 +405,8 @@ async function run(){
     await switchTrack("another-track","Brano senza animazione");
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
     assert.equal(await video.getAttribute("src"),null);
-    await switchTrack("too-long");
     await video.evaluate(v=>Object.defineProperty(v,"duration",{value:185,configurable:true}));
-    await page.getByRole("button",{name:"Animazione",exact:true}).click();
+    await switchTrack("too-long");
     await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden);
     assert.equal(await video.getAttribute("src"),null,"a full-length response must be released");
     await video.evaluate(v=>{delete v.duration});

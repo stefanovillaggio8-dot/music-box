@@ -693,7 +693,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"||file==="style.css"?release:"6734";
   const cacheSuffix=file==="style.css"?"lyrics=12":
-    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"18":"22");
+    "words="+(file==="word-karaoke.js"?"13":file==="immersive.js"?"19":"22");
   const assetUrl=file+"?v="+revision+"&"+cacheSuffix;
   assert.ok(html.includes(assetUrl.replace("&","&amp;")));
   assert.equal(sw.split(assetUrl).length-1,2);
