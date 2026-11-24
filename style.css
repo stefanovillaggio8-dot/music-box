@@ -4789,14 +4789,20 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(max-width:420px){.im-video-toggle{padding:6px 8px}.im-root:has(.im-video-toggle:not([hidden])) .im-mode{display:none}}
 @media(prefers-reduced-motion:reduce){.im-video,.im-video-shade{transition:none}}
 
-/* Device-local video association, compact and separate from playback. */
-.im-video-manage[hidden],#imVideoFile[hidden]{display:none!important}
-.im-video-manage{white-space:nowrap;flex:none;opacity:.85}
-.im-video-manage:disabled{opacity:.45}
-@media(max-width:850px){.im-root:has(.im-video-manage:not([hidden])) .im-mode{display:none}.im-video-manage{font-size:10px;padding:6px 8px}.im-root .im-head-right{gap:6px}}
-@media(max-width:420px){.im-root:has(.im-video-toggle:not([hidden])) .im-brand-block small{display:none}.im-root .im-video-toggle{padding:6px 8px}}
-
-.im-official-video[hidden]{display:none!important}
-.im-official-video{align-self:flex-end;display:block;width:max-content;max-width:100%;margin:4px 0 9px auto;padding:5px 10px;border:1px solid #c5a9ff40;border-radius:99px;color:#e5d7ff;text-decoration:none;font-size:11px;font-weight:700;background:#19122665}
-.im-official-video:hover,.im-official-video:focus-visible{color:white;background:#a78bfa35}
-@media(max-width:850px){.im-official-video{margin:1px auto 5px;padding:3px 8px;font-size:10px}}
+/* A video is a separate decorative layer, never a foreground player.
+   Keep the lyrics, controls and focus ring above it, with no cover or halo
+   competing for attention while the film is actually visible. */
+.im-root.im-video-live{isolation:isolate}
+.im-root.im-video-live .im-video{z-index:0}
+.im-root.im-video-live .im-video-shade{z-index:1;background:linear-gradient(90deg,#05040d18 0%,#07051135 40%,#080612b8 69%,#080612e0 100%),linear-gradient(0deg,#060410e8,transparent 42%)}
+.im-root.im-video-live .im-shell{z-index:2}
+.im-root.im-video-live .im-atmosphere,.im-root.im-video-live .im-ambient-bloom,.im-root.im-video-live .im-backdrop{visibility:hidden}
+.im-root.im-video-live .im-art-zone{visibility:hidden}
+.im-root.im-video-live::before,.im-root.im-video-live::after{opacity:0;pointer-events:none}
+.im-root.im-video-live .im-karaoke-frame{background:transparent;border:0;box-shadow:none}
+.im-root.im-video-live .im-karaoke-frame::before{display:none}
+.im-root.im-video-live .im-line.active{color:white;text-shadow:0 2px 14px #000c}
+@media(max-width:850px){
+ .im-root.im-video-live .im-video-shade{background:linear-gradient(180deg,#07051115 0%,#07051135 27%,#070511ba 55%,#070511ed 100%)}
+ .im-root.im-video-live .im-player{background:transparent}
+}
