@@ -75,6 +75,7 @@ const CORE = [
   "./immersive-animation.js?v=7",
   "./immersive-textures.webp?v=1",
   "./immersive-kid-yugi.webp?v=1",
+  "./immersive-ste.webp?v=1",
   "./immersive.js?v=6734&words=23",
   "./manifest.json",
   "./lyrics.json",
