@@ -419,14 +419,34 @@ async function run(){
 
     if(process.env.IMMERSIVE_LIVE_VIMEO==="1"&&size.name==="desktop"){
      await page.unroute("https://player.vimeo.com/video/1028937342?*");
+     const network=[];
+     page.on("response",response=>{
+      const url=new URL(response.url());
+      if(url.hostname.endsWith("vimeo.com")&&response.status()>=400)network.push([url.hostname,response.status()]);
+     });
+     page.on("requestfailed",request=>{
+      const url=new URL(request.url());
+      if(/vimeo(?:cdn)?\.com$/.test(url.hostname))network.push([url.hostname,request.failure()?.errorText]);
+     });
      await page.evaluate(()=>{
+      window.vimeoProbe=[];
+      window.addEventListener("message",e=>{
+       if(e.origin!=="https://player.vimeo.com")return;
+       const data=typeof e.data==="string"?JSON.parse(e.data):e.data;
+       if(data.method||data.event)vimeoProbe.push([data.method||data.event,data.data?.name,data.data?.method]);
+      });
       fakeProfile="Ste";
       const start=performance.now();
       setInterval(()=>{fakeAudio.currentTime=28+(performance.now()-start)/1000},50);
      });
      await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
      await page.locator("#imVideoToggle").click();
-     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:14000});
+     try{
+      await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:14000});
+     }catch(error){
+      console.error("Official Vimeo diagnostics",JSON.stringify({network,events:await page.evaluate(()=>vimeoProbe.slice(-20))}));
+      throw error;
+     }
      const live=page.frameLocator("#imVimeo iframe").locator("video").first();
      const playback=await live.evaluate(video=>({muted:video.muted,paused:video.paused,time:video.currentTime}));
      assert.ok(playback.muted&&!playback.paused&&playback.time>20,"official Vimeo video is decoding in the Immersive background");
