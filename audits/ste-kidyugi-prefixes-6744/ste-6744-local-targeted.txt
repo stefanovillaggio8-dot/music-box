@@ -1,0 +1,19 @@
+✔ a late clean launch is bounded by actually meaningful original prefix and independently quiet native source (1.2926ms)
+✔ rhythmic, altered, incomplete and insufficient evidence never expands the legacy 80ms launch bound (1.4434ms)
+✔ the actual native controller survives a delayed tick only inside the proven clean interval (1.3389ms)
+✔ original intro dynamics may exceed 3dB only when independently bounded added change remains transparent (1.7499ms)
+✔ a real gain jump, wrong reference identity or incomplete measurement still rejects even if levels do not clip (3.2135ms)
+✔ a distinct natural class requires both native platforms, original speed, original entry and near-silent intact source (3.5109ms)
+✔ actual planner adds only the native clean shadow case while preserving the existing full and partial classes (56.3703ms)
+✔ the native-only path aborts on queue changes and seeks without pausing the outgoing song or starting an intro (1.3258ms)
+✔ quiet continuation drains the old native pause before issuing a one-use zero-entry continuation (1.0828ms)
+✔ explicit pause, reordered queue, manual track change and missing pause acknowledgement cannot start a stale successor (0.4142ms)
+✔ a rejected or declined native continuation restores the same original without a stale pause guard (0.9064ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 193.1215
