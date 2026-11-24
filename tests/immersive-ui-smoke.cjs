@@ -460,6 +460,8 @@ async function run(){
     await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
     await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
     assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
+    await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
+    await stage.waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});
     await stage.waitFor({state:"hidden"});
     assert.equal(await stage.evaluate(node=>node.lastElementChild.width),0,"pause releases the drawn planes");

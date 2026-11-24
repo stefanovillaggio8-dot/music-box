@@ -1,7 +1,7 @@
 /* Original Music Box scene direction for each published Ste recording. */
 (function(){
 "use strict";
-// Audio file, title, artist, subject, palette and camera movement.
+// Audio file, title, artist, subject, palette, camera and optional alternate title.
 const scenes=Object.freeze({
   "b-track-6":["songs/track-6.mp3","Kid Yugi x Lil Peep MASHUP","Kid Yugi / Lil Peep","moon","violet","orbit"],
   "b-track-27":["songs/track-27.mp3","Il Filmografo","Kid Yugi","film","jade","push"],
@@ -203,7 +203,7 @@ const scenes=Object.freeze({
   "b-track-440":["songs/track-440.mp3","Morto Mai (Piano Solo)","Lazza","notes","ice","sway"],
   "b-track-457":["songs/track-457.mp3","Funghi in salsa rosa","L'Elfo, Funkymann","branch","fuchsia","orbit"],
   "b-track-466":["songs/track-466.mp3","Senza Di Me (feat. Venerus & Franco126)","Gemitaiz, Venerus, Franco126","window","plum","drift"],
-  "b-track-478":["songs/track-478.mp3","VENT'ANNI","Måneskin","clock","clay","push"],
+  "b-track-478":["songs/track-478.mp3","VENT'ANNI","Måneskin","clock","clay","push","VENTANNI"],
   "b-track-483":["songs/track-483.mp3","Addio xx","nayt","rail","garnet","drift"],
   "b-track-485":["songs/track-485.mp3","Hai visto mai","Frah Quintale","eye","jade","sway"],
   "b-track-509":["songs/track-509.mp3","verdi nei viola","lazza","ink","plum","orbit"],

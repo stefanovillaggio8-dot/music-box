@@ -279,8 +279,9 @@ function find(track,profile){
  if(profile!=="Ste"||!track?.id)return null;
  const scenes=window.MusicBoxImmersiveScenes;
  if(!scenes||!Object.hasOwn(scenes,track.id))return null;
- const [file,title,artist,subject,palette,camera]=scenes[track.id];
- if(track.file!==file||track.title!==title||track.artist!==artist)return null;
+ const [file,title,artist,subject,palette,camera,alternateTitle]=scenes[track.id];
+ if(track.file!==file||track.artist!==artist)return null;
+ if(track.title!==title&&(!alternateTitle||track.title!==alternateTitle))return null;
  return {subject,palette,camera,seed:hash(track.id)};
 }
 function draw({stage,scene}){
