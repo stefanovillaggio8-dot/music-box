@@ -73,11 +73,13 @@ function atmosphereForTrack(id,title,artist){
   }
   return vimeoSdk;
  }
- function startVimeo(){
+ function startVimeo(audio){
   const holder=$("imVimeo");
   if(!holder)return;
   const src=new URL("https://player.vimeo.com/video/"+vimeoId);
-  src.search=new URLSearchParams({controls:"0",muted:"1",autoplay:"0",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"});
+  src.search=new URLSearchParams({controls:"0",muted:"1",autoplay:"1",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"});
+  const initialTime=Math.max(0,Math.floor(audio.currentTime+videoOffset));
+  if(initialTime>0)src.hash="t="+initialTime+"s";
   const iframe=document.createElement("iframe");
   iframe.title="Filmato musicale";
   iframe.tabIndex=-1;
@@ -99,11 +101,11 @@ function atmosphereForTrack(id,title,artist){
   }).catch(()=>{if(vimeoSession===session)failVideo()});
  }
  function syncVimeo(audio){
-  if(!vimeoSession&&!audio.paused&&!audio.seeking)startVimeo();
+  if(!vimeoSession&&!audio.paused&&!audio.seeking)startVimeo(audio);
   const session=vimeoSession;
   if(!session)return;
   const now=Date.now();
-  if((!session.duration||session.busy)&&now-session.started>12000){failVideo();return}
+  if((!session.duration||session.busy)&&now-session.started>25000){failVideo();return}
   if(!session.duration||session.busy||now<session.nextPoll)return;
   if(Number.isFinite(audio.duration)&&audio.duration>10&&session.duration<audio.duration+videoOffset-2){failVideo();return}
   const time=audio.currentTime+videoOffset;
@@ -126,6 +128,14 @@ function atmosphereForTrack(id,title,artist){
     await player.setPlaybackRate(rate);
     session.rate=rate;
    }
+   if(vimeoSession!==session||audio.paused||audio.seeking)return;
+   // Start decoding before seeking. The player can keep a pre-play seek
+   // pending while media is being initialized.
+   if(session.paused){
+    await player.play();
+    session.paused=false;
+   }
+   if(vimeoSession!==session||audio.paused||audio.seeking)return;
    const position=await player.getCurrentTime();
    if(vimeoSession!==session||audio.paused||audio.seeking)return;
    const target=audio.currentTime+videoOffset;
@@ -139,10 +149,6 @@ function atmosphereForTrack(id,title,artist){
     await player.pause();
     session.paused=true;
     return;
-   }
-   if(session.paused){
-    await player.play();
-    session.paused=false;
    }
    if(vimeoSession===session&&!audio.paused&&!audio.seeking)root?.classList.add("im-video-live");
   })().catch(()=>{if(vimeoSession===session)failVideo()}).finally(()=>{session.busy=false});

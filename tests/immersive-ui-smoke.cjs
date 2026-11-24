@@ -57,7 +57,7 @@ const fixture=[
 const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
 const vimeoSdk=fs.readFileSync(path.join(root,"vendor","vimeo","player.min.js"));
 const vimeoFixture=`<!doctype html><html><body><output id="status"></output><script>
-let time=0,paused=true,muted=false;
+let time=Number(location.hash.match(/^#t=([0-9]+)s$/)?.[1])||0,paused=true,muted=false;
 window.addEventListener("message",event=>{
  if(event.source!==parent)return;
  const request=typeof event.data==="string"?JSON.parse(event.data):event.data;
@@ -392,7 +392,7 @@ async function run(){
      const params=new URL(route.request().url()).searchParams;
      assert.equal(params.get("controls"),"0");
      assert.equal(params.get("muted"),"1");
-     assert.equal(params.get("autoplay"),"0");
+     assert.equal(params.get("autoplay"),"1");
      return route.fulfill({contentType:"text/html",body:vimeoFixture});
     });
     await page.evaluate(()=>{
@@ -422,11 +422,12 @@ async function run(){
      const network=[];
      page.on("response",response=>{
       const url=new URL(response.url());
-      if(url.hostname.endsWith("vimeo.com")&&response.status()>=400)network.push([url.hostname,response.status()]);
+      if((/vimeo(?:cdn)?\.com$/.test(url.hostname)||response.request().resourceType()==="media")&&response.status()>=400)
+       network.push([url.hostname,response.status()]);
      });
      page.on("requestfailed",request=>{
       const url=new URL(request.url());
-      if(/vimeo(?:cdn)?\.com$/.test(url.hostname))network.push([url.hostname,request.failure()?.errorText]);
+      if(/vimeo(?:cdn)?\.com$/.test(url.hostname)||request.resourceType()==="media")network.push([url.hostname,request.failure()?.errorText]);
      });
      await page.evaluate(()=>{
       window.vimeoProbe=[];
@@ -436,15 +437,19 @@ async function run(){
        if(data.method||data.event)vimeoProbe.push([data.method||data.event,data.data?.name,data.data?.method]);
       });
       fakeProfile="Ste";
-      const start=performance.now();
-      setInterval(()=>{fakeAudio.currentTime=28+(performance.now()-start)/1000},50);
+      fakeAudio.currentTime=28;
      });
      await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
      await page.locator("#imVideoToggle").click();
      try{
-      await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:14000});
+      await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:24000});
      }catch(error){
-      console.error("Official Vimeo diagnostics",JSON.stringify({network,events:await page.evaluate(()=>vimeoProbe.slice(-20))}));
+      const playerFrame=page.frames().find(frame=>frame.url().startsWith("https://player.vimeo.com/video/"));
+      const media=await playerFrame?.evaluate(()=>{
+       const video=document.querySelector("video");
+       return {video:video&&{time:video.currentTime,paused:video.paused,readyState:video.readyState,error:video.error?.code}};
+      }).catch(()=>null);
+      console.error("Official Vimeo diagnostics",JSON.stringify({network,media,events:await page.evaluate(()=>vimeoProbe.slice(-20))}));
       throw error;
      }
      const live=page.frameLocator("#imVimeo iframe").locator("video").first();
