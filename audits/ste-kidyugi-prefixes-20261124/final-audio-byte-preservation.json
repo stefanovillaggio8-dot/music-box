@@ -1,0 +1,15 @@
+{
+  "candidate": "ed5482c3",
+  "runtimeAudioAndPlansUnchangedSince": "fb905a8a",
+  "byteIdentical": [
+    "app.js",
+    "mix-intelligente.js",
+    "dj-deep-analysis.json",
+    "index.html",
+    "versione.json",
+    "audio-composite-mix.js",
+    "audio-stretch.js"
+  ],
+  "workerFixSeparatelyProven": true,
+  "physicalIPhone": false
+}

@@ -15,3 +15,9 @@ Current final verification: PR94 installed matrix and phrase/offline6.743→6.74
 Bounded cached metre inventory, not another search: tracks138/1187 lack early reliable bars;33/87 have early model bars. Spleeter strict nonquiet starts0–2.4s and extends near EOF for these originals. These are automatic energy observations, NOT verified word/vocal labels. They prevent treating the four clean junctions as full beatmatches. Next useful full research requires independent vocal/percussive/phrase evidence, not another identical scan or lower gate.
 
 Rejected long Filmografo→Eva137.36 lead-in remains separate: added chroma roughness0.060424 and actual4xpeak1.336439. No rescue by lowering thresholds. Private iPhone readiness prototype remains disabled; physical Safari/PWA/background/lock-screen unverified. Karaoke FULL PHRASES ONLY.
+
+## Final candidate correction (ed5482c3)
+
+The worker fallback bug is independently reproduced with old719f591a and fixedfeb63dcf in the SAME real Windows WebKit upgrade: old fails/new passes, with exact cached metadata, all original synthetic downloads and personal sentinels retained.39/39 unit/mobile contracts pass. Worker changes no deletion/migration rules.
+
+Second Linux native failure45468839513 is retained: existing38->4 incoming original0/unity/no seeks reached2.714s while source delivered its actual EOF late. The old fade+.2 upper-bound misclassified audible continuation as a skipped intro. ed5482c3 replaces that inference ONLY in the clean test with actual native volume/mute/rate/seeking/pause/playing/underrun history through adoption; negative controls reject hidden/accelerated/buffering prefixes. Original EOF, source/target identity, >=750ms meaningful original exposure and zero incoming seek still required. No app audio code, runtime tolerance, beat gate or plan geometry changed. Final native results still pending; no publication claimed.
