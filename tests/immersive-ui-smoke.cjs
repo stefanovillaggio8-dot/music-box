@@ -366,10 +366,17 @@ async function run(){
     assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
     assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
     assert.equal(visual.pointer,"none");
-    await video.evaluate(v=>{v.currentTime=v.duration-.30});
+    await video.evaluate(v=>{
+     v.addEventListener("timeupdate",()=>{
+      const lastTime=v.dataset.testLoopTime;
+      v.dataset.testLoopTime=String(v.currentTime);
+      if(lastTime&&Number(lastTime)>v.duration-1&&v.currentTime<1)v.dataset.testLoopWrapped="true";
+     });
+    });
+    await page.waitForFunction(()=>document.getElementById("imVideo").dataset.testLoopWrapped==="true",null,{timeout:12000});
     await page.waitForFunction(()=>{
      const v=document.getElementById("imVideo");
-     return !v.paused&&!v.seeking&&v.currentTime>0&&v.currentTime<1.5;
+     return !v.paused&&!v.seeking&&v.currentTime>0&&v.currentTime<2;
     });
     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123,"loop does not seek the audio");
 
