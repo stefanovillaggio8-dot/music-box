@@ -107,6 +107,33 @@ function atmosphereForTrack(id,title,artist){
   }catch(_){api()?.toast?.("Spazio insufficiente o archivio video non disponibile.")}
   finally{videoManaging=false;videoManageButton()}
  }
+ // Verified public artist-channel references, not playable background assets.
+ const officialVideos=Object.freeze({
+  "songs/track-28.mp3":["Paganini","Kid Yugi","9alkA8SYQQQ","clip"],
+  "songs/track-29.mp3":["terr1","Kid Yugi","TU72BbShdQ0","visual"],
+  "songs/track-32.mp3":["Eroina","Kid Yugi","QLbyNOY819k","visual"],
+  "songs/track-39.mp3":["Tristano e Isotta","Kid Yugi","hHpGfKYjOEw","visual"],
+  "songs/track-45.mp3":["Porto il Commerciale","Kid Yugi","3ejrcBMxXIE","visual"],
+  "songs/track-49.mp3":["Mostro (Visual)","Kid Yugi","VbsdxQa1UC0","visual"],
+  "songs/track-64.mp3":["dimmi che ce'","thasup","uPeznfsvDW8","clip"],
+  "songs/track-74.mp3":["Dimmi Che C''","thasup","uPeznfsvDW8","clip"]
+ });
+ const videoIdentity=value=>String(value||"").normalize("NFKD").toLowerCase()
+   .replace(/\p{M}/gu,"").replace(/[^a-z0-9]/g,"");
+ function officialVideoFor(track){
+  const entry=officialVideos[track?.file];
+  if(!entry||videoIdentity(track?.title)!==videoIdentity(entry[0])||
+     !videoIdentity(track?.artist).startsWith(videoIdentity(entry[1])))return null;
+  return {url:"https://www.youtube.com/watch?v="+entry[2],kind:entry[3]};
+ }
+ function updateOfficialVideo(track){
+  const link=$("imOfficialVideo");if(!link)return;
+  const match=officialVideoFor(track);
+  link.hidden=!match;
+  if(!match){link.removeAttribute("href");return}
+  link.href=match.url;
+  link.textContent=match.kind==="visual"?"Visual ufficiale ↗":"Videoclip ufficiale ↗";
+ }
  function directVideoSource(track){
   const raw=track?.videoUrl||track?.musicVideoUrl||"";
   if(typeof raw!=="string"||!raw.trim())return "";
@@ -134,6 +161,7 @@ function atmosphereForTrack(id,title,artist){
  }
  function configureVideo(track){
   const epoch=++videoEpoch;
+  updateOfficialVideo(track);
   stopVideo();releaseLocalVideo();videoSource=directVideoSource(track);videoFailed=false;
   // Mobile opts in: its native audio decoder must remain the priority.
   videoEnabled=!!videoSource&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
