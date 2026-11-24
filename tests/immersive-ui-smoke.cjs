@@ -5,6 +5,8 @@ const {chromium,webkit}=require("playwright");
 const root=path.resolve(__dirname,"..");
 const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
 const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
+const scenes=fs.readFileSync(path.join(root,"immersive-scenes.js"),"utf8");
+const animation=fs.readFileSync(path.join(root,"immersive-animation.js"),"utf8");
 const css=fs.readFileSync(path.join(root,"style.css"),"utf8");
 const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
@@ -50,6 +52,8 @@ const fixture=[
  '</script>',
  fragment,
  lyricsFragment,
+ '<script src="/immersive-scenes.js"></script>',
+ '<script src="/immersive-animation.js"></script>',
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
@@ -62,6 +66,10 @@ const canvasFixtureEntries=Object.fromEntries(["short-loop","too-long"].map(id=>
 }]));
 const testImmersive=immersive.replace("const reviewedCanvasCatalog=Object.freeze({",
  match=>match+JSON.stringify(canvasFixtureEntries).slice(1,-1)+",");
+const testScenes=scenes.replace("const scenes=Object.freeze({",match=>match+
+ JSON.stringify(Object.fromEntries(Object.keys(canvasFixtureEntries).map(id=>[
+  id,["songs/canvas-fixture.mp3","Brano di prova","Artista di prova","stars","violet","drift"]
+ ]))).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
  if(loc==="/fixture.mp4"){
@@ -76,7 +84,8 @@ const server=http.createServer((req,res)=>{
   res.writeHead(200,{...headers,"Content-Length":clip.length});res.end(clip);return;
  }
 
- const contents=loc==="/style.css"?css:loc==="/immersive.js"?testImmersive:fixture;
+ const contents={"/style.css":css,"/immersive.js":testImmersive,"/immersive-scenes.js":testScenes,
+  "/immersive-animation.js":animation}[loc]??fixture;
  res.writeHead(200,{"Content-Type":loc.endsWith(".css")?"text/css":
   loc.endsWith(".js")?"text/javascript":"text/html","Cache-Control":"no-store"});
  res.end(contents);
@@ -331,11 +340,12 @@ async function run(){
 
    if(size.name==="desktop"||size.name==="iphone13"){
     const video=page.locator("#imVideo");
-    const switchTrack=async(trackId,title="Brano di prova")=>{
-     await page.evaluate(({trackId,title})=>{
-      Object.assign(fakeSong,{id:trackId,file:"songs/canvas-fixture.mp3",title,artist:"Artista di prova"});
+    const stage=page.locator("#imSongAnimation");
+    const switchTrack=async(trackId,title="Brano di prova",file="songs/canvas-fixture.mp3",artist="Artista di prova")=>{
+     await page.evaluate(({trackId,title,file,artist})=>{
+      Object.assign(fakeSong,{id:trackId,file,title,artist});
       Object.assign(fakeAudio,{currentTime:123,duration:240,paused:false});
-     },{trackId,title});
+     },{trackId,title,file,artist});
      await page.waitForFunction(title=>document.getElementById("imTitle").textContent===title,title);
     };
     await page.evaluate(()=>{fakeSong.videoUrl="/fixture.mp4";fakeSong.musicVideoUrl="/fixture.mp4"});
@@ -370,6 +380,8 @@ async function run(){
     assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
     assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
     assert.equal(visual.pointer,"none");
+    assert.equal(await stage.isHidden(),true,"an approved clip takes priority over generated art");
+    assert.equal(await page.locator("#imAnimationLabel").isHidden(),true);
     const loopProof=await video.evaluate(v=>new Promise(resolve=>{
      let previous=v.currentTime,wraps=0;
      const finish=()=>{
@@ -407,7 +419,7 @@ async function run(){
     assert.equal(await video.getAttribute("src"),null);
     await video.evaluate(v=>Object.defineProperty(v,"duration",{value:185,configurable:true}));
     await switchTrack("too-long");
-    await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden);
+    await stage.waitFor({state:"visible"});
     assert.equal(await video.getAttribute("src"),null,"a full-length response must be released");
     await video.evaluate(v=>{delete v.duration});
 
@@ -415,6 +427,47 @@ async function run(){
     await switchTrack("another-track","Brano senza animazione");
     await switchTrack("short-loop");
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the reviewed entry is exclusive to Ste");
+
+    await page.evaluate(()=>{fakeProfile="Ste"});
+    await switchTrack("b-track-27","Il Filmografo","songs/track-27.mp3","Kid Yugi");
+    await page.locator("#imClose").click();
+    assert.equal(await stage.isHidden(),true,"no art outside immersive mode");
+    if(size.name==="iphone13")await page.locator("#btnImmersive").tap();
+    else await page.locator("#btnImmersive").click();
+    await stage.waitFor({state:"visible"});
+    await page.locator("#imAnimationLabel").waitFor({state:"visible"});
+    assert.equal(await page.locator("#imAnimationLabel").innerText(),"Animazione Music Box");
+    assert.equal(await video.getAttribute("src"),null,"original Music Box art requires no video downloads");
+    const shot=await stage.evaluate(node=>{
+     const art=node.lastElementChild,shade=document.querySelector(".im-video-shade"),shell=document.querySelector(".im-shell");
+     const lyric=document.querySelector("#imKaraoke .im-line.active"),r=lyric.getBoundingClientRect();
+     const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+     return {transform:getComputedStyle(art).transform,duration:parseFloat(getComputedStyle(art).animationDuration),
+      width:art.width,height:art.height,layered:Number(getComputedStyle(node).zIndex)<Number(getComputedStyle(shade).zIndex)&&
+       Number(getComputedStyle(shade).zIndex)<Number(getComputedStyle(shell).zIndex),
+      lyricUsable:lyric.contains(hit),pointer:getComputedStyle(node).pointerEvents};
+    });
+    assert.ok(shot.layered&&shot.lyricUsable&&shot.pointer==="none",JSON.stringify(shot));
+    assert.ok(shot.duration>=6&&shot.duration<=8&&shot.width<=640&&shot.height<=440);
+    await page.waitForFunction(transform=>getComputedStyle(document.querySelector("#imSongAnimation canvas:last-child")).transform!==transform,shot.transform);
+    const fingerprint=async()=>stage.evaluate(node=>{
+     const pixels=node.lastElementChild.toDataURL();
+     let hash=0;
+     for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
+     return hash;
+    });
+    const film=await fingerprint();
+    await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
+    await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
+    assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
+    await page.evaluate(()=>{fakeAudio.paused=true});
+    await stage.waitFor({state:"hidden"});
+    assert.equal(await stage.evaluate(node=>node.lastElementChild.width),0,"pause releases the drawn planes");
+    await page.evaluate(()=>{fakeAudio.paused=false});
+    await stage.waitFor({state:"visible"});
+    await page.locator("#imClose").click();
+    assert.equal(await stage.isHidden(),true);
+    await page.locator("#btnImmersive").click();
    }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");

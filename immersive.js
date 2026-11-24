@@ -38,7 +38,7 @@ function atmosphereForTrack(id,title,artist){
  // Source kinds: spotify-canvas, official-loop, official-excerpt.
  // Record the permission URL in evidence when adding a source.
  const reviewedCanvasCatalog=Object.freeze({});
- let canvasSource="",canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
+ let canvasSource="",songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
  function canvasFor(track){
   if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedCanvasCatalog,track.id))return "";
   const entry=reviewedCanvasCatalog[track.id];
@@ -52,6 +52,9 @@ function atmosphereForTrack(id,title,artist){
  }
  function stopCanvas(){
   $("immersivePanel")?.classList.remove("im-video-live");
+  window.MusicBoxImmersiveAnimation?.stop($("imSongAnimation"));
+  const label=$("imAnimationLabel");
+  if(label)label.hidden=true;
   canvasRequest=null;
   canvasLoadStarted=0;
   const video=$("imVideo");
@@ -64,27 +67,38 @@ function atmosphereForTrack(id,title,artist){
  function renderCanvasButton(){
   const button=$("imVideoToggle");
   if(!button)return;
-  button.hidden=!canvasSource;
+  button.hidden=!canvasSource&&!songAnimation;
   button.setAttribute("aria-pressed",String(canvasEnabled));
   button.textContent=canvasEnabled?"Copertina":"Animazione";
  }
  function configureCanvas(track){
   stopCanvas();
   canvasSource=canvasFor(track);
+  songAnimation=window.MusicBoxImmersiveAnimation?.find(track,api()?.profile?.())??null;
   const conserve=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches||navigator.connection?.saveData;
-  canvasEnabled=!!canvasSource&&!conserve;
+  canvasEnabled=!!(canvasSource||songAnimation)&&!conserve;
   renderCanvasButton();
  }
  function failCanvas(){
   canvasSource="";
-  canvasEnabled=false;
+  canvasEnabled=!!songAnimation&&canvasEnabled;
   stopCanvas();
   renderCanvasButton();
  }
  function updateCanvas(audio){
-  if(!opened||!canvasEnabled||!canvasSource)return;
+  if(!opened||!canvasEnabled)return;
+  const stage=$("imSongAnimation");
   if(document.hidden||window.MusicBoxRoom?.isActive?.()||!audio||audio.paused||audio.ended){
-   if(canvasLoadStarted)stopCanvas();
+   if(canvasLoadStarted||stage&&!stage.hidden)stopCanvas();
+   return;
+  }
+  if(!canvasSource){
+   if(!songAnimation||!stage?.hidden)return;
+   if(!window.MusicBoxImmersiveAnimation?.start(stage,songAnimation)){
+    songAnimation=null;canvasEnabled=false;renderCanvasButton();return;
+   }
+   $("immersivePanel")?.classList.add("im-video-live");
+   $("imAnimationLabel").hidden=false;
    return;
   }
   const video=$("imVideo");
@@ -123,7 +137,7 @@ function atmosphereForTrack(id,title,artist){
   }
  }
  function toggleCanvas(){
-  if(!opened||!canvasSource)return;
+  if(!opened||!canvasSource&&!songAnimation)return;
   canvasEnabled=!canvasEnabled;
   if(canvasEnabled)updateCanvas(api()?.audio?.());
   else stopCanvas();
@@ -422,7 +436,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopCanvas();canvasSource="";canvasEnabled=false;renderCanvasButton();
+ stopCanvas();canvasSource="";songAnimation=null;canvasEnabled=false;renderCanvasButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
