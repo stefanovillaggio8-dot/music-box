@@ -474,6 +474,24 @@ async function run(){
     await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
     await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
     assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
+    await page.evaluate(()=>{
+     const animation=MusicBoxImmersiveAnimation,apply=animation.setVerse;
+     animation.setVerse=(scene,index)=>{
+      apply(scene,index);
+      window.testLyricImage=scene?.lyricCue;
+     };
+     fakeLyrics={id:"b-track-40",synced:[
+      {t:10,text:"C'è la luna piena"},
+      {t:20,text:"Un pianoforte senza tasti"},
+      {t:30,text:"La pioggia nella stanza",estimated:true}
+     ]};
+     fakeAudio.currentTime=14;
+    });
+    await page.waitForFunction(()=>window.testLyricImage==="moon");
+    await page.evaluate(()=>{fakeAudio.currentTime=24});
+    await page.waitForFunction(()=>window.testLyricImage==="piano");
+    await page.evaluate(()=>{fakeAudio.currentTime=34});
+    await page.waitForFunction(()=>window.testLyricImage===null);
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});
