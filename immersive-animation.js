@@ -24,8 +24,8 @@ const palettes={
 const tau=Math.PI*2;
 const motionStep=1000/24;
 const environments={
- film:0,city:1,rail:1,stairs:1,window:2,mirror:2,clock:2,fold:2,
- water:3,storm:3,rain:3,gate:4,crown:4,maze:4,mask:4,shield:4,blade:4,stone:4,
+ film:0,city:1,headlights:1,rail:1,stairs:1,window:2,mirror:2,clock:2,fold:2,
+ water:3,shell:3,storm:3,rain:3,piano:2,candle:2,chess:4,apple:5,gate:4,crown:4,maze:4,mask:4,shield:4,blade:4,stone:4,
  rose:5,branch:5,heart:5,leaf:5,peak:6,sun:6,wings:6,ember:6,
  moon:7,orbit:7,stars:7
 };
@@ -71,6 +71,55 @@ function curveGrid(c,n,strength){
  }
 }
 const subjects={
+ shell(c,_random,t){
+  for(let i=-5;i<=5;i++){
+   const x=i*.16;
+   curve(c,[0,.66],[x*.55,.1,x*(1.23+.12*Math.sin(t)),-.95],[x,-.55+Math.abs(x)*.27]);
+  }
+  ellipse(c,0,.61,.22,.08);
+ },
+ headlights(c,_random,t){
+  const width=.33+.12*Math.sin(t);
+  for(const side of [-1,1]){
+   const x=side*width;
+   circle(c,x,-.07,.095);
+   line(c,[[x,-.07],[x*2,.86]]);
+   line(c,[[x,-.02],[x*.62,.86]]);
+  }
+  line(c,[[-width*1.1,-.17],[-.21,-.41],[.21,-.41],[width*1.1,-.17]]);
+ },
+ piano(c,_random,t){
+  c.strokeRect(-.94,-.42,1.88,.87);
+  for(let i=0;i<10;i++){
+   const x=-.94+i*.188;
+   line(c,[[x,-.42],[x,.45]]);
+   if(i%3!==0)c.fillRect(x-.04,-.42,.081,.48);
+  }
+  const key=Math.floor(t/tau*10);
+  c.globalAlpha*=.8;
+  c.fillRect(-.93+key*.188,.14,.16,.29);
+ },
+ candle(c,_random,t){
+  c.strokeRect(-.19,.03,.38,.8);
+  line(c,[[-.36,.84],[.36,.84]]);
+  const lean=.11*Math.sin(2*t);
+  c.beginPath();c.moveTo(0,-.02);c.bezierCurveTo(-.42,-.19,lean-.17,-.53,lean,-.78);
+  c.bezierCurveTo(lean+.33,-.44,.45,-.21,0,-.02);c.fill();
+  ellipse(c,0,-.31,.34,.48);
+ },
+ apple(c){
+  c.beginPath();c.moveTo(0,-.45);c.bezierCurveTo(-1.06,-1,-.84,.59,-.26,.69);
+  c.quadraticCurveTo(0,.55,.27,.69);c.bezierCurveTo(.59,.62,.73,.31,.72,.04);
+  c.bezierCurveTo(.26,.11,.37,-.42,.69,-.46);c.quadraticCurveTo(.41,-.74,0,-.45);c.stroke();
+  curve(c,[0,-.43],[-.15,-.64,.01,-.84],[.18,-.94]);
+ },
+ chess(c,_random,t){
+  for(let y=0;y<6;y++)for(let x=0;x<6;x++)if((x+y)%2===0)
+   c.fillRect(x*.26-.78,y*.16-.11,.26,.16);
+  c.translate(.16*Math.sin(t),0);
+  line(c,[[-.3,.25],[-.19,-.09],[-.02,-.31],[-.31,-.21],[-.41,-.4],[-.05,-.78],[.25,-.7],[.41,.25],[-.3,.25]]);
+  circle(c,.05,-.53,.045);
+ },
  film(c,_random,t){
   c.rotate(-.15);
   c.strokeRect(-.8,-.84,1.6,1.68);
@@ -301,7 +350,82 @@ function find(track,profile){
  const [file,title,artist,subject,palette,camera,alternateTitle]=scenes[track.id];
  if(track.file!==file||track.artist!==artist)return null;
  if(track.title!==title&&(!alternateTitle||track.title!==alternateTitle))return null;
- return {subject,palette,camera,seed:hash(track.id)};
+ return {id:track.id,subject,palette,camera,seed:hash(track.id)};
+}
+// Concrete imagery in Italian and English. Timed cues use only the active
+// lyric line supplied by the player; untimed lyrics establish the backdrop.
+const lyricImages=[
+ ["shell",/\b(conchigli[ae]|seashells?)\b/i],
+ ["headlights",/\b(fari|automobil[ei]|suv|headlights?)\b/i],
+ ["piano",/\b(pianoforte|piano keys|tasti del piano)\b/i],
+ ["candle",/\b(candela|candele|candlelights?|candles?)\b/i],
+ ["apple",/\b(morso la mela|mele proibite|forbidden apple)\b/i],
+ ["chess",/\b(scacchi|scacchiera|bobby fischer|chess)\b/i],
+ ["maze",/\b(dedalo|labirint[oi]|maze|labyrinth)\b/i],
+ ["moon",/\b(luna|moon|lunar)\b/i],
+ ["orbit",/\b(universo|pianeti?|cosmo|galass[ie][ae]?|spazio siderale|galax(?:y|ies)|planets?|astronauta)\b/i],
+ ["stars",/\b(stell[ae]|stelle cadenti|stars?|costellazion[ei]|constellations?)\b/i],
+ ["sun",/\b(sole|alba|tramont[oi]|sorgere del sole|sun(?:rise|set)?|daybreak)\b/i],
+ ["rain",/\b(piogg[ie][ae]?|piove|piovere|piovesse|temporale|tempesta|rain|storm|bufera)\b/i],
+ ["water",/\b(mare|onde|oceano|porto|naufrag[io]+|ocean|waves?|harbou?r|sail(?:or|ing)?)\b/i],
+ ["rail",/\b(treno|treni|binari|rotaie|railway|trains?)\b/i],
+ ["city",/\b(citta|quartier[ei]|grattaciel[oi]|strad[ae]|vicoli|neon|semafor[oi]|city|streets?|skyscrapers?)\b/i],
+ ["window",/\b(finestr[ae]|finestrin[oi]|vetri|windows?)\b/i],
+ ["mirror",/\b(specchi[oi]|rifless[oi]|mirrors?|reflection)\b/i],
+ ["rose",/\b(rose|rosa rossa|petal[oi]|fior[ei]|flowers?|petals?)\b/i],
+ ["branch",/\b(filo d.erba|foglie|ram[oi]|alber[oi]|bosco|foresta|woods|forest|leaves)\b/i],
+ ["peak",/\b(montagn[ae]|vetta|mountains?|valleys?|vall[ei]|tibet)\b/i],
+ ["ember",/\b(fiamme|fuoco|incendio|camino|brucia|bruciano|fire|flames?)\b/i],
+ ["wings",/\b(ali|angelo|angeli|volo|volare|angel[s]?|wings?|fly away)\b/i],
+ ["lens",/\b(fotografi[ae]|foto|cinepresa|obiettivo fotografico|scatto|flash|photos?|cameras?)\b/i],
+ ["clock",/\b(orologi[oi]|clessidr[ae]|lancett[ae]|or[ae] passano|clocks?|hourglass)\b/i],
+ ["fold",/\b(letter[ae]|cartolin[ae]|bust[ae] di carta|envelopes?|letters?)\b/i],
+ ["crown",/\b(coron[ae]|trono|castell[oi]|regno|impero|kingdom|crowns?|throne)\b/i],
+ ["notes",/\b(melodi[ae]|spartit[oi]|musica|strument[oi]|canzon[ei]|chorus|music|melody|songs?)\b/i],
+ ["heart",/\b(cuor[ei]|amore|baci[oi]|abbracci[oi]|hearts?|love|kiss)\b/i]
+];
+const authoredLyrics={
+ "b-track-29":"water", // porto di Taranto e immagini del ritornello
+ "b-track-30":"maze",
+ "b-track-34":"candle", // ultima cena, candela e mela
+ "b-track-37":"city",
+ "b-track-38":"chess",
+ "b-track-40":"piano",
+ "b-track-41":"stars",
+ "b-track-134":"city",
+ "b-track-138":"wings",
+ "b-track-161":"sun",
+ "b-track-205":"rail",
+ "b-track-208":"branch",
+ "b-track-488":"city",
+ "b-track-518":"water",
+ "b-track-670":"water",
+ "b-track-1187":"headlights", // Stratos: automobile in corsa
+ "b-youtube-S8oUoa0pwpo":"shell" // Sentire La Musica: mare e conchiglia
+};
+function describeLyrics(scene,rows,timed){
+ if(!scene||scene.id==="b-track-27")return;
+ const scores=Object.create(null);
+ const cues=rows.map(row=>{
+  const line=String(row.text??"").normalize("NFD").replace(/\p{M}/gu,"");
+  const images=lyricImages.filter(([,pattern])=>pattern.test(line));
+  for(const [motif] of images)scores[motif]=(scores[motif]||0)+1;
+  return timed&&row.estimated!==true?images[0]?.[0]??null:null;
+ });
+ const strongest=lyricImages.reduce((best,[motif])=>{
+  const weight=motif==="heart"||motif==="notes" ? .3 : 1;
+  const score=(scores[motif]||0)*weight;
+  return score>best.score?{motif,score}:best;
+ },{motif:null,score:0}).motif;
+ const subject=authoredLyrics[scene.id]??strongest??scene.subject;
+ const changed=scene.lyricSubject!==subject;
+ scene.lyricSubject=subject;
+ scene.lyricCues=cues;
+ scene.lyricCue=null;
+ if(changed&&active?.scene===scene)draw(active);
+}
+function setVerse(scene,index){
+ if(scene?.lyricCues)scene.lyricCue=scene.lyricCues[index]??null;
 }
 function loadTextures(){
  if(textures.image)return;
@@ -341,7 +465,8 @@ function draw(shot){
  const c=world.getContext("2d"),f=ink.getContext("2d");
  if(!c||!f)return false;
  const [dark,mid,color,light]=palettes[scene.palette],r=random(scene.seed);
- const wide=aspect>1.15,kind=environments[scene.subject]??8;
+ const subject=scene.lyricSubject??scene.subject;
+ const wide=aspect>1.15,kind=environments[subject]??8;
  const x=w*((wide ? .30 : .50)+(r()-.5)*(wide ? .07 : .11));
  const y=h*((wide ? .45 : .36)+(r()-.5)*.07);
  const size=Math.min(w*.33,h*(wide ? .39 : .20));
@@ -361,7 +486,7 @@ function draw(shot){
  const particles=Array.from({length:22},()=>[r(),r(),r(),r()]);
  const wash=f.createLinearGradient(0,0,w*.28,0);
  wash.addColorStop(0,"transparent");wash.addColorStop(.55,color);wash.addColorStop(1,"transparent");
- Object.assign(shot,{f,w,h,x,y,size,kind,color,light,particles,wash,crop,tilt:(r()-.5)*.22});
+ Object.assign(shot,{f,w,h,x,y,size,kind,color,light,particles,wash,crop,subject,tilt:(r()-.5)*.22});
  paint(shot,0);
  return true;
 }
@@ -434,7 +559,7 @@ function turnReels(shot,t){
  }
 }
 function paint(shot,t){
- const {f,w,h,x,y,size,kind,crop,scene,color,light,tilt}=shot;
+ const {f,w,h,x,y,size,kind,crop,scene,color,light,tilt,subject}=shot;
  f.clearRect(0,0,w,h);
  if(kind===0&&crop){
   turnReels(shot,t);
@@ -452,7 +577,7 @@ function paint(shot,t){
  f.strokeStyle=light;f.fillStyle=color;
  f.globalAlpha=(textures.ready ? .30 : .66)+.10*Math.cos(t);
  f.lineWidth=.014;f.lineJoin="round";f.lineCap="round";
- subjects[scene.subject](f,random(scene.seed),t);
+ subjects[scene.lyricCue??subject](f,random(scene.seed),t);
  f.restore();
  f.globalAlpha=1;
 }
@@ -496,5 +621,5 @@ function stop(stage){
  for(const canvas of stage.querySelectorAll("canvas"))canvas.width=canvas.height=0;
 }
 window.addEventListener("resize",()=>{if(active)draw(active)},{passive:true});
-window.MusicBoxImmersiveAnimation={find,start,stop};
+window.MusicBoxImmersiveAnimation={find,start,stop,describeLyrics,setVerse};
 })();
