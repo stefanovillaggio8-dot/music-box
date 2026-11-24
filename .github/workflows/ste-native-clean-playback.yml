@@ -22,7 +22,7 @@ jobs:
     # Keep the Linux decoder dependencies in a versioned, prebuilt image.
     # The empty macOS value means native host execution, as before.
     container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -103,11 +103,20 @@ jobs:
           MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
           MUSICBOX_NATIVE_CLEAN_OUTPUT: safari-native-intro-installed.json
         run: node tests/native-clean-browser.cjs
+      - name: Four new installed Kid Yugi clean junctions, no shadow injection
+        run: |
+          node --test tests/ste-kidyugi-clean-prefixes.test.cjs
+          for id in 33 87 1187 138; do
+            fixture="audits/ste-kidyugi-prefixes-6744/track-${id}-shadow.json"
+            node tools/fetch-ste-clean-evaluation.cjs "$fixture"
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="$fixture" MUSICBOX_NATIVE_CLEAN_OUTPUT="kidyugi-${id}-installed.json" node tests/native-clean-browser.cjs
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ste-native-clean-release-${{ runner.os }}
           path: |
+            kidyugi-*-installed.json
             gilgamesh-eva-installed.json
             mashup-eva-installed.json
             safari-native-intro-installed.json
