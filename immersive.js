@@ -86,7 +86,7 @@ function atmosphereForTrack(id,title,artist){
   iframe.allow="autoplay; encrypted-media";
   iframe.referrerPolicy="strict-origin-when-cross-origin";
   iframe.src=src.href;
-  const session={iframe,player:null,duration:0,started:Date.now(),busy:false,nextPoll:0,paused:true,rate:1};
+  const session={iframe,player:null,duration:0,started:Date.now(),busy:false,nextPoll:0,paused:true,rate:1,seekDelay:0};
   vimeoSession=session;
   holder.append(iframe);
   holder.hidden=false;
@@ -136,13 +136,16 @@ function atmosphereForTrack(id,title,artist){
     session.paused=false;
    }
    if(vimeoSession!==session||audio.paused||audio.seeking)return;
-   const position=await player.getCurrentTime();
+   let position=await player.getCurrentTime();
    if(vimeoSession!==session||audio.paused||audio.seeking)return;
    const target=audio.currentTime+videoOffset;
    if(target<0||target>=session.duration-.15)return;
    if(Math.abs(position-target)>.55){
     root?.classList.remove("im-video-live");
-    await player.setCurrentTime(target);
+    const seekStarted=performance.now();
+    const seekTarget=Math.min(session.duration-.15,target+session.seekDelay*rate);
+    position=await player.setCurrentTime(seekTarget);
+    session.seekDelay=Math.min(1.25,(performance.now()-seekStarted)/1000);
    }
    if(vimeoSession!==session)return;
    if(audio.paused||audio.seeking){
@@ -150,7 +153,10 @@ function atmosphereForTrack(id,title,artist){
     session.paused=true;
     return;
    }
-   if(vimeoSession===session&&!audio.paused&&!audio.seeking)root?.classList.add("im-video-live");
+   if(vimeoSession===session&&!audio.paused&&!audio.seeking){
+    const drift=Math.abs(position-(audio.currentTime+videoOffset));
+    root?.classList.toggle("im-video-live",drift<=.85);
+   }
   })().catch(()=>{if(vimeoSession===session)failVideo()}).finally(()=>{session.busy=false});
  }
  function stopVideo(){
