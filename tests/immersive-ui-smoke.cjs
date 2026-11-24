@@ -373,7 +373,8 @@ async function run(){
     const visual=await visualHandle.jsonValue();
     assert.equal(visual.muted,true);
     assert.equal(visual.volume,0);
-    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ,"video stays beneath shade and controls");
+    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ,
+     "video stays beneath shade and controls: "+JSON.stringify(visual));
     assert.equal(visual.cover,"hidden","cover must not overlay the video");
     assert.equal(visual.hit,true,"play button remains the top clickable element");
     assert.equal(visual.pointer,"none");
