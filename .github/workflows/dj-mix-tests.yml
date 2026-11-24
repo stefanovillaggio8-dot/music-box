@@ -7,6 +7,8 @@ on:
       - 'tests/introduction-exposure.test.cjs'
       - 'tests/deep-reconcile.test.cjs'
       - 'tests/playback-session-expiry.test.cjs'
+      - 'tests/published-personal-catalog.test.cjs'
+      - 'tools/published-personal-catalog.cjs'
       - 'tests/deep-parallel-merge.test.cjs'
       - 'tests/rendered-metadata-recovery.test.cjs'
       - 'tools/dj_metadata_merge.py'
@@ -39,6 +41,11 @@ on:
       - 'tests/personal-audit-scope.test.cjs'
       - 'tests/personal-mix-isolation.test.cjs'
       - 'tests/dj-observed-bars.test.cjs'
+      - 'tests/cadence-window.test.cjs'
+      - 'tests/native-cadence-proof.test.cjs'
+      - 'tools/apply-native-decoder-peaks.cjs'
+      - 'tools/mp3-gapless-clock.py'
+      - 'tools/test-mp3-gapless-clock.py'
       - 'tests/shortlist-musical-windows.test.cjs'
       - 'tools/exact-silent-suffix.cjs'
       - 'tools/build-exact-silent-suffix.py'
@@ -89,6 +96,8 @@ on:
       - 'tests/introduction-exposure.test.cjs'
       - 'tests/deep-reconcile.test.cjs'
       - 'tests/playback-session-expiry.test.cjs'
+      - 'tests/published-personal-catalog.test.cjs'
+      - 'tools/published-personal-catalog.cjs'
       - 'tests/deep-parallel-merge.test.cjs'
       - 'tests/rendered-metadata-recovery.test.cjs'
       - 'tools/dj_metadata_merge.py'
@@ -121,6 +130,11 @@ on:
       - 'tests/personal-audit-scope.test.cjs'
       - 'tests/personal-mix-isolation.test.cjs'
       - 'tests/dj-observed-bars.test.cjs'
+      - 'tests/cadence-window.test.cjs'
+      - 'tests/native-cadence-proof.test.cjs'
+      - 'tools/apply-native-decoder-peaks.cjs'
+      - 'tools/mp3-gapless-clock.py'
+      - 'tools/test-mp3-gapless-clock.py'
       - 'tests/shortlist-musical-windows.test.cjs'
       - 'tools/exact-silent-suffix.cjs'
       - 'tools/build-exact-silent-suffix.py'
@@ -184,6 +198,7 @@ jobs:
           node --check tools/build-dj-lyric-boundaries.cjs
           python -m py_compile tools/dj-vocal-stem.py
           python tools/test-dj-vocal-stem.py
+          python tools/test-mp3-gapless-clock.py
           node --check audio-lyrics-align.js
           node --check audio-lyrics-worker.js
           node --check word-karaoke.js

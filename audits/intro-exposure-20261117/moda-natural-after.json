@@ -1,0 +1,13 @@
+{
+  "method": "original-stereo-eof-then-original-intro-v1",
+  "sampleRate": 48000,
+  "outgoingSeconds": 10.288083333333333,
+  "incomingStartsAtOriginalSeconds": 0,
+  "incomingNativeGain": 1,
+  "incomingIntroSkippedFrames": 0,
+  "outgoingOmittedFrames": 0,
+  "incomingFirstFiveSecondsMaximumDifference": 0.0,
+  "samplePeak": 1.1184120178222656,
+  "oversampledTruePeak": 1.119123935699463,
+  "audioEvidence": "Offline reconstruction of the selected natural handoff; not a recording from physical iPhone or from the missing screen video."
+}

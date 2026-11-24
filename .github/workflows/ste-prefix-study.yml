@@ -1,0 +1,67 @@
+name: Four frozen Ste incoming prefixes, no installed plans
+on:
+  workflow_call:
+    inputs:
+      stage:
+        type: string
+        default: prefixes
+permissions:
+  contents: read
+jobs:
+  prefixes:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pinned native browsers
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            node -e "const fs=require('fs'),p=require('playwright');for(const b of [p.chromium,p.webkit])if(!fs.existsSync(b.executablePath()))throw Error('Pinned browser missing')"
+          else
+            npx playwright install chromium webkit
+          fi
+      - name: Independent Linux native audio output
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1 \
+            --log-target=file:/tmp/ste-prefix-pulse.log \
+            --load="module-native-protocol-unix socket=/tmp/ste-prefix-pulse auth-anonymous=1" \
+            --load="module-null-sink sink_name=ste_prefix rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-prefix-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-prefix-pulse pactl set-default-sink ste_prefix
+      - run: node --test tests/ste-prefix-only-study.test.cjs tests/factored-native-clean.test.cjs
+      - name: Five SHA-verified current Ste originals only
+        run: node tools/fetch-ste-clean-recordings.cjs audits/ste-kidyugi-prefixes-20261124/recordings.json
+      - name: Four incoming prefixes, two rates and two native decoders
+        if: inputs.stage == 'prefixes'
+        run: node tools/ste-clean-prefix-native.cjs audits/ste-kidyugi-prefixes-20261124/recordings.json kidyugi-prefix-native.json
+      - name: Four frozen Ste junctions in the actual app, SHADOW only
+        if: inputs.stage == 'player'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+        run: |
+          for id in 33 87 1187 138; do
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="audits/ste-kidyugi-prefixes-20261124/track-${id}-shadow.json" \
+            MUSICBOX_NATIVE_CLEAN_OUTPUT="kidyugi-${id}-player.json" node tests/native-clean-browser.cjs
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kidyugi-${{ inputs.stage }}-${{ runner.os }}
+          path: kidyugi-*.json

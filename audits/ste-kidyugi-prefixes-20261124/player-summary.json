@@ -1,0 +1,16 @@
+{
+  "run": 45466626785,
+  "passed": 16,
+  "platforms": [
+    "Linux",
+    "macOS"
+  ],
+  "browsers": [
+    "chromium",
+    "webkit"
+  ],
+  "shadowIndex": true,
+  "installedReleasePassed": false,
+  "physicalIPhone": false,
+  "humanListening": false
+}

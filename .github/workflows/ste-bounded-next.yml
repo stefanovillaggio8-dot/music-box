@@ -1,0 +1,149 @@
+name: Bounded Ste new entry and silent primer study
+on:
+  workflow_call:
+    inputs:
+      stage:
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  bounded-next:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Standard Intel pool is a bounded alternative to a queued ARM latest.
+        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel' || inputs.stage == 'debug-source6') && '["macos-15-intel"]' || (inputs.stage == 'source-quiet' || inputs.stage == 'filmografo-quiet' || inputs.stage == 'filmografo-player' || inputs.stage == 'finish' || inputs.stage == 'phone') && '["ubuntu-24.04","macos-15-intel"]' || inputs.stage == 'player' && '["ubuntu-24.04"]' || '["ubuntu-24.04","macos-latest"]') }}
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bounded pinned browser environment
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            node -e "const fs=require('fs'),p=require('playwright');for(const b of [p.chromium,p.webkit])if(!fs.existsSync(b.executablePath()))throw Error('Pinned native browser missing')"
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
+      - name: Isolated Linux native output
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1 \
+            --log-target=file:/tmp/ste-observed-pulse.log \
+            --load="module-native-protocol-unix socket=/tmp/ste-observed-pulse auth-anonymous=1" \
+            --load="module-null-sink sink_name=ste_observed rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-observed-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-observed-pulse pactl set-default-sink ste_observed
+      - name: Preserve scope, cancellation and existing natural controls
+        run: node --test tests/ios-native-observed.test.cjs tests/ste-research-scope.test.cjs tests/factored-native-clean.test.cjs
+      - name: Three frozen Ste originals only, one new prefix
+        if: inputs.stage != 'source-quiet' && inputs.stage != 'filmografo-quiet' && inputs.stage != 'filmografo-player' && inputs.stage != 'finish' && inputs.stage != 'phone' && inputs.stage != 'debug-source6'
+        run: node tools/fetch-ste-clean-recordings.cjs audits/ste-next-clean-20261123/recordings.json
+      - name: Three frozen Filmografo SHADOW junctions in the actual Ste player
+        if: inputs.stage == 'filmografo-player'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+        run: |
+          node --test tests/native-clean-launch-window.test.cjs tests/native-eof-ownership.test.cjs
+          for id in 4 34 50; do
+            fixture="audits/ste-filmografo-quiet-20261124/track-${id}-shadow.json"
+            node tools/fetch-ste-clean-evaluation.cjs "$fixture"
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="$fixture" MUSICBOX_NATIVE_CLEAN_OUTPUT="filmografo-${id}-player.json" node tests/native-clean-browser.cjs
+          done
+      - name: One fresh Ste Kid Yugi quiet source with reused target evidence
+        if: inputs.stage == 'filmografo-quiet'
+        run: |
+          node tools/fetch-ste-clean-recordings.cjs audits/ste-filmografo-quiet-20261124/recordings.json
+          node tools/measure-native-quiet-recording.cjs audits/ste-filmografo-quiet-20261124/recordings.json filmografo-quiet-native.json
+      - name: Frozen alternative Ste source only, with reused incoming evidence
+        if: inputs.stage == 'source-quiet'
+        run: |
+          node tools/fetch-ste-clean-recordings.cjs audits/ste-source6-quiet-20261123/recordings.json
+          node tools/measure-native-quiet-recording.cjs audits/ste-source6-quiet-20261123/recordings.json source-quiet-native.json
+      - name: New native original prefix, no certificate or playback installation
+        if: inputs.stage == 'prepare' || inputs.stage == 'prepare-mac-intel'
+        run: node tools/ste-clean-prefix-native.cjs audits/ste-next-clean-20261123/recordings.json next-prefix.json
+      - name: Silent primer and declared clock after source first play, isolated from app
+        if: inputs.stage == 'prepare' || inputs.stage == 'prepare-mac-intel'
+        env:
+          MUSICBOX_OBSERVED_VARIANT: silent-observe
+          MUSICBOX_OBSERVED_MODES: natural,seek,hidden,hidden-after-adopt
+        run: node tests/ste-ios-observed-browser.cjs audits/ste-factored-clean-20261123/recordings.json silent-observed.json
+      - name: New frozen actual-app SHADOW, never release index mutation
+        if: inputs.stage == 'player' || inputs.stage == 'player-mac-intel'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-next-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: new-pair-shadow-player.json
+        run: node tests/native-clean-browser.cjs
+      - name: Exact originals for the new second-source and existing phone junction
+        if: inputs.stage == 'finish'
+        run: |
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+          node --test tests/mobile-unconsumed-prefix.test.cjs tests/native-clean-level-reference.test.cjs tests/native-eof-ownership.test.cjs
+      - name: New frozen second-source actual-app SHADOW
+        if: inputs.stage == 'finish'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: source6-shadow-player.json
+        run: |
+          node tests/native-clean-browser.cjs
+          MUSICBOX_NATIVE_CLEAN_OUTPUT=source6-shadow-repeat.json node tests/native-clean-browser.cjs
+      - name: Actual iPhone-path player preserves unconsumed original intro before encoded EOF
+        if: inputs.stage == 'finish'
+        env:
+          MUSICBOX_PHONE_NATIVE_INTRO: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: phone-native-intro.json
+        run: node tests/native-clean-browser.cjs
+      - name: One new-source EOF diagnosis on standard Intel, no new pair or threshold change
+        if: inputs.stage == 'debug-source6'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: source6-shadow-player.json
+          MUSICBOX_NATIVE_EVENT_TRACE: 'true'
+          MUSICBOX_COMPOSITE_BROWSERS: chromium
+        run: |
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-source6-quiet-20261123/new-pair-shadow.json
+          node tests/native-clean-browser.cjs
+      - name: Single native continuation with explicit-pause and queue contracts
+        if: inputs.stage == 'phone'
+        env:
+          MUSICBOX_PHONE_NATIVE_INTRO: 'true'
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: phone-native-intro.json
+        run: |
+          node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+          node --test tests/quiet-native-continuation.test.cjs tests/mobile-unconsumed-prefix.test.cjs tests/ios-home-screen-background.test.cjs
+          node tests/native-clean-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-bounded-next-${{ runner.os }}
+          path: |
+            phone-native-intro.json
+            source6-shadow-player.json
+            source6-shadow-repeat.json
+            source-quiet-native.json
+            filmografo-quiet-native.json
+            filmografo-4-player.json
+            filmografo-34-player.json
+            filmografo-50-player.json
+            next-prefix.json
+            silent-observed.json
+            new-pair-shadow-player.json

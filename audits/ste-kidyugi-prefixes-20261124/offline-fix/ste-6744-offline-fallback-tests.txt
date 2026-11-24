@@ -1,0 +1,47 @@
+✔ offline explicit revalidation prefers the exact saved index over an older query variant (16.6053ms)
+✔ a temporary HTTP failure cannot hide an existing exact analysis index (0.5677ms)
+✔ successful refresh replaces the same key while preserving other cached variants (0.7295ms)
+✔ system-induced Safari pause must not erase playback intent (0.8583ms)
+✔ stale ended/timeupdate/metadata events cannot change the new track (0.2399ms)
+✔ repeated unchanged timeupdate cannot conceal a stalled iPhone stream (0.269ms)
+✔ buffering does not reset heartbeat forever (0.1527ms)
+✔ offline MP3 lookup remains fast even with thousands of cached songs (19.9907ms)
+✔ new versions preserve user-downloaded MP3 caches (0.1146ms)
+✔ Safari seeking interrupts optional DJ work and preserves offline cache (1.4187ms)
+✔ cached MP3 Range responses reuse one bounded Blob on repeated seeks (6.1887ms)
+✔ iPhone DJ loads bounded intro range and refuses a full file response (1.5693ms)
+✔ 1000 rapid offline iPhone seeks keep valid HTTP 206 ranges and one cached Blob (14.02ms)
+✔ iPhone DJ stops an unexpectedly oversized streaming response before decoding (1.7139ms)
+✔ locked iPhone headphone pause after several seconds is intentional (0.1722ms)
+✔ iOS MediaSession play/pause handlers must be registered, never null (0.1397ms)
+✔ headphone pause cancels all retry work and persists paused intent (0.6393ms)
+✔ delayed play, retry and resume cannot resurrect an explicit iPhone pause (0.4135ms)
+✔ background pause saves the precise decoder time, not just a painted progress bar (0.4221ms)
+✔ a paused track can recover after a full iPhone page recreation (0.3519ms)
+✔ the resume event keeps paused near-end timestamps, short positions and state (0.4869ms)
+✔ foreground recovery seeks the HTMLAudioElement and does not autoplay paused music (0.4801ms)
+✔ resume-before-metadata: iOS does not go silent while waiting for decoder seek (0.3737ms)
+✔ iPhone pause during delayed decoder restore retains original timestamp (0.364ms)
+✔ iOS canplay, seeked and changing songs settle outstanding restore (0.5574ms)
+✔ restoring a paused iPhone song never traps audio output muted (0.3189ms)
+✔ iOS seek gate expires harmlessly without muting when Safari never completes range load (0.1798ms)
+✔ DJ index bypasses stale JSON cache while preserving music cache (0.1409ms)
+✔ offline downloads take priority without deleting saved music (1.382ms)
+✔ iPhone DJ retries a bounded wider intro before requesting a full MP3 (0.6739ms)
+✔ large HTTP 200 fallback keeps only a bounded iPhone preview and cancels the rest (1.9905ms)
+✔ mobile DJ status does not promise a preview when the pair has no safe cue (1.6227ms)
+✔ Safari complete 8.5MB MP3 retries after its short prefix cannot decode (3.5489ms)
+✔ Safari preview gate allows normal readyState 3 with 3 seconds buffered (0.6252ms)
+✔ Safari fallback decode accepts readyState 2 only with a deep playback buffer (0.577ms)
+✔ iPhone lock-screen pause and play retain active media and recover a discarded decoder (0.4735ms)
+✔ rapid seeking gives the native decoder priority over DJ analysis (1.5023ms)
+✔ seek uses preload and emits bounded network/decoder timing (0.3879ms)
+✔ uncached MP3 ranges skip repeated CacheStorage misses without dropping offline fallback (0.08ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 145.0575

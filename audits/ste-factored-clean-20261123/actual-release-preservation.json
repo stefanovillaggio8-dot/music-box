@@ -1,0 +1,13 @@
+{
+  "release": "0b607622f0afc655681a4fdd17c222771a889c75",
+  "parent": "c1afab36053db4da5856537af002fb73807db626",
+  "unchanged": {
+    "stato.json": "5e3a1184c675545a0dbbda68ed8f295229039f93849ce87c5d0563db67f21fa6",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "karaoke-scan-state.json": "cbdd1ce73c4c06719eedfc54c2e719faaa27536e69d5ef3ce89025be3a20126a"
+  },
+  "originalDownloadsDeleted": false
+}

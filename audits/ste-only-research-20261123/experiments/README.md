@@ -1,0 +1,1 @@
+Rejected research only. Neither estimator improved the frozen Ste windows. These scripts are retained to explain the negative result, not for deployment or automatic reuse. Run from repository root; no player integration and no certification.

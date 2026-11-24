@@ -1,0 +1,78 @@
+{
+  "method": "bounded-native-original-quiet-recording-v1",
+  "evaluationOnly": true,
+  "notPlaybackCertified": true,
+  "physicalIPhone": false,
+  "platform": "linux",
+  "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.80",
+      "measurements": [
+        {
+          "rate": 44100,
+          "sourceTailPeak": 0.00010296057735104114,
+          "sourceTailRmsMax": 0.000022428153305136912,
+          "maximumChannelRms": 0.00002315571335038769,
+          "channelRmsUpperBound": 0.00003171819858310758,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "sourceDecodedDuration": 139.83346938775512,
+          "sourceMediaDuration": 139.833458,
+          "from": 138.433,
+          "through": 139.83346938775512,
+          "accepted": true
+        },
+        {
+          "rate": 48000,
+          "sourceTailPeak": 0.00010319169814465567,
+          "sourceTailRmsMax": 0.000022419083931012893,
+          "maximumChannelRms": 0.000023157619137363067,
+          "channelRmsUpperBound": 0.00003170537255121916,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "sourceDecodedDuration": 139.83345833333334,
+          "sourceMediaDuration": 139.833458,
+          "from": 138.433,
+          "through": 139.83345833333334,
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "measurements": [
+        {
+          "rate": 44100,
+          "sourceTailPeak": 0.000091552734375,
+          "sourceTailRmsMax": 0.000024382036097299508,
+          "maximumChannelRms": 0.000025379361392899258,
+          "channelRmsUpperBound": 0.000034481406127071335,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "sourceDecodedDuration": 139.83346938775512,
+          "sourceMediaDuration": 139.833458333,
+          "from": 138.433,
+          "through": 139.83346938775512,
+          "accepted": true
+        },
+        {
+          "rate": 48000,
+          "sourceTailPeak": 0.00009590445552021265,
+          "sourceTailRmsMax": 0.000024314529564121437,
+          "maximumChannelRms": 0.000025330705341006156,
+          "channelRmsUpperBound": 0.000034385937472302116,
+          "sourceDecodedOffset": 0,
+          "sourceMediaOffset": 0,
+          "sourceDecodedDuration": 139.83345833333334,
+          "sourceMediaDuration": 139.833458333,
+          "from": 138.433,
+          "through": 139.83345833333334,
+          "accepted": true
+        }
+      ]
+    }
+  ]
+}

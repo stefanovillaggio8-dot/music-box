@@ -1,0 +1,19 @@
+{
+  "releaseMerge": "379830d5728846445005e42a840b5deced8ab9c9",
+  "candidate": "d9a415828b357c2f10c8acbc920c3d5aa80a473b",
+  "version": "6.739",
+  "scopeCI": 45101049035,
+  "runtimeFilesUnchanged": {
+    "app.js": "4c71f698d0cf4fccf8c0d3aa4e3a0e7c39a89340e4ae32e298764957cc712d97",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "style.css": "50135f42186b69fe0b59d3f68db616f731d12d57ced80b46bc5302c652b1c075",
+    "sw.js": "2b89005957f395a3c1e76ff1360c77bb2fd60c73ee52740b6c7d74a8fa72c434",
+    "index.html": "4dfcf8c45675adee86c7775b4a5d6b792d07bed75324bb42215b1e4287bbc7fb",
+    "versione.json": "09936b74749c217f6dd7166c3235e1d1b398928acb71072f469a48dd033b42ac",
+    "mix-intelligente.js": "8db6aa6f44d0705e84a534567338530cb0917202098e5e84ea4d01cc1b34e61a",
+    "dj-deep-analysis.json": "5c0362c3da9e84d99e10d008c3d71810f1f1ae14d7c10e799807de7831fc728c",
+    "stato.json": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  }
+}

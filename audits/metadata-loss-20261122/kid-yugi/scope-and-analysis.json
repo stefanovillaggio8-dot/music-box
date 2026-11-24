@@ -1,0 +1,228 @@
+{
+  "scope": "Actual current Ste personal library; excluded playlist unchanged",
+  "currentMain": "9ae77d7f",
+  "members": 222,
+  "kidYugiRecordings": 24,
+  "orderedKidYugiPairs": 10056,
+  "cachedShaBoundPCM": 222,
+  "newPCMRequired": [],
+  "notHumanVerified": true,
+  "tracks": [
+    {
+      "id": "b-track-6",
+      "key": "audio/songs/track-6.mp3",
+      "sha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "title": "Kid Yugi x Lil Peep MASHUP",
+      "artist": "Kid Yugi / Lil Peep",
+      "basicEstimatedBpm": 128.929,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-27",
+      "key": "audio/songs/track-27.mp3",
+      "sha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "title": "Il Filmografo",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 90.102,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-29",
+      "key": "audio/songs/track-29.mp3",
+      "sha": "a1d867c940efda354c4a8da7b5a6a35ab44c49bd",
+      "title": "terr1",
+      "artist": "kid yugi",
+      "basicEstimatedBpm": 107.416,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-30",
+      "key": "audio/songs/track-30.mp3",
+      "sha": "1ebd28bcab8b1339e4c3238ce2fb793ea3fe8ed8",
+      "title": "Sintetico",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 118.433,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-33",
+      "key": "audio/songs/track-33.mp3",
+      "sha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "title": "Lilith",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 94.892,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-34",
+      "key": "audio/songs/track-34.mp3",
+      "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "title": "Eva",
+      "artist": "Kid Yugi, Tedua & Junior K",
+      "basicEstimatedBpm": 91.012,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-37",
+      "key": "audio/songs/track-37.mp3",
+      "sha": "b9d32bc7cf9368f409408e628f23e55d058ba28c",
+      "title": "La Violenza Necessaria",
+      "artist": "Kid Yugi & Shiva",
+      "basicEstimatedBpm": 96.933,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-38",
+      "key": "audio/songs/track-38.mp3",
+      "sha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+      "title": "Gilgamesh",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 116.896,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-39",
+      "key": "audio/songs/track-39.mp3",
+      "sha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd",
+      "title": "Tristano e Isotta",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 160.1,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-40",
+      "key": "audio/songs/track-40.mp3",
+      "sha": "0f1ac7429eba1ab2df58bd9ccad8ae7d5429d362",
+      "title": "Donna",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 107.322,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-41",
+      "key": "audio/songs/track-41.mp3",
+      "sha": "e87337b7bc6224ba2c5dc74c62ac350455d9d824",
+      "title": "Lucifero",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 118.376,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-49",
+      "key": "audio/songs/track-49.mp3",
+      "sha": "db545d9e16290dc62f08773eb90dd9e23b073257",
+      "title": "Mostro (Visual)",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 164.592,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-87",
+      "key": "audio/songs/track-87.mp3",
+      "sha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "title": "Bullet Ballet",
+      "artist": "Kid Yugi, Artie 5ive",
+      "basicEstimatedBpm": 129.88,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-134",
+      "key": "audio/songs/track-134.mp3",
+      "sha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+      "title": "TUTTO FUORI CONTROLLO",
+      "artist": "MACE, Kid Yugi, IzI, Franco126",
+      "basicEstimatedBpm": 107.276,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-138",
+      "key": "audio/songs/track-138.mp3",
+      "sha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "title": "Ex Angelo",
+      "artist": "Kid Yugi, Sfera Ebbasta, Shablo",
+      "basicEstimatedBpm": 93.029,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-205",
+      "key": "audio/songs/track-205.mp3",
+      "sha": "611c879b4c80ba12a1a415f2225a8cea89cf1416",
+      "title": "Amelie",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 95.481,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-206",
+      "key": "audio/songs/track-206.mp3",
+      "sha": "592f4db9c95c76cc002683f347fa0ab675eb00b4",
+      "title": "Per il Sangue Versato",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 118.947,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-207",
+      "key": "audio/songs/track-207.mp3",
+      "sha": "d747047edd58b7725f595a9676241a5d5c624864",
+      "title": "Per te che Lotto",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 118.775,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-208",
+      "key": "audio/songs/track-208.mp3",
+      "sha": "6564028b080714ee4518cc905c72b1c92e5f9d4a",
+      "title": "Davide e Golia",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 98.013,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-213",
+      "key": "audio/songs/track-213.mp3",
+      "sha": "aeee9ab48fb4a23fd3d40fedfce041a9ef63e52e",
+      "title": "Jolly",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 97.961,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-215",
+      "key": "audio/songs/track-215.mp3",
+      "sha": "7d7b064ba371e9cf775525b1a6110b03ae2cd92f",
+      "title": "Il Ferro di Echov",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 117.791,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-488",
+      "key": "audio/songs/track-488.mp3",
+      "sha": "03de64ebd7132156a686835ba02fd1d175d92cf3",
+      "title": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
+      "artist": "MACE, Kid Yugi, Izi, Franco126",
+      "basicEstimatedBpm": 107.276,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-track-1187",
+      "key": "audio/songs/track-1187.mp3",
+      "sha": "91880f7106a62122af82cff60cc00541b500369f",
+      "title": "Stratos",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 128.48,
+      "wholeModelEvidence": true
+    },
+    {
+      "id": "b-youtube-S8oUoa0pwpo",
+      "key": "mobile/songs/youtube-S8oUoa0pwpo.mp3",
+      "sha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+      "title": "Sentire La Musica",
+      "artist": "Kid Yugi",
+      "basicEstimatedBpm": 129.471,
+      "wholeModelEvidence": true
+    }
+  ]
+}

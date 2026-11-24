@@ -1,0 +1,26 @@
+✔ a known phrase end clears the normal reader during a long instrumental gap without advancing the next phrase (1.3183ms)
+✔ unknown or estimated word endings never fabricate a pause; close and sustained phrases stay intact (0.2821ms)
+✔ final-phrase expiry and phrase-only rendering from PR65 remain unchanged (0.3515ms)
+✔ continuous Ste listening carries the actual fresh pool and current track across reporting sessions (312.8628ms)
+✔ editing lyrics with the same number of phrases must not reuse another source text translation (4.575ms)
+✔ a 60-of-61 phrase result is reusable without repeating sixty external requests (4.4876ms)
+✔ repeated complete phrases keep their positions but need one identical line request (2.2701ms)
+✔ a late rejected request cannot overwrite the new song button or show an obsolete error (2.1305ms)
+✔ reset aborts network work; even a provider ignoring abort cannot update the new view (1.8876ms)
+✔ entity text is readable while remaining literal text, with no injected markup (1.8007ms)
+✔ a late clean launch is bounded by actually meaningful original prefix and independently quiet native source (1.8799ms)
+✔ rhythmic, altered, incomplete and insufficient evidence never expands the legacy 80ms launch bound (1.8607ms)
+✔ the actual native controller survives a delayed tick only inside the proven clean interval (1.9234ms)
+✔ actual paused-EOF tick claims the live incoming before ordinary paused-player cancellation (1.7105ms)
+✔ an explicit pause or reordered manual queue never acquires EOF handoff ownership (0.5506ms)
+✔ quiet continuation drains the old native pause before issuing a one-use zero-entry continuation (0.9381ms)
+✔ explicit pause, reordered queue, manual track change and missing pause acknowledgement cannot start a stale successor (0.4243ms)
+✔ a rejected or declined native continuation restores the same original without a stale pause guard (1.2668ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 394.0299

@@ -1,0 +1,99 @@
+{
+  "profile": "Ste",
+  "recordings": 222,
+  "pair": {
+    "from": "audio/songs/track-1187.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "originalSha": [
+    "91880f7106a62122af82cff60cc00541b500369f",
+    "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd"
+  ],
+  "cachedFileSha256": {
+    "../whole-structure-ci/whole-structure-15/structure-15.json": "8d8840c937213ce6301a7bca9b3879fab2331fa58ad4a42dac10627188953afd",
+    "../whole-structure-ci/whole-structure-2/structure-2.json": "48cff0826782d11f78f5a2f2d598441a9dcd115ee626a7d441a867ef86a00b53",
+    "../pcm-v3/pcm-0.json": "d0917ee60da4eb684fb4763ad06575fa2a2e9ee80ae2850c81d8d7b49384055f",
+    "../pcm-v3/pcm-11.json": "29838b6cd8538387f53646a273ae5025d8f460258575ca67b56b2f9386be0dca"
+  },
+  "distinctPairs": 1,
+  "geometries": 2,
+  "newPcmDecodes": 0,
+  "newModelInferences": 0,
+  "newRenders": 0,
+  "newCertifiedPairs": 0,
+  "caveat": "Cached model/PCM summaries do not prove perceptual dissonance or human structure. No pair is certified.",
+  "rows": [
+    {
+      "hypothesizedBars": 2,
+      "begin": 163.26754716981134,
+      "end": 168.853,
+      "fade": 5.585452830188672,
+      "entry": 0,
+      "tempo": 1.039215686274511,
+      "geometryIsModelHypothesis": true,
+      "estimatedIncomingClear": true,
+      "estimatedVocalHandoffPossible": true,
+      "sourceQuietSuffixFrom": 168.20000000000002,
+      "targetQuietPrefixThrough": 10,
+      "originalHarmonyAccepted": false,
+      "preservedHarmonyAccepted": false,
+      "harmonicTrace": {
+        "sharedTonalFrames": 10,
+        "frames": 10,
+        "maximumRawClash": 0.23287502776518015,
+        "maximumAddedClash": -0.042570473304088204,
+        "sourceKey": {
+          "code": "3B",
+          "mode": "B",
+          "pitch": 1,
+          "confidence": 0.6631738235366678
+        },
+        "targetKey": {
+          "code": "12B",
+          "mode": "B",
+          "pitch": 4,
+          "confidence": 0.8721893606799843
+        },
+        "keyFit": 0.05
+      },
+      "newHighFrequencyOnsetAnalysisStarted": false,
+      "reason": "independent-harmony-gate-not-met"
+    },
+    {
+      "hypothesizedBars": 4,
+      "begin": 158.1464393939394,
+      "end": 168.853,
+      "fade": 10.706560606060606,
+      "entry": 0,
+      "tempo": 1.0332681017612526,
+      "geometryIsModelHypothesis": true,
+      "estimatedIncomingClear": false,
+      "estimatedVocalHandoffPossible": false,
+      "sourceQuietSuffixFrom": 168.20000000000002,
+      "targetQuietPrefixThrough": 10,
+      "originalHarmonyAccepted": false,
+      "preservedHarmonyAccepted": false,
+      "harmonicTrace": {
+        "sharedTonalFrames": 20,
+        "frames": 20,
+        "maximumRawClash": 0.277524362315477,
+        "maximumAddedClash": 0.008154182810279062,
+        "sourceKey": {
+          "code": "11A",
+          "mode": "A",
+          "pitch": 6,
+          "confidence": 0.6023369633817017
+        },
+        "targetKey": {
+          "code": "12A",
+          "mode": "A",
+          "pitch": 1,
+          "confidence": 0.8672414385105337
+        },
+        "keyFit": 0.92
+      },
+      "newHighFrequencyOnsetAnalysisStarted": false,
+      "reason": "independent-harmony-gate-not-met"
+    }
+  ]
+}

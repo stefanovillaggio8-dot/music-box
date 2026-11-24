@@ -1,0 +1,17 @@
+{
+  "main": "487ed612025697c9a55d95c8bcb4400fa6ddca81",
+  "researchMerge": "0f91148cf2376c699172d7143d418fa6d7ae8e67",
+  "identicalFilesSha256": {
+    "app.js": "aadbd838474707cacf24bcf74e681f3db2c9d9951ff77004ca69328d625edad9",
+    "immersive.js": "59e6b80ce9d303d948a274c906b5ba284b7028bbb3db12f305ae4d843fd39695",
+    "immersive-animation.js": "b1501332d0d3245980a116cd5d75dcd622482934840c30807621179241c3b146",
+    "immersive-scenes.js": "fa6a0104fd12f9b46952e4b5b0e83e4ac4c8d100ce21344c765fea5c788d77ba",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "stato.json": "0989bc3a9998cdd940e43294df45d2c7bd8818f11a65e6b5d9f3fa073773418d",
+    "dj-deep-analysis.json": "8b65694acecc779145af176008688d3a2bc414a0dbc01b78a1da378ec4a5c784",
+    "karaoke-index.json": "f0ad5dbb5af6b7cfad5e7386dc271a5f555217b40a216ea2aa5d60e73d6c5cbb",
+    "karaoke-scan-state.json": "11c0557fc7973c1f54ea19c348ba812ca914229834e967f70dd3cc15c14f3ee9"
+  },
+  "researchEngineUnchangedSince": "c5cd0900",
+  "notANewPublication": true
+}

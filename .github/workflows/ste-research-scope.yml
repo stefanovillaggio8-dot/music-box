@@ -3,8 +3,21 @@ on:
   pull_request:
     paths:
       - 'tools/ste-research-scope.cjs'
+      - 'tools/ste-native-clean-evaluation.cjs'
+      - 'tools/build-native-clean-tail-candidate.cjs'
+      - 'tests/native-clean-tail.test.cjs'
+      - 'tests/native-clean-browser.cjs'
       - 'tools/simulate-library-listening.cjs'
       - 'tests/ste-research-scope.test.cjs'
+      - 'tests/ste-metrical-diagnosis.test.cjs'
+      - 'tests/context-bar-chains.test.cjs'
+      - 'tools/context-bar-chains.cjs'
+      - 'tools/diagnose-ste-metrical-pulses.cjs'
+      - 'tools/build-preserved-tail-plans.cjs'
+      - 'tools/dj-edge-grids.py'
+      - 'tools/dj-structure-core.py'
+      - 'tools/test-dj-whole-structure.py'
+      - 'tools/test-dj-edge-cache.py'
       - '.github/workflows/ste-research-scope.yml'
       - '.github/workflows/dj-equivalence-audit.yml'
       - '.github/workflows/dj-pcm-transition-features.yml'
@@ -12,9 +25,173 @@ on:
       - '.github/workflows/dj-real-audio-audit.yml'
       - '.github/workflows/dj-audio-spotcheck.yml'
   workflow_dispatch:
+    inputs:
+      native_clean_evaluation:
+        description: 'Read-only Ste clean-tail native decode experiment; never installs playback plans'
+        type: boolean
+        default: false
+      native_clean_player:
+        description: 'Actual-app Ste native-element SHADOW trial only; does not install or certify plans'
+        type: boolean
+        default: false
+      factored_native_study:
+        description: 'Frozen Ste recording-prefix and isolated iPhone-bootstrap study; never installs or publishes a plan'
+        type: boolean
+        default: false
+      factored_player:
+        description: 'New frozen Ste factored SHADOW only, actual app on two native platforms'
+        type: boolean
+        default: false
+      ios_sequential_study:
+        description: 'Isolated sequential bootstrap only, preserves failed trials and never enables iPhone playback'
+        type: boolean
+        default: false
+      observed_native_study:
+        description: 'New isolated readiness/clock observer; never enables iPhone or installs a musical cue'
+        type: boolean
+        default: false
+      observed_native_modes:
+        description: 'Bounded isolated observer modes; no new musical search'
+        type: string
+        default: 'natural,seek,hidden'
+      bounded_next_stage:
+        description: 'Frozen single new Ste prefix plus silent primer (prepare), or its SHADOW player; never installs cues'
+        type: string
+        default: 'none'
 permissions:
   contents: read
 jobs:
+  component-evidence:
+    if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'component-evidence'
+    uses: ./.github/workflows/ste-component-study.yml
+  four-prefixes:
+    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'kidyugi-prefixes' || inputs.bounded_next_stage == 'kidyugi-player')
+    uses: ./.github/workflows/ste-prefix-study.yml
+    with:
+      stage: ${{ inputs.bounded_next_stage == 'kidyugi-player' && 'player' || 'prefixes' }}
+  exact-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'release-final'
+    uses: ./.github/workflows/ste-release-final.yml
+    with:
+      release_sha: '2957332f1ec483810e25cf5bb228bc4a8439749a'
+  bounded-next:
+    if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'prepare' || inputs.bounded_next_stage == 'player' || inputs.bounded_next_stage == 'prepare-mac-intel' || inputs.bounded_next_stage == 'player-mac-intel' || inputs.bounded_next_stage == 'source-quiet' || inputs.bounded_next_stage == 'filmografo-quiet' || inputs.bounded_next_stage == 'filmografo-player' || inputs.bounded_next_stage == 'finish' || inputs.bounded_next_stage == 'phone' || inputs.bounded_next_stage == 'debug-source6')
+    uses: ./.github/workflows/ste-bounded-next.yml
+    with:
+      stage: ${{ inputs.bounded_next_stage }}
+  observed-native-study:
+    if: github.event_name == 'workflow_dispatch' && inputs.observed_native_study
+    uses: ./.github/workflows/ste-observed-native-study.yml
+    with:
+      modes: ${{ inputs.observed_native_modes }}
+  factored-native-study:
+    if: github.event_name == 'workflow_dispatch' && (inputs.factored_native_study || inputs.factored_player || inputs.ios_sequential_study)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bounded browser setup
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Linux native audio output
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=ste_factored rate=48000 channels=2
+          pactl set-default-sink ste_factored
+      - run: node --test tests/factored-native-clean.test.cjs
+      - name: Only selected Ste originals, hot rejected candidate excluded
+        if: inputs.factored_native_study || inputs.ios_sequential_study
+        run: node tools/fetch-ste-clean-recordings.cjs audits/ste-factored-clean-20261123/recordings.json
+      - name: Independent new target prefix receipts
+        if: inputs.factored_native_study
+        run: node tools/ste-clean-prefix-native.cjs audits/ste-factored-clean-20261123/recordings.json factored-prefix-native.json
+      - name: Isolated native dual-deck bootstrap, not iPhone certification
+        if: inputs.factored_native_study
+        run: node tests/ste-ios-native-prototype.cjs audits/ste-factored-clean-20261123/recordings.json ios-native-prototype.json
+      - name: Different sequential authorization study, no repeated parallel trial or prefix scan
+        if: inputs.ios_sequential_study
+        env:
+          MUSICBOX_PRIMING_ORDER: sequential
+        run: node tests/ste-ios-native-prototype.cjs audits/ste-factored-clean-20261123/recordings.json ios-native-sequential.json
+      - name: Only the new Ste shadow pair, original Git identity checked
+        if: inputs.factored_player
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-factored-clean-20261123/new-pair-shadow.json
+      - name: New factored player on actual application, no index installation
+        if: inputs.factored_player
+        env:
+          MUSICBOX_NATIVE_CLEAN_FIXTURE: audits/ste-factored-clean-20261123/new-pair-shadow.json
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: factored-new-pair-player.json
+        run: |
+          node --test tests/native-clean-tail.test.cjs tests/factored-native-clean.test.cjs tests/factored-clean-candidate.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+          node tests/native-clean-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-factored-native-${{ runner.os }}
+          path: |
+            factored-prefix-native.json
+            ios-native-prototype.json
+            factored-new-pair-player.json
+            ios-native-sequential.json
+  native-clean-evaluation:
+    if: github.event_name == 'workflow_dispatch' && (inputs.native_clean_evaluation || inputs.native_clean_player)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser backends
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - name: Provide Linux native media output
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=musicbox_eval rate=48000 channels=2
+          pactl set-default-sink musicbox_eval
+      - name: Fetch only the two current Ste originals with Git identity checks
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json
+      - name: Measure nominal clocks and original waveform at both sample rates
+        if: inputs.native_clean_evaluation
+        run: node tools/ste-native-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/candidate.json native-clean-evaluation.json
+      - name: Exercise actual native element start and same-element adoption in the real app
+        if: inputs.native_clean_player
+        env:
+          MUSICBOX_NATIVE_CLEAN_OUTPUT: native-clean-player.json
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+        run: |
+          node --test tests/native-clean-tail.test.cjs tests/structural-plans.test.cjs tests/dj-shuffle-fallback.test.cjs
+          node tests/native-clean-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-native-clean-evaluation-${{ runner.os }}
+          path: |
+            native-clean-evaluation.json
+            native-clean-player.json
   personal-scope:
     runs-on: ubuntu-latest
     timeout-minutes: 3
@@ -23,4 +200,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/ste-research-scope.test.cjs tests/published-personal-catalog.test.cjs
+      - run: node --test tests/ste-research-scope.test.cjs tests/ste-metrical-diagnosis.test.cjs tests/context-bar-chains.test.cjs tests/published-personal-catalog.test.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'numpy>=1.26,<3'
+      - name: Metrical evidence and cache regression without audio or model downloads
+        run: |
+          python -m py_compile tools/dj-edge-grids.py tools/dj-structure-core.py
+          python tools/test-dj-whole-structure.py
+          python tools/test-dj-edge-cache.py

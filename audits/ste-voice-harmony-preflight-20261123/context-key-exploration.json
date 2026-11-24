@@ -1,0 +1,18 @@
+{
+  "exploratory": true,
+  "newPcmDecodes": 0,
+  "acceptedMethod": false,
+  "newCertifiedPairs": 0,
+  "minimumConfidenceUnchanged": 0.7,
+  "sourceGlobal": 0.3844431074445217,
+  "targetGlobal": 0.39498754026392335,
+  "sourceContexts": [
+    0.2451814322196855,
+    0.620278248232344
+  ],
+  "targetContexts": [
+    1,
+    0.2521373641113182
+  ],
+  "reason": "Independent context confidence is not consistent; cannot override the local key veto."
+}

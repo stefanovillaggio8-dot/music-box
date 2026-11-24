@@ -1,0 +1,64 @@
+--- a/mix-intelligente.js
++++ b/mix-intelligente.js
+@@ -3139,9 +3139,11 @@
+ }
+ function measuredFullBeatBridge(a,b,dur){
+  if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
+- if(!beatBearingIntro(b,.39)||!Number.isFinite(Math.min(
++ // Discovery-only alternative. Model regions are not a silence certificate.
++ if(!Number.isFinite(Math.min(
+    Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+-   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity)))return null;
++   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity))&&
++   !(a.musicalContent?.wholeCoverageVerified&&a.musicalContent.sourceSha===a.sha))return null;
+  let best=null;
+  for(const aa of pcmBeatVariants(a,"outro"))for(const bb of pcmBeatVariants(b,"intro")){
+   const cue=pcmFullBeatWindowSearch(aa,bb,dur);
+@@ -3153,18 +3155,18 @@
+  if(!a||!b||a.durationMismatch||b.durationMismatch||
+     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+     Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
+-    a.last>dur+.2||!beatBearingIntro(b,.39)||
++    a.last>dur+.2||
+     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
+  const nominal=a.bpm/b.bpm;
+  if(nominal<.93||nominal>1.07)return null;
+  const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+     Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+- if(!Number.isFinite(firstVoice))return null;
++ if(!Number.isFinite(firstVoice)&&!(a.musicalContent?.wholeCoverageVerified&&a.musicalContent.sourceSha===a.sha))return null;
+  const baseEntry=0,end=dur-.035;
+  const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
+  if(!outro||!intro)return null;
+  // Missing vocal data never certifies a full-band instrumental intro.
+- if(!Number.isFinite(firstVoice)||baseEntry<intro.start||end>outro.end)return null;
++ if(baseEntry<intro.start||end>outro.end)return null;
+  // The actual overlapping sections determine harmony below. A whole-song
+  // key must not veto a separately verified local modulation.
+  let best=null;
+@@ -3181,8 +3183,15 @@
+    for(const rate of rates){
+    const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
+    if(begin<26||fade<4.5||fade>16||begin<outro.start||
+-      entry+fade*Math.max(1,rate)>intro.end||
+-      (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
++      entry+fade*Math.max(1,rate)>intro.end)continue;
++   const needsOutgoingModel=!(Number.isFinite(firstVoice)&&(firstVoice-entry)/Math.max(1,rate)>=fade+.65);
++   if(needsOutgoingModel){
++    const model=a.musicalContent,regions=model?.vocalRegions;
++    if(!model?.wholeCoverageVerified||model.sourceSha!==a.sha||
++       !Array.isArray(regions)||!regions.length||
++       regions.some(r=>!Array.isArray(r)||r.length!==2||!r.every(Number.isFinite)||r[1]<r[0]||r[1]>begin-.65&&r[0]<end+.3)||
++       Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=begin-.65)continue;
++   }
+    // The complete original finishes at native EOF, including any vocal.
+    // The incoming window must precede the known vocal/lyric boundary.
+    // An LRC boundary is metadata, not an independent vocal-model result.
+@@ -3195,6 +3204,7 @@
+     harmony.compatibleKey?harmony.keyCompatibility:harmony.average)+.20*fit.ratio;
+    const cue={kind:"beat",measuredFullBeat:true,fullBeatSearchVersion:2,
+     sourceTempoBpm:a.bpm,targetTempoBpm:b.bpm,
++    discoveryOnly:true,vocalPolicyHypothesis:needsOutgoingModel?"outgoing-model-regions-not-a-silence-certificate":"incoming-known-boundary",
+     sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
+     measuredBeatPlacement:true,measuredOnsetGrid:true,
+     begin,end,fade,entry,tempo:rate,gain:1,

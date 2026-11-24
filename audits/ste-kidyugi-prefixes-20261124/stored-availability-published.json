@@ -1,0 +1,133 @@
+{
+  "personalSteRecordings": 222,
+  "examined": "stored same-account plans only; no Cartesian scan, simulation or new PCM",
+  "sourceJsSha256": "2da35fff9559e522463e8875ee97a5c61a54fa71d036bb5fdb0931d8642080d1",
+  "indexSha256": "3245ce0f909bdda5d056603705b819e04c0da84a061b9e424c7e35d0a56f45fb",
+  "counts": {
+    "full": 1,
+    "partial": 1,
+    "cleanDesktop": 11
+  },
+  "newCleanIPhone": 0,
+  "pairs": [
+    {
+      "from": "audio/songs/track-4.mp3",
+      "to": "audio/songs/track-38.mp3",
+      "kind": "partial",
+      "begin": 119.62671731448765,
+      "fade": 7.250282685512346,
+      "entry": 0,
+      "tempo": 1.0442804428044306
+    },
+    {
+      "from": "audio/songs/track-6.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "kind": "cleanDesktop",
+      "begin": 138.733,
+      "fade": 1.0999999999999943,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-87.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-1187.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-138.mp3",
+      "kind": "cleanDesktop",
+      "begin": 144.593,
+      "fade": 1.740000000000009,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "full",
+      "begin": 148.52438815789475,
+      "fade": 10.77661184210524,
+      "entry": 0,
+      "tempo": 1.0167224080267576
+    }
+  ],
+  "physicalIPhone": false,
+  "humanListening": false
+}

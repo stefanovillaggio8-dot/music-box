@@ -1,0 +1,352 @@
+{
+  "shadowIndex": false,
+  "published": false,
+  "physicalIPhone": false,
+  "controlledPhraseFixture": true,
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "platform": "darwin",
+      "overlap": {
+        "id": "b-track-38",
+        "sourceEnded": false,
+        "oldVolume": 1,
+        "newVolume": 1,
+        "sourceTime": 158.99349,
+        "targetTime": 0.129398,
+        "lyrics": "Native outgoing phrase",
+        "diagnostics": {
+          "enabled": true,
+          "isIOS": false,
+          "current": "b-track-38",
+          "next": "b-track-4",
+          "playerPaused": false,
+          "playerReadyState": 4,
+          "playerErrorCode": null,
+          "playbackTime": 159,
+          "bufferedAhead": 2.1,
+          "deepIndexLoaded": true,
+          "tempoIndexQuality": {
+            "analyzed": 1176,
+            "distinctBpm": 570,
+            "tempoReliableAtLeast030": 47,
+            "temposRefinedFromTrackedBeats": 1140,
+            "songsWithTrackedIntroOutroBeats": 1175,
+            "limitedResolution": false
+          },
+          "offlineTransferPriority": false,
+          "audioContextState": "running",
+          "remaining": 2.1,
+          "analysisReady": true,
+          "deepIndexed": true,
+          "analysisDuration": 161.089,
+          "lastAudible": 158.3,
+          "lastLyricAt": 145.47,
+          "lastVoiceAt": null,
+          "dropRelease": null,
+          "softOutro": null,
+          "confidentTail": true,
+          "shuffleState": {
+            "outgoing": "b-track-38",
+            "chosen": "",
+            "first": "",
+            "autoCount": 0,
+            "manualCount": 1,
+            "userReordered": false
+          },
+          "plannedCue": {
+            "kind": "postlude",
+            "begin": 158.75,
+            "end": 161.089,
+            "fade": 2.3389999999999986,
+            "entry": 0,
+            "quietCertified": false,
+            "independentLowBand": false,
+            "independentOnsetScore": null,
+            "underlayVolume": null,
+            "measuredBeatBridge": false,
+            "nativeCleanTail": true,
+            "protectedTail": true
+          },
+          "liveTransition": {
+            "device": "pc",
+            "fromId": "b-track-38",
+            "toId": "b-track-4",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 158.99349,
+            "incomingAt": 0.129398,
+            "elapsed": 0.18010000000009313,
+            "fade": 2.2738879999999995,
+            "handingOff": false
+          },
+          "plannedKind": "postlude",
+          "plannedBegin": 158.75,
+          "planWaitingAnalysis": false,
+          "planRetryCount": 1,
+          "planRetryInMs": null,
+          "lastTickFailure": "",
+          "instrumentalBeatBridge": false,
+          "measuredBeatBridge": false,
+          "pulseUnderlay": false,
+          "mobileMixLastBlocker": "",
+          "mobileMixLastStartedAt": 0,
+          "certifiedQuietAlternative": false,
+          "mobileSilentBridge": false,
+          "mobileSilentBridgeReserved": false,
+          "measuredPostludeBridge": false,
+          "measuredFinalImpact": false,
+          "finalImpactAt": null,
+          "shuffleSearch": null,
+          "shuffleBusy": false,
+          "previewReady": false,
+          "previewFailed": false,
+          "prebufferIntroAt": null,
+          "prebufferSeekReady": null,
+          "prebufferSafeForNaturalEOF": null,
+          "prebufferPlaybackTime": null,
+          "earlyHandoffPending": false,
+          "mobileClipReady": false,
+          "mobileClipFailure": null,
+          "mobileClipMetrics": {
+            "ranges": 0,
+            "fullFetches": 0,
+            "successes": 0,
+            "errors": 0,
+            "method": "",
+            "lastError": ""
+          },
+          "previewMatches": false,
+          "liveSampleCount": 18,
+          "liveContext": "running",
+          "liveRms": 0.000012490567413246433,
+          "liveQuietEligible": false
+        }
+      },
+      "adopted": {
+        "sameElement": true,
+        "beforeAdoption": {
+          "oldEnded": true,
+          "sourceAt": 161.088979,
+          "sourceDuration": 161.088979,
+          "incomingAt": 2.270973,
+          "incomingDuration": 126.876708,
+          "incomingPaused": false,
+          "incomingSeeking": false,
+          "observedAt": 17600.799999999814
+        },
+        "targetTime": 2.605888,
+        "observedAt": 17935.5,
+        "rate": 1,
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 158.815112,
+            "sourceDuration": 161.088979
+          },
+          {
+            "event": "target-play",
+            "at": 2.270973,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 161.088979,
+            "sourceDuration": 161.088979
+          }
+        ],
+        "isPlaying": true,
+        "sourceEndedAt": 0
+      },
+      "eofChecks": [],
+      "stall": null,
+      "translation": {
+        "obsoleteRequestGoneByHandoff": true,
+        "oldPhrasesThroughOriginalEof": true,
+        "wordModelRequests": 0,
+        "observedOldPhraseSamples": 67
+      },
+      "logs": [
+        {
+          "failed": "http://127.0.0.1:49191/songs/track-38.mp3",
+          "error": {
+            "errorText": "net::ERR_ABORTED"
+          }
+        },
+        "[Music Box DJ] Cambio continuo: riutilizzo del lettore gia in riproduzione {outgoing: b-track-38, incoming: b-track-4, at: 2.270973}"
+      ]
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "platform": "darwin",
+      "overlap": {
+        "id": "b-track-38",
+        "sourceEnded": false,
+        "oldVolume": 1,
+        "newVolume": 1,
+        "sourceTime": 159.03031008999994,
+        "targetTime": 0.20543299999986792,
+        "lyrics": "Native outgoing phrase",
+        "diagnostics": {
+          "enabled": true,
+          "isIOS": false,
+          "current": "b-track-38",
+          "next": "b-track-4",
+          "playerPaused": false,
+          "playerReadyState": 4,
+          "playerErrorCode": null,
+          "playbackTime": 159,
+          "bufferedAhead": 2.1,
+          "deepIndexLoaded": true,
+          "tempoIndexQuality": {
+            "analyzed": 1176,
+            "distinctBpm": 570,
+            "tempoReliableAtLeast030": 47,
+            "temposRefinedFromTrackedBeats": 1140,
+            "songsWithTrackedIntroOutroBeats": 1175,
+            "limitedResolution": false
+          },
+          "offlineTransferPriority": false,
+          "audioContextState": "running",
+          "remaining": 2.1,
+          "analysisReady": true,
+          "deepIndexed": true,
+          "analysisDuration": 161.089,
+          "lastAudible": 158.3,
+          "lastLyricAt": 145.47,
+          "lastVoiceAt": null,
+          "dropRelease": null,
+          "softOutro": null,
+          "confidentTail": true,
+          "shuffleState": {
+            "outgoing": "b-track-38",
+            "chosen": "",
+            "first": "",
+            "autoCount": 0,
+            "manualCount": 1,
+            "userReordered": false
+          },
+          "plannedCue": {
+            "kind": "postlude",
+            "begin": 158.75,
+            "end": 161.089,
+            "fade": 2.3389999999999986,
+            "entry": 0,
+            "quietCertified": false,
+            "independentLowBand": false,
+            "independentOnsetScore": null,
+            "underlayVolume": null,
+            "measuredBeatBridge": false,
+            "nativeCleanTail": true,
+            "protectedTail": true
+          },
+          "liveTransition": {
+            "device": "pc",
+            "fromId": "b-track-38",
+            "toId": "b-track-4",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 159.031847912,
+            "incomingAt": 0.20697140599987668,
+            "elapsed": 0.248,
+            "fade": 2.3305432373335293,
+            "handingOff": false
+          },
+          "plannedKind": "postlude",
+          "plannedBegin": 158.75,
+          "planWaitingAnalysis": false,
+          "planRetryCount": 1,
+          "planRetryInMs": null,
+          "lastTickFailure": "",
+          "instrumentalBeatBridge": false,
+          "measuredBeatBridge": false,
+          "pulseUnderlay": false,
+          "mobileMixLastBlocker": "",
+          "mobileMixLastStartedAt": 0,
+          "certifiedQuietAlternative": false,
+          "mobileSilentBridge": false,
+          "mobileSilentBridgeReserved": false,
+          "measuredPostludeBridge": false,
+          "measuredFinalImpact": false,
+          "finalImpactAt": null,
+          "shuffleSearch": null,
+          "shuffleBusy": false,
+          "previewReady": false,
+          "previewFailed": false,
+          "prebufferIntroAt": null,
+          "prebufferSeekReady": null,
+          "prebufferSafeForNaturalEOF": null,
+          "prebufferPlaybackTime": null,
+          "earlyHandoffPending": false,
+          "mobileClipReady": false,
+          "mobileClipFailure": null,
+          "mobileClipMetrics": {
+            "ranges": 0,
+            "fullFetches": 0,
+            "successes": 0,
+            "errors": 0,
+            "method": "",
+            "lastError": ""
+          },
+          "previewMatches": false,
+          "liveSampleCount": 0,
+          "liveContext": "unsupported",
+          "liveRms": null,
+          "liveQuietEligible": false
+        }
+      },
+      "adopted": {
+        "sameElement": true,
+        "beforeAdoption": {
+          "oldEnded": true,
+          "sourceAt": 161.136,
+          "sourceDuration": 161.136,
+          "incomingAt": 2.319765728000065,
+          "incomingDuration": 126.87673469387755,
+          "incomingPaused": false,
+          "incomingSeeking": false,
+          "observedAt": 14786
+        },
+        "targetTime": 2.769803155000037,
+        "observedAt": 15236,
+        "rate": 1,
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 158.781762112,
+            "sourceDuration": 161.136
+          },
+          {
+            "event": "target-play",
+            "at": 2.333542228000014,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 161.136,
+            "sourceDuration": 161.136
+          }
+        ],
+        "isPlaying": true,
+        "sourceEndedAt": 0
+      },
+      "eofChecks": [],
+      "stall": null,
+      "translation": {
+        "obsoleteRequestGoneByHandoff": true,
+        "oldPhrasesThroughOriginalEof": true,
+        "wordModelRequests": 0,
+        "observedOldPhraseSamples": 63
+      },
+      "logs": [
+        "[Music Box DJ] Cambio continuo: riutilizzo del lettore gia in riproduzione {outgoing: b-track-38, incoming: b-track-4, at: 2.372879548999962}"
+      ]
+    }
+  ]
+}

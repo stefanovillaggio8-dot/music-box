@@ -1,0 +1,131 @@
+{
+  "codeAndIndexIdentical": true,
+  "applicationSha256": {
+    "app.js": "f91253a3c071f60a0d4dcc193faf4b2c409ac2052e2f8a65033483133a9e5a1f",
+    "mix-intelligente.js": "c2bcece311d6754f72ee3bd5297a2d71323abc2de395a1f716fc541c3fed0987",
+    "dj-deep-analysis.json": "b3c7d0ecbbb9ddc09f53ed238cc60ba2b297a54a77ab4caefc8f990a29bd8a91",
+    "index.html": "59dfc2d4ca6e05286161484a69a9bd7c8357f6f0653238e2a34adecd29aafd69",
+    "sw.js": "cf795b17709f68cc1c1bed8130c03a2c2e2ce376deb9f9e1f5674de438592833",
+    "versione.json": "c456ab261b5c0051951c447151ce432e062bf0a222dbdf2ffaf596bdf7b951a7",
+    "tests/native-clean-browser.cjs": "bac0a111a063d48821e1e2e54c78b8becadd49912c49396957a7542e236238f5"
+  },
+  "retainedAndNewNativeCases": 8,
+  "newPairNativeCases": 4,
+  "rows": [
+    {
+      "platform": "linux",
+      "browser": "chromium",
+      "fixture": "native-clean-release-player.json",
+      "run": 45191714791,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.754988,
+        "sourceDuration": 161.088979
+      }
+    },
+    {
+      "platform": "linux",
+      "browser": "webkit",
+      "fixture": "native-clean-release-player.json",
+      "run": 45191714791,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.777892,
+        "sourceDuration": 161.136
+      }
+    },
+    {
+      "platform": "linux",
+      "browser": "chromium",
+      "fixture": "factored-clean-release-player.json",
+      "run": 45191714791,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.75539,
+        "sourceDuration": 161.088979
+      }
+    },
+    {
+      "platform": "linux",
+      "browser": "webkit",
+      "fixture": "factored-clean-release-player.json",
+      "run": 45191714791,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.784517,
+        "sourceDuration": 161.136
+      }
+    },
+    {
+      "platform": "darwin",
+      "browser": "chromium",
+      "fixture": "native-clean-release-player.json",
+      "run": 45191178406,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.761361,
+        "sourceDuration": 161.088979
+      }
+    },
+    {
+      "platform": "darwin",
+      "browser": "webkit",
+      "fixture": "native-clean-release-player.json",
+      "run": 45191178406,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.78581824966668,
+        "sourceDuration": 161.136
+      }
+    },
+    {
+      "platform": "darwin",
+      "browser": "chromium",
+      "fixture": "factored-clean-release-player.json",
+      "run": 45191178406,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.76338,
+        "sourceDuration": 161.088979
+      }
+    },
+    {
+      "platform": "darwin",
+      "browser": "webkit",
+      "fixture": "factored-clean-release-player.json",
+      "run": 45191178406,
+      "start": {
+        "event": "target-play",
+        "at": 0,
+        "volume": 1,
+        "rate": 1,
+        "sourceAt": 158.78584037533332,
+        "sourceDuration": 161.136
+      }
+    }
+  ],
+  "physicalIPhone": false,
+  "humanListening": false,
+  "queuedMacIsRedundant": true
+}

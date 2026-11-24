@@ -1,0 +1,246 @@
+{
+  "cachedOnly": true,
+  "newPcm": 0,
+  "newModels": 0,
+  "pairSearch": false,
+  "rows": [
+    {
+      "key": "audio/songs/track-138.mp3",
+      "file": "..\\whole-structure-ci\\whole-structure-0\\structure-0.json",
+      "duration": 178.167,
+      "introBars": [],
+      "endingBars": [
+        {
+          "start": 160.06,
+          "end": 162.64,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 162.64,
+          "end": 165.22,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 165.22,
+          "end": 167.78,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 167.78,
+          "end": 170.4,
+          "bpm": 90.90909090909138,
+          "phase": 1.0
+        },
+        {
+          "start": 170.4,
+          "end": 172.96,
+          "bpm": 92.3076923076915,
+          "phase": 1.0
+        },
+        {
+          "start": 172.96,
+          "end": 175.52,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        }
+      ]
+    },
+    {
+      "key": "audio/songs/track-87.mp3",
+      "file": "..\\whole-structure-ci\\whole-structure-1\\structure-1.json",
+      "duration": 211.673,
+      "introBars": [
+        {
+          "start": 1.26,
+          "end": 3.7,
+          "bpm": 98.36065573770492,
+          "phase": 0.9999999681552864
+        },
+        {
+          "start": 3.7,
+          "end": 6.18,
+          "bpm": 96.77419354838707,
+          "phase": 0.9999999999988236
+        },
+        {
+          "start": 6.18,
+          "end": 8.68,
+          "bpm": 95.23809523809526,
+          "phase": 0.9999999999999998
+        },
+        {
+          "start": 8.68,
+          "end": 11.18,
+          "bpm": 96.77419354838707,
+          "phase": 1.0
+        },
+        {
+          "start": 11.18,
+          "end": 13.7,
+          "bpm": 96.77419354838707,
+          "phase": 1.0
+        }
+      ],
+      "endingBars": [
+        {
+          "start": 195.52,
+          "end": 197.98,
+          "bpm": 96.77419354839083,
+          "phase": 1.0
+        },
+        {
+          "start": 197.98,
+          "end": 200.46,
+          "bpm": 96.77419354838639,
+          "phase": 1.0
+        },
+        {
+          "start": 200.46,
+          "end": 202.94,
+          "bpm": 96.77419354838639,
+          "phase": 1.0
+        },
+        {
+          "start": 202.94,
+          "end": 205.42,
+          "bpm": 96.77419354838639,
+          "phase": 1.0
+        },
+        {
+          "start": 205.42,
+          "end": 207.88,
+          "bpm": 98.36065573770502,
+          "phase": 1.0
+        }
+      ]
+    },
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "file": "..\\whole-structure-ci\\whole-structure-15\\structure-15.json",
+      "duration": 168.853,
+      "introBars": [],
+      "endingBars": [
+        {
+          "start": 150.68,
+          "end": 153.24,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 153.24,
+          "end": 155.78,
+          "bpm": 93.750000000002,
+          "phase": 1.0
+        },
+        {
+          "start": 155.78,
+          "end": 158.34,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 158.34,
+          "end": 160.9,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 160.9,
+          "end": 163.46,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 163.46,
+          "end": 166.0,
+          "bpm": 93.750000000002,
+          "phase": 1.0
+        },
+        {
+          "start": 166.0,
+          "end": 168.56,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        }
+      ]
+    },
+    {
+      "key": "audio/songs/track-33.mp3",
+      "file": "..\\whole-structure-ci\\whole-structure-7\\structure-7.json",
+      "duration": 164.363,
+      "introBars": [
+        {
+          "start": 0.2,
+          "end": 2.72,
+          "bpm": 95.23809523809524,
+          "phase": 1.0
+        },
+        {
+          "start": 2.72,
+          "end": 5.26,
+          "bpm": 93.75000000000004,
+          "phase": 1.0
+        },
+        {
+          "start": 5.26,
+          "end": 7.78,
+          "bpm": 95.23809523809526,
+          "phase": 1.0
+        },
+        {
+          "start": 7.78,
+          "end": 10.32,
+          "bpm": 93.75000000000011,
+          "phase": 1.0
+        },
+        {
+          "start": 10.32,
+          "end": 12.86,
+          "bpm": 93.75000000000017,
+          "phase": 1.0
+        }
+      ],
+      "endingBars": [
+        {
+          "start": 146.9,
+          "end": 149.42,
+          "bpm": 95.23809523809592,
+          "phase": 1.0
+        },
+        {
+          "start": 149.42,
+          "end": 151.94,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 151.94,
+          "end": 154.48,
+          "bpm": 93.750000000002,
+          "phase": 1.0
+        },
+        {
+          "start": 154.48,
+          "end": 157.02,
+          "bpm": 93.74999999999991,
+          "phase": 1.0
+        },
+        {
+          "start": 157.02,
+          "end": 159.54,
+          "bpm": 95.23809523809592,
+          "phase": 1.0
+        },
+        {
+          "start": 159.54,
+          "end": 162.06,
+          "bpm": 95.23809523809378,
+          "phase": 1.0
+        }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,33 @@ def bars():
         downbeatProbabilityMin=.9) for i in range(64)]
 
 class EvidenceTests(unittest.TestCase):
+    def test_bar_trace_does_not_change_candidates_or_invent_missing_attacks(self):
+        beats=np.arange(.5,40,.5);bp=np.ones(2100)*.99;dp=np.ones(2100)*.01;onset=np.zeros(2100)
+        for i,t in enumerate(beats):
+            if i%4==0:dp[round(t/.02)]=.99
+            onset[round(t/.02)]=1
+        expected=core.measured_bars(beats,beats[::4],bp,dp,onset,sparse_candidates=True)
+        trace=[]
+        self.assertEqual(core.measured_bars(beats,beats[::4],bp,dp,onset,sparse_candidates=True,diagnostics=trace),expected)
+        self.assertEqual(sum(r['gate']=='acceptedCandidateBar' for r in trace),len(expected))
+        self.assertEqual(len(trace),len(beats))
+        for t in beats[::4]:onset[round(t/.02)]=0
+        trace=[]
+        self.assertEqual(core.measured_bars(beats,beats[::4],bp,dp,onset,sparse_candidates=True,diagnostics=trace),[])
+        self.assertTrue(any(r['gate']=='missingObservedDownbeat' for r in trace))
+        self.assertFalse(any(r['gate']=='acceptedCandidateBar' for r in trace))
+
+    def test_bar_trace_distinguishes_irregular_grid_from_missing_pcm(self):
+        beats=np.arange(.5,40,.5);bp=np.ones(2100)*.99;dp=np.ones(2100)*.01;onset=np.zeros(2100)
+        for i,t in enumerate(beats):
+            if i%4==0:dp[round(t/.02)]=.99
+            onset[round(t/.02)]=1
+        beats[2]+=.12
+        trace=[];core.measured_bars(beats,beats[::4],bp,dp,onset,sparse_candidates=True,diagnostics=trace)
+        first=next(r for r in trace if r['start']==.5)
+        self.assertEqual(first['gate'],'irregularBeatGrid')
+        self.assertGreater(max(first['gaps'])-min(first['gaps']),.2)
+
     def test_no_voice_evidence_is_not_silence(self):
         self.assertIsNone(core.vocal_guard([],[],2,4))
         self.assertIsNone(core.vocal_guard([float('nan')]*100,[.1]*100,2,4))

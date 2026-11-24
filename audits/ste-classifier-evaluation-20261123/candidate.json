@@ -1,0 +1,47 @@
+{
+  "evaluationOnly": true,
+  "path": "f311d8aef215aa8f05efdf03c41696eb826faf3be99f7f7186c335e103e1a8e1.flac",
+  "sha256": "f311d8aef215aa8f05efdf03c41696eb826faf3be99f7f7186c335e103e1a8e1",
+  "from": "audio/songs/track-38.mp3",
+  "to": "audio/songs/track-4.mp3",
+  "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+  "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+  "sampleRate": 48000,
+  "begin": 158.75,
+  "end": 161.089,
+  "fade": 2.3389999999999986,
+  "entry": 0,
+  "tempo": 1,
+  "preRoll": 0.3,
+  "releaseSeconds": 0.9,
+  "seconds": 4.438979166666667,
+  "nativeHandoffAt": 2.338979166666667,
+  "nativeRevealAt": 3.3889791666666667,
+  "handoffPosition": 2.3389999999999986,
+  "peak": 0.962621808052063,
+  "overlapPeak": 0.3761146366596222,
+  "oversampledPeak": 0.9810177683830261,
+  "sourceTailRmsMax": 3.636075377920722e-05,
+  "sourceTailPeak": 0.00013762815797235817,
+  "sourceReadThrough": 161.08897916666666,
+  "nativeClocks": {
+    "source": {
+      "method": "original-mp3-gapless-metadata-v1",
+      "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+      "sampleRate": 48000,
+      "rawFrames": 7734528,
+      "decodedFrames": 7732271,
+      "primingFrames": 1105,
+      "paddingFrames": 1152
+    },
+    "target": {
+      "method": "original-mp3-gapless-metadata-v1",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sampleRate": 44100,
+      "rawFrames": 5595264,
+      "decodedFrames": 5595264,
+      "primingFrames": 0,
+      "paddingFrames": 0
+    }
+  }
+}

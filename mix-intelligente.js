@@ -2915,6 +2915,28 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   [e.sourceObservedDownbeats,e.targetObservedDownbeats,e.sourceModelDownbeats,e.targetModelDownbeats].every(v=>v.every((n,i)=>Number.isFinite(n)&&(!i||n>v[i-1])))&&
   e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
   e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
+ const cadence=p?.metricalCadenceWindow===true,cadenceWindow=e?.cadenceWindow;
+ const cadenceTailValid=(t,rate,channels=true)=>t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&t.sampleRate===rate&&
+  t.sourceGainApplied===false&&t.searchedEntireTail===true&&t.onsetThreshold===.25&&t.relativeRmsCeiling===.5&&
+  [t.rhythmicSeconds,t.sourceTailThrough,t.tailSeconds,t.maximumTailOnset,t.maximumRelativeRms,t.bodyRmsMedian,t.maximumTailRms].every(Number.isFinite)&&
+  Math.abs(t.rhythmicSeconds-cadenceWindow.rhythmicSeconds)<.001&&Math.abs(t.tailSeconds-cadenceWindow.tailSeconds)<.001&&
+  Math.abs(t.sourceTailThrough-p.fade)<.001&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&
+  t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&t.bodyRmsMedian>=.003&&t.maximumTailRms>=0&&
+  (!channels||Array.isArray(t.channelProofs)&&t.channelProofs.length===2&&t.channelProofs.every(v=>cadenceTailValid(v,rate,false)));
+ const cadenceValid=cadence&&pickup&&originalReturn&&p.nativeRecoveryCurve==='sine-1.2-v1'&&c?.nativeRecoveryCurve===p.nativeRecoveryCurve&&
+  e.bars===4&&cadenceWindow?.method==='four-observed-bars-and-preserved-decay-v1'&&
+  [cadenceWindow.sourceStart,cadenceWindow.sourceEnd,cadenceWindow.targetStart,cadenceWindow.targetEnd,cadenceWindow.rhythmicSeconds,cadenceWindow.tailSeconds].every(Number.isFinite)&&
+  cadenceWindow.rhythmicSeconds>=4.5&&cadenceWindow.tailSeconds>=.65&&cadenceWindow.tailSeconds<=4&&
+  Math.abs(cadenceWindow.rhythmicSeconds+cadenceWindow.tailSeconds-p.fade)<.001&&
+  cadenceWindow.sourceStart>=p.begin&&cadenceWindow.sourceEnd<=p.end&&cadenceWindow.targetStart>=0&&cadenceWindow.targetStart<=8&&
+  cadenceWindow.sourceEnd>cadenceWindow.sourceStart&&cadenceWindow.targetEnd>cadenceWindow.targetStart&&
+  Math.abs(cadenceWindow.sourceStart-e.sourceModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.sourceEnd-e.sourceModelDownbeats?.[4])<.001&&
+  Math.abs(cadenceWindow.targetStart-e.targetModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.targetEnd-e.targetModelDownbeats?.[4])<.001&&
+  c.cadenceTailProof?.sourceSha===a.sha&&cadenceTailValid(c.cadenceTailProof.at48000,48000)&&cadenceTailValid(c.cadenceTailProof.at44100,44100)&&
+  [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.sourceClockProof;
+   return v?.method==='actual-native-source-clock-v1'&&v.sourceSha===a.sha&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')&&
+    [v.decodedOffsets,v.mediaOffsets].every(values=>Array.isArray(values)&&values.length>0&&values.every(n=>Number.isFinite(n)&&[0,c.nativeSplice.sourceClock.primingFrames/c.nativeSplice.sourceClock.sampleRate].some(e=>Math.abs(n-e)<1e-9)));});
+ if(cadence&&!cadenceValid||!cadence&&(p?.nativeRecoveryCurve!=null||c?.nativeRecoveryCurve!=null))return null;
  const pickupValid=pickup&&p.nativeOriginalReturn===true&&originalReturn&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
   pickupCertificate.originalModelAnchorsRetained===true&&
   [pickupCertificate.gridRms,pickupCertificate.gridMaximum,pickupCertificate.observedSharedRms,pickupCertificate.observedShared,
@@ -2925,7 +2947,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   pickupCertificate.minimumSharedPerBar>=2&&pickupCertificate.observedDownbeats===e.bars&&pickupCertificate.modelGridPoints===e.bars*e.beatsPerBar&&
   pickupCertificate.maximumModelAnchorRefinement>=0&&pickupCertificate.maximumModelAnchorRefinement<=.075&&
   pickupCertificate.observedBarPairRms>=0&&pickupCertificate.observedBarPairRms<=.025&&pickupCertificate.observedBarPairMaximum>=0&&pickupCertificate.observedBarPairMaximum<=.05&&
-  p.preservedEntrance==='metrical-pickup-033-v1'&&c?.renderedEntrance===p.preservedEntrance&&c.releaseSeconds===1.5&&
+  p.preservedEntrance==='metrical-pickup-033-v1'&&c?.renderedEntrance===p.preservedEntrance&&c.releaseSeconds===(cadenceValid?1.2:1.5)&&
   c.envelopeVersion===4&&c.sampleRate===48000&&c.nativeDecoderProof?.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
   [44100,48000].every(rate=>{const v=c.nativeDecoderProof.rates?.[rate];return v&&[v.samplePeak,v.overlapPeak].every(Number.isFinite)&&v.samplePeak>0&&v.samplePeak<=.9992&&v.overlapPeak>=0&&v.overlapPeak<=.962&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')})&&
   pickupRendered(r)&&resampled?.method==='encoded-common-resampling-v1'&&resampled.sampleRate===44100&&resampled.assetSha256===c.sha256&&
@@ -3011,7 +3033,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
     !pickup&&![p.fullOnsetFirst,p.fullOnsetSecond].every(Number.isFinite)||
     p.measuredPulseMode&&![p.fullPulseFirst,p.fullPulseSecond,p.fullPulseAttackSupport].every(Number.isFinite)||
-    p.begin<26||p.fade<4.5||p.fade>16||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
+    p.begin<26||p.fade<4.5||p.fade>(cadenceValid?18:16)||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     p.tempo<.95||p.tempo>1.05||p.entry+p.fade*p.tempo>b.duration-2||
     !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.beatPulseAgreement<0||!pickup&&p.beatPulseAgreement<.9||p.beatPulseAgreement>1||p.measuredPlacementError<0||p.measuredPlacementError>(pickup?.020:.040)||p.grooveScore<.36||
     (!pickup&&(p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.9):
@@ -8941,6 +8963,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    measuredBeatBridge:!!cue.measuredBeatBridge,
    measuredFullBeat:!!cue.measuredFullBeat,structuralBeat:!!cue.structuralBeat,metricalRhythmic:!!cue.metricalRhythmic,nativeCleanTail:cue.nativeCleanTail===true,
    nativeOriginalReturn:cue.nativeOriginalReturn===true,metricalPickupWindow:cue.metricalPickupWindow===true,
+   metricalCadenceWindow:cue.metricalCadenceWindow===true,nativeRecoveryCurve:cue.nativeRecoveryCurve,
    instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
    independentLowBand:!!cue.independentLowBand,

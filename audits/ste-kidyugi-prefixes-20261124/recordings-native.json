@@ -1,0 +1,3511 @@
+{
+  "version": 1,
+  "evaluationOnly": true,
+  "notPlaybackCertified": true,
+  "recordings": {
+    "42cb3593ee9e81e557b34aa9cb3f331d40976a7a": {
+      "key": "audio/songs/track-27.mp3",
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "duration": 146.333,
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "sampleRate": 48000,
+        "rawFrames": 7026048,
+        "decodedFrames": 7024000,
+        "primingFrames": 1105,
+        "paddingFrames": 943
+      },
+      "quietSuffix": {
+        "method": "native-original-quiet-suffix-factored-v1",
+        "from": 144.293,
+        "begin": 144.593,
+        "through": 146.333,
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "native": [
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.00020913156913593411,
+            "sourceTailRmsMax": 0.00006036365907083142,
+            "maximumChannelRms": 0.00007422058771065386,
+            "channelRmsUpperBound": 0.00008536710533243551,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33331065759637,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33331065759637,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.00022668883320875466,
+            "sourceTailRmsMax": 0.000060782089326462536,
+            "maximumChannelRms": 0.00007448307981671094,
+            "channelRmsUpperBound": 0.00008595885507485626,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.0002181071904487908,
+            "sourceTailRmsMax": 0.00006153710209713061,
+            "maximumChannelRms": 0.00007503409981065547,
+            "channelRmsUpperBound": 0.00008702660437489994,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.37598639455783,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.3529655612245,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.000213623046875,
+            "sourceTailRmsMax": 0.00006162832039414791,
+            "maximumChannelRms": 0.00007512790994858407,
+            "channelRmsUpperBound": 0.00008715560652767838,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.376,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.35297916666667,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.00020913156913593411,
+            "sourceTailRmsMax": 0.00006036365907083142,
+            "maximumChannelRms": 0.00007422058771065386,
+            "channelRmsUpperBound": 0.00008536710533243551,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33331065759637,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33331065759637,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.00022668883320875466,
+            "sourceTailRmsMax": 0.000060782089326462536,
+            "maximumChannelRms": 0.00007448307981671094,
+            "channelRmsUpperBound": 0.00008595885507485626,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.0002090830384986475,
+            "sourceTailRmsMax": 0.000060348243477386004,
+            "maximumChannelRms": 0.00007421157360926978,
+            "channelRmsUpperBound": 0.00008534530439111296,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.0002266888041049242,
+            "sourceTailRmsMax": 0.000060782086575058485,
+            "maximumChannelRms": 0.00007448307396814836,
+            "channelRmsUpperBound": 0.00008595885118378335,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ]
+      }
+    },
+    "87ac95c6c1e141a822414e3a16aacd7d9020824f": {
+      "key": "audio/songs/track-33.mp3",
+      "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "duration": 164.363,
+      "sourceSha256": "effa07b9ea68d0c870b5dd90fce4aac35da225cb453ba5e17bf36ee2126a2803",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "sampleRate": 48000,
+        "rawFrames": 7891200,
+        "decodedFrames": 7889398,
+        "primingFrames": 1105,
+        "paddingFrames": 697
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "dceef6d34dc52f42bb4babd24ef141f86d9edf32fd1b5ce812ee006905cfe451",
+            "maximumPeak": 0.45755982398986816,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.05542816253872737
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.11824793072076713
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.1250486682411578
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.12415820643751076
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.11927937053416941
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.10925999873415092
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "ae27743e3f50844ea83ae1e021d30388fe6cb24489c81bdefc3f82a17b69ee62",
+            "maximumPeak": 0.4576285779476166,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.05542911584194483
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.11824807847251331
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.1250491278176864
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.12415874021597878
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.11928034921095446
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.1092601798445745
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 164.36244897959185,
+            "targetMediaDuration": 164.362458,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.055426532085801304
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.1182441472732308
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.12504493245174267
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.12415425286462016
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11927623285322977
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10925721915263983
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10469396941151131
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.13057327107037608
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.13103733872583254
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11767003627250579
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10523273531188408
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.0729108503631364
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11597455350917743
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.09058748997672186
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 164.36245833333334,
+            "targetMediaDuration": 164.362458,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.055429112425070606
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11824807804626361
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.12504912788846112
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.12415874217130413
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11928034947448028
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.1092601788701779
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.1046970827429038
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.13057773959930688
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.13104223989738625
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11767384045430217
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.10523520244680658
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.07291308214526598
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11597835271312504
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.09059030411881566
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 164.4,
+            "targetMediaDuration": 164.4,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3180614113807678,
+                "rms": 0.03532277689583719
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.12279243812066382
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.1221031451375515
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.12505530280035965
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.11757234050827144
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.10882714985311358
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.10772236873430599
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.1279780416962553
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.1314974311742105
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.1191441923330375
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.10746321247000133
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.07547041523416331
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.11269044595242007
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45794641971588135,
+                "rms": 0.09330924766079049
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 164.4,
+            "targetMediaDuration": 164.4,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.31805419921875,
+                "rms": 0.035324261844982156
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.1227918793945819
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.12210279277605582
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.12505501982525227
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.11757273544363807
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.10882603879254807
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.1077221266810758
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.1279781782051096
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.13149727137691897
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.11914602146945605
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.10746056088732343
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.07546944096918322
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.11269001515214848
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.4576416015625,
+                "rms": 0.09330955630708528
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 164.36244897959185,
+            "targetMediaDuration": 164.362458,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.055426532085801304
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.1182441472732308
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.12504493245174267
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.12415425286462016
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11927623285322977
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10925721915263983
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10469396941151131
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.13057327107037608
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.13103733872583254
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11767003627250579
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.10523273531188408
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.0729108503631364
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.11597455350917743
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45755666494369507,
+                "rms": 0.09058748997672186
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 164.36245833333334,
+            "targetMediaDuration": 164.362458,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.055429112425070606
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11824807804626361
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.12504912788846112
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.12415874217130413
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11928034947448028
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.1092601788701779
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.1046970827429038
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.13057773959930688
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.13104223989738625
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11767384045430217
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.10523520244680658
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.07291308214526598
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.11597835271312504
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45762842893600464,
+                "rms": 0.09059030411881566
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 164.36244897959185,
+            "targetMediaDuration": 164.4,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.05542893341387298
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.11824983194843477
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.1250504736523949
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.12416018612343772
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.11928074357281364
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.10926117981803472
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.10469914652406959
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.13057924917405836
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.1310437528215969
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.11767514814678127
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.10523598849160631
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.07291390637414286
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.11597952680851374
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45756375789642334,
+                "rms": 0.09059105784493247
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 164.36245833333334,
+            "targetMediaDuration": 164.4,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.055429110826830205
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.11824807328731152
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.12504912557012898
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.12415873693919012
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.11928034580980437
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.10926017617410243
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.1046970790012653
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.13057773514938636
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.13104223404225318
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.11767383520207536
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.10523519834036149
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.07291307971360629
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.11597834899039836
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.45762839913368225,
+                "rms": 0.09059030106758291
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ],
+        "notNativeCertified": true
+      }
+    },
+    "9c738da06344a9a141398d53fa95591573f7630d": {
+      "key": "audio/songs/track-87.mp3",
+      "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "duration": 211.673,
+      "sourceSha256": "e2e0a4e4b0f002e3d7fab96ee15801b1dedc7b6eb18aef610b82e2cdd6b1c179",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+        "sampleRate": 48000,
+        "rawFrames": 10161792,
+        "decodedFrames": 10160310,
+        "primingFrames": 1105,
+        "paddingFrames": 377
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "be9deb61bdf45dd6de4ee2b007bf54dfa03b3ae15f4624b4e65125536ee82b02",
+            "maximumPeak": 0.6584542989730835,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.10291310074007617
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.12156438801567714
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08990466848796518
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.09253763448629305
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.0664318198105645
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.10015274046002
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "daba87b180365d122921186133ee3fa7e58673fe8223af3fb6b7eee53fae490b",
+            "maximumPeak": 0.658764123916626,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.10291375997306433
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.12156376709564212
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08990396181134086
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.09253758062685118
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.06643168473586572
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.1001528920274572
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 211.67310657596371,
+            "targetMediaDuration": 211.673125,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.4926254451274872,
+                "rms": 0.10291156725500256
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.12156308723245551
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.08990484829029141
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.09253652193824365
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.06643090465126864
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10015132323490604
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.06319113153946618
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10140199618158595
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.11493155194834305
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.09941267552215015
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10664816818607335
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.07333349352428196
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10072504782196556
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6880568265914917,
+                "rms": 0.1223982589253885
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 211.673125,
+            "targetMediaDuration": 211.673125,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.4947665333747864,
+                "rms": 0.10291375888108856
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.1215637483912533
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.08990394656190882
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.09253757710140664
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.06643168310449793
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.10015289016754927
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.06319250650616504
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.101403231745181
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.11493206905861748
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.09941102085799666
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.1066492665136645
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.07333413942960884
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.10072695962007162
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6859263777732849,
+                "rms": 0.1223970353575973
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 211.7039909297052,
+            "targetMediaDuration": 211.704,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.49643057584762573,
+                "rms": 0.09266160326767217
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5282304286956787,
+                "rms": 0.11992569557905164
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5632340908050537,
+                "rms": 0.09819771191874256
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5632340908050537,
+                "rms": 0.08930718608570556
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5632340908050537,
+                "rms": 0.07578945920649971
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.0958875400057133
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.06822647884908886
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.08898030880243545
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.1213296422980947
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.08477113185393383
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.11272383380701899
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.08791466650891393
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6569125652313232,
+                "rms": 0.09838198952456233
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6838083267211914,
+                "rms": 0.12035347583963851
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 211.704,
+            "targetMediaDuration": 211.704,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.494781494140625,
+                "rms": 0.09266136494574441
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5306396484375,
+                "rms": 0.11993085878908806
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.563232421875,
+                "rms": 0.09819084140560373
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.563232421875,
+                "rms": 0.08931694521495642
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.563232421875,
+                "rms": 0.07577622855478153
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.09588700314337342
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.06822621229545188
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.08898026650185765
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.12133512052096208
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.08476190853161561
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.11272584173936484
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.08791155075667752
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.65875244140625,
+                "rms": 0.09838119128342818
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6859130859375,
+                "rms": 0.1203529538841998
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 211.67310657596371,
+            "targetMediaDuration": 211.673125,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.4926254451274872,
+                "rms": 0.10291156725500256
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.12156308723245551
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.08990484829029141
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.09253652193824365
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5677322149276733,
+                "rms": 0.06643090465126864
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10015132323490604
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.06319113153946618
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10140199618158595
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.11493155194834305
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.09941267552215015
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10664816818607335
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.07333349352428196
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6584465503692627,
+                "rms": 0.10072504782196556
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6880568265914917,
+                "rms": 0.1223982589253885
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 211.673125,
+            "targetMediaDuration": 211.673125,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.4947665333747864,
+                "rms": 0.10291375888108856
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.1215637483912533
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.08990394656190882
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.09253757710140664
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5632418394088745,
+                "rms": 0.06643168310449793
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.10015289016754927
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.06319250650616504
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.101403231745181
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.11493206905861748
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.09941102085799666
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.1066492665136645
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.07333413942960884
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6587641835212708,
+                "rms": 0.10072695962007162
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6859263777732849,
+                "rms": 0.1223970353575973
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 211.6731292517007,
+            "targetMediaDuration": 211.704,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.49263107776641846,
+                "rms": 0.1029136063565884
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.567732036113739,
+                "rms": 0.12156436836817594
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.567732036113739,
+                "rms": 0.08990374867621076
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.567732036113739,
+                "rms": 0.09253772516077649
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.567732036113739,
+                "rms": 0.06643208967867661
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.10015308725890983
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.06319313884275456
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.10140355810135926
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.1149319719292252
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.09941037434659587
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.10664948367118632
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.07333420668590349
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6584531664848328,
+                "rms": 0.10072620672927729
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6880542635917664,
+                "rms": 0.12239752736851596
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 211.673125,
+            "targetMediaDuration": 211.704,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.49476638436317444,
+                "rms": 0.1029137573502962
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5632418990135193,
+                "rms": 0.121563748064996
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5632418990135193,
+                "rms": 0.0899039465871973
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5632418990135193,
+                "rms": 0.09253757768143785
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5632418990135193,
+                "rms": 0.06643168239649379
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.10015288677596297
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.0631925067466368
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.10140323016395995
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.11493206963228396
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.09941102280271721
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.10664926425136348
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.07333413808389705
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.6587640643119812,
+                "rms": 0.10072696024399126
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.6859264373779297,
+                "rms": 0.12239703416965209
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ],
+        "notNativeCertified": true
+      }
+    },
+    "91880f7106a62122af82cff60cc00541b500369f": {
+      "key": "audio/songs/track-1187.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "duration": 168.853,
+      "sourceSha256": "a7accfcc6a67a3c9af34f2f2f08fb62dede0b6d119b19a770e2cd47937294178",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+        "sampleRate": 48000,
+        "rawFrames": 8106624,
+        "decodedFrames": 8104960,
+        "primingFrames": 1105,
+        "paddingFrames": 559
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "b19208e037d3dda36dccd445825d9d4e7c71ad01d8d6ed170e3e262516ccd117",
+            "maximumPeak": 0.34668248891830444,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.07618753507286653
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.06888741526452478
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.07458664711517339
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.051244393044412716
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.06393941725800341
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.04104670863062386
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "9625b5ed8db141b35891bcde2ea4b2f077b17861701e5058a2bc5509f97bf595",
+            "maximumPeak": 0.346831738948822,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.07618769208185279
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.06888739430887435
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.07458689096780173
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.05124431413266051
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.06393947241612637
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.0410467797230708
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 168.85331065759638,
+            "targetMediaDuration": 168.853333,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.0761858161758013
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.06888589165283888
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.07458479095478474
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.051243092549041955
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.06393787182065558
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.04104601077501585
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.04482587964655532
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.052557344633215486
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.029511597001483487
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.05995719341750567
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.03983615177470233
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.044902548639511014
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.048234671755871386
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.03144630675424095
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 168.85333333333332,
+            "targetMediaDuration": 168.853333,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.07618768570714139
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.06888738928335242
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0745868873975114
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.051244312730321886
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.06393947079692935
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.041046773136412515
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.044826355715128656
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.052558563857327364
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.02951209353955784
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.05995891127846941
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0398367191892345
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.04490312105922664
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0482355332788332
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.03144701831348661
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 168.88798185941044,
+            "targetMediaDuration": 168.888,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.07147627712833328
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.07149609354738365
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.07442459571185053
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.05282367817478962
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.06355144914764638
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.04201370638304686
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.045224155084931134
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.052568020782514095
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.03114083328467373
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.05793535155276966
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.04149828091938918
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.044742416679696265
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.04912508321120937
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3468279242515564,
+                "rms": 0.03156204082093889
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 168.888,
+            "targetMediaDuration": 168.888,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.07147656464837313
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.0714960494902772
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.07442406184439623
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.052822826510802244
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.06355130692478601
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.042013773568076285
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.04522347861334484
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.0525676270405626
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.03114066527513848
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.05793523234275657
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.04149830173443586
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.04474181481935004
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.049124730406409224
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.346832275390625,
+                "rms": 0.03156220747458835
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 168.85331065759638,
+            "targetMediaDuration": 168.853333,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.0761858161758013
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.06888589165283888
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.07458479095478474
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.051243092549041955
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.06393787182065558
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.04104601077501585
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.04482587964655532
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.052557344633215486
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.029511597001483487
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.05995719341750567
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.03983615177470233
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.044902548639511014
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.048234671755871386
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3466801643371582,
+                "rms": 0.03144630675424095
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 168.85333333333332,
+            "targetMediaDuration": 168.853333,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.07618768570714139
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.06888738928335242
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0745868873975114
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.051244312730321886
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.06393947079692935
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.041046773136412515
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.044826355715128656
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.052558563857327364
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.02951209353955784
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.05995891127846941
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0398367191892345
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.04490312105922664
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.0482355332788332
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3468317985534668,
+                "rms": 0.03144701831348661
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 168.85333333333332,
+            "targetMediaDuration": 168.888,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.07618815130501401
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.06888795061439702
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.07458737482214024
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.05124492584259876
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.06393999743458663
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.04104681368067778
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.04482661781719597
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.05255876001694673
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.029512519363054195
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.05995935260850472
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.03983702318403209
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.04490326629215812
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.04823577307604694
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.34668469429016113,
+                "rms": 0.03144728020967576
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 168.85333333333332,
+            "targetMediaDuration": 168.888,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.07618768274327246
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.06888738573468786
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.07458688331978117
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.051244310592839334
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.06393946796651491
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.041046772377032345
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.04482635508513279
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.05255856153021138
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.029512093886330096
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.059958909627083105
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.039836718704748794
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.04490312034238368
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.04823553196822787
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.3468318581581116,
+                "rms": 0.031447017975027365
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ],
+        "notNativeCertified": true
+      }
+    },
+    "59372e79e4c57c7c8ed70151b6a3e250a8c0be63": {
+      "key": "audio/songs/track-138.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "duration": 178.167,
+      "sourceSha256": "0b8f18300deb94c7034149e3742014e7318edd466fb8ddde84ba8ce67bc7291c",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+        "sampleRate": 48000,
+        "rawFrames": 8553600,
+        "decodedFrames": 8552003,
+        "primingFrames": 1105,
+        "paddingFrames": 492
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "d54c02ceb94c1cfe03f9358510f696690d1c766d47bd24fc2f3ec31975441fe5",
+            "maximumPeak": 0.5174490213394165,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.12534896140699986
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.10295556490890216
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08275784564838723
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.06709400348632184
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.057351627376677795
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.05899881478357163
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "193c61a296d08cdcef827b9702cdc9b860339a6032edab6423c5393b783c63e7",
+            "maximumPeak": 0.5174506902694702,
+            "windows": [
+              {
+                "at": 0,
+                "seconds": 0.25,
+                "rms": 0.12534955573142686
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.10295596302842493
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08275784249397322
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.06709436810773452
+              },
+              {
+                "at": 1,
+                "seconds": 0.25,
+                "rms": 0.05735143023993217
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.05899882468802988
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 178.1667120181406,
+            "targetMediaDuration": 178.166729,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.1253450328023732
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.10295242627783856
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.08275547777108264
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.06709213993239367
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0573501306482711
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.05899751677877549
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.04484542485789224
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.041377632496398364
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.03665609598194996
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.029478247650068467
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.10816039269029402
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.11882160087185707
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0931424525737071
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0763163133501405
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 178.16672916666667,
+            "targetMediaDuration": 178.166729,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.12534956063949307
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.10295596032509334
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.0827578390620456
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.06709436747104404
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.057351427533412755
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.05899882134520732
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.04484670724920276
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.04137846861797137
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.03665699273749674
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.02947893584421536
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.10816370436385153
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.11882502450171771
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.09314504217533655
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.07631842742257029
+              }
+            ],
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 178.2,
+            "targetMediaDuration": 178.2,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.12079325670894343
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.1046976681668963
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.08407511727792377
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.06872110506669182
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.05737321218817854
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.059722666133281685
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.045225686701786276
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.042850066653562904
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.03630385957015582
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.03004365959078471
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.10030034745341945
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.12137113988700518
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.09483337909389847
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174147486686707,
+                "rms": 0.07866997320543569
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0.023020833333333334,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 178.2,
+            "targetMediaDuration": 178.2,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.12079341829223632
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.10469744635061914
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.08407388923052245
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.06872097526891863
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.05737336307059739
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.05972168972332746
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.04522549310782597
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.042849734868062005
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.036303608355904196
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.03004352262860816
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.1003004136585148
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.1213721326458451
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.09483039710092711
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174560546875,
+                "rms": 0.07866959413788824
+              }
+            ],
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 178.1667120181406,
+            "targetMediaDuration": 178.166729,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.1253450328023732
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.10295242627783856
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.08275547777108264
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.06709213993239367
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0573501306482711
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.05899751677877549
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.04484542485789224
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.041377632496398364
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.03665609598194996
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.029478247650068467
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.10816039269029402
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.11882160087185707
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0931424525737071
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174117684364319,
+                "rms": 0.0763163133501405
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 178.16672916666667,
+            "targetMediaDuration": 178.166729,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.12534956063949307
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.10295596032509334
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.0827578390620456
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.06709436747104404
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.057351427533412755
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.05899882134520732
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.04484670724920276
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.04137846861797137
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.03665699273749674
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.02947893584421536
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.10816370436385153
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.11882502450171771
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.09314504217533655
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174505114555359,
+                "rms": 0.07631842742257029
+              }
+            ],
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 178.16673469387754,
+            "targetMediaDuration": 178.2,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.1253508752670883
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.10295705244551231
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.08275888225980409
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.06709478909787439
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.05735221292554873
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.05899920076251533
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.04484690185861268
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.04137889330963781
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.036657276565794115
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.02947911405434946
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.10816474470024627
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.11882609615050388
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.09314587509730277
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174541473388672,
+                "rms": 0.07631901899840163
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0.023020833333333334,
+            "targetDecodedDuration": 178.16672916666667,
+            "targetMediaDuration": 178.2,
+            "bins": [
+              {
+                "through": 0.25,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.12534955471456757
+              },
+              {
+                "through": 0.5,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.10295595560206627
+              },
+              {
+                "through": 0.75,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.0827578357527149
+              },
+              {
+                "through": 1,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.0670943649398408
+              },
+              {
+                "through": 1.25,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.057351424871605175
+              },
+              {
+                "through": 1.5,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.05899881862904064
+              },
+              {
+                "through": 1.75,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.04484670517889568
+              },
+              {
+                "through": 2,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.041378467765045404
+              },
+              {
+                "through": 2.25,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.03665699077838541
+              },
+              {
+                "through": 2.5,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.02947893503326224
+              },
+              {
+                "through": 2.75,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.10816370209059131
+              },
+              {
+                "through": 3,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.11882502051379638
+              },
+              {
+                "through": 3.25,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.09314503929945266
+              },
+              {
+                "through": 3.5,
+                "maximumPeakSoFar": 0.5174503922462463,
+                "rms": 0.0763184256319334
+              }
+            ],
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ],
+        "notNativeCertified": true
+      }
+    }
+  },
+  "cases": [
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-33.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-87.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-1187.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-138.mp3"
+    }
+  ],
+  "sourceDecodes": 0,
+  "newPrefixDecodes": 8,
+  "newModels": 0,
+  "installed": false,
+  "summary": [
+    {
+      "key": "audio/songs/track-33.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "dceef6d34dc52f42bb4babd24ef141f86d9edf32fd1b5ce812ee006905cfe451",
+          "maximumPeak": 0.45755982398986816,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.05542816253872737
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.11824793072076713
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.1250486682411578
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.12415820643751076
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.11927937053416941
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.10925999873415092
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "ae27743e3f50844ea83ae1e021d30388fe6cb24489c81bdefc3f82a17b69ee62",
+          "maximumPeak": 0.4576285779476166,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.05542911584194483
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.11824807847251331
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.1250491278176864
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.12415874021597878
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.11928034921095446
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.1092601798445745
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-87.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "be9deb61bdf45dd6de4ee2b007bf54dfa03b3ae15f4624b4e65125536ee82b02",
+          "maximumPeak": 0.6584542989730835,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.10291310074007617
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.12156438801567714
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08990466848796518
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.09253763448629305
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.0664318198105645
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.10015274046002
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "daba87b180365d122921186133ee3fa7e58673fe8223af3fb6b7eee53fae490b",
+          "maximumPeak": 0.658764123916626,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.10291375997306433
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.12156376709564212
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08990396181134086
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.09253758062685118
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.06643168473586572
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.1001528920274572
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "b19208e037d3dda36dccd445825d9d4e7c71ad01d8d6ed170e3e262516ccd117",
+          "maximumPeak": 0.34668248891830444,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.07618753507286653
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.06888741526452478
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.07458664711517339
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.051244393044412716
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.06393941725800341
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.04104670863062386
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "9625b5ed8db141b35891bcde2ea4b2f077b17861701e5058a2bc5509f97bf595",
+          "maximumPeak": 0.346831738948822,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.07618769208185279
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.06888739430887435
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.07458689096780173
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.05124431413266051
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.06393947241612637
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.0410467797230708
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-138.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "d54c02ceb94c1cfe03f9358510f696690d1c766d47bd24fc2f3ec31975441fe5",
+          "maximumPeak": 0.5174490213394165,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.12534896140699986
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.10295556490890216
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08275784564838723
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.06709400348632184
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.057351627376677795
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.05899881478357163
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "193c61a296d08cdcef827b9702cdc9b860339a6032edab6423c5393b783c63e7",
+          "maximumPeak": 0.5174506902694702,
+          "windows": [
+            {
+              "at": 0,
+              "seconds": 0.25,
+              "rms": 0.12534955573142686
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.10295596302842493
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08275784249397322
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.06709436810773452
+            },
+            {
+              "at": 1,
+              "seconds": 0.25,
+              "rms": 0.05735143023993217
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.05899882468802988
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    }
+  ],
+  "prefixOnly": true
+}

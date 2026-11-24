@@ -1,0 +1,37 @@
+{
+  "profile": "Ste",
+  "recordings": 222,
+  "newAnalysis": false,
+  "requests": [
+    {
+      "key": "audio/songs/track-705.mp3",
+      "sha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+      "attempt": 0,
+      "status": 200
+    },
+    {
+      "key": "audio/songs/track-50.mp3",
+      "sha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+      "attempt": 0,
+      "status": 200
+    },
+    {
+      "key": "audio/songs/track-27.mp3",
+      "sha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "attempt": 0,
+      "status": 200
+    },
+    {
+      "key": "audio/songs/track-166.mp3",
+      "sha": "f1392f160613a77791b3f870e60541c692ed08ef",
+      "attempt": 0,
+      "status": 200
+    },
+    {
+      "key": "audio/songs/track-181.mp3",
+      "sha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "attempt": 0,
+      "status": 200
+    }
+  ]
+}

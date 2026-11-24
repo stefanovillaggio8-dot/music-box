@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "pair": {
+        "from": "audio/songs/track-27.mp3",
+        "to": "audio/songs/track-33.mp3"
+      },
+      "accepted": true,
+      "kind": "clean-only",
+      "nativeObservations": 8,
+      "notPlaybackCertified": true
+    },
+    {
+      "pair": {
+        "from": "audio/songs/track-27.mp3",
+        "to": "audio/songs/track-87.mp3"
+      },
+      "accepted": true,
+      "kind": "clean-only",
+      "nativeObservations": 8,
+      "notPlaybackCertified": true
+    },
+    {
+      "pair": {
+        "from": "audio/songs/track-27.mp3",
+        "to": "audio/songs/track-1187.mp3"
+      },
+      "accepted": true,
+      "kind": "clean-only",
+      "nativeObservations": 8,
+      "notPlaybackCertified": true
+    },
+    {
+      "pair": {
+        "from": "audio/songs/track-27.mp3",
+        "to": "audio/songs/track-138.mp3"
+      },
+      "accepted": true,
+      "kind": "clean-only",
+      "nativeObservations": 8,
+      "notPlaybackCertified": true
+    }
+  ],
+  "installed": false,
+  "certified": false
+}

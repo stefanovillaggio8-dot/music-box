@@ -1,0 +1,106 @@
+name: Bounded exact-release Ste regressions in pinned browsers
+on:
+  workflow_call:
+    inputs:
+      release_sha:
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  exact-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    runs-on: ubuntu-24.04
+    container: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+    timeout-minutes: 10
+    env:
+      MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
+      MUSICBOX_COMPOSITE_PROFILE: Ste
+      MUSICBOX_STE_CASE: complete-personal
+      IMMERSIVE_ENGINE: ${{ matrix.browser }}
+      LYRICS_ENGINE: ${{ matrix.browser }}
+      EXPECTED_RELEASE_SHA: ${{ inputs.release_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Exact release checkout and bounded preinstalled browser setup
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          test "$(git -c safe.directory="$GITHUB_WORKSPACE" rev-parse HEAD)" = "$EXPECTED_RELEASE_SHA"
+          npm install --no-save --no-package-lock playwright@1.64.1
+          node -e "const fs=require('fs'),p=require('playwright');for(const b of [p.chromium,p.webkit])if(!fs.existsSync(b.executablePath()))throw Error('Pinned native browser missing')"
+          sha256sum app.js mix-intelligente.js dj-deep-analysis.json audio-composite-mix.js audio-stretch.js > exact-release-inputs.txt
+      - name: Same isolated operating Linux media output used by installed native tests
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1             --log-target=file:/tmp/ste-final-pulse.log             --load="module-native-protocol-unix socket=/tmp/ste-final-pulse auth-anonymous=1"             --load="module-null-sink sink_name=ste_final rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-final-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-final-pulse pactl set-default-sink ste_final
+      - name: Bounded SHA-verified fetch of five existing Ste regression originals only
+        timeout-minutes: 4
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+          const {currentSteScope,validateSteCases}=require('./tools/ste-research-scope.cjs');
+          (async()=>{
+           const index=require('./dj-deep-analysis.json'),scope=currentSteScope();
+           const cases=validateSteCases([{from:'audio/songs/track-705.mp3',to:'audio/songs/track-50.mp3'},{from:'audio/songs/track-27.mp3',to:'audio/songs/track-50.mp3'},{from:'audio/songs/track-166.mp3',to:'audio/songs/track-181.mp3'}],scope,index);
+           const folder=path.resolve('../original-mp3');fs.mkdirSync(folder,{recursive:true});const report=[];
+           for(const key of new Set(cases.flatMap(c=>[c.from,c.to]))){
+            const sha=index.entries[key].sha,file=path.join(folder,sha+'.mp3');let bytes;
+            if(fs.existsSync(file))bytes=fs.readFileSync(file);
+            else for(let attempt=0;attempt<3;attempt++){
+             try{
+              const r=await fetch('https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+key.slice(6),{signal:AbortSignal.timeout(20000)});
+              report.push({key,sha,attempt,status:r.status});
+              if(!r.ok)throw Error('HTTP '+r.status+' for '+key);
+              bytes=Buffer.from(await r.arrayBuffer());break;
+             }catch(e){if(attempt===2)throw e;await new Promise(resolve=>setTimeout(resolve,1000*(attempt+1)))}
+            }
+            if(!bytes||bytes.length>32e6||crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length)).update(Buffer.from([0])).update(bytes).digest('hex')!==sha)throw Error('Original identity mismatch: '+key);
+            if(!fs.existsSync(file))fs.writeFileSync(file,bytes,{flag:'wx'});
+           }
+           fs.writeFileSync('fixture-fetch.json',JSON.stringify({profile:'Ste',recordings:scope.tracks.length,newAnalysis:false,requests:report},null,2));
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
+      - name: Actual existing Ste complete control, EXACT production index without shadow or recertification
+        run: node tests/composite-browser.cjs > exact-ste-composite.json
+      - name: Preserved original introduction, native resume and storage regressions
+        run: |
+          node tests/composite-introduction.cjs > exact-ste-introduction.json
+          node tests/playback-session-browser.cjs > exact-ste-session.json
+          node tests/storage-browser.cjs > exact-storage.json
+      - name: Unchanged Immersive and full-phrase lyrics views
+        if: always()
+        run: |
+          node tests/immersive-ui-smoke.cjs > exact-immersive.json
+          node tests/lyrics-full-view-layout.cjs > exact-lyrics-layout.json
+      - name: No application or certificate metadata mutation during tests
+        if: always()
+        run: sha256sum --check exact-release-inputs.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exact-release-Ste-${{ matrix.browser }}
+          path: |
+            exact-release-inputs.txt
+            fixture-fetch.json
+            exact-ste-composite.json
+            exact-ste-introduction.json
+            exact-ste-session.json
+            exact-storage.json
+            exact-immersive.json
+            exact-lyrics-layout.json
+          retention-days: 30

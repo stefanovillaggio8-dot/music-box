@@ -26,6 +26,28 @@ test('common mix refuses stale sources, altered cues and hot assets',async()=>{
  for(const changed of [{...p,entry:0},{...p,sourceSha:'c'.repeat(40)},
   {...p,composite:{...p.composite,peak:1.01}},{...p,composite:{...p.composite,path:'../private'}}])assert.equal(f.api.supports(changed),false);
 });
+
+test('recovering an original-only preroll needs both native waveform receipts and never reaches the first incoming sample',async()=>{
+ const f=fixture(),p=await cue(f);p.nativeOriginalReturn=true;p.composite.sampleRate=48000;
+ const c=p.composite,legacy=p.begin-c.preRoll+.04;
+ // Synthetic receipt shapes test the deadline policy, not certification.
+ c.sourcePrerollProof={method:'original-only-preroll-with-common-gain-v1',assetSha256:c.sha256,sourceSha:p.sourceSha,
+  sampleRate:48000,frames:13440,fromOffsetSeconds:0,throughOffsetSeconds:.28,sharedGainOnly:true,
+  maximumReductionDb:.033,maximumOriginalWaveformResidual:1e-7,maximumEncodedDifference:1e-7,incomingMaximumPeak:0};
+ assert.equal(f.api.latestLaunchTime(p),legacy,'offline evidence alone cannot extend a native launch window');
+ c.nativeDecoderProof={assetSha256:c.sha256,sourcePlatformCoverage:['linux','darwin'],rates:Object.fromEntries([44100,48000].map(rate=>[rate,{originalPrerollProof:{
+  method:'actual-native-original-preroll-v1',sourceSha:p.sourceSha,frames:Math.round(.28*rate),minimumCorrelation:.999,maximumRelativeRms:.03,browsers:['chromium','webkit']}}]))};
+ assert.ok(Math.abs(f.api.latestLaunchTime(p)-(p.begin-.02))<1e-9);
+ for(const mutate of [q=>q.composite.sourcePrerollProof.maximumReductionDb=.1001,
+  q=>q.composite.sourcePrerollProof.maximumOriginalWaveformResidual=2.1e-6,q=>q.composite.sourcePrerollProof.incomingMaximumPeak=1e-8,
+  q=>q.composite.sourcePrerollProof.throughOffsetSeconds=.3,q=>q.composite.sourcePrerollProof.sourceSha='f'.repeat(40),
+  q=>q.composite.nativeDecoderProof.sourcePlatformCoverage=['linux'],
+  q=>delete q.composite.nativeDecoderProof.rates[44100].originalPrerollProof,
+  q=>q.composite.nativeDecoderProof.rates[48000].originalPrerollProof.minimumCorrelation=.989,
+  q=>q.composite.nativeDecoderProof.rates[44100].originalPrerollProof.maximumRelativeRms=.1001]){
+  const changed=structuredClone(p);mutate(changed);assert.equal(f.api.latestLaunchTime(changed),legacy);
+ }
+});
 test('common mix verifies decoded PCM; native volume is never the outgoing gate',async()=>{
  const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);
  const old={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,volume:1};

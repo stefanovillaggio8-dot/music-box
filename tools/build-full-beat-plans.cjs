@@ -6,7 +6,7 @@ const fs=require('node:fs'),path=require('node:path');
 const arg=(k,f)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??f;
 const directory=arg('features',''),output=arg('output','dj-deep-analysis.json');
 if(!directory)throw Error('Supply --features=DIR with PCM shard JSONs');
-const root=path.resolve(__dirname,'..'),file=path.join(root,'dj-deep-analysis.json');
+const root=path.resolve(__dirname,'..'),file=path.resolve(arg('index',path.join(root,'dj-deep-analysis.json')));
 const data=JSON.parse(fs.readFileSync(file,'utf8'));
 function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>x.isDirectory()?files(path.join(dir,x.name)):/^pcm-\d+\.json$/.test(x.name)?[path.join(dir,x.name)]:[])}
 const features=new Map();

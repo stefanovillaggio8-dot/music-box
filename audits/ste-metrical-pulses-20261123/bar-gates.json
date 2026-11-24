@@ -1,0 +1,839 @@
+[
+  {
+    "key": "audio/songs/track-34.mp3",
+    "sha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+    "role": "intro",
+    "cachedOriginalOnly": true,
+    "bars": [
+      {
+        "start": 0.22,
+        "end": 2.84,
+        "beats": [
+          0.24,
+          0.92,
+          2.22
+        ],
+        "modelBeats": [
+          0.22,
+          0.88,
+          1.52,
+          2.18
+        ],
+        "beatProbabilityMin": 0.904324,
+        "beatProbabilityGeometricMean": 0.9537834058428812,
+        "downbeatProbabilityMin": 0.996582,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9999994583095281,
+        "bpm": 90.90909090909092,
+        "gridRms": 0.009999999999999953,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      },
+      {
+        "start": 5.48,
+        "end": 8.12,
+        "beats": [
+          5.5200000000000005,
+          6.18,
+          7.5200000000000005
+        ],
+        "modelBeats": [
+          5.48,
+          6.14,
+          6.8,
+          7.46
+        ],
+        "beatProbabilityMin": 0.88231,
+        "beatProbabilityGeometricMean": 0.9370110365751805,
+        "downbeatProbabilityMin": 0.9594639999999963,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9737867756069988,
+        "bpm": 90.90909090909095,
+        "gridRms": 4.440892098500626e-16,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      },
+      {
+        "start": 10.76,
+        "end": 13.42,
+        "beats": [
+          10.700000000000001,
+          11.38,
+          12.16,
+          12.780000000000001
+        ],
+        "modelBeats": [
+          10.76,
+          11.42,
+          12.1,
+          12.76
+        ],
+        "beatProbabilityMin": 0.972945,
+        "beatProbabilityGeometricMean": 0.984710009143149,
+        "downbeatProbabilityMin": 0.996217,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9999999935495405,
+        "bpm": 90.90909090909089,
+        "gridRms": 0.009999999999999787,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      },
+      {
+        "start": 16.02,
+        "end": 18.68,
+        "beats": [
+          16.04,
+          16.740000000000002,
+          17.400000000000002,
+          18.02
+        ],
+        "modelBeats": [
+          16.02,
+          16.7,
+          17.34,
+          18.0
+        ],
+        "beatProbabilityMin": 0.831933,
+        "beatProbabilityGeometricMean": 0.9346827330365642,
+        "downbeatProbabilityMin": 0.991188,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9999999999998657,
+        "bpm": 89.55223880597016,
+        "gridRms": 0.017320508075688402,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      },
+      {
+        "start": 18.68,
+        "end": 21.28,
+        "beats": [
+          18.66,
+          19.36,
+          19.92
+        ],
+        "modelBeats": [
+          18.68,
+          19.32,
+          19.98,
+          20.64
+        ],
+        "beatProbabilityMin": 0.911436,
+        "beatProbabilityGeometricMean": 0.9569519558148059,
+        "downbeatProbabilityMin": 0.994396,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 1.0,
+        "bpm": 92.30769230769226,
+        "gridRms": 0.009999999999999787,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      }
+    ],
+    "trace": [
+      {
+        "start": 0.22,
+        "gate": "acceptedCandidateBar",
+        "end": 2.84,
+        "meter": 4
+      },
+      {
+        "start": 0.88,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.999999458385461
+      },
+      {
+        "start": 1.52,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999996394180036
+      },
+      {
+        "start": 2.18,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999995708073462
+      },
+      {
+        "start": 2.84,
+        "gate": "missingObservedDownbeat",
+        "meter": 4,
+        "observed": [
+          4.2,
+          4.86
+        ]
+      },
+      {
+        "start": 3.5,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999308404394988
+      },
+      {
+        "start": 4.16,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999308405155299
+      },
+      {
+        "start": 4.82,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999045635626063
+      },
+      {
+        "start": 5.48,
+        "gate": "acceptedCandidateBar",
+        "end": 8.12,
+        "meter": 4
+      },
+      {
+        "start": 6.14,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9741277176944744
+      },
+      {
+        "start": 6.8,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9741277176946534
+      },
+      {
+        "start": 7.46,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.6899999999999995,
+        "gaps": [
+          0.6599999999999993,
+          1.2600000000000016,
+          0.7199999999999989,
+          0.6600000000000001
+        ]
+      },
+      {
+        "start": 8.12,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9998780461055076
+      },
+      {
+        "start": 9.38,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999996522698283
+      },
+      {
+        "start": 10.1,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999996524060406
+      },
+      {
+        "start": 10.76,
+        "gate": "acceptedCandidateBar",
+        "end": 13.42,
+        "meter": 4
+      },
+      {
+        "start": 11.42,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.999999999955069
+      },
+      {
+        "start": 12.1,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999999999972995
+      },
+      {
+        "start": 12.76,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.999999999997299
+      },
+      {
+        "start": 13.42,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.6399999999999997,
+        "gaps": [
+          0.6799999999999997,
+          0.5999999999999996,
+          0.08000000000000007,
+          1.2400000000000002
+        ]
+      },
+      {
+        "start": 14.1,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999999999998663
+      },
+      {
+        "start": 14.7,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999999999998663
+      },
+      {
+        "start": 14.78,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999999999998663
+      },
+      {
+        "start": 16.02,
+        "gate": "acceptedCandidateBar",
+        "end": 18.68,
+        "meter": 4
+      },
+      {
+        "start": 16.7,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999999999999998
+      },
+      {
+        "start": 17.34,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 1.0
+      },
+      {
+        "start": 18.0,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 1.0
+      },
+      {
+        "start": 18.68,
+        "gate": "acceptedCandidateBar",
+        "end": 21.28,
+        "meter": 4
+      },
+      {
+        "start": 19.32,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999999999999944
+      },
+      {
+        "start": 19.98,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999999999999887
+      },
+      {
+        "start": 20.64,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999999999943501
+      },
+      {
+        "start": 21.28,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.6600000000000001,
+        "gaps": [
+          1.0199999999999996,
+          0.3200000000000003,
+          0.6799999999999997,
+          0.6400000000000006
+        ]
+      },
+      {
+        "start": 22.3,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999999985036099
+      },
+      {
+        "start": 22.62,
+        "gate": "insufficientMetricalContext",
+        "beats": 15
+      },
+      {
+        "start": 23.3,
+        "gate": "insufficientMetricalContext",
+        "beats": 14
+      },
+      {
+        "start": 23.94,
+        "gate": "insufficientMetricalContext",
+        "beats": 13
+      }
+    ]
+  },
+  {
+    "key": "audio/songs/track-39.mp3",
+    "sha": "831120fb7638bb8f8fd831e69db0c14bc515e8bd",
+    "role": "intro",
+    "cachedOriginalOnly": true,
+    "bars": [
+      {
+        "start": 4.64,
+        "end": 7.62,
+        "beats": [
+          4.68,
+          5.36,
+          6.18,
+          6.92
+        ],
+        "modelBeats": [
+          4.64,
+          5.38,
+          6.12,
+          6.86
+        ],
+        "beatProbabilityMin": 0.953144,
+        "beatProbabilityGeometricMean": 0.9679880506380077,
+        "downbeatProbabilityMin": 0.800151,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9336425824078157,
+        "bpm": 81.08108108108105,
+        "gridRms": 0.009999999999999787,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      },
+      {
+        "start": 9.5,
+        "end": 11.0,
+        "beats": [
+          9.5,
+          10.3,
+          10.620000000000001
+        ],
+        "modelBeats": [
+          9.5,
+          9.88,
+          10.26,
+          10.64
+        ],
+        "beatProbabilityMin": 0.7123119999999973,
+        "beatProbabilityGeometricMean": 0.8058664911771335,
+        "downbeatProbabilityMin": 0.670832,
+        "beatsPerBar": 4,
+        "metricalPhaseConfidence": 0.9999951731249196,
+        "bpm": 157.89473684210532,
+        "gridRms": 0.010000000000000231,
+        "candidateObservedMinimum": 2,
+        "sparseCandidateOnly": true
+      }
+    ],
+    "trace": [
+      {
+        "start": 0.14,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 0,
+        "confidence": 0.7188076428420505
+      },
+      {
+        "start": 0.48,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.7188091114935078
+      },
+      {
+        "start": 0.9,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.7380940463635518
+      },
+      {
+        "start": 1.26,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.7387767551340181
+      },
+      {
+        "start": 1.64,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 0,
+        "confidence": 0.744222627046206
+      },
+      {
+        "start": 2.38,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.7462534584367473
+      },
+      {
+        "start": 3.12,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.7462815236175485
+      },
+      {
+        "start": 3.88,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.7462815459796447
+      },
+      {
+        "start": 4.64,
+        "gate": "acceptedCandidateBar",
+        "end": 7.62,
+        "meter": 4
+      },
+      {
+        "start": 5.38,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9996914058457472
+      },
+      {
+        "start": 6.12,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9996920345261172
+      },
+      {
+        "start": 6.86,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9996921951794756
+      },
+      {
+        "start": 7.62,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.3799999999999999,
+        "gaps": [
+          0.7600000000000007,
+          0.35999999999999943,
+          0.40000000000000036,
+          0.35999999999999943
+        ]
+      },
+      {
+        "start": 8.38,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9998997345284788
+      },
+      {
+        "start": 8.74,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9999954131946415
+      },
+      {
+        "start": 9.14,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999955466520767
+      },
+      {
+        "start": 9.5,
+        "gate": "acceptedCandidateBar",
+        "end": 11.0,
+        "meter": 4
+      },
+      {
+        "start": 9.88,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999785183891947
+      },
+      {
+        "start": 10.26,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9998942401699353
+      },
+      {
+        "start": 10.64,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999790865256151
+      },
+      {
+        "start": 11.0,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.3700000000000001,
+        "gaps": [
+          0.3800000000000008,
+          0.35999999999999943,
+          0.40000000000000036,
+          0.35999999999999943
+        ]
+      },
+      {
+        "start": 11.38,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9997253422060792
+      },
+      {
+        "start": 11.74,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9997249791194459
+      },
+      {
+        "start": 12.14,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9999963560394087
+      },
+      {
+        "start": 12.5,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.3899999999999997,
+        "gaps": [
+          0.40000000000000036,
+          0.33999999999999986,
+          0.41999999999999993,
+          0.379999999999999
+        ]
+      },
+      {
+        "start": 12.9,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9999549132503723
+      },
+      {
+        "start": 13.24,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9998667114127779
+      },
+      {
+        "start": 13.66,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.99989687605937
+      },
+      {
+        "start": 14.04,
+        "gate": "neuralEvidence",
+        "beatGeometricMean": 0.7406982050966673,
+        "downbeatMinimum": 0.48612
+      },
+      {
+        "start": 14.42,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9998597216401324
+      },
+      {
+        "start": 14.76,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9936699667118342
+      },
+      {
+        "start": 15.14,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9981694055208803
+      },
+      {
+        "start": 15.48,
+        "gate": "irregularBeatGrid",
+        "meter": 4,
+        "period": 0.1999999999999984,
+        "gaps": [
+          0.27999999999999936,
+          0.09999999999999964,
+          0.740000000000002,
+          0.11999999999999744
+        ]
+      },
+      {
+        "start": 15.76,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9952639302409679
+      },
+      {
+        "start": 15.86,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.9699566007176826
+      },
+      {
+        "start": 16.6,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.9840679646009086
+      },
+      {
+        "start": 16.72,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 2,
+        "confidence": 0.834092880776566
+      },
+      {
+        "start": 17.42,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 1,
+        "confidence": 0.8459457556672599
+      },
+      {
+        "start": 18.14,
+        "gate": "irregularBeatGrid",
+        "meter": 5,
+        "period": 0.40000000000000213,
+        "gaps": [
+          0.379999999999999,
+          0.35999999999999943,
+          0.7600000000000016,
+          0.7199999999999989,
+          0.40000000000000213
+        ]
+      },
+      {
+        "start": 18.52,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 4,
+        "confidence": 0.5222631351268756
+      },
+      {
+        "start": 18.88,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 3,
+        "confidence": 0.5219214972976389
+      },
+      {
+        "start": 19.64,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 0,
+        "confidence": 0.5974569434371565
+      },
+      {
+        "start": 20.36,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 4,
+        "confidence": 0.4692647281267987
+      },
+      {
+        "start": 20.76,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.42692381876697494
+      },
+      {
+        "start": 21.14,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 2,
+        "confidence": 0.4099945054040233
+      },
+      {
+        "start": 21.48,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 1,
+        "confidence": 0.40699527491632764
+      },
+      {
+        "start": 21.84,
+        "gate": "metricalPhase",
+        "meter": 5,
+        "phase": 2,
+        "confidence": 0.4953612699248422
+      },
+      {
+        "start": 22.26,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 3,
+        "confidence": 0.9200324716296765
+      },
+      {
+        "start": 22.62,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 2,
+        "confidence": 0.8960990896657941
+      },
+      {
+        "start": 23.0,
+        "gate": "metricalPhase",
+        "meter": 4,
+        "phase": 1,
+        "confidence": 0.8770145275073739
+      },
+      {
+        "start": 23.38,
+        "gate": "insufficientMetricalContext",
+        "beats": 15
+      },
+      {
+        "start": 23.8,
+        "gate": "insufficientMetricalContext",
+        "beats": 14
+      },
+      {
+        "start": 24.0,
+        "gate": "insufficientMetricalContext",
+        "beats": 13
+      }
+    ]
+  }
+]

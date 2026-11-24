@@ -1,0 +1,94 @@
+{
+  "baselineSha256": "287633c53909fa3428874e669daa966b6e196c50b27cf93abcc0ad44989c3cf6",
+  "profiles": [
+    "Ste",
+    "Diego",
+    "Emanuele"
+  ],
+  "restored": [
+    {
+      "key": "audio/songs/track-166.mp3",
+      "toSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "field": "structuralBeatPlans",
+      "acceptedCues": 0,
+      "vetoedCues": 1,
+      "assets": [
+        "6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc"
+      ]
+    },
+    {
+      "key": "audio/songs/track-451.mp3",
+      "toSha": "5c4b27e4ee2c178552552eed7591a86566655e31",
+      "field": "pcmBeatPlans",
+      "acceptedCues": 0,
+      "vetoedCues": 1,
+      "assets": [
+        "19f228667bcf636b610197061becc2dececab0b0f78ce0ace33d9cb2eda284cc"
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "key": "audio/songs/track-102.mp3",
+      "toSha": "1097b90206a5061375da4fd5a4bafb5a661dcba3",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-102.mp3",
+      "toSha": "27f89ce447b15bab428c8b83c78dd140e2b547e9",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-246.mp3",
+      "toSha": "74ea0669645e1c2b026b44eed6ef2b5ffca266d7",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-675.mp3",
+      "toSha": "76f346b3072ce721971c0f9bb5f1b2757369484a",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-675.mp3",
+      "toSha": "05e3d8cf8f66b98a03e15345934f18a404bc5612",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-675.mp3",
+      "toSha": "a12262c19a748e02b5ea90e15b092d05346514f8",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-675.mp3",
+      "toSha": "8efd30aea721723bb4763e44aaaaa98286f57f95",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-745.mp3",
+      "toSha": "53e53d637715cca5aebd9d70a0767a6403927356",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-745.mp3",
+      "toSha": "a12262c19a748e02b5ea90e15b092d05346514f8",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    },
+    {
+      "key": "audio/songs/track-889.mp3",
+      "toSha": "35350a31df3c4b62b2fd8eb001645a8b904d803a",
+      "field": "structuralBeatPlans",
+      "reason": "no-current-render-and-exposure-proof"
+    }
+  ],
+  "currentFieldsOverwritten": 0,
+  "downloadBytesModified": 0
+}

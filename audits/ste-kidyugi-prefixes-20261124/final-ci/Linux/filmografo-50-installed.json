@@ -1,0 +1,2036 @@
+{
+  "shadowIndex": false,
+  "published": false,
+  "physicalIPhone": false,
+  "controlledPhraseFixture": false,
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.80",
+      "platform": "linux",
+      "overlap": {
+        "id": "b-track-27",
+        "sourceEnded": false,
+        "oldVolume": 1,
+        "newVolume": 1,
+        "sourceTime": 144.867632,
+        "targetTime": 0.159927,
+        "lyrics": "",
+        "diagnostics": {
+          "enabled": true,
+          "isIOS": false,
+          "current": "b-track-27",
+          "next": "b-track-50",
+          "playerPaused": false,
+          "playerReadyState": 4,
+          "playerErrorCode": null,
+          "playbackTime": 144.9,
+          "bufferedAhead": 1.5,
+          "deepIndexLoaded": true,
+          "tempoIndexQuality": {
+            "analyzed": 1176,
+            "distinctBpm": 570,
+            "tempoReliableAtLeast030": 47,
+            "temposRefinedFromTrackedBeats": 1140,
+            "songsWithTrackedIntroOutroBeats": 1175,
+            "limitedResolution": false
+          },
+          "offlineTransferPriority": false,
+          "audioContextState": "running",
+          "remaining": 1.5,
+          "analysisReady": true,
+          "deepIndexed": true,
+          "analysisDuration": 146.333,
+          "lastAudible": 140.6,
+          "lastLyricAt": 132.03,
+          "lastVoiceAt": null,
+          "dropRelease": null,
+          "softOutro": null,
+          "confidentTail": true,
+          "shuffleState": {
+            "outgoing": "b-track-27",
+            "chosen": "",
+            "first": "",
+            "autoCount": 0,
+            "manualCount": 1,
+            "userReordered": false
+          },
+          "plannedCue": {
+            "kind": "postlude",
+            "begin": 144.593,
+            "end": 146.333,
+            "fade": 1.740000000000009,
+            "entry": 0,
+            "quietCertified": false,
+            "independentLowBand": false,
+            "independentOnsetScore": null,
+            "underlayVolume": null,
+            "measuredBeatBridge": false,
+            "nativeCleanTail": true,
+            "protectedTail": true
+          },
+          "liveTransition": {
+            "device": "pc",
+            "fromId": "b-track-27",
+            "toId": "b-track-50",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 144.867632,
+            "incomingAt": 0.159927,
+            "elapsed": 0.26589999999996505,
+            "fade": 1.7210629999999867,
+            "handingOff": false
+          },
+          "plannedKind": "postlude",
+          "plannedBegin": 144.593,
+          "planWaitingAnalysis": false,
+          "planRetryCount": 1,
+          "planRetryInMs": null,
+          "lastTickFailure": "",
+          "instrumentalBeatBridge": false,
+          "measuredBeatBridge": false,
+          "pulseUnderlay": false,
+          "mobileMixLastBlocker": "",
+          "mobileMixLastStartedAt": 0,
+          "certifiedQuietAlternative": false,
+          "mobileSilentBridge": false,
+          "mobileSilentBridgeReserved": false,
+          "measuredPostludeBridge": false,
+          "measuredFinalImpact": false,
+          "finalImpactAt": null,
+          "shuffleSearch": null,
+          "shuffleBusy": false,
+          "previewReady": false,
+          "previewFailed": false,
+          "prebufferIntroAt": null,
+          "prebufferSeekReady": null,
+          "prebufferSafeForNaturalEOF": null,
+          "prebufferPlaybackTime": null,
+          "earlyHandoffPending": false,
+          "mobileClipReady": false,
+          "mobileClipFailure": null,
+          "mobileClipMetrics": {
+            "ranges": 0,
+            "fullFetches": 0,
+            "successes": 0,
+            "errors": 0,
+            "method": "",
+            "lastError": ""
+          },
+          "previewMatches": false,
+          "liveSampleCount": 16,
+          "liveContext": "running",
+          "liveRms": 0.00003586625432087487,
+          "liveQuietEligible": false
+        }
+      },
+      "adopted": {
+        "sameElement": true,
+        "beforeAdoption": {
+          "oldEnded": true,
+          "sourceAt": 146.333333,
+          "sourceDuration": 146.333333,
+          "incomingAt": 1.682345,
+          "incomingDuration": 305.690708,
+          "incomingPaused": false,
+          "incomingSeeking": false,
+          "observedAt": 10023.199999999953,
+          "audibility": [
+            {
+              "event": "play-request",
+              "at": 0,
+              "observedAt": 8238.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": true,
+              "seeking": false
+            },
+            {
+              "event": "volumechange",
+              "at": 0,
+              "observedAt": 8238.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "playing",
+              "at": 0,
+              "observedAt": 8238.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0,
+              "observedAt": 8259.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.006341,
+              "observedAt": 8279.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.020546,
+              "observedAt": 8299.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.028031,
+              "observedAt": 8320,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.028031,
+              "observedAt": 8340.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.034475,
+              "observedAt": 8360.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.045566,
+              "observedAt": 8380.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.065705,
+              "observedAt": 8400.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.082032,
+              "observedAt": 8420.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.105116,
+              "observedAt": 8443.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.123419,
+              "observedAt": 8463.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.14171,
+              "observedAt": 8484.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.159902,
+              "observedAt": 8504.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.189972,
+              "observedAt": 8526.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.208871,
+              "observedAt": 8546.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.227274,
+              "observedAt": 8566.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.247409,
+              "observedAt": 8586.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.263753,
+              "observedAt": 8606.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.284299,
+              "observedAt": 8627.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.313217,
+              "observedAt": 8647.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.331478,
+              "observedAt": 8667.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.353411,
+              "observedAt": 8691.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.371666,
+              "observedAt": 8711.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.391795,
+              "observedAt": 8731.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.408242,
+              "observedAt": 8751.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.428513,
+              "observedAt": 8772.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.45651,
+              "observedAt": 8793.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.476642,
+              "observedAt": 8813.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.494821,
+              "observedAt": 8833.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.513123,
+              "observedAt": 8853.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.531348,
+              "observedAt": 8873.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.549589,
+              "observedAt": 8893.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.569733,
+              "observedAt": 8914,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.59676,
+              "observedAt": 8934.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.616891,
+              "observedAt": 8954.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.635781,
+              "observedAt": 8976.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.655948,
+              "observedAt": 8997.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.674063,
+              "observedAt": 9017.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.703179,
+              "observedAt": 9037.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.723759,
+              "observedAt": 9060,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.742083,
+              "observedAt": 9080.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.762236,
+              "observedAt": 9100.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.780522,
+              "observedAt": 9120.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.800406,
+              "observedAt": 9144.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.820545,
+              "observedAt": 9164.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.849456,
+              "observedAt": 9184.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.867748,
+              "observedAt": 9204.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.888333,
+              "observedAt": 9227,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.906648,
+              "observedAt": 9247.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.924936,
+              "observedAt": 9267.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.943215,
+              "observedAt": 9287.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.966198,
+              "observedAt": 9310.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.992069,
+              "observedAt": 9330.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.01221,
+              "observedAt": 9350.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.030409,
+              "observedAt": 9371.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.051749,
+              "observedAt": 9392.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.069979,
+              "observedAt": 9412.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.098877,
+              "observedAt": 9433,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.117094,
+              "observedAt": 9453.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.135449,
+              "observedAt": 9473.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.163011,
+              "observedAt": 9502.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.181259,
+              "observedAt": 9522.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.201954,
+              "observedAt": 9545.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.230848,
+              "observedAt": 9565.599999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.250995,
+              "observedAt": 9585.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.267364,
+              "observedAt": 9605.799999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.28875,
+              "observedAt": 9627.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.306994,
+              "observedAt": 9647.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.325276,
+              "observedAt": 9667.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.343543,
+              "observedAt": 9687.699999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.375147,
+              "observedAt": 9710.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.393608,
+              "observedAt": 9730.899999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.41183,
+              "observedAt": 9751,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.43201,
+              "observedAt": 9771.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.45111,
+              "observedAt": 9794,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.471258,
+              "observedAt": 9814.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.500166,
+              "observedAt": 9834.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.51839,
+              "observedAt": 9854.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.539229,
+              "observedAt": 9877,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.55739,
+              "observedAt": 9897.199999999953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.575599,
+              "observedAt": 9917.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.59392,
+              "observedAt": 9937.5,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.616849,
+              "observedAt": 9960.399999999965,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.646333,
+              "observedAt": 9983.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.666467,
+              "observedAt": 10003.299999999988,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "adoption",
+              "at": 1.682345,
+              "observedAt": 10023.099999999977,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            }
+          ]
+        },
+        "targetTime": 1.729453,
+        "observedAt": 10073.599999999977,
+        "rate": 1,
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 144.611937,
+            "sourceDuration": 146.333333
+          },
+          {
+            "event": "target-play",
+            "at": 1.682345,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 146.333333,
+            "sourceDuration": 146.333333
+          }
+        ],
+        "isPlaying": true,
+        "sourceEndedAt": 0
+      },
+      "sourceStart": {
+        "fromZero": true,
+        "advancedBeforeSeek": 0.252723,
+        "duration": 146.333333,
+        "advancedAfterSeek": 137.661829
+      },
+      "eofChecks": [
+        {
+          "ended": true,
+          "paused": true,
+          "at": 146.333333,
+          "live": {
+            "device": "pc",
+            "fromId": "b-track-27",
+            "toId": "b-track-50",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 146.333333,
+            "incomingAt": 1.682345,
+            "elapsed": 1.7836999999999534,
+            "fade": 1.7210629999999867,
+            "handingOff": false
+          },
+          "incomingPaused": false,
+          "incomingAt": 1.682345,
+          "incomingReady": 4,
+          "result": true
+        }
+      ],
+      "stall": null,
+      "logs": [
+        "[Music Box DJ] Cambio continuo: riutilizzo del lettore gia in riproduzione {outgoing: b-track-27, incoming: b-track-50, at: 1.682345}"
+      ]
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "platform": "linux",
+      "overlap": {
+        "id": "b-track-27",
+        "sourceEnded": false,
+        "oldVolume": 1,
+        "newVolume": 1,
+        "sourceTime": 144.779262,
+        "targetTime": 0.139288,
+        "lyrics": "",
+        "diagnostics": {
+          "enabled": true,
+          "isIOS": false,
+          "current": "b-track-27",
+          "next": "b-track-50",
+          "playerPaused": false,
+          "playerReadyState": 2,
+          "playerErrorCode": null,
+          "playbackTime": 144.8,
+          "bufferedAhead": 1.6,
+          "deepIndexLoaded": true,
+          "tempoIndexQuality": {
+            "analyzed": 1176,
+            "distinctBpm": 570,
+            "tempoReliableAtLeast030": 47,
+            "temposRefinedFromTrackedBeats": 1140,
+            "songsWithTrackedIntroOutroBeats": 1175,
+            "limitedResolution": false
+          },
+          "offlineTransferPriority": false,
+          "audioContextState": "running",
+          "remaining": 1.6,
+          "analysisReady": true,
+          "deepIndexed": true,
+          "analysisDuration": 146.333,
+          "lastAudible": 140.6,
+          "lastLyricAt": 132.03,
+          "lastVoiceAt": null,
+          "dropRelease": null,
+          "softOutro": null,
+          "confidentTail": true,
+          "shuffleState": {
+            "outgoing": "b-track-27",
+            "chosen": "",
+            "first": "",
+            "autoCount": 0,
+            "manualCount": 1,
+            "userReordered": false
+          },
+          "plannedCue": {
+            "kind": "postlude",
+            "begin": 144.593,
+            "end": 146.333,
+            "fade": 1.740000000000009,
+            "entry": 0,
+            "quietCertified": false,
+            "independentLowBand": false,
+            "independentOnsetScore": null,
+            "underlayVolume": null,
+            "measuredBeatBridge": false,
+            "nativeCleanTail": true,
+            "protectedTail": true
+          },
+          "liveTransition": {
+            "device": "pc",
+            "fromId": "b-track-27",
+            "toId": "b-track-50",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 144.779262,
+            "incomingAt": 0.139288,
+            "elapsed": 0.139,
+            "fade": 1.719290833333332,
+            "handingOff": false
+          },
+          "plannedKind": "postlude",
+          "plannedBegin": 144.593,
+          "planWaitingAnalysis": false,
+          "planRetryCount": 1,
+          "planRetryInMs": null,
+          "lastTickFailure": "",
+          "instrumentalBeatBridge": false,
+          "measuredBeatBridge": false,
+          "pulseUnderlay": false,
+          "mobileMixLastBlocker": "",
+          "mobileMixLastStartedAt": 0,
+          "certifiedQuietAlternative": false,
+          "mobileSilentBridge": false,
+          "mobileSilentBridgeReserved": false,
+          "measuredPostludeBridge": false,
+          "measuredFinalImpact": false,
+          "finalImpactAt": null,
+          "shuffleSearch": null,
+          "shuffleBusy": false,
+          "previewReady": false,
+          "previewFailed": false,
+          "prebufferIntroAt": null,
+          "prebufferSeekReady": null,
+          "prebufferSafeForNaturalEOF": null,
+          "prebufferPlaybackTime": null,
+          "earlyHandoffPending": false,
+          "mobileClipReady": false,
+          "mobileClipFailure": null,
+          "mobileClipMetrics": {
+            "ranges": 0,
+            "fullFetches": 0,
+            "successes": 0,
+            "errors": 0,
+            "method": "",
+            "lastError": ""
+          },
+          "previewMatches": false,
+          "liveSampleCount": 0,
+          "liveContext": "unsupported",
+          "liveRms": null,
+          "liveQuietEligible": false
+        }
+      },
+      "adopted": {
+        "sameElement": true,
+        "beforeAdoption": {
+          "oldEnded": true,
+          "sourceAt": 146.376,
+          "sourceDuration": 146.376,
+          "incomingAt": 1.744441,
+          "incomingDuration": 305.736,
+          "incomingPaused": false,
+          "incomingSeeking": false,
+          "observedAt": 10631,
+          "audibility": [
+            {
+              "event": "play-request",
+              "at": 0,
+              "observedAt": 8884,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": true,
+              "seeking": false
+            },
+            {
+              "event": "volumechange",
+              "at": 0.000689,
+              "observedAt": 8887,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "playing",
+              "at": 0.000689,
+              "observedAt": 8887,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.019317,
+              "observedAt": 8905,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.043373,
+              "observedAt": 8929,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.0674,
+              "observedAt": 8953,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.092317,
+              "observedAt": 8978,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.11531,
+              "observedAt": 9001,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.139288,
+              "observedAt": 9027,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.163302,
+              "observedAt": 9049,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.187293,
+              "observedAt": 9073,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.212548,
+              "observedAt": 9099,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.235288,
+              "observedAt": 9121,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.259773,
+              "observedAt": 9146,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.283303,
+              "observedAt": 9169,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.30759,
+              "observedAt": 9194,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.331311,
+              "observedAt": 9217,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.35533,
+              "observedAt": 9241,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.379313,
+              "observedAt": 9265,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.403336,
+              "observedAt": 9289,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.427333,
+              "observedAt": 9313,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.452302,
+              "observedAt": 9338,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.475333,
+              "observedAt": 9361,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.499354,
+              "observedAt": 9385,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.523336,
+              "observedAt": 9409,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.547932,
+              "observedAt": 9434,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.5714,
+              "observedAt": 9457,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.605826,
+              "observedAt": 9492,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.627357,
+              "observedAt": 9513,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.651392,
+              "observedAt": 9537,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.675366,
+              "observedAt": 9561,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.699384,
+              "observedAt": 9585,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.724888,
+              "observedAt": 9611,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.747389,
+              "observedAt": 9633,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.771389,
+              "observedAt": 9657,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.795417,
+              "observedAt": 9681,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.819569,
+              "observedAt": 9706,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.843472,
+              "observedAt": 9729,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.868156,
+              "observedAt": 9754,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.891411,
+              "observedAt": 9777,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.91541,
+              "observedAt": 9801,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.939435,
+              "observedAt": 9825,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.963414,
+              "observedAt": 9849,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 0.987405,
+              "observedAt": 9873,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.01142,
+              "observedAt": 9897,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.035424,
+              "observedAt": 9921,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.059425,
+              "observedAt": 9945,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.083432,
+              "observedAt": 9969,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.107483,
+              "observedAt": 9993,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.131553,
+              "observedAt": 10017,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.155473,
+              "observedAt": 10041,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.180284,
+              "observedAt": 10066,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.230127,
+              "observedAt": 10116,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.251436,
+              "observedAt": 10137,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.275505,
+              "observedAt": 10161,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.299514,
+              "observedAt": 10185,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.323511,
+              "observedAt": 10209,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.347524,
+              "observedAt": 10233,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.373922,
+              "observedAt": 10260,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.395525,
+              "observedAt": 10281,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.419547,
+              "observedAt": 10305,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.443547,
+              "observedAt": 10329,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.467542,
+              "observedAt": 10353,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.492515,
+              "observedAt": 10378,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.515538,
+              "observedAt": 10401,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.539594,
+              "observedAt": 10425,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.563593,
+              "observedAt": 10449,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.587577,
+              "observedAt": 10473,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.611566,
+              "observedAt": 10497,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.635582,
+              "observedAt": 10521,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.659609,
+              "observedAt": 10545,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.68361,
+              "observedAt": 10569,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.707592,
+              "observedAt": 10593,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "volume-set",
+              "at": 1.731579,
+              "observedAt": 10617,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            },
+            {
+              "event": "adoption",
+              "at": 1.744441,
+              "observedAt": 10631,
+              "volume": 1,
+              "muted": false,
+              "rate": 1,
+              "paused": false,
+              "seeking": false
+            }
+          ]
+        },
+        "targetTime": 1.913332,
+        "observedAt": 10799,
+        "rate": 1,
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 144.63673,
+            "sourceDuration": 146.376
+          },
+          {
+            "event": "target-play",
+            "at": 1.744441,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 146.376,
+            "sourceDuration": 146.376
+          }
+        ],
+        "isPlaying": true,
+        "sourceEndedAt": 0
+      },
+      "sourceStart": {
+        "fromZero": true,
+        "advancedBeforeSeek": 0.266163,
+        "duration": 146.376,
+        "advancedAfterSeek": 137.654614
+      },
+      "eofChecks": [
+        {
+          "ended": true,
+          "paused": true,
+          "at": 146.376,
+          "live": {
+            "device": "pc",
+            "fromId": "b-track-27",
+            "toId": "b-track-50",
+            "kind": "postlude",
+            "nativeCleanTail": true,
+            "started": true,
+            "actualAt": 146.376,
+            "incomingAt": 1.744441,
+            "elapsed": 1.743,
+            "fade": 1.719290833333332,
+            "handingOff": false
+          },
+          "incomingPaused": false,
+          "incomingAt": 1.744441,
+          "incomingReady": 4,
+          "result": true
+        }
+      ],
+      "stall": null,
+      "logs": [
+        "[Music Box DJ] Cambio continuo: riutilizzo del lettore gia in riproduzione {outgoing: b-track-27, incoming: b-track-50, at: 1.744441}"
+      ]
+    }
+  ]
+}

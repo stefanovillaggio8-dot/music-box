@@ -1,0 +1,15 @@
+{
+  "reportSha256": "488491299bbe5a50d9712f63c1adb1ac92ea96260275a195c13966403ad65a67",
+  "operatorDeclaredDevice": "iphone 13",
+  "userReported": "Finale udibile, Sono Ok non parte",
+  "reason": "bounded-source-clock-refinement-timeout",
+  "incomingPlayRequested": false,
+  "recognizedSourceClock": 0.023020833333333334,
+  "positioning": {
+    "duration": 161.136,
+    "offset": 0.023020833333333334,
+    "sourceAt": 0,
+    "at": 9
+  },
+  "conclusion": "Recognized clock; preparation demanded the initial seek timestamp after the stream had already advanced. No target play requested, so dual-stream audibility remains untested."
+}

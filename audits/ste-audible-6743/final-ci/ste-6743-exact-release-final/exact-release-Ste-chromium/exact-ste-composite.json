@@ -1,0 +1,68 @@
+{
+  "results": [
+    {
+      "browser": "chromium",
+      "profile": "Ste",
+      "nativePlaybackTrial": 1,
+      "indexSha256": "a4c07cd556c28b74d3d02d338d7af09beb775ce2929bbb5307b60c965357cfe6",
+      "decodedOriginalMixes": 33,
+      "resampled": {
+        "sampleRate": 44100,
+        "decoded": 33,
+        "rejected": []
+      },
+      "actualNativeHandoff": {
+        "id": "in",
+        "handoffs": 1,
+        "mutedBeforePlay": true,
+        "paused": false,
+        "at": 12.05789,
+        "playError": null
+      },
+      "nativeHandoffMode": {
+        "preservedFileTail": true,
+        "entry": 0,
+        "tempo": 1.0167224080267576
+      },
+      "seekRollback": true,
+      "silentAppBridge": {
+        "muted": true,
+        "lastPlayWasMuted": true
+      },
+      "actualSameProfilePlannerPlayback": {
+        "handoffs": 1,
+        "paused": false,
+        "sourceMatches": true,
+        "nativeMetadata": {
+          "state": "idle",
+          "repairsApplied": 0,
+          "supported": false,
+          "platform": "Linux x86_64"
+        }
+      },
+      "optimizedCue": {
+        "from": "b-track-705",
+        "to": "b-track-50",
+        "fade": 10.77661184210524,
+        "tempo": 1.0167224080267576
+      },
+      "muteDuringOverlap": {
+        "muted": true,
+        "unmuteKeptCommonOwnership": true
+      },
+      "automaticShuffle": {
+        "full": true,
+        "partial": false,
+        "manualQueue": 0,
+        "poolRespected": true
+      },
+      "completePersonalSte": true,
+      "observedBarsPartialSte": false,
+      "diagnosticMetadataPrefixProbe": false,
+      "diagnosticMetadataFixtureTransport": false,
+      "diagnosticUniqueSourceUrl": false,
+      "diagnosticInjectedProvisionalMetadata": false,
+      "physicalIPhone": false
+    }
+  ]
+}

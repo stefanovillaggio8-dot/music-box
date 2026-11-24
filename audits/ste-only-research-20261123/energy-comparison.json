@@ -1,0 +1,143 @@
+{
+  "method": "frozen-Ste-window-actual-PCM-gates-v1",
+  "discoveryOnly": true,
+  "certifiedPairsAdded": 0,
+  "criteriaUnchanged": true,
+  "geometryRetuned": false,
+  "modelDownbeatOrVocalProofNotChecked": true,
+  "rows": [
+    {
+      "from": "audio/songs/track-50.mp3",
+      "to": "audio/songs/track-39.mp3",
+      "role": "development",
+      "begin": 299.28,
+      "entry": 0,
+      "fade": 6.375999999999976,
+      "rate": 1,
+      "before": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 15,
+          "targetPulses": 14,
+          "matches": 13,
+          "ratio": 0.8666666666666667,
+          "first": 6,
+          "second": 7,
+          "rms": 0.03186510027263436,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 6,
+          "observedPulseCount": 6
+        }
+      },
+      "after": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 15,
+          "targetPulses": 14,
+          "matches": 13,
+          "ratio": 0.8666666666666667,
+          "first": 6,
+          "second": 7,
+          "rms": 0.0361808120055993,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 6,
+          "observedPulseCount": 6
+        }
+      }
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "audio/songs/track-7.mp3",
+      "role": "development",
+      "begin": 161.76107669333334,
+      "entry": 0,
+      "fade": 7.056923306666675,
+      "rate": 1.0077502714207398,
+      "before": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 17,
+          "targetPulses": 17,
+          "matches": 15,
+          "ratio": 0.8823529411764706,
+          "first": 9,
+          "second": 6,
+          "rms": 0.03637098218482984,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 9,
+          "observedPulseCount": 7
+        }
+      },
+      "after": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 17,
+          "targetPulses": 17,
+          "matches": 11,
+          "ratio": 0.6470588235294118,
+          "first": 6,
+          "second": 5,
+          "rms": 0.03941719492448,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 9,
+          "observedPulseCount": 7
+        }
+      }
+    },
+    {
+      "from": "audio/songs/track-210.mp3",
+      "to": "audio/songs/track-206.mp3",
+      "role": "held-out",
+      "begin": 129.88484864,
+      "entry": 0,
+      "fade": 15.402151360000005,
+      "rate": 1.0312510312510312,
+      "before": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 23,
+          "targetPulses": 21,
+          "matches": 19,
+          "ratio": 0.8260869565217391,
+          "first": 9,
+          "second": 10,
+          "rms": 0.01908727832374558,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 12
+        }
+      },
+      "after": {
+        "best": {
+          "fitPassed": false,
+          "harmonyPassed": false,
+          "sourcePulses": 23,
+          "targetPulses": 21,
+          "matches": 17,
+          "ratio": 0.7391304347826086,
+          "first": 8,
+          "second": 9,
+          "rms": 0.031815504349302866,
+          "reason": "observedPulseAgreement"
+        },
+        "rejections": {
+          "observedPulseAgreement": 12
+        }
+      }
+    }
+  ]
+}

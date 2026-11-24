@@ -1,0 +1,12 @@
+AssertionError [ERR_ASSERTION]: the revalidated index remains available through the same loader request while offline
+
+false !== true
+
+    at C:\Users\stefa\Documents\Codex\2026-11-13\files-pasted-by-the-user-music\work\music-box-ste-prefixes-6744\tests\offline-upgrade.cjs:84:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "platform": "safari-logical-capability",
+  "seed": 20261114,
+  "runtimeEvidence": {
+    "engineSha256": "60de183aa681f93f3c13dcff0e7692534c699b926d5cd0ac6d398b392dd5531f",
+    "indexSha256": "75a15243f409988041c6001981f096105c5290d97433af920a40cc0786446d6a",
+    "compositeSha256": "1bcce94701948bf8f0a0f1bd532a3c187e6203c9a1c66a7366d834d9872e6ed5",
+    "applicationSha256": "0615fee5d95a918db7647ff0c017fb752e5c5f7c146da67950282e41154199d4"
+  },
+  "audioVariant": "original recordings; no loaded boost manifest",
+  "sessionHistoryAssumption": "A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.",
+  "sourceSnapshot": "Unchanged BUILTIN + validated published online-imports + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.",
+  "publishedImports": {
+    "sha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "manifestRows": 1
+  },
+  "auditExclusions": [
+    {
+      "profile": "Ste",
+      "playlist": "gym"
+    }
+  ],
+  "personalLibrariesOnly": true,
+  "offlineAssumption": "Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.",
+  "limits": "Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.",
+  "results": [],
+  "inventories": [
+    {
+      "profile": "Ste",
+      "members": 222,
+      "completePairs": 1,
+      "uniqueRecordingPairs": 1,
+      "partialPairs": 1,
+      "uniquePartialRecordingPairs": 1,
+      "full": [
+        {
+          "from": "b-track-705",
+          "to": "b-track-50",
+          "fromTitle": "End of Beginning",
+          "toTitle": "la mia storia tra le dita",
+          "fromSha": "7f72d7d8bfa968897b418d4f11ceb620499fd69c",
+          "toSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+          "kind": "full",
+          "overlap": 10.77661184210524,
+          "commonAssetSha": "7a99ebb66c947f66a68790eb446422e616748ee9c1ae0ec2cf6ebf3e82a6e311",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 159.301,
+          "incomingAudibleUpperBound": 0,
+          "begin": 148.52438815789475,
+          "end": 159.301,
+          "earlyOverlapStart": true,
+          "early": false,
+          "safariFull": true,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        }
+      ],
+      "partial": [
+        {
+          "from": "b-track-4",
+          "to": "b-track-38",
+          "fromTitle": "Sono Ok",
+          "toTitle": "Gilgamesh",
+          "fromSha": "004e594c10688869197f21e31e748c1dd82901b4",
+          "toSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+          "kind": "partial",
+          "overlap": 7.250282685512346,
+          "commonAssetSha": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+          "skipped": 0,
+          "incomingOmitted": 0,
+          "outgoingReadThrough": 126.877,
+          "incomingAudibleUpperBound": 0,
+          "begin": 119.62671731448765,
+          "end": 126.877,
+          "earlyOverlapStart": false,
+          "early": false,
+          "safariFull": false,
+          "significantContentSkippedSeconds": null,
+          "semanticContentUnknown": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "main": "398e6b2d7339f7e81a086612c721383f4ae765ff",
+  "releaseMerge": "f8ca958d7a6f022dd53092128cf3fdf232b11458",
+  "version": "6.738",
+  "verifiedAt": "2026-11-22T21:09:43.456484+00:00",
+  "files": {
+    "app.js": "0615fee5d95a918db7647ff0c017fb752e5c5f7c146da67950282e41154199d4",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "index.html": "c9028d91e660c10ca37465e5a4cfcabe1a927f73b66338dad287eb2efcfbeab5",
+    "style.css": "50135f42186b69fe0b59d3f68db616f731d12d57ced80b46bc5302c652b1c075",
+    "sw.js": "cb9d323cd9996b49af6577ff3c4c1f0edf40d681a254775a5afda4ce02588743",
+    "versione.json": "91a49311315faf3641b4692158a87153ceff71c42aa915812a673e6e28edf8dd"
+  },
+  "publicIndexSha256": "e9157f716bad01173b297b99d22bd08c3d28c6ed74e2cdbe3927c312132e23a7",
+  "djoOriginalRenderPresent": true
+}

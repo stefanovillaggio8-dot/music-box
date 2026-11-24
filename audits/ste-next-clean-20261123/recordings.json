@@ -1,0 +1,464 @@
+{
+  "version": 1,
+  "evaluationOnly": true,
+  "notPlaybackCertified": true,
+  "recordings": {
+    "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8": {
+      "key": "audio/songs/track-38.mp3",
+      "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+      "sourceSha256": "746955fd371e9f31fe0c361c6dc6b73452d584de12c6986f0ebd776e1b26e8e4",
+      "duration": 161.089,
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "sampleRate": 48000,
+        "rawFrames": 7734528,
+        "decodedFrames": 7732271,
+        "primingFrames": 1105,
+        "paddingFrames": 1152
+      },
+      "quietSuffix": {
+        "method": "native-original-quiet-suffix-factored-v1",
+        "from": 158.45,
+        "begin": 158.75,
+        "through": 161.089,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "sourceClock": {
+          "method": "original-mp3-gapless-metadata-v1",
+          "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+          "sampleRate": 48000,
+          "rawFrames": 7734528,
+          "decodedFrames": 7732271,
+          "primingFrames": 1105,
+          "paddingFrames": 1152
+        },
+        "reusedPublishedEvidence": true,
+        "native": [
+          {
+            "platform": "linux",
+            "browser": "chromium",
+            "rate": 44100,
+            "sourceTailPeak": 0.0001379056047881022,
+            "sourceTailRmsMax": 3.63050937184139e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 161.08895691609976,
+            "sourceMediaDuration": 161.088979,
+            "channelRmsUpperBound": 5.13431559198072e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "linux",
+            "browser": "chromium",
+            "rate": 48000,
+            "sourceTailPeak": 0.0001376281288685277,
+            "sourceTailRmsMax": 3.63607435796943e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 161.08897916666666,
+            "sourceMediaDuration": 161.088979,
+            "channelRmsUpperBound": 5.1421856708374124e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "linux",
+            "browser": "webkit",
+            "rate": 44100,
+            "sourceTailPeak": 0.00013112313172314316,
+            "sourceTailRmsMax": 3.6976242839279894e-05,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 161.13598639455782,
+            "sourceMediaDuration": 161.136,
+            "channelRmsUpperBound": 5.229230410891067e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "linux",
+            "browser": "webkit",
+            "rate": 48000,
+            "sourceTailPeak": 0.000152587890625,
+            "sourceTailRmsMax": 3.7174546168768564e-05,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 161.136,
+            "sourceMediaDuration": 161.136,
+            "channelRmsUpperBound": 5.257274736693729e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "darwin",
+            "browser": "chromium",
+            "rate": 44100,
+            "sourceTailPeak": 0.0001379056047881022,
+            "sourceTailRmsMax": 3.630509369464485e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 161.08895691609976,
+            "sourceMediaDuration": 161.088979,
+            "channelRmsUpperBound": 5.134315588619269e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "darwin",
+            "browser": "chromium",
+            "rate": 48000,
+            "sourceTailPeak": 0.0001376281288685277,
+            "sourceTailRmsMax": 3.63607435796943e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 161.08897916666666,
+            "sourceMediaDuration": 161.088979,
+            "channelRmsUpperBound": 5.1421856708374124e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "darwin",
+            "browser": "webkit",
+            "rate": 44100,
+            "sourceTailPeak": 0.00012865362805314362,
+            "sourceTailRmsMax": 3.67526913962822e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 161.08897959183673,
+            "sourceMediaDuration": 161.136,
+            "channelRmsUpperBound": 5.197615462633526e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          },
+          {
+            "platform": "darwin",
+            "browser": "webkit",
+            "rate": 48000,
+            "sourceTailPeak": 0.0001220703125,
+            "sourceTailRmsMax": 3.704383357638615e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 161.08897916666666,
+            "sourceMediaDuration": 161.136,
+            "channelRmsUpperBound": 5.2387891846017134e-05,
+            "rmsBoundMethod": "sqrt2-times-measured-stereo-rms"
+          }
+        ]
+      }
+    },
+    "004e594c10688869197f21e31e748c1dd82901b4": {
+      "key": "audio/songs/track-4.mp3",
+      "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "sourceSha256": "3e69445817146a1df64c7bf2dd0572fddd0670d5da037bcca085c2adc0cb4848",
+      "duration": 126.877,
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "sampleRate": 44100,
+        "rawFrames": 5595264,
+        "decodedFrames": 5595264,
+        "primingFrames": 0,
+        "paddingFrames": 0
+      },
+      "prefix": {
+        "method": "native-original-prefix-factored-v1",
+        "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "through": 2.4389999999999987,
+        "reusedPublishedEvidence": true,
+        "meaningfulSeconds": 1.5,
+        "originalWindows": [
+          {
+            "at": 0,
+            "seconds": 0.25,
+            "rms": 1.9612390677669226e-05
+          },
+          {
+            "at": 0.25,
+            "seconds": 0.25,
+            "rms": 5.6777480243719224e-05
+          },
+          {
+            "at": 0.5,
+            "seconds": 0.25,
+            "rms": 0.0006863551238730384
+          },
+          {
+            "at": 0.75,
+            "seconds": 0.25,
+            "rms": 0.0035200002602740164
+          },
+          {
+            "at": 1,
+            "seconds": 0.25,
+            "rms": 0.008519709794584765
+          },
+          {
+            "at": 1.25,
+            "seconds": 0.25,
+            "rms": 0.03976726626197334
+          },
+          {
+            "at": 1.5,
+            "seconds": 0.25,
+            "rms": 0.037203207308602736
+          },
+          {
+            "at": 1.75,
+            "seconds": 0.25,
+            "rms": 0.08010380157697171
+          },
+          {
+            "at": 2,
+            "seconds": 0.25,
+            "rms": 0.07740567970469446
+          }
+        ],
+        "native": [
+          {
+            "platform": "linux",
+            "browser": "chromium",
+            "rate": 44100,
+            "targetNativeOverlapPeak": 0.37295302748680115,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87673469387755,
+            "targetMediaDuration": 126.876708
+          },
+          {
+            "platform": "linux",
+            "browser": "chromium",
+            "rate": 48000,
+            "targetNativeOverlapPeak": 0.3761063814163208,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87672916666666,
+            "targetMediaDuration": 126.876708
+          },
+          {
+            "platform": "linux",
+            "browser": "webkit",
+            "rate": 44100,
+            "targetNativeOverlapPeak": 0.372955322265625,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87673469387755,
+            "targetMediaDuration": 126.876708333
+          },
+          {
+            "platform": "linux",
+            "browser": "webkit",
+            "rate": 48000,
+            "targetNativeOverlapPeak": 0.3699779510498047,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87672916666666,
+            "targetMediaDuration": 126.876708333
+          },
+          {
+            "platform": "darwin",
+            "browser": "chromium",
+            "rate": 44100,
+            "targetNativeOverlapPeak": 0.37295302748680115,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87673469387755,
+            "targetMediaDuration": 126.876708
+          },
+          {
+            "platform": "darwin",
+            "browser": "chromium",
+            "rate": 48000,
+            "targetNativeOverlapPeak": 0.3761063516139984,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87672916666666,
+            "targetMediaDuration": 126.876708
+          },
+          {
+            "platform": "darwin",
+            "browser": "webkit",
+            "rate": 44100,
+            "targetNativeOverlapPeak": 0.372955322265625,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87673469387755,
+            "targetMediaDuration": 126.87673469387755
+          },
+          {
+            "platform": "darwin",
+            "browser": "webkit",
+            "rate": 48000,
+            "targetNativeOverlapPeak": 0.372214138507843,
+            "targetDecodedOffset": 0,
+            "targetMediaOffset": 0,
+            "targetDecodedDuration": 126.87672916666666,
+            "targetMediaDuration": 126.87673469387755
+          }
+        ]
+      }
+    },
+    "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd": {
+      "key": "audio/songs/track-34.mp3",
+      "sourceSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+      "sourceSha256": "da7b51325b2c4ca2bc02133c7b3dba1c227494a32858abc3d0d971125831fb94",
+      "duration": 160.647,
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "sampleRate": 48000,
+        "rawFrames": 7712640,
+        "decodedFrames": 7711069,
+        "primingFrames": 1105,
+        "paddingFrames": 466
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "36d90d77c826f1d2f28cc7a6ac569a43ff980af492571e2e84e14f009018141b",
+            "coveredThrough": 3.5,
+            "maximumPeak": 0.681501030921936,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.07318532068439115,
+                "peak": 0.5584452152252197
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.172043717105989,
+                "peak": 0.681501030921936
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.10572494205514503,
+                "peak": 0.41275495290756226
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.0897646187893437,
+                "peak": 0.32676973938941956
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.1365048897385934,
+                "peak": 0.5402324795722961
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.1253575778809858,
+                "peak": 0.46162325143814087
+              },
+              {
+                "at": 1.5,
+                "seconds": 0.25,
+                "rms": 0.06743962693997288,
+                "peak": 0.22085288166999817
+              },
+              {
+                "at": 1.75,
+                "seconds": 0.25,
+                "rms": 0.04275320715697316,
+                "peak": 0.14051994681358337
+              },
+              {
+                "at": 2.0,
+                "seconds": 0.25,
+                "rms": 0.06949995654759344,
+                "peak": 0.3503826856613159
+              }
+            ],
+            "meaningfulSeconds": 2.25,
+            "originalEofWindowChangeDb": 5.3565099277088954
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "12644a39994b219993e167ea20936d7567730e4191d7c134e867fbe8cf55919d",
+            "coveredThrough": 3.5,
+            "maximumPeak": 0.6814932823181152,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.0731854557827803,
+                "peak": 0.5585839748382568
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.17204359018204368,
+                "peak": 0.6814932823181152
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.10572508583617551,
+                "peak": 0.41276347637176514
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.08976449796128862,
+                "peak": 0.32694190740585327
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.13650541745104683,
+                "peak": 0.540422797203064
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.12535655998942047,
+                "peak": 0.46161338686943054
+              },
+              {
+                "at": 1.5,
+                "seconds": 0.25,
+                "rms": 0.0674398123398903,
+                "peak": 0.22089512646198273
+              },
+              {
+                "at": 1.75,
+                "seconds": 0.25,
+                "rms": 0.04275329411278468,
+                "peak": 0.1405337154865265
+              },
+              {
+                "at": 2.0,
+                "seconds": 0.25,
+                "rms": 0.0695003261924346,
+                "peak": 0.35038650035858154
+              }
+            ],
+            "meaningfulSeconds": 2.25,
+            "originalEofWindowChangeDb": 5.356497373127632
+          }
+        },
+        "native": [],
+        "notNativeCertified": true
+      }
+    }
+  },
+  "sourceDecodes": 0,
+  "newPrefixDecodes": 2,
+  "positiveControlReused": true,
+  "protocolSha256": "52edd1a207a0d1b5188241804303954a4dea45285c7119e4c7e49b5b5010249f",
+  "cases": [
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "role": "reused-published-positive-no-new-render"
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "role": "new-frozen-Kid-Yugi-entry"
+    }
+  ]
+}

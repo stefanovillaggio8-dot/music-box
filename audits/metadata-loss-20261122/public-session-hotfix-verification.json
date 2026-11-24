@@ -1,0 +1,18 @@
+{
+  "version": "6.738",
+  "releaseMerge": "e67f3792cf33a7e6055d13216caa98eead87058a",
+  "deployedMain": "3f60798e7c2994858b7eb96faceb9ed381770c9b",
+  "pagesRun": 45075314041,
+  "verifiedAt": "2026-11-22T22:02:42.939890+00:00",
+  "files": {
+    "app.js": "88cc1436190c104b43a657cc2edaf0b2b1c074bfce135a98ced693eed9acd7c4",
+    "index.html": "64071fb7f570c7fd9d30e0958cc5419a2e2fad01986c162af94cae71a38ecbd2",
+    "sw.js": "1c66cade751d8a12eb4a49dbcaa13d0f30c31e36d6c552f23feea946220c71d6",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f",
+    "style.css": "50135f42186b69fe0b59d3f68db616f731d12d57ced80b46bc5302c652b1c075",
+    "versione.json": "91a49311315faf3641b4692158a87153ceff71c42aa915812a673e6e28edf8dd",
+    "dj-deep-analysis.json": "0b7f54be44b97114af7a1ecaa2a6267cc19c75c33bfa58eaa018098d33dc7c46"
+  },
+  "physicalIPhoneTested": false,
+  "phraseKaraokePR65Preserved": true
+}

@@ -1,0 +1,17 @@
+{
+  "pair": {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "sourceBegin": 137.36,
+  "anchor": "End of last cached reliable source bar; model hypothesis, not verified semantic section",
+  "entry": 0,
+  "tempo": 1,
+  "sourceUnityThroughOriginalEof": true,
+  "targetUnityFromZero": true,
+  "kindUnderStudy": "non-beatmatched musical clean lead-in, NOT a full or partial beat certificate",
+  "purpose": "Different from the admitted near-silent suffix144.593; check voice and local harmony BEFORE rendering or new detectors",
+  "newModels": 0,
+  "newPcmDecodes": 0,
+  "allowInstallation": false
+}

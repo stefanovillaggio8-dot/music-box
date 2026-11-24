@@ -1,0 +1,45 @@
+name: Bounded independent Ste component evidence, no release
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  component-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      TORCH_HOME: ${{ github.workspace }}/model-cache/torch
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Freeze current Ste selection before dependencies or audio
+        run: node tools/ste-research-scope.cjs --cases=audits/ste-component-evidence-20261124/cases.json --output=scope-preflight.json
+      - uses: actions/cache@v4
+        with:
+          path: model-cache
+          key: ste-components-htdemucs401-beat-final0-v1
+      - name: CPU-only research dependencies, nothing installed in the app
+        timeout-minutes: 6
+        run: |
+          python -m pip install torch==2.5.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install numpy==1.26.4 librosa==0.11.0 soxr beat-this==1.1.0 demucs==4.0.1
+      - run: python tools/test-dj-component-support.py
+      - name: Only three declared component separations and beat inferences
+        run: python tools/ste-component-study.py --protocol=audits/ste-component-evidence-20261124/protocol.json --output=component-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-component-evidence
+          path: |
+            scope-preflight.json
+            component-results/component-study.json
+            component-results/scope.json
+            component-results/*.npz
+          retention-days: 7

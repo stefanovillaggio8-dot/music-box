@@ -1,0 +1,14 @@
+{
+  "features": 222,
+  "analyzable": 222,
+  "candidateRestricted": true,
+  "consideredPairs": 10056,
+  "evaluatedPairs": 10054,
+  "sameRecordingSkipped": 2,
+  "fullBeatPlans": 0,
+  "averagePlannedOverlap": null,
+  "downbeatsVerified": false,
+  "phrasesVerified": false,
+  "listeningVerified": false,
+  "plans": []
+}

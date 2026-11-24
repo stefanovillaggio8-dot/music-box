@@ -1,0 +1,41 @@
+{
+  "baseline": {
+    "tests": 740,
+    "passed": 721,
+    "failed": 19,
+    "failures": [
+      "actual Diego shuffle preserves a fresh certified follower without calling its current natural change a beatmatch",
+      "equal validated personal postludes prepare a full successor instead of consuming its follower",
+      "historical full pairs stay full unless exact rendered evidence independently disqualifies the entrance",
+      "legacy extended and alternative-grid plans cannot discard an unverified incoming prefix",
+      "missing native/44.1 kHz evidence, drift, weak bars, volume jumps and content cuts invalidate the new partial",
+      "original MP3 pulse agreement cannot authorize a 2.38 second unverified opening skip",
+      "player requires exact raw suffix evidence and independently rendered evidence at both rates",
+      "protected rhythmic tail preserves the actual recording: audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3",
+      "protected rhythmic tail preserves the actual recording: audio/songs/track-4.mp3 -> audio/songs/track-38.mp3",
+      "protected rhythmic tail preserves the actual recording: audio/songs/track-705.mp3 -> audio/songs/track-50.mp3",
+      "real Safari shuffle uses rendered precision to promote the better verified mix while respecting the fresh pool",
+      "real original 700 to 521 uses separated vocals with both recordings intact",
+      "real original 934 to 1124 uses separated vocals with both recordings intact",
+      "tests\\iphone-offline-shell.test.cjs",
+      "the actual Safari shuffle promotes an exposed partial while keeping full counters separate",
+      "the actual player planner selects the shorter four-bar intact cue and retains its historical alternative",
+      "the original-source Mod\u00e0 rhythm receipts cannot override a persistently masked entrance",
+      "the previous rhythmic certificate remains explicitly partial, independently of the entrance veto",
+      "the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed"
+    ]
+  },
+  "recovery": {
+    "tests": 743,
+    "passed": 739,
+    "failed": 4,
+    "failures": [
+      "legacy extended and alternative-grid plans cannot discard an unverified incoming prefix",
+      "original MP3 pulse agreement cannot authorize a 2.38 second unverified opening skip",
+      "protected rhythmic tail preserves the actual recording: audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3",
+      "the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed"
+    ]
+  },
+  "newFailures": [],
+  "baselineEnvironmentFailure": "Playwright missing in clean worktree; provisioned before final recovery run, not counted as a code fix"
+}

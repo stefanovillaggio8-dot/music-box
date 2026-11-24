@@ -1,0 +1,31 @@
+{
+  "profile": "Ste",
+  "pair": {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+  "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+  "begin": 137.36,
+  "end": 146.333,
+  "fade": 8.972999999999985,
+  "entry": 0,
+  "tempo": 1,
+  "inputs": {
+    "..\\whole-structure-ci\\whole-structure-12\\structure-12.json": "7de6f0e0cfa17b12b87d4efb7ecd4244bccd3208a1b429c98a632cdda1e2a430",
+    "..\\whole-structure-ci\\whole-structure-2\\structure-2.json": "48cff0826782d11f78f5a2f2d598441a9dcd115ee626a7d441a867ef86a00b53",
+    "..\\pcm-v3\\pcm-1.json": "eb40a4453d5c99223e4d8d3375f07f802e5886119bc88ea9475353e5507c2180",
+    "..\\pcm-v3\\pcm-11.json": "29838b6cd8538387f53646a273ae5025d8f460258575ca67b56b2f9386be0dca"
+  },
+  "incomingClear": false,
+  "incomingQuietPrefix": 10,
+  "outgoingQuietSuffix": 142.70000000000002,
+  "fullHarmony": false,
+  "preservedHarmony": false,
+  "semanticLabelsVerified": false,
+  "newPcmDecodes": 0,
+  "newRenders": 0,
+  "newModels": 0,
+  "certified": false,
+  "installed": false
+}

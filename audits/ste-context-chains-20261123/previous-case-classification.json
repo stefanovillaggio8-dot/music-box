@@ -1,0 +1,87 @@
+{
+  "sourceCheckpoint": "642c7535",
+  "newAudioDecoded": 0,
+  "newModelInferences": 0,
+  "allModelEvidenceIsHypothesis": true,
+  "actualAcousticAbsenceNotInferredFromThresholdFailure": true,
+  "rows": [
+    {
+      "from": "audio/songs/track-50.mp3",
+      "to": "audio/songs/track-39.mp3",
+      "primary": "independent_metrical_observations_unavailable",
+      "evidence": [
+        "metric-diagnosis-checked.json",
+        "other-context.json"
+      ],
+      "finding": "Insufficient observed pulses in reliable bars at the frozen geometry, and no coherent initial chain in context evidence. Neither a BPM incompatibility nor absolute absence of rhythm is established."
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "audio/songs/track-7.mp3",
+      "primary": "harmony_gate_in_context_windows",
+      "secondary": "metrical_phase_conflict_at_frozen_geometry",
+      "evidence": [
+        "metric-diagnosis-checked.json",
+        "realigned-whole.json",
+        "realigned-context.json"
+      ],
+      "finding": "Frozen geometry loses correspondence under independent model meter hypotheses. Original-context replanning reaches harmony and is vetoed there. This does not prove the pair is impossible at every geometry."
+    },
+    {
+      "from": "audio/songs/track-210.mp3",
+      "to": "audio/songs/track-206.mp3",
+      "primary": "vocal_boundary_gate",
+      "secondary": "metrical_phase_conflict_at_frozen_geometry",
+      "evidence": [
+        "metric-diagnosis-checked.json",
+        "other-context.json"
+      ],
+      "finding": "The context plans are blocked by the existing vocal policy before a full harmony/rhythm certificate. Rhythm at the old geometry also fails the independent metric observation test."
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "audio/songs/track-34.mp3",
+      "primary": "weak_unverified_downbeat_and_incomplete_detector_grid",
+      "evidence": [
+        "bar-gates.json",
+        "band-transient-probe.json",
+        "short-eva-candidates.json",
+        "phase-gap-results.json"
+      ],
+      "events": [
+        {
+          "time": 2.84,
+          "state": "Existing HPSS onset 0.009 < 0.25. Raw band-energy rises are weak; actual acoustic absence is NOT proved. Independent timing evidence is insufficient."
+        },
+        {
+          "time": 8.12,
+          "state": "Raw low-band energy rise exists. Energy alone does not prove a correctly timed audible impulse, and cannot replace the onset gate."
+        },
+        {
+          "time": 8.78,
+          "state": "Missing detector event; beat posterior about 0.403 and local onset 0.042 are insufficient to insert an observed pulse."
+        }
+      ]
+    },
+    {
+      "from": "audio/songs/track-205.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "primary": "ending_grid_gap_and_preserved_tail_bounds",
+      "evidence": [
+        "lilith-whole.json",
+        "lilith-context.json"
+      ],
+      "finding": "No coherent eligible ending chain within the existing duration/tail bounds. No independent evidence establishes that every missing bar is acoustically absent."
+    },
+    {
+      "from": "audio/songs/track-1187.mp3",
+      "to": "audio/songs/track-33.mp3",
+      "primary": "vocal_boundary_gate",
+      "evidence": [
+        "lilith-whole.json",
+        "lilith-context.json"
+      ],
+      "finding": "Eligible geometries are vetoed by existing vocal/lyric protection. A model bar or onset correction alone would not remove this veto."
+    }
+  ]
+}

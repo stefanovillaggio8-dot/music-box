@@ -1,0 +1,10 @@
+[IPHONE OFFLINE SHELL] {"background":"rgb(15, 15, 20)","libraryCount":242,"downloadStillSaved":true,"cssOk":true,"jsOk":true,"legacyCssOk":true,"cssBytes":204994,"jsBytes":1119288,"legacyCssBytes":204994,"playerLoaded":true,"stylesheetCount":3}
+✔ tests\iphone-offline-shell.test.cjs (1780.634ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1785.5609

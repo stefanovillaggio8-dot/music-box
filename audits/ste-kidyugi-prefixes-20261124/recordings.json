@@ -1,0 +1,915 @@
+{
+  "version": 1,
+  "evaluationOnly": true,
+  "notPlaybackCertified": true,
+  "recordings": {
+    "42cb3593ee9e81e557b34aa9cb3f331d40976a7a": {
+      "key": "audio/songs/track-27.mp3",
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "duration": 146.333,
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "sampleRate": 48000,
+        "rawFrames": 7026048,
+        "decodedFrames": 7024000,
+        "primingFrames": 1105,
+        "paddingFrames": 943
+      },
+      "quietSuffix": {
+        "method": "native-original-quiet-suffix-factored-v1",
+        "from": 144.293,
+        "begin": 144.593,
+        "through": 146.333,
+        "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+        "native": [
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.00020913156913593411,
+            "sourceTailRmsMax": 6.036365907083142e-05,
+            "maximumChannelRms": 7.422058771065386e-05,
+            "channelRmsUpperBound": 8.536710533243551e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33331065759637,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33331065759637,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.00022668883320875466,
+            "sourceTailRmsMax": 6.0782089326462536e-05,
+            "maximumChannelRms": 7.448307981671094e-05,
+            "channelRmsUpperBound": 8.595885507485626e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.0002181071904487908,
+            "sourceTailRmsMax": 6.153710209713061e-05,
+            "maximumChannelRms": 7.503409981065547e-05,
+            "channelRmsUpperBound": 8.702660437489994e-05,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.37598639455783,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.3529655612245,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.000213623046875,
+            "sourceTailRmsMax": 6.162832039414791e-05,
+            "maximumChannelRms": 7.512790994858407e-05,
+            "channelRmsUpperBound": 8.715560652767838e-05,
+            "sourceDecodedOffset": 0.023020833333333334,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.376,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.35297916666667,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "linux"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.00020913156913593411,
+            "sourceTailRmsMax": 6.036365907083142e-05,
+            "maximumChannelRms": 7.422058771065386e-05,
+            "channelRmsUpperBound": 8.536710533243551e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33331065759637,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33331065759637,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.00022668883320875466,
+            "sourceTailRmsMax": 6.0782089326462536e-05,
+            "maximumChannelRms": 7.448307981671094e-05,
+            "channelRmsUpperBound": 8.595885507485626e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.333333,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "chromium",
+            "platform": "darwin"
+          },
+          {
+            "rate": 44100,
+            "sourceTailPeak": 0.0002090830384986475,
+            "sourceTailRmsMax": 6.0348243477386004e-05,
+            "maximumChannelRms": 7.421157360926978e-05,
+            "channelRmsUpperBound": 8.534530439111296e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "darwin"
+          },
+          {
+            "rate": 48000,
+            "sourceTailPeak": 0.0002266888041049242,
+            "sourceTailRmsMax": 6.0782086575058485e-05,
+            "maximumChannelRms": 7.448307396814836e-05,
+            "channelRmsUpperBound": 8.595885118378335e-05,
+            "sourceDecodedOffset": 0,
+            "sourceMediaOffset": 0.023020833333333334,
+            "sourceDecodedDuration": 146.33333333333334,
+            "sourceMediaDuration": 146.376,
+            "from": 144.293,
+            "through": 146.33333333333334,
+            "accepted": true,
+            "browser": "webkit",
+            "platform": "darwin"
+          }
+        ]
+      }
+    },
+    "87ac95c6c1e141a822414e3a16aacd7d9020824f": {
+      "key": "audio/songs/track-33.mp3",
+      "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+      "duration": 164.363,
+      "sourceSha256": "effa07b9ea68d0c870b5dd90fce4aac35da225cb453ba5e17bf36ee2126a2803",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "sampleRate": 48000,
+        "rawFrames": 7891200,
+        "decodedFrames": 7889398,
+        "primingFrames": 1105,
+        "paddingFrames": 697
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "dceef6d34dc52f42bb4babd24ef141f86d9edf32fd1b5ce812ee006905cfe451",
+            "maximumPeak": 0.45755982398986816,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.05542816253872737
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.11824793072076713
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.1250486682411578
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.12415820643751076
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.11927937053416941
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.10925999873415092
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "ae27743e3f50844ea83ae1e021d30388fe6cb24489c81bdefc3f82a17b69ee62",
+            "maximumPeak": 0.4576285779476166,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.05542911584194483
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.11824807847251331
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.1250491278176864
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.12415874021597878
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.11928034921095446
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.1092601798445745
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [],
+        "notNativeCertified": true
+      }
+    },
+    "9c738da06344a9a141398d53fa95591573f7630d": {
+      "key": "audio/songs/track-87.mp3",
+      "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+      "duration": 211.673,
+      "sourceSha256": "e2e0a4e4b0f002e3d7fab96ee15801b1dedc7b6eb18aef610b82e2cdd6b1c179",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+        "sampleRate": 48000,
+        "rawFrames": 10161792,
+        "decodedFrames": 10160310,
+        "primingFrames": 1105,
+        "paddingFrames": 377
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "9c738da06344a9a141398d53fa95591573f7630d",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "be9deb61bdf45dd6de4ee2b007bf54dfa03b3ae15f4624b4e65125536ee82b02",
+            "maximumPeak": 0.6584542989730835,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.10291310074007617
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.12156438801567714
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08990466848796518
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.09253763448629305
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.0664318198105645
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.10015274046002
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "daba87b180365d122921186133ee3fa7e58673fe8223af3fb6b7eee53fae490b",
+            "maximumPeak": 0.658764123916626,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.10291375997306433
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.12156376709564212
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08990396181134086
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.09253758062685118
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.06643168473586572
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.1001528920274572
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [],
+        "notNativeCertified": true
+      }
+    },
+    "91880f7106a62122af82cff60cc00541b500369f": {
+      "key": "audio/songs/track-1187.mp3",
+      "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+      "duration": 168.853,
+      "sourceSha256": "a7accfcc6a67a3c9af34f2f2f08fb62dede0b6d119b19a770e2cd47937294178",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+        "sampleRate": 48000,
+        "rawFrames": 8106624,
+        "decodedFrames": 8104960,
+        "primingFrames": 1105,
+        "paddingFrames": 559
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "b19208e037d3dda36dccd445825d9d4e7c71ad01d8d6ed170e3e262516ccd117",
+            "maximumPeak": 0.34668248891830444,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.07618753507286653
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.06888741526452478
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.07458664711517339
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.051244393044412716
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.06393941725800341
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.04104670863062386
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "9625b5ed8db141b35891bcde2ea4b2f077b17861701e5058a2bc5509f97bf595",
+            "maximumPeak": 0.346831738948822,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.07618769208185279
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.06888739430887435
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.07458689096780173
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.05124431413266051
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.06393947241612637
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.0410467797230708
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [],
+        "notNativeCertified": true
+      }
+    },
+    "59372e79e4c57c7c8ed70151b6a3e250a8c0be63": {
+      "key": "audio/songs/track-138.mp3",
+      "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+      "duration": 178.167,
+      "sourceSha256": "0b8f18300deb94c7034149e3742014e7318edd466fb8ddde84ba8ce67bc7291c",
+      "clock": {
+        "method": "original-mp3-gapless-metadata-v1",
+        "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+        "sampleRate": 48000,
+        "rawFrames": 8553600,
+        "decodedFrames": 8552003,
+        "primingFrames": 1105,
+        "paddingFrames": 492
+      },
+      "prefix": {
+        "method": "original-stereo-prefix-factored-v1",
+        "sourceSha": "59372e79e4c57c7c8ed70151b6a3e250a8c0be63",
+        "through": 3.5,
+        "rates": {
+          "44100": {
+            "frames": 154350,
+            "pcmSha256": "d54c02ceb94c1cfe03f9358510f696690d1c766d47bd24fc2f3ec31975441fe5",
+            "maximumPeak": 0.5174490213394165,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.12534896140699986
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.10295556490890216
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08275784564838723
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.06709400348632184
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.057351627376677795
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.05899881478357163
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          },
+          "48000": {
+            "frames": 168000,
+            "pcmSha256": "193c61a296d08cdcef827b9702cdc9b860339a6032edab6423c5393b783c63e7",
+            "maximumPeak": 0.5174506902694702,
+            "windows": [
+              {
+                "at": 0.0,
+                "seconds": 0.25,
+                "rms": 0.12534955573142686
+              },
+              {
+                "at": 0.25,
+                "seconds": 0.25,
+                "rms": 0.10295596302842493
+              },
+              {
+                "at": 0.5,
+                "seconds": 0.25,
+                "rms": 0.08275784249397322
+              },
+              {
+                "at": 0.75,
+                "seconds": 0.25,
+                "rms": 0.06709436810773452
+              },
+              {
+                "at": 1.0,
+                "seconds": 0.25,
+                "rms": 0.05735143023993217
+              },
+              {
+                "at": 1.25,
+                "seconds": 0.25,
+                "rms": 0.05899882468802988
+              }
+            ],
+            "meaningfulSeconds": 1.5
+          }
+        },
+        "native": [],
+        "notNativeCertified": true
+      }
+    }
+  },
+  "cases": [
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-33.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-87.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-1187.mp3"
+    },
+    {
+      "from": "audio/songs/track-27.mp3",
+      "to": "audio/songs/track-138.mp3"
+    }
+  ],
+  "sourceDecodes": 0,
+  "newPrefixDecodes": 8,
+  "newModels": 0,
+  "installed": false,
+  "summary": [
+    {
+      "key": "audio/songs/track-33.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "dceef6d34dc52f42bb4babd24ef141f86d9edf32fd1b5ce812ee006905cfe451",
+          "maximumPeak": 0.45755982398986816,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.05542816253872737
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.11824793072076713
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.1250486682411578
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.12415820643751076
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.11927937053416941
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.10925999873415092
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "ae27743e3f50844ea83ae1e021d30388fe6cb24489c81bdefc3f82a17b69ee62",
+          "maximumPeak": 0.4576285779476166,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.05542911584194483
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.11824807847251331
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.1250491278176864
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.12415874021597878
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.11928034921095446
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.1092601798445745
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-87.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "be9deb61bdf45dd6de4ee2b007bf54dfa03b3ae15f4624b4e65125536ee82b02",
+          "maximumPeak": 0.6584542989730835,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.10291310074007617
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.12156438801567714
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08990466848796518
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.09253763448629305
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.0664318198105645
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.10015274046002
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "daba87b180365d122921186133ee3fa7e58673fe8223af3fb6b7eee53fae490b",
+          "maximumPeak": 0.658764123916626,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.10291375997306433
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.12156376709564212
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08990396181134086
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.09253758062685118
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.06643168473586572
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.1001528920274572
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "b19208e037d3dda36dccd445825d9d4e7c71ad01d8d6ed170e3e262516ccd117",
+          "maximumPeak": 0.34668248891830444,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.07618753507286653
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.06888741526452478
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.07458664711517339
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.051244393044412716
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.06393941725800341
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.04104670863062386
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "9625b5ed8db141b35891bcde2ea4b2f077b17861701e5058a2bc5509f97bf595",
+          "maximumPeak": 0.346831738948822,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.07618769208185279
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.06888739430887435
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.07458689096780173
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.05124431413266051
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.06393947241612637
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.0410467797230708
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    },
+    {
+      "key": "audio/songs/track-138.mp3",
+      "rejections": [],
+      "needsNativeDecode": true,
+      "rates": {
+        "44100": {
+          "frames": 154350,
+          "pcmSha256": "d54c02ceb94c1cfe03f9358510f696690d1c766d47bd24fc2f3ec31975441fe5",
+          "maximumPeak": 0.5174490213394165,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.12534896140699986
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.10295556490890216
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08275784564838723
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.06709400348632184
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.057351627376677795
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.05899881478357163
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        },
+        "48000": {
+          "frames": 168000,
+          "pcmSha256": "193c61a296d08cdcef827b9702cdc9b860339a6032edab6423c5393b783c63e7",
+          "maximumPeak": 0.5174506902694702,
+          "windows": [
+            {
+              "at": 0.0,
+              "seconds": 0.25,
+              "rms": 0.12534955573142686
+            },
+            {
+              "at": 0.25,
+              "seconds": 0.25,
+              "rms": 0.10295596302842493
+            },
+            {
+              "at": 0.5,
+              "seconds": 0.25,
+              "rms": 0.08275784249397322
+            },
+            {
+              "at": 0.75,
+              "seconds": 0.25,
+              "rms": 0.06709436810773452
+            },
+            {
+              "at": 1.0,
+              "seconds": 0.25,
+              "rms": 0.05735143023993217
+            },
+            {
+              "at": 1.25,
+              "seconds": 0.25,
+              "rms": 0.05899882468802988
+            }
+          ],
+          "meaningfulSeconds": 1.5
+        }
+      }
+    }
+  ],
+  "prefixOnly": true
+}

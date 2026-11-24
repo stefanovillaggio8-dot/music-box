@@ -39,3 +39,24 @@ segnalati, senza modificare o includere Gym nei nuovi benchmark.
 Smart Mix mantiene la disponibilita' verificata, non aumenta i contatori.
 La copertura Ste, la certificazione delle future importazioni, i riferimenti
 vocali indipendenti e le verifiche su un iPhone fisico restano da completare.
+
+## Pubblicazione e risultati finali
+
+PR68 unita nel commit 56ff510d3d3a3054cb2eaa82e5e117225993aad9. Pages
+45097036088 completato; sette file pubblici identici byte per byte al
+main distribuito, incluso l'indice musicale. Versione effettiva 6.739.
+
+Candidata 12dc3d882223696d6a66f3c3aed6419c369d06b6: workflow frasi/offline
+45096588161 superato, 76/76 test mirati e 9/9 regressioni Karaoke/DJ;
+Chromium e WebKit reali superati per le due viste e aggiornamento
+worker 6.738/PR67 -> 6.739. Matrice audio nativa Linux 45096588156: 10/10.
+Suite completa candidata 757/759, stessi due fallimenti storici Gym.
+Ramo ricerca dopo il merge: 61/61 test mirati superati. Nessuna nuova
+certificazione acustica delle frasi e nessuna prova su iPhone fisico.
+
+Indice, librerie e buffer sono invariati, salvo aggiornamenti concorrenti
+separati dei dati utente conservati. Rollback disponibile tramite tag
+music-box-v6.738-before-phrase-gap-20261123. Non svuotare dati o cache del
+telefono per aggiornare: aprire la versione e accettare l'aggiornamento.
+
+Suite finale del ramo ricerca dopo il merge: 770/772, stessi due casi storici falliti. Nessuna nuova regressione.

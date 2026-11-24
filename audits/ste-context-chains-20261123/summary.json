@@ -1,0 +1,58 @@
+{
+  "checkpoint": "642c7535d6649f00662b404b7c8492da2d096fea",
+  "researchCodeCommit": "e3b2746a5d0b36abfe00026ad512a5fa78401e4a",
+  "lastTestedCodeCommit": "372e5a4f156ef69b83ad757ebc5d6723e3e55be1",
+  "profile": "Ste",
+  "membershipEvidence": {
+    "stateSha256": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlistsSha256": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "importsSha256": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499"
+  },
+  "scopeRecordings": 222,
+  "compilerPairs": {
+    "distinct": 3,
+    "newResearchDirections": 2,
+    "previousNegativeControl": 1
+  },
+  "additionalCachedPreflightPairs": 1,
+  "newBarChainHypotheses": 3,
+  "gatePassingPlans": 0,
+  "certifiedBefore": {
+    "complete": 1,
+    "partial": 1
+  },
+  "newCertified": {
+    "complete": 0,
+    "partial": 0
+  },
+  "certifiedAfter": {
+    "complete": 1,
+    "partial": 1
+  },
+  "researchCost": {
+    "newAudioDecodes": 0,
+    "newModelInferences": 0,
+    "newModelDownloads": 0,
+    "newTransitionRenders": 0,
+    "newShuffleSimulations": 0
+  },
+  "legacyCiMeasurements": {
+    "run": 45142000572,
+    "fixedCases": 17,
+    "notNewResearchCertificates": true,
+    "automaticTriggerNowRemoved": true
+  },
+  "publication": {
+    "pr": 70,
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/pull/70",
+    "mergeCommit": "71df773727aee236a9dcd06bcfb702a3bd0c8132",
+    "filesChanged": [
+      ".github/workflows/dj-real-audio-audit.yml",
+      ".github/workflows/ste-research-scope.yml",
+      "tests/ste-research-scope.test.cjs"
+    ],
+    "appVersion": "6.739",
+    "newMusicalAppRelease": false,
+    "rollbackTag": "music-box-v6.739-before-manual-spotcheck-20261123"
+  }
+}

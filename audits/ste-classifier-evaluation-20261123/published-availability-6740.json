@@ -1,0 +1,40 @@
+{
+  "publishedVersion": "6.740",
+  "releaseCommit": "2559a5c0532f89abc95c77a80178f56cd9f05135",
+  "source": "actual-published-JS-and-index-verified-against-Git-blobs",
+  "personalSteRecordings": 222,
+  "examined": "stored same-account plans only, no new pair scan or PCM analysis",
+  "full": 1,
+  "partial": 1,
+  "cleanDesktop": 1,
+  "pairs": [
+    {
+      "from": "audio/songs/track-4.mp3",
+      "to": "audio/songs/track-38.mp3",
+      "kind": "partial",
+      "begin": 119.62671731448765,
+      "fade": 7.250282685512346,
+      "entry": 0,
+      "tempo": 1.0442804428044306
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "kind": "clean",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "full",
+      "begin": 148.52438815789475,
+      "fade": 10.77661184210524,
+      "entry": 0,
+      "tempo": 1.0167224080267576
+    }
+  ],
+  "physicalIPhone": false
+}

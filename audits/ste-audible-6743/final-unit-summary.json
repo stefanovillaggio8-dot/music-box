@@ -1,0 +1,11 @@
+{
+  "run": 45298097845,
+  "job": 138123499737,
+  "summary": [
+    "2026-11-24T00:34:56.5837895Z not ok 410 - protected rhythmic tail preserves the actual recording: audio/songs/bassi/track-53.mp3 -> audio/songs/bassi/track-51.mp3",
+    "2026-11-24T00:34:56.5855910Z not ok 415 - the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed",
+    "2026-11-24T00:34:56.6263977Z # tests 799",
+    "2026-11-24T00:34:56.6264081Z # pass 797",
+    "2026-11-24T00:34:56.6264129Z # fail 2"
+  ]
+}

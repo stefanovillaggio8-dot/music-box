@@ -1,0 +1,21 @@
+{
+  "releaseMerge": "a523ae51f0cf98048749f8fb7ea36b552f660f01",
+  "rollbackParent": "98c993330cac84faababaf5f937014dc724de183",
+  "unchangedSha256": {
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "7d859f9a7bbc2a53db91316ea941c453f0b01c1886964a94d11f71611cb59074",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "audio-lyrics-worker.js": "eff4366b7360732950676aaf395429275440193c1a3525dddaf6c08145dd5097",
+    "karaoke-acoustic-proof.js": "0b12f36d42dcc6608aa636dc7ef054ae90719b7a62523946cefb70a77fedcbca",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "stato.json": "2fb5fa13d479b1095abfa1c672e6e98e875ba758100f5fd722eda38378f80f57",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+    "audio-stretch.js": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+    "audio-stretch-core.mjs": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b",
+    "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
+    "native-mp3-metadata.json": "94b2f005c18986ba68f7c6a648a52e7d32323898a2e714953fa008453227ba4c",
+    "dj-lyric-boundaries.json": "0414f6f64aa6facb47c3582050f13ac5f351c705996a954742757cace9b14913",
+    "karaoke-index.json": "2935013c4a1cc2f92408e9472f2c62c9e077bb305118a2bf2d60706ed2697865"
+  }
+}

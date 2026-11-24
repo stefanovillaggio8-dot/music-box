@@ -1,0 +1,33 @@
+✔ personal audit excludes the requested playlist without changing user data or other profiles (156.0151ms)
+✔ continuous shuffle exhausts the personal pool before resetting and audits every attempted pair (1753.8396ms)
+✔ each personal account permits its own recordings and explicit copies, never foreign-only or room recordings (1.9015ms)
+✔ download, favorites, search and unheard filters still restrict the personal DJ library (1.0192ms)
+✔ filter failure and stale indices cannot fall back to the loaded global catalog (0.2968ms)
+✔ an already-previewed candidate removed by a new account/filter is rejected after async analysis (0.3908ms)
+✔ manual queues and shared rooms never enter personal automatic promotion (0.4849ms)
+✔ the real selector audit prefix also loads correctly from external regression callers (70.2897ms)
+✔ published imports use actual app validation and merge by file AND owner, without changing inputs (0.8527ms)
+✔ new published recordings enter only their actual personal scope; unknown analysis is explicit and excluded playlist stays excluded (289.6706ms)
+✔ every song appears exactly once before a new shuffle cycle (1.5322ms)
+✔ reload and shuffle toggle retain the played-song history (1.4909ms)
+✔ playlist and profile histories are independent (0.2941ms)
+✔ Smart Mix selection only accepts unplayed tracks (0.5476ms)
+✔ entering a playlist containing the current song does not schedule it again (0.197ms)
+✔ automatic next-song candidates exclude missing audio but browsing still shows them (0.7554ms)
+✔ ten displayed shuffle songs are previews; DJ promotion changes the ACTUAL next track (1.0293ms)
+✔ stale DJ overlays cannot override a manually changed first song (1.0485ms)
+✔ songs imported during playback join shuffle without replaying listened tracks (0.2083ms)
+✔ new catalog notifications rearm DJ selection without interrupting audio (1.1285ms)
+✔ a newly imported song enters an already-filled ten-song preview (2.4899ms)
+✔ Smart Mix exposes the full playable catalog rather than first 80 entries (2.6262ms)
+✔ new scope queries only actual personal Ste membership, excludes Gym and never changes user data (184.4192ms)
+✔ bounded cases reject outside membership, changed audio, duplicate files and a foreign profile before PCM work (0.4587ms)
+✔ global research cannot run automatically from a PR; essential regressions and existing import analysis stay enabled (0.7804ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1974.0991

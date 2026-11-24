@@ -1,0 +1,66 @@
+name: Isolated Ste observed native clock study
+on:
+  workflow_dispatch:
+    inputs:
+      modes:
+        description: 'Bounded observer modes'
+        type: string
+        default: 'natural,seek,hidden'
+  workflow_call:
+    inputs:
+      modes:
+        type: string
+        default: 'natural,seek,hidden'
+permissions:
+  contents: read
+jobs:
+  observed-clock:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest]
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bounded pinned browser environment
+        timeout-minutes: 4
+        env:
+          npm_config_fetch_timeout: '60000'
+          npm_config_fetch_retries: '1'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            node -e "const fs=require('fs'),p=require('playwright');for(const b of [p.chromium,p.webkit])if(!fs.existsSync(b.executablePath()))throw Error('Pinned native browser missing')"
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
+      - name: Isolated Linux native output
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          install -d -o pulse -g pulse /run/pulse
+          pulseaudio --system --daemonize --disallow-exit --exit-idle-time=-1 \
+            --log-target=file:/tmp/ste-observed-pulse.log \
+            --load="module-native-protocol-unix socket=/tmp/ste-observed-pulse auth-anonymous=1" \
+            --load="module-null-sink sink_name=ste_observed rate=48000 channels=2"
+          echo "PULSE_SERVER=unix:/tmp/ste-observed-pulse" >> "$GITHUB_ENV"
+          PULSE_SERVER=unix:/tmp/ste-observed-pulse pactl set-default-sink ste_observed
+      - name: Delayed-promise and cancellation contracts
+        run: node --test tests/ios-native-observed.test.cjs tests/ste-research-scope.test.cjs
+      - name: Exactly the retained personal Ste source/target originals
+        run: node tools/fetch-ste-clean-evaluation.cjs audits/ste-classifier-evaluation-20261123/native-element-shadow.json
+      - name: Observed clock, original audio and real cancellation controls
+        env:
+          MUSICBOX_OBSERVED_MODES: ${{ inputs.modes || 'natural,seek,hidden' }}
+        run: node tests/ste-ios-observed-browser.cjs audits/ste-factored-clean-20261123/recordings.json observed-native-clock.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-observed-native-${{ runner.os }}
+          path: observed-native-clock.json

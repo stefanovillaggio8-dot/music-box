@@ -1,0 +1,14 @@
+{
+  "source": {
+    "key": "audio/songs/track-27.mp3",
+    "begin": 144.593,
+    "end": 146.333
+  },
+  "targets": [
+    "audio/songs/track-33.mp3"
+  ],
+  "entry": 0,
+  "tempo": 1,
+  "evaluationOnly": true,
+  "frozenProtocol": "../protocol.json"
+}

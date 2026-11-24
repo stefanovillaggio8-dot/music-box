@@ -1,0 +1,45 @@
+{
+  "method": "actual-native-source-window-v1",
+  "forensicOnly": true,
+  "notPlaybackCertification": true,
+  "physicalIPhone": false,
+  "nativePlatform": "darwin",
+  "browser": "webkit",
+  "browserVersion": "27.2",
+  "sourceKey": "audio/songs/track-6.mp3",
+  "targetKey": "audio/songs/track-233.mp3",
+  "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+  "originalSha256": "90de8a4e750d712b4fa5d404301a8255ba56ac85a1f285deb9eb855138398112",
+  "originalBytes": 3356047,
+  "candidateAssetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+  "windows": [
+    {
+      "sampleRate": 44100,
+      "startFrame": 5416434,
+      "frames": 750222,
+      "channels": 2,
+      "decodedSourceFrames": 6166656,
+      "decodedSourceDuration": 139.83346938775512,
+      "throughDecodedEOF": true,
+      "sourceProcessing": "none",
+      "fittedLagApplied": false,
+      "file": "44100.f32le",
+      "bytes": 6001776,
+      "sha256": "45fc151e8e487e758d6c48ccb6054d43aec7b913cd5280b1a7910c9dda80a0e8"
+    },
+    {
+      "sampleRate": 48000,
+      "startFrame": 5895438,
+      "frames": 816568,
+      "channels": 2,
+      "decodedSourceFrames": 6712006,
+      "decodedSourceDuration": 139.83345833333334,
+      "throughDecodedEOF": true,
+      "sourceProcessing": "none",
+      "fittedLagApplied": false,
+      "file": "48000.f32le",
+      "bytes": 6532544,
+      "sha256": "ee07327f7cd5b2685544ecd348b867fb1860851dbbf2ff963e99a6b8d3272d55"
+    }
+  ]
+}

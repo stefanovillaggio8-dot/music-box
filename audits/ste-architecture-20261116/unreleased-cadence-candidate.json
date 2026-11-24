@@ -1,0 +1,1299 @@
+{
+  "status": "rejected-for-universal-native-playback",
+  "reason": "actual macOS WebKit outgoing waveform coherence fails at nominal source clock; fitted lag is diagnostic only",
+  "sourceKey": "audio/songs/track-6.mp3",
+  "targetKey": "audio/songs/track-233.mp3",
+  "record": {
+    "version": 1,
+    "fromSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+    "toSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+    "sourceDuration": 139.833,
+    "nextDuration": 238.492,
+    "cue": {
+      "kind": "beat",
+      "structuralBeat": true,
+      "preservedFileTail": true,
+      "measuredFullBeat": false,
+      "metricalRhythmic": true,
+      "metricalPickupWindow": true,
+      "nativeOriginalReturn": true,
+      "metricalCadenceWindow": true,
+      "nativeRecoveryCurve": "sine-1.2-v1",
+      "nativeTailFullBeat": true,
+      "preserveTail": true,
+      "quietCertified": false,
+      "silenceTrim": false,
+      "softTailTrim": false,
+      "begin": 123.62164059590316,
+      "end": 139.833,
+      "fade": 16.21135940409684,
+      "entry": 0,
+      "tempo": 1.0386847195357845,
+      "gain": 1,
+      "vocalFadeSeconds": 0,
+      "preservedEntrance": "metrical-pickup-033-v1",
+      "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+      "contentPenalty": 0,
+      "sourceTempoBpm": 92.84332688588017,
+      "targetTempoBpm": 89.3854748603352,
+      "nominalTempo": 1.0386847195357845,
+      "nativeRatePreferred": false,
+      "beatAnchor": 126.573,
+      "nextBeat": 3.06,
+      "beatPeriod": 0.6462499999999993,
+      "measuredBeatCount": 10,
+      "beatPulseAgreement": 0.625,
+      "measuredPlacementError": 0.01837031819513344,
+      "grooveScore": 0.7582906118584812,
+      "score": 0.7582906118584812,
+      "fullOnsetFirst": null,
+      "fullOnsetSecond": null,
+      "measuredPulseMode": false,
+      "fullPulseFirst": 5,
+      "fullPulseSecond": 5,
+      "fullPulseAttackSupport": 1,
+      "harmonicEvidence": {
+        "method": "pcm-key-with-quiet-frame-bound-v1",
+        "compatibleKey": true,
+        "keyFrom": "11A",
+        "keyTo": "10A",
+        "keyConfidence": 0.8538377322277195,
+        "keyCompatibility": 0.92,
+        "dissonanceMax": 0.018570178312338072,
+        "rawDissonanceMax": 0.30454538410500015,
+        "frames": 31,
+        "sharedTonalFrames": 21,
+        "boundedQuietFrames": 6,
+        "quietInteractionMaximum": 0.05,
+        "sourceGain": 1,
+        "incomingEnvelope": "metrical-pickup-033-v1"
+      },
+      "harmonicMode": "compatible-key",
+      "percussiveIntro": false,
+      "structuralEvidence": {
+        "version": 1,
+        "edgeAnalysisViews": {
+          "source": "whole-original",
+          "target": "whole-original"
+        },
+        "bars": 4,
+        "beatsPerBar": 4,
+        "sourcePhaseConfidence": 0.9999999999999996,
+        "targetPhaseConfidence": 1,
+        "metricalCertificate": {
+          "method": "observed-bar-anchors-metrical-hypotheses-v2",
+          "gridRms": 0.024170938814151874,
+          "gridMaximum": 0.04711545623834379,
+          "observedSharedRms": 0.01837031819513344,
+          "observedShared": 10,
+          "minimumSharedPerBar": 2,
+          "observedDownbeats": 4,
+          "modelGridPoints": 16,
+          "humanMetricalReference": false,
+          "maximumModelAnchorRefinement": 0.05299999999999727,
+          "observedBarPairRms": 0.018412838682121416,
+          "observedBarPairMaximum": 0.03337057728118786,
+          "originalModelAnchorsRetained": true
+        },
+        "cadenceWindow": {
+          "method": "four-observed-bars-and-preserved-decay-v1",
+          "sourceStart": 126.54,
+          "sourceEnd": 136.88,
+          "targetStart": 3.02,
+          "targetEnd": 13.76,
+          "rhythmicSeconds": 14.761359404096845,
+          "tailSeconds": 1.449999999999994,
+          "humanVerified": false
+        },
+        "downbeatRms": 0.018412838682121416,
+        "incomingNativeReturn": {
+          "start": 0,
+          "end": 18.254932301740837,
+          "method": "spleeter-2stems-energy-v1",
+          "maxVocalRms": 0.000119,
+          "maxRelativeVocal": 0.006333333333333333,
+          "clear": true,
+          "notHumanVerified": true
+        },
+        "incomingWholeOverlap": {
+          "start": 0,
+          "end": 17.138491295938127,
+          "method": "spleeter-2stems-energy-v1",
+          "maxVocalRms": 0.000119,
+          "maxRelativeVocal": 0.006333333333333333,
+          "clear": true,
+          "notHumanVerified": true
+        },
+        "outgoingWholeOverlap": null,
+        "vocalOverlapPolicy": "instrumental-incoming-v1",
+        "sourceObservedDownbeats": [
+          126.573,
+          129.153,
+          131.753,
+          134.333
+        ],
+        "targetObservedDownbeats": [
+          3.06,
+          5.78,
+          8.46,
+          11.12
+        ],
+        "sourceModelDownbeats": [
+          126.54,
+          129.12,
+          131.72,
+          134.28,
+          136.88
+        ],
+        "targetModelDownbeats": [
+          3.02,
+          5.76,
+          8.42,
+          11.1,
+          13.76
+        ],
+        "pulseCheck": {
+          "source": [
+            0.371359404096836,
+            1.0313594040968468,
+            1.6713594040968474,
+            2.311359404096848,
+            2.9513594040968343,
+            3.631359404096841,
+            4.251359404096846,
+            4.911359404096828,
+            5.531359404096833,
+            6.191359404096829,
+            6.831359404096844,
+            7.4913594040968405,
+            8.131359404096827,
+            8.791359404096852,
+            9.411359404096828,
+            10.051359404096843,
+            10.71135940409684,
+            11.371359404096836,
+            11.99135940409684,
+            12.631359404096827,
+            13.271359404096842,
+            14.611359404096845
+          ],
+          "target": [
+            3.06,
+            3.74,
+            5.12,
+            5.78,
+            6.48,
+            7.16,
+            7.78,
+            8.46,
+            9.16,
+            10.44,
+            11.12,
+            11.8,
+            13.12,
+            13.78,
+            14.46,
+            15.78,
+            16.46
+          ],
+          "sourceBars": [
+            2.9513594040968343,
+            5.531359404096833,
+            8.131359404096827,
+            10.71135940409684
+          ],
+          "targetBars": [
+            2.94603351955307,
+            5.56472998137802,
+            8.144916201117312,
+            10.705847299813769
+          ]
+        },
+        "method": "source-eof-and-original-pcm-initial-pickup-v1",
+        "humanVerified": false,
+        "semanticLabelsVerified": false
+      },
+      "composite": {
+        "version": 1,
+        "path": "dj-mixes/721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1.flac",
+        "sha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+        "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+        "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+        "begin": 123.62164059590316,
+        "entry": 0,
+        "fade": 16.21135940409684,
+        "tempo": 1.0386847195357845,
+        "seconds": 18.61135416666667,
+        "peak": 0.9972109794616699,
+        "headroom": 0.9336140790879676,
+        "pitchPreserved": true,
+        "timingVerified": true,
+        "renderedFromOriginals": true,
+        "handoffPosition": 16.838491295938127,
+        "sampleRate": 48000,
+        "nativeHandoffAt": 16.21183333333333,
+        "nativeRevealAt": 17.56183333333333,
+        "preRoll": 0.3,
+        "releaseSeconds": 1.2,
+        "overlapPeak": 0.9484471667995311,
+        "envelopeVersion": 4,
+        "warmupOriginalSeconds": 0,
+        "renderedEntrance": "metrical-pickup-033-v1",
+        "cadenceTailProof": {
+          "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+          "at48000": {
+            "method": "unmodified-original-hpss-tail-v1",
+            "accepted": true,
+            "rhythmicSeconds": 14.761359404096845,
+            "sourceTailThrough": 16.21135940409684,
+            "tailSeconds": 1.449999999999994,
+            "maximumTailOnset": 0.10958453731549259,
+            "onsetThreshold": 0.25,
+            "bodyRmsMedian": 0.039269689470529556,
+            "maximumTailRms": 0.0012226783437654376,
+            "maximumRelativeRms": 0.031135421752774804,
+            "relativeRmsCeiling": 0.5,
+            "sourceGainApplied": false,
+            "searchedEntireTail": true,
+            "humanVerified": false,
+            "sampleRate": 48000,
+            "channelProofs": [
+              {
+                "method": "unmodified-original-hpss-tail-v1",
+                "accepted": true,
+                "rhythmicSeconds": 14.761359404096845,
+                "sourceTailThrough": 16.21135940409684,
+                "tailSeconds": 1.449999999999994,
+                "maximumTailOnset": 0.1347049115088086,
+                "onsetThreshold": 0.25,
+                "bodyRmsMedian": 0.03975494205951691,
+                "maximumTailRms": 0.0013047002721577883,
+                "maximumRelativeRms": 0.0328185680714747,
+                "relativeRmsCeiling": 0.5,
+                "sourceGainApplied": false,
+                "searchedEntireTail": true,
+                "humanVerified": false,
+                "sampleRate": 48000
+              },
+              {
+                "method": "unmodified-original-hpss-tail-v1",
+                "accepted": true,
+                "rhythmicSeconds": 14.761359404096845,
+                "sourceTailThrough": 16.21135940409684,
+                "tailSeconds": 1.449999999999994,
+                "maximumTailOnset": 0.10537631927879111,
+                "onsetThreshold": 0.25,
+                "bodyRmsMedian": 0.045227594673633575,
+                "maximumTailRms": 0.0012983556371182203,
+                "maximumRelativeRms": 0.028707156471337297,
+                "relativeRmsCeiling": 0.5,
+                "sourceGainApplied": false,
+                "searchedEntireTail": true,
+                "humanVerified": false,
+                "sampleRate": 48000
+              }
+            ]
+          },
+          "at44100": {
+            "method": "unmodified-original-hpss-tail-v1",
+            "accepted": true,
+            "rhythmicSeconds": 14.761359404096845,
+            "sourceTailThrough": 16.21135940409684,
+            "tailSeconds": 1.449999999999994,
+            "maximumTailOnset": 0.1095778754503765,
+            "onsetThreshold": 0.25,
+            "bodyRmsMedian": 0.039273396134376526,
+            "maximumTailRms": 0.0012224725214764476,
+            "maximumRelativeRms": 0.031127242403322517,
+            "relativeRmsCeiling": 0.5,
+            "sourceGainApplied": false,
+            "searchedEntireTail": true,
+            "humanVerified": false,
+            "sampleRate": 44100,
+            "channelProofs": [
+              {
+                "method": "unmodified-original-hpss-tail-v1",
+                "accepted": true,
+                "rhythmicSeconds": 14.761359404096845,
+                "sourceTailThrough": 16.21135940409684,
+                "tailSeconds": 1.449999999999994,
+                "maximumTailOnset": 0.13448263175689276,
+                "onsetThreshold": 0.25,
+                "bodyRmsMedian": 0.03976040333509445,
+                "maximumTailRms": 0.0013046994572505355,
+                "maximumRelativeRms": 0.03281403979367947,
+                "relativeRmsCeiling": 0.5,
+                "sourceGainApplied": false,
+                "searchedEntireTail": true,
+                "humanVerified": false,
+                "sampleRate": 44100
+              },
+              {
+                "method": "unmodified-original-hpss-tail-v1",
+                "accepted": true,
+                "rhythmicSeconds": 14.761359404096845,
+                "sourceTailThrough": 16.21135940409684,
+                "tailSeconds": 1.449999999999994,
+                "maximumTailOnset": 0.10535767250113862,
+                "onsetThreshold": 0.25,
+                "bodyRmsMedian": 0.04524775967001915,
+                "maximumTailRms": 0.0012980563333258033,
+                "maximumRelativeRms": 0.028687748140288287,
+                "relativeRmsCeiling": 0.5,
+                "sourceGainApplied": false,
+                "searchedEntireTail": true,
+                "humanVerified": false,
+                "sampleRate": 44100
+              }
+            ]
+          }
+        },
+        "nativeRecoveryCurve": "sine-1.2-v1",
+        "nativeSplice": {
+          "method": "original-pcm-native-return-v1",
+          "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+          "sampleRate": 48000,
+          "returnStart": 17.2218333333333,
+          "returnEnd": 17.2418333333333,
+          "returnEnergyRatio": 0.9540100899204331,
+          "nativeResumeSeconds": 18.205395833333334,
+          "verifiedFrames": 4800,
+          "maximumLast100msDifference": 0,
+          "encodedMaximumDifference": 1.1891825124621391e-07,
+          "unmodifiedOriginalComparison": true,
+          "sourceClock": {
+            "method": "original-mp3-gapless-metadata-v1",
+            "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+            "sampleRate": 44100,
+            "rawFrames": 6166656,
+            "decodedFrames": 6166656,
+            "primingFrames": 0,
+            "paddingFrames": 0
+          },
+          "targetClock": {
+            "method": "original-mp3-gapless-metadata-v1",
+            "sourceSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+            "sampleRate": 48000,
+            "rawFrames": 11449728,
+            "decodedFrames": 11447624,
+            "primingFrames": 1105,
+            "paddingFrames": 999
+          }
+        },
+        "gainProof": {
+          "method": "offline-stereo-shared-lookahead-v1",
+          "truePeakLookahead": true,
+          "maximumReductionDb": 0.5966521533044837,
+          "meanOverlapReductionDb": 0.0071287051836986005,
+          "attackDbPerSecond": 40,
+          "releaseDbPerSecond": 8,
+          "firstGain": 1,
+          "nativeRevealGain": 1
+        },
+        "sourceReadThrough": 139.8334739292365,
+        "outgoingEnvelope": "unity-through-decoded-eof-v1",
+        "oversampledPeak": 0.9979961514472961,
+        "oversampledOverlapPeak": 0.9490597248077393,
+        "processing": "soundtouch-wsola",
+        "levelContinuity": {
+          "method": "rendered-half-second-eof-rms-v1",
+          "beforeRms": 0.007246926426887512,
+          "afterRms": 0.006653512362390757,
+          "changeDb": -0.7420576819589899,
+          "includesOriginalSongDynamics": true,
+          "notHumanListening": true
+        },
+        "rhythmVerified": true,
+        "postRenderRhythm": {
+          "method": "rendered-hpss-attacks-v1",
+          "mode": "metrical-rhythmic",
+          "accepted": true,
+          "sourceAttacks": 22,
+          "incomingAttacks": 14,
+          "matches": 10,
+          "agreement": 0.45454545454545453,
+          "rmsSeconds": 0.015684215682735828,
+          "firstHalfMatches": 4,
+          "secondHalfMatches": 6,
+          "sharedPerBar": [
+            2,
+            2,
+            3,
+            3
+          ],
+          "sourceObserved": [
+            0.36757369614512475,
+            1.0351473922902494,
+            1.667891156462585,
+            2.3122448979591836,
+            2.950793650793651,
+            3.6183673469387756,
+            4.239501133786848,
+            4.907074829931973,
+            5.534013605442177,
+            6.184172335600907,
+            6.822721088435374,
+            7.484489795918368,
+            8.128843537414966,
+            8.784807256235826,
+            9.4059410430839,
+            10.050294784580498,
+            10.700453514739229,
+            11.373832199546484,
+            11.989160997732425,
+            12.627709750566893,
+            13.272063492063491,
+            14.595600907029478
+          ],
+          "incomingObserved": [
+            2.950793650793651,
+            4.918684807256236,
+            5.563038548752835,
+            6.903990929705215,
+            7.496099773242631,
+            8.134648526077097,
+            8.813832199546484,
+            10.05609977324263,
+            10.712063492063491,
+            12.610294784580498,
+            13.272063492063491,
+            13.933832199546485,
+            15.187709750566892,
+            15.83206349206349
+          ],
+          "notHumanListening": true,
+          "downbeatsVerified": true,
+          "downbeatRmsSeconds": 0.015897616181555763,
+          "maximumDownbeatError": 0.029024943310657747,
+          "downbeatMatches": 4
+        },
+        "resampledCommonProof": {
+          "method": "encoded-common-resampling-v1",
+          "sampleRate": 44100,
+          "samplePeak": 0.9968960881233215,
+          "oversampledPeak": 0.9981181621551514,
+          "oversampledOverlapPeak": 0.9502118825912476,
+          "rhythm": {
+            "method": "rendered-hpss-attacks-v1",
+            "mode": "metrical-rhythmic",
+            "accepted": true,
+            "sourceAttacks": 22,
+            "incomingAttacks": 14,
+            "matches": 10,
+            "agreement": 0.45454545454545453,
+            "rmsSeconds": 0.015684215682735828,
+            "firstHalfMatches": 4,
+            "secondHalfMatches": 6,
+            "sharedPerBar": [
+              2,
+              2,
+              3,
+              3
+            ],
+            "sourceObserved": [
+              0.36757369614512475,
+              1.0351473922902494,
+              1.667891156462585,
+              2.3122448979591836,
+              2.950793650793651,
+              3.6183673469387756,
+              4.239501133786848,
+              4.907074829931973,
+              5.534013605442177,
+              6.184172335600907,
+              6.822721088435374,
+              7.484489795918368,
+              8.128843537414966,
+              8.784807256235826,
+              9.4059410430839,
+              10.050294784580498,
+              10.700453514739229,
+              11.373832199546484,
+              11.989160997732425,
+              12.627709750566893,
+              13.272063492063491,
+              14.595600907029478
+            ],
+            "incomingObserved": [
+              2.950793650793651,
+              4.918684807256236,
+              5.563038548752835,
+              6.903990929705215,
+              7.496099773242631,
+              8.134648526077097,
+              8.813832199546484,
+              10.05609977324263,
+              10.712063492063491,
+              12.610294784580498,
+              13.272063492063491,
+              13.933832199546485,
+              15.187709750566892,
+              15.83206349206349
+            ],
+            "notHumanListening": true,
+            "downbeatsVerified": true,
+            "downbeatRmsSeconds": 0.015897616181555763,
+            "maximumDownbeatError": 0.029024943310657747,
+            "downbeatMatches": 4
+          },
+          "notASecondSoundTouchRender": true,
+          "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1"
+        },
+        "nativeDecoderProof": {
+          "method": "actual-browser-decode-v1",
+          "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+          "rates": {
+            "44100": {
+              "samplePeak": 0.9978684782981873,
+              "overlapPeak": 0.9502411484718323,
+              "browsers": [
+                "chromium",
+                "webkit"
+              ],
+              "nativeSplice": {
+                "method": "actual-native-original-splice-v1",
+                "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+                "frames": 4410,
+                "minimumCorrelation": 0.9996467204648698,
+                "maximumRelativeRms": 0.026581519363783057,
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "clockMethod": "original-mp3-gapless-metadata-v1",
+                "decodedPrimingSeconds": [
+                  0,
+                  0.023020833333333334
+                ],
+                "mediaPrimingSeconds": [
+                  0,
+                  0.023020833333333334
+                ]
+              },
+              "sourceClockProof": {
+                "method": "actual-native-source-clock-v1",
+                "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "decodedOffsets": [
+                  0
+                ],
+                "mediaOffsets": [
+                  0
+                ]
+              }
+            },
+            "48000": {
+              "samplePeak": 0.9972109794616699,
+              "overlapPeak": 0.9484472274780273,
+              "browsers": [
+                "chromium",
+                "webkit"
+              ],
+              "nativeSplice": {
+                "method": "actual-native-original-splice-v1",
+                "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+                "frames": 4800,
+                "minimumCorrelation": 0.9999996483105013,
+                "maximumRelativeRms": 0.0008386903573828833,
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "clockMethod": "original-mp3-gapless-metadata-v1",
+                "decodedPrimingSeconds": [
+                  0,
+                  0.023020833333333334
+                ],
+                "mediaPrimingSeconds": [
+                  0,
+                  0.023020833333333334
+                ]
+              },
+              "sourceClockProof": {
+                "method": "actual-native-source-clock-v1",
+                "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "decodedOffsets": [
+                  0
+                ],
+                "mediaOffsets": [
+                  0
+                ]
+              }
+            }
+          },
+          "physicalIPhone": false,
+          "provenanceRuns": [
+            43948609933,
+            43950033686
+          ]
+        },
+        "sourcePrerollProof": {
+          "method": "original-only-preroll-with-common-gain-v1",
+          "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+          "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+          "sampleRate": 48000,
+          "frames": 13440,
+          "fromOffsetSeconds": 0,
+          "throughOffsetSeconds": 0.28,
+          "sharedGainOnly": true,
+          "maximumReductionDb": 0.03279335410768229,
+          "maximumOriginalWaveformResidual": 2.4056200698119312e-08,
+          "maximumEncodedDifference": 1.1827796697616577e-07,
+          "incomingMaximumPeak": 0
+        }
+      }
+    },
+    "cues": [
+      {
+        "kind": "beat",
+        "structuralBeat": true,
+        "preservedFileTail": true,
+        "measuredFullBeat": false,
+        "metricalRhythmic": true,
+        "metricalPickupWindow": true,
+        "nativeOriginalReturn": true,
+        "metricalCadenceWindow": true,
+        "nativeRecoveryCurve": "sine-1.2-v1",
+        "nativeTailFullBeat": true,
+        "preserveTail": true,
+        "quietCertified": false,
+        "silenceTrim": false,
+        "softTailTrim": false,
+        "begin": 123.62164059590316,
+        "end": 139.833,
+        "fade": 16.21135940409684,
+        "entry": 0,
+        "tempo": 1.0386847195357845,
+        "gain": 1,
+        "vocalFadeSeconds": 0,
+        "preservedEntrance": "metrical-pickup-033-v1",
+        "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+        "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+        "contentPenalty": 0,
+        "sourceTempoBpm": 92.84332688588017,
+        "targetTempoBpm": 89.3854748603352,
+        "nominalTempo": 1.0386847195357845,
+        "nativeRatePreferred": false,
+        "beatAnchor": 126.573,
+        "nextBeat": 3.06,
+        "beatPeriod": 0.6462499999999993,
+        "measuredBeatCount": 10,
+        "beatPulseAgreement": 0.625,
+        "measuredPlacementError": 0.01837031819513344,
+        "grooveScore": 0.7582906118584812,
+        "score": 0.7582906118584812,
+        "fullOnsetFirst": null,
+        "fullOnsetSecond": null,
+        "measuredPulseMode": false,
+        "fullPulseFirst": 5,
+        "fullPulseSecond": 5,
+        "fullPulseAttackSupport": 1,
+        "harmonicEvidence": {
+          "method": "pcm-key-with-quiet-frame-bound-v1",
+          "compatibleKey": true,
+          "keyFrom": "11A",
+          "keyTo": "10A",
+          "keyConfidence": 0.8538377322277195,
+          "keyCompatibility": 0.92,
+          "dissonanceMax": 0.018570178312338072,
+          "rawDissonanceMax": 0.30454538410500015,
+          "frames": 31,
+          "sharedTonalFrames": 21,
+          "boundedQuietFrames": 6,
+          "quietInteractionMaximum": 0.05,
+          "sourceGain": 1,
+          "incomingEnvelope": "metrical-pickup-033-v1"
+        },
+        "harmonicMode": "compatible-key",
+        "percussiveIntro": false,
+        "structuralEvidence": {
+          "version": 1,
+          "edgeAnalysisViews": {
+            "source": "whole-original",
+            "target": "whole-original"
+          },
+          "bars": 4,
+          "beatsPerBar": 4,
+          "sourcePhaseConfidence": 0.9999999999999996,
+          "targetPhaseConfidence": 1,
+          "metricalCertificate": {
+            "method": "observed-bar-anchors-metrical-hypotheses-v2",
+            "gridRms": 0.024170938814151874,
+            "gridMaximum": 0.04711545623834379,
+            "observedSharedRms": 0.01837031819513344,
+            "observedShared": 10,
+            "minimumSharedPerBar": 2,
+            "observedDownbeats": 4,
+            "modelGridPoints": 16,
+            "humanMetricalReference": false,
+            "maximumModelAnchorRefinement": 0.05299999999999727,
+            "observedBarPairRms": 0.018412838682121416,
+            "observedBarPairMaximum": 0.03337057728118786,
+            "originalModelAnchorsRetained": true
+          },
+          "cadenceWindow": {
+            "method": "four-observed-bars-and-preserved-decay-v1",
+            "sourceStart": 126.54,
+            "sourceEnd": 136.88,
+            "targetStart": 3.02,
+            "targetEnd": 13.76,
+            "rhythmicSeconds": 14.761359404096845,
+            "tailSeconds": 1.449999999999994,
+            "humanVerified": false
+          },
+          "downbeatRms": 0.018412838682121416,
+          "incomingNativeReturn": {
+            "start": 0,
+            "end": 18.254932301740837,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.000119,
+            "maxRelativeVocal": 0.006333333333333333,
+            "clear": true,
+            "notHumanVerified": true
+          },
+          "incomingWholeOverlap": {
+            "start": 0,
+            "end": 17.138491295938127,
+            "method": "spleeter-2stems-energy-v1",
+            "maxVocalRms": 0.000119,
+            "maxRelativeVocal": 0.006333333333333333,
+            "clear": true,
+            "notHumanVerified": true
+          },
+          "outgoingWholeOverlap": null,
+          "vocalOverlapPolicy": "instrumental-incoming-v1",
+          "sourceObservedDownbeats": [
+            126.573,
+            129.153,
+            131.753,
+            134.333
+          ],
+          "targetObservedDownbeats": [
+            3.06,
+            5.78,
+            8.46,
+            11.12
+          ],
+          "sourceModelDownbeats": [
+            126.54,
+            129.12,
+            131.72,
+            134.28,
+            136.88
+          ],
+          "targetModelDownbeats": [
+            3.02,
+            5.76,
+            8.42,
+            11.1,
+            13.76
+          ],
+          "pulseCheck": {
+            "source": [
+              0.371359404096836,
+              1.0313594040968468,
+              1.6713594040968474,
+              2.311359404096848,
+              2.9513594040968343,
+              3.631359404096841,
+              4.251359404096846,
+              4.911359404096828,
+              5.531359404096833,
+              6.191359404096829,
+              6.831359404096844,
+              7.4913594040968405,
+              8.131359404096827,
+              8.791359404096852,
+              9.411359404096828,
+              10.051359404096843,
+              10.71135940409684,
+              11.371359404096836,
+              11.99135940409684,
+              12.631359404096827,
+              13.271359404096842,
+              14.611359404096845
+            ],
+            "target": [
+              3.06,
+              3.74,
+              5.12,
+              5.78,
+              6.48,
+              7.16,
+              7.78,
+              8.46,
+              9.16,
+              10.44,
+              11.12,
+              11.8,
+              13.12,
+              13.78,
+              14.46,
+              15.78,
+              16.46
+            ],
+            "sourceBars": [
+              2.9513594040968343,
+              5.531359404096833,
+              8.131359404096827,
+              10.71135940409684
+            ],
+            "targetBars": [
+              2.94603351955307,
+              5.56472998137802,
+              8.144916201117312,
+              10.705847299813769
+            ]
+          },
+          "method": "source-eof-and-original-pcm-initial-pickup-v1",
+          "humanVerified": false,
+          "semanticLabelsVerified": false
+        },
+        "composite": {
+          "version": 1,
+          "path": "dj-mixes/721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1.flac",
+          "sha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+          "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+          "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+          "begin": 123.62164059590316,
+          "entry": 0,
+          "fade": 16.21135940409684,
+          "tempo": 1.0386847195357845,
+          "seconds": 18.61135416666667,
+          "peak": 0.9972109794616699,
+          "headroom": 0.9336140790879676,
+          "pitchPreserved": true,
+          "timingVerified": true,
+          "renderedFromOriginals": true,
+          "handoffPosition": 16.838491295938127,
+          "sampleRate": 48000,
+          "nativeHandoffAt": 16.21183333333333,
+          "nativeRevealAt": 17.56183333333333,
+          "preRoll": 0.3,
+          "releaseSeconds": 1.2,
+          "overlapPeak": 0.9484471667995311,
+          "envelopeVersion": 4,
+          "warmupOriginalSeconds": 0,
+          "renderedEntrance": "metrical-pickup-033-v1",
+          "cadenceTailProof": {
+            "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+            "at48000": {
+              "method": "unmodified-original-hpss-tail-v1",
+              "accepted": true,
+              "rhythmicSeconds": 14.761359404096845,
+              "sourceTailThrough": 16.21135940409684,
+              "tailSeconds": 1.449999999999994,
+              "maximumTailOnset": 0.10958453731549259,
+              "onsetThreshold": 0.25,
+              "bodyRmsMedian": 0.039269689470529556,
+              "maximumTailRms": 0.0012226783437654376,
+              "maximumRelativeRms": 0.031135421752774804,
+              "relativeRmsCeiling": 0.5,
+              "sourceGainApplied": false,
+              "searchedEntireTail": true,
+              "humanVerified": false,
+              "sampleRate": 48000,
+              "channelProofs": [
+                {
+                  "method": "unmodified-original-hpss-tail-v1",
+                  "accepted": true,
+                  "rhythmicSeconds": 14.761359404096845,
+                  "sourceTailThrough": 16.21135940409684,
+                  "tailSeconds": 1.449999999999994,
+                  "maximumTailOnset": 0.1347049115088086,
+                  "onsetThreshold": 0.25,
+                  "bodyRmsMedian": 0.03975494205951691,
+                  "maximumTailRms": 0.0013047002721577883,
+                  "maximumRelativeRms": 0.0328185680714747,
+                  "relativeRmsCeiling": 0.5,
+                  "sourceGainApplied": false,
+                  "searchedEntireTail": true,
+                  "humanVerified": false,
+                  "sampleRate": 48000
+                },
+                {
+                  "method": "unmodified-original-hpss-tail-v1",
+                  "accepted": true,
+                  "rhythmicSeconds": 14.761359404096845,
+                  "sourceTailThrough": 16.21135940409684,
+                  "tailSeconds": 1.449999999999994,
+                  "maximumTailOnset": 0.10537631927879111,
+                  "onsetThreshold": 0.25,
+                  "bodyRmsMedian": 0.045227594673633575,
+                  "maximumTailRms": 0.0012983556371182203,
+                  "maximumRelativeRms": 0.028707156471337297,
+                  "relativeRmsCeiling": 0.5,
+                  "sourceGainApplied": false,
+                  "searchedEntireTail": true,
+                  "humanVerified": false,
+                  "sampleRate": 48000
+                }
+              ]
+            },
+            "at44100": {
+              "method": "unmodified-original-hpss-tail-v1",
+              "accepted": true,
+              "rhythmicSeconds": 14.761359404096845,
+              "sourceTailThrough": 16.21135940409684,
+              "tailSeconds": 1.449999999999994,
+              "maximumTailOnset": 0.1095778754503765,
+              "onsetThreshold": 0.25,
+              "bodyRmsMedian": 0.039273396134376526,
+              "maximumTailRms": 0.0012224725214764476,
+              "maximumRelativeRms": 0.031127242403322517,
+              "relativeRmsCeiling": 0.5,
+              "sourceGainApplied": false,
+              "searchedEntireTail": true,
+              "humanVerified": false,
+              "sampleRate": 44100,
+              "channelProofs": [
+                {
+                  "method": "unmodified-original-hpss-tail-v1",
+                  "accepted": true,
+                  "rhythmicSeconds": 14.761359404096845,
+                  "sourceTailThrough": 16.21135940409684,
+                  "tailSeconds": 1.449999999999994,
+                  "maximumTailOnset": 0.13448263175689276,
+                  "onsetThreshold": 0.25,
+                  "bodyRmsMedian": 0.03976040333509445,
+                  "maximumTailRms": 0.0013046994572505355,
+                  "maximumRelativeRms": 0.03281403979367947,
+                  "relativeRmsCeiling": 0.5,
+                  "sourceGainApplied": false,
+                  "searchedEntireTail": true,
+                  "humanVerified": false,
+                  "sampleRate": 44100
+                },
+                {
+                  "method": "unmodified-original-hpss-tail-v1",
+                  "accepted": true,
+                  "rhythmicSeconds": 14.761359404096845,
+                  "sourceTailThrough": 16.21135940409684,
+                  "tailSeconds": 1.449999999999994,
+                  "maximumTailOnset": 0.10535767250113862,
+                  "onsetThreshold": 0.25,
+                  "bodyRmsMedian": 0.04524775967001915,
+                  "maximumTailRms": 0.0012980563333258033,
+                  "maximumRelativeRms": 0.028687748140288287,
+                  "relativeRmsCeiling": 0.5,
+                  "sourceGainApplied": false,
+                  "searchedEntireTail": true,
+                  "humanVerified": false,
+                  "sampleRate": 44100
+                }
+              ]
+            }
+          },
+          "nativeRecoveryCurve": "sine-1.2-v1",
+          "nativeSplice": {
+            "method": "original-pcm-native-return-v1",
+            "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+            "sampleRate": 48000,
+            "returnStart": 17.2218333333333,
+            "returnEnd": 17.2418333333333,
+            "returnEnergyRatio": 0.9540100899204331,
+            "nativeResumeSeconds": 18.205395833333334,
+            "verifiedFrames": 4800,
+            "maximumLast100msDifference": 0,
+            "encodedMaximumDifference": 1.1891825124621391e-07,
+            "unmodifiedOriginalComparison": true,
+            "sourceClock": {
+              "method": "original-mp3-gapless-metadata-v1",
+              "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+              "sampleRate": 44100,
+              "rawFrames": 6166656,
+              "decodedFrames": 6166656,
+              "primingFrames": 0,
+              "paddingFrames": 0
+            },
+            "targetClock": {
+              "method": "original-mp3-gapless-metadata-v1",
+              "sourceSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+              "sampleRate": 48000,
+              "rawFrames": 11449728,
+              "decodedFrames": 11447624,
+              "primingFrames": 1105,
+              "paddingFrames": 999
+            }
+          },
+          "gainProof": {
+            "method": "offline-stereo-shared-lookahead-v1",
+            "truePeakLookahead": true,
+            "maximumReductionDb": 0.5966521533044837,
+            "meanOverlapReductionDb": 0.0071287051836986005,
+            "attackDbPerSecond": 40,
+            "releaseDbPerSecond": 8,
+            "firstGain": 1,
+            "nativeRevealGain": 1
+          },
+          "sourceReadThrough": 139.8334739292365,
+          "outgoingEnvelope": "unity-through-decoded-eof-v1",
+          "oversampledPeak": 0.9979961514472961,
+          "oversampledOverlapPeak": 0.9490597248077393,
+          "processing": "soundtouch-wsola",
+          "levelContinuity": {
+            "method": "rendered-half-second-eof-rms-v1",
+            "beforeRms": 0.007246926426887512,
+            "afterRms": 0.006653512362390757,
+            "changeDb": -0.7420576819589899,
+            "includesOriginalSongDynamics": true,
+            "notHumanListening": true
+          },
+          "rhythmVerified": true,
+          "postRenderRhythm": {
+            "method": "rendered-hpss-attacks-v1",
+            "mode": "metrical-rhythmic",
+            "accepted": true,
+            "sourceAttacks": 22,
+            "incomingAttacks": 14,
+            "matches": 10,
+            "agreement": 0.45454545454545453,
+            "rmsSeconds": 0.015684215682735828,
+            "firstHalfMatches": 4,
+            "secondHalfMatches": 6,
+            "sharedPerBar": [
+              2,
+              2,
+              3,
+              3
+            ],
+            "sourceObserved": [
+              0.36757369614512475,
+              1.0351473922902494,
+              1.667891156462585,
+              2.3122448979591836,
+              2.950793650793651,
+              3.6183673469387756,
+              4.239501133786848,
+              4.907074829931973,
+              5.534013605442177,
+              6.184172335600907,
+              6.822721088435374,
+              7.484489795918368,
+              8.128843537414966,
+              8.784807256235826,
+              9.4059410430839,
+              10.050294784580498,
+              10.700453514739229,
+              11.373832199546484,
+              11.989160997732425,
+              12.627709750566893,
+              13.272063492063491,
+              14.595600907029478
+            ],
+            "incomingObserved": [
+              2.950793650793651,
+              4.918684807256236,
+              5.563038548752835,
+              6.903990929705215,
+              7.496099773242631,
+              8.134648526077097,
+              8.813832199546484,
+              10.05609977324263,
+              10.712063492063491,
+              12.610294784580498,
+              13.272063492063491,
+              13.933832199546485,
+              15.187709750566892,
+              15.83206349206349
+            ],
+            "notHumanListening": true,
+            "downbeatsVerified": true,
+            "downbeatRmsSeconds": 0.015897616181555763,
+            "maximumDownbeatError": 0.029024943310657747,
+            "downbeatMatches": 4
+          },
+          "resampledCommonProof": {
+            "method": "encoded-common-resampling-v1",
+            "sampleRate": 44100,
+            "samplePeak": 0.9968960881233215,
+            "oversampledPeak": 0.9981181621551514,
+            "oversampledOverlapPeak": 0.9502118825912476,
+            "rhythm": {
+              "method": "rendered-hpss-attacks-v1",
+              "mode": "metrical-rhythmic",
+              "accepted": true,
+              "sourceAttacks": 22,
+              "incomingAttacks": 14,
+              "matches": 10,
+              "agreement": 0.45454545454545453,
+              "rmsSeconds": 0.015684215682735828,
+              "firstHalfMatches": 4,
+              "secondHalfMatches": 6,
+              "sharedPerBar": [
+                2,
+                2,
+                3,
+                3
+              ],
+              "sourceObserved": [
+                0.36757369614512475,
+                1.0351473922902494,
+                1.667891156462585,
+                2.3122448979591836,
+                2.950793650793651,
+                3.6183673469387756,
+                4.239501133786848,
+                4.907074829931973,
+                5.534013605442177,
+                6.184172335600907,
+                6.822721088435374,
+                7.484489795918368,
+                8.128843537414966,
+                8.784807256235826,
+                9.4059410430839,
+                10.050294784580498,
+                10.700453514739229,
+                11.373832199546484,
+                11.989160997732425,
+                12.627709750566893,
+                13.272063492063491,
+                14.595600907029478
+              ],
+              "incomingObserved": [
+                2.950793650793651,
+                4.918684807256236,
+                5.563038548752835,
+                6.903990929705215,
+                7.496099773242631,
+                8.134648526077097,
+                8.813832199546484,
+                10.05609977324263,
+                10.712063492063491,
+                12.610294784580498,
+                13.272063492063491,
+                13.933832199546485,
+                15.187709750566892,
+                15.83206349206349
+              ],
+              "notHumanListening": true,
+              "downbeatsVerified": true,
+              "downbeatRmsSeconds": 0.015897616181555763,
+              "maximumDownbeatError": 0.029024943310657747,
+              "downbeatMatches": 4
+            },
+            "notASecondSoundTouchRender": true,
+            "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1"
+          },
+          "nativeDecoderProof": {
+            "method": "actual-browser-decode-v1",
+            "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+            "rates": {
+              "44100": {
+                "samplePeak": 0.9978684782981873,
+                "overlapPeak": 0.9502411484718323,
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "nativeSplice": {
+                  "method": "actual-native-original-splice-v1",
+                  "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+                  "frames": 4410,
+                  "minimumCorrelation": 0.9996467204648698,
+                  "maximumRelativeRms": 0.026581519363783057,
+                  "browsers": [
+                    "chromium",
+                    "webkit"
+                  ],
+                  "clockMethod": "original-mp3-gapless-metadata-v1",
+                  "decodedPrimingSeconds": [
+                    0,
+                    0.023020833333333334
+                  ],
+                  "mediaPrimingSeconds": [
+                    0,
+                    0.023020833333333334
+                  ]
+                },
+                "sourceClockProof": {
+                  "method": "actual-native-source-clock-v1",
+                  "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+                  "browsers": [
+                    "chromium",
+                    "webkit"
+                  ],
+                  "decodedOffsets": [
+                    0
+                  ],
+                  "mediaOffsets": [
+                    0
+                  ]
+                }
+              },
+              "48000": {
+                "samplePeak": 0.9972109794616699,
+                "overlapPeak": 0.9484472274780273,
+                "browsers": [
+                  "chromium",
+                  "webkit"
+                ],
+                "nativeSplice": {
+                  "method": "actual-native-original-splice-v1",
+                  "targetSha": "ae0a607aebe1c2297f929d39cfbfa2e44927db82",
+                  "frames": 4800,
+                  "minimumCorrelation": 0.9999996483105013,
+                  "maximumRelativeRms": 0.0008386903573828833,
+                  "browsers": [
+                    "chromium",
+                    "webkit"
+                  ],
+                  "clockMethod": "original-mp3-gapless-metadata-v1",
+                  "decodedPrimingSeconds": [
+                    0,
+                    0.023020833333333334
+                  ],
+                  "mediaPrimingSeconds": [
+                    0,
+                    0.023020833333333334
+                  ]
+                },
+                "sourceClockProof": {
+                  "method": "actual-native-source-clock-v1",
+                  "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+                  "browsers": [
+                    "chromium",
+                    "webkit"
+                  ],
+                  "decodedOffsets": [
+                    0
+                  ],
+                  "mediaOffsets": [
+                    0
+                  ]
+                }
+              }
+            },
+            "physicalIPhone": false,
+            "provenanceRuns": [
+              43948609933,
+              43950033686
+            ]
+          },
+          "sourcePrerollProof": {
+            "method": "original-only-preroll-with-common-gain-v1",
+            "assetSha256": "721ee463354b87655f306b99a3249a204f8e7ac90c96f6dfa3617bf5abbe46a1",
+            "sourceSha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+            "sampleRate": 48000,
+            "frames": 13440,
+            "fromOffsetSeconds": 0,
+            "throughOffsetSeconds": 0.28,
+            "sharedGainOnly": true,
+            "maximumReductionDb": 0.03279335410768229,
+            "maximumOriginalWaveformResidual": 2.4056200698119312e-08,
+            "maximumEncodedDifference": 1.1827796697616577e-07,
+            "incomingMaximumPeak": 0
+          }
+        }
+      }
+    ]
+  }
+}

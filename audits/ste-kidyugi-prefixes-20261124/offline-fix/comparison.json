@@ -1,0 +1,13 @@
+{
+  "oldWorkerCommit": "719f591a",
+  "newWorkerCommit": "feb63dcf",
+  "oldWorkerSha256": "189c097621f193888da248eef836c7b42f2a6f7d52931959a01ea4597429fda6",
+  "sameBrowserSameHarness": true,
+  "oldRealWebkitExit": 1,
+  "newRealWebkitExit": 0,
+  "unitRegressionsBefore": "2fail/3",
+  "unitAndExistingMobileAfter": "39/39",
+  "syntheticStorageUnchanged": true,
+  "physicalIPhone": false,
+  "noLocalWorkerFileMutation": true
+}

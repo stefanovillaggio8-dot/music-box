@@ -1,0 +1,294 @@
+{
+  "method": "unchanged-owning-harmony-gate-trace-v1",
+  "profile": "Ste",
+  "pair": {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+  "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+  "geometry": {
+    "begin": 137.36,
+    "end": 146.333,
+    "entry": 0,
+    "tempo": 1,
+    "fade": 8.972999999999985
+  },
+  "engineSha256": "9aa53eed95afeea26d2f2cab0b43f168b842f381aaab29b6885547ed76f2faf4",
+  "results": {
+    "pcmFullHarmony": {
+      "accepted": false,
+      "evidence": null,
+      "diagnostics": [
+        {
+          "gate": "pcmCompatibleKeyHarmony",
+          "site": 1,
+          "owningStatement": "  const x=close(outro,begin+t),y=close(intro,entry+t*rate);\n  if(!x||!y)"
+        },
+        {
+          "gate": "four-probes",
+          "average": 0.22088396666958618,
+          "weakest": 0,
+          "shared": 0,
+          "scores": [
+            0.21119325784672716,
+            0,
+            0,
+            0.6723426088316176
+          ]
+        }
+      ]
+    },
+    "pcmPreservedTailHarmony": {
+      "accepted": false,
+      "evidence": null,
+      "diagnostics": [
+        {
+          "gate": "preserved-frame-statistics",
+          "frames": 16,
+          "sharedTonalFrames": 7,
+          "boundedQuiet": 6,
+          "rawClashMax": 0.2914616068252462,
+          "excessClashMax": 0.06042392182682085
+        },
+        {
+          "gate": "pcmPreservedTailHarmony",
+          "site": 5,
+          "owningStatement": " }\n if(source.length<6||Math.max(...clashes)>.45||Math.max(...excess)>.05)"
+        }
+      ]
+    }
+  },
+  "originalUnityFrameDiagnostics": [
+    {
+      "t": 0.5,
+      "sourceTime": 138.1,
+      "targetTime": 0.5,
+      "sourceRms": 0.53515,
+      "targetRms": 0.12402,
+      "sourceTonalRatio": 0.5717,
+      "targetTonalRatio": 0.8753,
+      "levelDifferenceDb": 12.699676055033276,
+      "clash": 0.16051737339079258,
+      "excess": -0.1652417528299357,
+      "originalSourceWeight": 0.6109875782400761,
+      "powerWeightedExcess": -0.10096065838570766
+    },
+    {
+      "t": 1,
+      "sourceTime": 138.6,
+      "targetTime": 1,
+      "sourceRms": 0.50125,
+      "targetRms": 0.12029,
+      "sourceTonalRatio": 0.3288,
+      "targetTonalRatio": 0.783,
+      "levelDifferenceDb": 12.396497214867432,
+      "clash": 0.17194550551649837,
+      "excess": -0.2287039627512877,
+      "originalSourceWeight": 0.6243178253086268,
+      "powerWeightedExcess": -0.14278396066434915
+    },
+    {
+      "t": 1.5,
+      "sourceTime": 139.1,
+      "targetTime": 1.5,
+      "sourceRms": 0.32942,
+      "targetRms": 0.10528,
+      "sourceTonalRatio": 0.1825,
+      "targetTonalRatio": 0.7395,
+      "levelDifferenceDb": 9.90808173168758,
+      "clash": 0.24467445288563056,
+      "excess": 0.06042392182682085,
+      "originalSourceWeight": 0.7341360488122374,
+      "powerWeightedExcess": 0.044359379223681765
+    },
+    {
+      "t": 2,
+      "sourceTime": 139.6,
+      "targetTime": 2,
+      "sourceRms": 0.13869,
+      "targetRms": 0.08733,
+      "sourceTonalRatio": 0.5049,
+      "targetTonalRatio": 0.7047,
+      "levelDifferenceDb": 4.0176337599854195,
+      "clash": 0.2914616068252462,
+      "excess": -0.1170508872153555,
+      "originalSourceWeight": 0.9483635604602557,
+      "powerWeightedExcess": -0.1110067961545864
+    },
+    {
+      "t": 2.5,
+      "sourceTime": 140.1,
+      "targetTime": 2.5,
+      "sourceRms": 0.07706,
+      "targetRms": 0.11703,
+      "sourceTonalRatio": 0.5443,
+      "targetTonalRatio": 0.611,
+      "levelDifferenceDb": -3.629364007089433,
+      "clash": 0.08607153653728479,
+      "excess": -0.1788177976707232,
+      "originalSourceWeight": 0.9575906148168408,
+      "powerWeightedExcess": -0.17123424481170127
+    },
+    {
+      "t": 3,
+      "sourceTime": 140.6,
+      "targetTime": 3,
+      "sourceRms": 0.0248,
+      "targetRms": 0.09666,
+      "sourceTonalRatio": 0.7722,
+      "targetTonalRatio": 0.6671,
+      "levelDifferenceDb": -11.815902199532907,
+      "clash": 0.13619990583812205,
+      "excess": -0.22569415096824305,
+      "originalSourceWeight": 0.6499679011024792,
+      "powerWeightedExcess": -0.146693953595935
+    },
+    {
+      "t": 3.5,
+      "sourceTime": 141.1,
+      "targetTime": 3.5,
+      "sourceRms": 0.0064,
+      "targetRms": 0.03508,
+      "sourceTonalRatio": 0.778,
+      "targetTonalRatio": 0.9835,
+      "levelDifferenceDb": -14.777592214202313,
+      "clash": 0.22686291393461808,
+      "excess": -0.24885269028431625,
+      "originalSourceWeight": 0.5219417706852252,
+      "powerWeightedExcess": -0.12988661380677796
+    },
+    {
+      "t": 4,
+      "sourceTime": 141.6,
+      "targetTime": 4,
+      "sourceRms": 0.00288,
+      "targetRms": 0.05624,
+      "sourceTonalRatio": 0.7961,
+      "targetTonalRatio": 0.6974,
+      "levelDifferenceDb": -25.81305648505073,
+      "clash": 0.21826061344699912,
+      "excess": -0.276033552936097,
+      "originalSourceWeight": 0.18536551423585615,
+      "powerWeightedExcess": -0.05116710148635005
+    },
+    {
+      "t": 4.5,
+      "sourceTime": 142.1,
+      "targetTime": 4.5,
+      "sourceRms": 0.00164,
+      "targetRms": 0.06446,
+      "sourceTonalRatio": 0.8555,
+      "targetTonalRatio": 0.631,
+      "levelDifferenceDb": -31.888929062572355,
+      "clash": 0.22183579751293414,
+      "excess": -0.2663588733117782,
+      "originalSourceWeight": 0.09678124878410511,
+      "powerWeightedExcess": -0.02577854438384114
+    },
+    {
+      "t": 5,
+      "sourceTime": 142.6,
+      "targetTime": 5,
+      "sourceRms": 0.00082,
+      "targetRms": 0.07261,
+      "sourceTonalRatio": 0.9005,
+      "targetTonalRatio": 0.8107,
+      "levelDifferenceDb": -38.94365168746958,
+      "clash": 0.21237021929387642,
+      "excess": -0.23271414023281353,
+      "originalSourceWeight": 0.04416957536203547,
+      "powerWeightedExcess": -0.010278884754824547
+    },
+    {
+      "t": 5.5,
+      "sourceTime": 143.1,
+      "targetTime": 5.5,
+      "sourceRms": 0.00035,
+      "targetRms": 0.13694,
+      "sourceTonalRatio": 0.8915,
+      "targetTonalRatio": 0.8634,
+      "levelDifferenceDb": -51.84924558362049,
+      "clash": 0.12585751371245546,
+      "excess": -0.3500553572972548,
+      "originalSourceWeight": 0.010171395678247638,
+      "powerWeightedExcess": -0.0035605515483607304
+    },
+    {
+      "t": 6,
+      "sourceTime": 143.6,
+      "targetTime": 6,
+      "sourceRms": 0.00018,
+      "targetRms": 0.14645,
+      "sourceTonalRatio": 0.8833,
+      "targetTonalRatio": 0.8496,
+      "levelDifferenceDb": -58.20833741828623,
+      "clash": 0.07021087258737838,
+      "excess": -0.41948739382620015,
+      "originalSourceWeight": 0.004904290681797937,
+      "powerWeightedExcess": -0.002057288116673535
+    },
+    {
+      "t": 6.5,
+      "sourceTime": 144.1,
+      "targetTime": 6.5,
+      "sourceRms": 0.00008,
+      "targetRms": 0.11471,
+      "sourceTonalRatio": 0.8415,
+      "targetTonalRatio": 0.8339,
+      "levelDifferenceDb": -63.13022585541621,
+      "clash": 0.12114695019348917,
+      "excess": -0.3770541615130083,
+      "originalSourceWeight": 0.0027857564601258366,
+      "powerWeightedExcess": -0.0010503810662521936
+    },
+    {
+      "t": 7,
+      "sourceTime": 144.6,
+      "targetTime": 7,
+      "sourceRms": 0.00004,
+      "targetRms": 0.09054,
+      "sourceTonalRatio": 0.7408,
+      "targetTonalRatio": 0.841,
+      "levelDifferenceDb": -67.09560997662541,
+      "clash": 0.2595332896785083,
+      "excess": -0.23550323435498471,
+      "originalSourceWeight": 0.0017656143102903346,
+      "powerWeightedExcess": -0.0004158078806968193
+    },
+    {
+      "t": 7.5,
+      "sourceTime": 145.1,
+      "targetTime": 7.5,
+      "sourceRms": 0.00002,
+      "targetRms": 0.08644,
+      "sourceTonalRatio": 0.1428,
+      "targetTonalRatio": 0.6215,
+      "levelDifferenceDb": -72.71369525094445,
+      "clash": 0.3233812352586721,
+      "excess": -0.17635841268530977,
+      "originalSourceWeight": 0.0009250693307036707,
+      "powerWeightedExcess": -0.00016314375878676124
+    },
+    {
+      "t": 8,
+      "sourceTime": 145.6,
+      "targetTime": 8,
+      "sourceRms": 0.00001,
+      "targetRms": 0.09006,
+      "sourceTonalRatio": 0.0233,
+      "targetTonalRatio": 0.6263,
+      "levelDifferenceDb": -79.09063885253828,
+      "clash": 0.1427974792408056,
+      "excess": -0.35716369738797143,
+      "originalSourceWeight": 0.0004440497280965823,
+      "powerWeightedExcess": -0.00015859844271109868
+    }
+  ],
+  "originalDecodes": 0,
+  "newModels": 0,
+  "renders": 0,
+  "installed": false,
+  "certified": false,
+  "thresholdsChanged": false
+}

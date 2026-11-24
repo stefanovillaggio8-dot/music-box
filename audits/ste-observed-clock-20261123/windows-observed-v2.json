@@ -1,0 +1,3741 @@
+{
+  "method": "observed-native-clock-before-play-promise-v2",
+  "physicalIPhone": false,
+  "notApplicationIntegration": true,
+  "notPlaybackCertified": true,
+  "platform": "win32",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "mode": "natural",
+      "prime": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "primed",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 82.89999999990687,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 92.69999999995343,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 151.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 151.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 212,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 232.39999999990687,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.03534,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourceTime": 155.75,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "result": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "adopted",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 82.89999999990687,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 92.69999999995343,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 151.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 151.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 212,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 232.39999999990687,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-request",
+            "wall": 279.80000000004657,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play",
+            "wall": 291.60000000009313,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-playing",
+            "wall": 291.69999999995343,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-promise",
+            "wall": 291.69999999995343,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-overlap-request",
+            "wall": 3373.1999999999534,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play",
+            "wall": 3373.5,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 3373.5,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play-promise",
+            "wall": 3373.600000000093,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-pause",
+            "wall": 5736.300000000047,
+            "time": 161.088979,
+            "duration": 161.088979,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "source-ended",
+            "wall": 5736.399999999907,
+            "time": 161.088979,
+            "duration": 161.088979,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [
+          {
+            "wall": 0.19999999995343387,
+            "sourceAt": 155.75,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 26.100000000093132,
+            "sourceAt": 155.75,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 51.300000000046566,
+            "sourceAt": 155.766933,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 76.4000000001397,
+            "sourceAt": 155.766933,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 101.60000000009313,
+            "sourceAt": 155.766933,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 126.69999999995343,
+            "sourceAt": 155.790304,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 151.80000000004657,
+            "sourceAt": 155.815546,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 177.80000000004657,
+            "sourceAt": 155.84149,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 203.4000000001397,
+            "sourceAt": 155.867035,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 229.60000000009313,
+            "sourceAt": 155.893239,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 255.60000000009313,
+            "sourceAt": 155.919323,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 283.10000000009313,
+            "sourceAt": 155.946792,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 309.69999999995343,
+            "sourceAt": 155.973419,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 335.69999999995343,
+            "sourceAt": 155.9994,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 361.9000000001397,
+            "sourceAt": 156.025485,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 387.4000000001397,
+            "sourceAt": 156.051,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 413.30000000004657,
+            "sourceAt": 156.076925,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 439.30000000004657,
+            "sourceAt": 156.103018,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 464.80000000004657,
+            "sourceAt": 156.128517,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 490.60000000009313,
+            "sourceAt": 156.154334,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 516.1999999999534,
+            "sourceAt": 156.179881,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 541.8000000000466,
+            "sourceAt": 156.205455,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 567.8000000000466,
+            "sourceAt": 156.231477,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 593.4000000001397,
+            "sourceAt": 156.257081,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 618.5,
+            "sourceAt": 156.282204,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 643.6000000000931,
+            "sourceAt": 156.307261,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 669.6999999999534,
+            "sourceAt": 156.333429,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 695.3000000000466,
+            "sourceAt": 156.358926,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 720.8000000000466,
+            "sourceAt": 156.384446,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 746.3000000000466,
+            "sourceAt": 156.40995,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 771.8000000000466,
+            "sourceAt": 156.435437,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 796.8000000000466,
+            "sourceAt": 156.460493,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 822.4000000001397,
+            "sourceAt": 156.486035,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 849.6000000000931,
+            "sourceAt": 156.513236,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 875.1000000000931,
+            "sourceAt": 156.538776,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 900.6000000000931,
+            "sourceAt": 156.564325,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 926.1999999999534,
+            "sourceAt": 156.589867,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 951.8000000000466,
+            "sourceAt": 156.615414,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 977.3000000000466,
+            "sourceAt": 156.640975,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1003.1999999999534,
+            "sourceAt": 156.666869,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1028.4000000001397,
+            "sourceAt": 156.692127,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1054.4000000001397,
+            "sourceAt": 156.71799,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1079.5,
+            "sourceAt": 156.743191,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1105.3000000000466,
+            "sourceAt": 156.768882,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1130.8000000000466,
+            "sourceAt": 156.794443,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1156.9000000001397,
+            "sourceAt": 156.820479,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1183.3000000000466,
+            "sourceAt": 156.846925,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1208.6999999999534,
+            "sourceAt": 156.872317,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1234.9000000001397,
+            "sourceAt": 156.898529,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1260.5,
+            "sourceAt": 156.924065,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1285.9000000001397,
+            "sourceAt": 156.949609,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1311.5,
+            "sourceAt": 156.9752,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1336.8000000000466,
+            "sourceAt": 157.000456,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1362.5,
+            "sourceAt": 157.026133,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1388.4000000001397,
+            "sourceAt": 157.051985,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1414.9000000001397,
+            "sourceAt": 157.07848,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1440.4000000001397,
+            "sourceAt": 157.104051,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1466.4000000001397,
+            "sourceAt": 157.130047,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1491.6000000000931,
+            "sourceAt": 157.155201,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1516.9000000001397,
+            "sourceAt": 157.180485,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1542.4000000001397,
+            "sourceAt": 157.206029,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1567.5,
+            "sourceAt": 157.231093,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1593.4000000001397,
+            "sourceAt": 157.257019,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1619.6000000000931,
+            "sourceAt": 157.283295,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1644.8000000000466,
+            "sourceAt": 157.308459,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1670.6999999999534,
+            "sourceAt": 157.334347,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1697.3000000000466,
+            "sourceAt": 157.360859,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1723.3000000000466,
+            "sourceAt": 157.38691,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1749.8000000000466,
+            "sourceAt": 157.413469,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1776.8000000000466,
+            "sourceAt": 157.440496,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1802.4000000001397,
+            "sourceAt": 157.466054,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1827.8000000000466,
+            "sourceAt": 157.491397,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1853.3000000000466,
+            "sourceAt": 157.516939,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1878.5,
+            "sourceAt": 157.542185,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1904.1000000000931,
+            "sourceAt": 157.567747,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1929.6999999999534,
+            "sourceAt": 157.593327,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1955.1999999999534,
+            "sourceAt": 157.618914,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1980.8000000000466,
+            "sourceAt": 157.644464,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2006.9000000001397,
+            "sourceAt": 157.670498,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2033.6999999999534,
+            "sourceAt": 157.697277,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2059.6999999999534,
+            "sourceAt": 157.723331,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2085.1999999999534,
+            "sourceAt": 157.74884,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2110.8000000000466,
+            "sourceAt": 157.774409,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2136.8000000000466,
+            "sourceAt": 157.800454,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2162.3000000000466,
+            "sourceAt": 157.825992,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2189.4000000001397,
+            "sourceAt": 157.853017,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2214.600000000093,
+            "sourceAt": 157.878172,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2239.600000000093,
+            "sourceAt": 157.903202,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2265.1999999999534,
+            "sourceAt": 157.928771,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2290.6999999999534,
+            "sourceAt": 157.954289,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2316.1999999999534,
+            "sourceAt": 157.979837,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2341.8000000000466,
+            "sourceAt": 158.005395,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2367.3000000000466,
+            "sourceAt": 158.030917,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2393.4000000001397,
+            "sourceAt": 158.056972,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2419.3000000000466,
+            "sourceAt": 158.08299,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2444.4000000001397,
+            "sourceAt": 158.108067,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2469.8000000000466,
+            "sourceAt": 158.133392,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2495.4000000001397,
+            "sourceAt": 158.159064,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2521.4000000001397,
+            "sourceAt": 158.185062,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2547.5,
+            "sourceAt": 158.211174,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2574.100000000093,
+            "sourceAt": 158.237679,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2599.600000000093,
+            "sourceAt": 158.263243,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2625.1999999999534,
+            "sourceAt": 158.288906,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2650.8000000000466,
+            "sourceAt": 158.314405,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2678.5,
+            "sourceAt": 158.342156,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2711.6999999999534,
+            "sourceAt": 158.375283,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2745.600000000093,
+            "sourceAt": 158.409203,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2778.5,
+            "sourceAt": 158.44217,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2811.8000000000466,
+            "sourceAt": 158.475349,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2843.600000000093,
+            "sourceAt": 158.507222,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2875.1999999999534,
+            "sourceAt": 158.538812,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2906.3000000000466,
+            "sourceAt": 158.569844,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2937.8000000000466,
+            "sourceAt": 158.601478,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2968.5,
+            "sourceAt": 158.632004,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2995.100000000093,
+            "sourceAt": 158.658713,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3029,
+            "sourceAt": 158.692632,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3061.9000000001397,
+            "sourceAt": 158.725506,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3093.4000000001397,
+            "sourceAt": 158.757045,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3124.9000000001397,
+            "sourceAt": 158.788482,
+            "incomingAt": 0.017225,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3157,
+            "sourceAt": 158.820544,
+            "incomingAt": 0.020195,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3188,
+            "sourceAt": 158.851612,
+            "incomingAt": 0.042853,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3213.1999999999534,
+            "sourceAt": 158.876741,
+            "incomingAt": 0.071203,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3246.4000000001397,
+            "sourceAt": 158.910061,
+            "incomingAt": 0.110977,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3278.600000000093,
+            "sourceAt": 158.942176,
+            "incomingAt": 0.137889,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3311.6999999999534,
+            "sourceAt": 158.975282,
+            "incomingAt": 0.174215,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3345.4000000001397,
+            "sourceAt": 159.00899,
+            "incomingAt": 0.202776,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3377.3000000000466,
+            "sourceAt": 159.040849,
+            "incomingAt": 0.241091,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3409.8000000000466,
+            "sourceAt": 159.07343,
+            "incomingAt": 0.265267,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3440.8000000000466,
+            "sourceAt": 159.104452,
+            "incomingAt": 0.30272,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3471.9000000001397,
+            "sourceAt": 159.135501,
+            "incomingAt": 0.337007,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3503.5,
+            "sourceAt": 159.167042,
+            "incomingAt": 0.363377,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3535,
+            "sourceAt": 159.19854,
+            "incomingAt": 0.391304,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3561.6999999999534,
+            "sourceAt": 159.225286,
+            "incomingAt": 0.419651,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3595.5,
+            "sourceAt": 159.259109,
+            "incomingAt": 0.459935,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3628.6999999999534,
+            "sourceAt": 159.292221,
+            "incomingAt": 0.484646,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3660.5,
+            "sourceAt": 159.324104,
+            "incomingAt": 0.522963,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3691.6999999999534,
+            "sourceAt": 159.355304,
+            "incomingAt": 0.557398,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3723.4000000001397,
+            "sourceAt": 159.386924,
+            "incomingAt": 0.583843,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3754.4000000001397,
+            "sourceAt": 159.417959,
+            "incomingAt": 0.618112,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3785.4000000001397,
+            "sourceAt": 159.448998,
+            "incomingAt": 0.643953,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3812.6999999999534,
+            "sourceAt": 159.476286,
+            "incomingAt": 0.674445,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3845.6999999999534,
+            "sourceAt": 159.509253,
+            "incomingAt": 0.702265,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3879.9000000001397,
+            "sourceAt": 159.543361,
+            "incomingAt": 0.742824,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3911.6999999999534,
+            "sourceAt": 159.575287,
+            "incomingAt": 0.766338,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3943.3000000000466,
+            "sourceAt": 159.606904,
+            "incomingAt": 0.804397,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 3975.4000000001397,
+            "sourceAt": 159.638971,
+            "incomingAt": 0.831313,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4006.4000000001397,
+            "sourceAt": 159.670004,
+            "incomingAt": 0.865556,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4037.5,
+            "sourceAt": 159.701023,
+            "incomingAt": 0.903021,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4068.3000000000466,
+            "sourceAt": 159.731826,
+            "incomingAt": 0.925425,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4095.5,
+            "sourceAt": 159.759029,
+            "incomingAt": 0.959088,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4128.5,
+            "sourceAt": 159.792116,
+            "incomingAt": 0.983775,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4161.90000000014,
+            "sourceAt": 159.825468,
+            "incomingAt": 1.023559,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4193.5,
+            "sourceAt": 159.857014,
+            "incomingAt": 1.058339,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4225.40000000014,
+            "sourceAt": 159.888995,
+            "incomingAt": 1.08513,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4257,
+            "sourceAt": 159.920552,
+            "incomingAt": 1.111525,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4288.199999999953,
+            "sourceAt": 159.951808,
+            "incomingAt": 1.146008,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4319.800000000047,
+            "sourceAt": 159.983362,
+            "incomingAt": 1.184006,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4344.90000000014,
+            "sourceAt": 160.00842,
+            "incomingAt": 1.200673,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4378.40000000014,
+            "sourceAt": 160.041902,
+            "incomingAt": 1.240573,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4412.100000000093,
+            "sourceAt": 160.075635,
+            "incomingAt": 1.277546,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4444.800000000047,
+            "sourceAt": 160.108379,
+            "incomingAt": 1.305115,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4476.40000000014,
+            "sourceAt": 160.139966,
+            "incomingAt": 1.331529,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4507.100000000093,
+            "sourceAt": 160.170627,
+            "incomingAt": 1.365401,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4537.600000000093,
+            "sourceAt": 160.201097,
+            "incomingAt": 1.402337,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4569.600000000093,
+            "sourceAt": 160.233182,
+            "incomingAt": 1.426013,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4594.90000000014,
+            "sourceAt": 160.258468,
+            "incomingAt": 1.457743,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4628.5,
+            "sourceAt": 160.292067,
+            "incomingAt": 1.482944,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4661.90000000014,
+            "sourceAt": 160.325432,
+            "incomingAt": 1.522756,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4693.40000000014,
+            "sourceAt": 160.356947,
+            "incomingAt": 1.557499,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4724.40000000014,
+            "sourceAt": 160.388037,
+            "incomingAt": 1.583406,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4756.199999999953,
+            "sourceAt": 160.419695,
+            "incomingAt": 1.621512,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4787.5,
+            "sourceAt": 160.450872,
+            "incomingAt": 1.64424,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4817.699999999953,
+            "sourceAt": 160.4813,
+            "incomingAt": 1.681178,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4845.100000000093,
+            "sourceAt": 160.508597,
+            "incomingAt": 1.700047,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4878.699999999953,
+            "sourceAt": 160.542137,
+            "incomingAt": 1.740037,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4912,
+            "sourceAt": 160.575405,
+            "incomingAt": 1.776512,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4942.800000000047,
+            "sourceAt": 160.606314,
+            "incomingAt": 1.802277,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 4973.40000000014,
+            "sourceAt": 160.63694,
+            "incomingAt": 1.836125,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5005.600000000093,
+            "sourceAt": 160.669108,
+            "incomingAt": 1.863114,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5037.300000000047,
+            "sourceAt": 160.700879,
+            "incomingAt": 1.901336,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5069.5,
+            "sourceAt": 160.732961,
+            "incomingAt": 1.925019,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5095.800000000047,
+            "sourceAt": 160.75923,
+            "incomingAt": 1.957717,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5129.199999999953,
+            "sourceAt": 160.792734,
+            "incomingAt": 1.994464,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5162.199999999953,
+            "sourceAt": 160.825628,
+            "incomingAt": 2.022168,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5195.5,
+            "sourceAt": 160.858975,
+            "incomingAt": 2.050351,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5226.5,
+            "sourceAt": 160.890054,
+            "incomingAt": 2.084635,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5258.100000000093,
+            "sourceAt": 160.921597,
+            "incomingAt": 2.122659,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5288.40000000014,
+            "sourceAt": 160.95184,
+            "incomingAt": 2.144449,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5320,
+            "sourceAt": 160.983458,
+            "incomingAt": 2.182569,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5345.800000000047,
+            "sourceAt": 161.009217,
+            "incomingAt": 2.19991,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5378.800000000047,
+            "sourceAt": 161.042286,
+            "incomingAt": 2.239412,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5404,
+            "sourceAt": 161.067516,
+            "incomingAt": 2.267896,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5444.5,
+            "sourceAt": 161.088979,
+            "incomingAt": 2.303139,
+            "sourcePaused": false,
+            "incomingPaused": false
+          },
+          {
+            "wall": 5476.100000000093,
+            "sourceAt": 161.088979,
+            "incomingAt": 2.341231,
+            "sourcePaused": true,
+            "incomingPaused": false
+          }
+        ],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.03534,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourcePlayRequestedAt": 279.69999999995343,
+        "sourcePlayPromiseResolvedAt": 291.69999999995343,
+        "incomingStart": 0,
+        "sourceAtStart": 158.757045,
+        "incomingRequestedAt": 3373.1999999999534,
+        "incomingPlayResolvedAt": 3373.600000000093,
+        "beforeAdoption": {
+          "sourceEnded": true,
+          "sourceAt": 161.088979,
+          "sourceDuration": 161.088979,
+          "incomingAt": 2.341231
+        },
+        "sameIncomingElement": true,
+        "sourceTime": 161.088979,
+        "incomingTime": 2.34505,
+        "sourcePaused": true,
+        "incomingPaused": false
+      },
+      "accepted": true
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "mode": "seek",
+      "prime": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "primed",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 63.39999999990687,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 77.30000000004657,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 99,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 99,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 168.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 190.30000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.037001,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourceTime": 155.75,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "result": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "stopped",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 63.39999999990687,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 77.30000000004657,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 99,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 99,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 168.80000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 190.30000000004657,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-request",
+            "wall": 229.89999999990687,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play",
+            "wall": 243.69999999995343,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-playing",
+            "wall": 243.69999999995343,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-promise",
+            "wall": 243.80000000004657,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-overlap-request",
+            "wall": 3324.8000000000466,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play",
+            "wall": 3325.100000000093,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 3325.100000000093,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play-promise",
+            "wall": 3325.1999999999534,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-seek",
+            "wall": 3328.600000000093,
+            "time": 158.977053,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 1
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 3328.6999999999534,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "source-playing",
+            "wall": 3329,
+            "time": 158.977053,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          }
+        ],
+        "samples": [
+          {
+            "wall": 0.19999999995343387,
+            "sourceAt": 155.75,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 26.5,
+            "sourceAt": 155.757063,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 52,
+            "sourceAt": 155.762661,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 78.39999999990687,
+            "sourceAt": 155.768974,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 104.80000000004657,
+            "sourceAt": 155.783376,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 131.30000000004657,
+            "sourceAt": 155.809952,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 156.69999999995343,
+            "sourceAt": 155.835281,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 182.89999999990687,
+            "sourceAt": 155.861552,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 209.89999999990687,
+            "sourceAt": 155.888515,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 235.89999999990687,
+            "sourceAt": 155.914528,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 261.39999999990687,
+            "sourceAt": 155.940034,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 288.39999999990687,
+            "sourceAt": 155.967023,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 314.19999999995343,
+            "sourceAt": 155.992816,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 339.69999999995343,
+            "sourceAt": 156.018336,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 365.0999999998603,
+            "sourceAt": 156.043617,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 390.69999999995343,
+            "sourceAt": 156.069258,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 416.5,
+            "sourceAt": 156.095101,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 442.80000000004657,
+            "sourceAt": 156.121448,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 468.5999999998603,
+            "sourceAt": 156.147189,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 494.89999999990687,
+            "sourceAt": 156.173429,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 520.3000000000466,
+            "sourceAt": 156.198896,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 545.5,
+            "sourceAt": 156.224075,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 571.3999999999069,
+            "sourceAt": 156.24999,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 596.8999999999069,
+            "sourceAt": 156.275527,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 622.3000000000466,
+            "sourceAt": 156.300919,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 648.3999999999069,
+            "sourceAt": 156.327007,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 674.6999999999534,
+            "sourceAt": 156.353225,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 700.0999999998603,
+            "sourceAt": 156.378727,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 725.8000000000466,
+            "sourceAt": 156.404395,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 751.3000000000466,
+            "sourceAt": 156.429899,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 778.3000000000466,
+            "sourceAt": 156.456957,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 804.8000000000466,
+            "sourceAt": 156.483357,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 830.3000000000466,
+            "sourceAt": 156.508866,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 856,
+            "sourceAt": 156.534421,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 881.3999999999069,
+            "sourceAt": 156.55998,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 906.8999999999069,
+            "sourceAt": 156.585525,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 933,
+            "sourceAt": 156.61164,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 959.3999999999069,
+            "sourceAt": 156.638038,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 985.5,
+            "sourceAt": 156.664112,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1011.1999999999534,
+            "sourceAt": 156.689747,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1036.6999999999534,
+            "sourceAt": 156.715283,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1062.6999999999534,
+            "sourceAt": 156.741244,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1088.6999999999534,
+            "sourceAt": 156.767313,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1114.8000000000466,
+            "sourceAt": 156.793333,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1140.5,
+            "sourceAt": 156.818965,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1166.3999999999069,
+            "sourceAt": 156.844989,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1191.8000000000466,
+            "sourceAt": 156.870359,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1218.3000000000466,
+            "sourceAt": 156.896902,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1244.8999999999069,
+            "sourceAt": 156.923437,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1270.3999999999069,
+            "sourceAt": 156.948985,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1295.8999999999069,
+            "sourceAt": 156.974535,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1321,
+            "sourceAt": 156.999595,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1346.5999999998603,
+            "sourceAt": 157.025133,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1372.0999999998603,
+            "sourceAt": 157.050684,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1397.6999999999534,
+            "sourceAt": 157.076039,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1423.1999999999534,
+            "sourceAt": 157.10178,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1449.3000000000466,
+            "sourceAt": 157.127878,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1474.8999999999069,
+            "sourceAt": 157.153464,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1500.5,
+            "sourceAt": 157.178987,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1525.5,
+            "sourceAt": 157.204084,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1551.5999999998603,
+            "sourceAt": 157.230124,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1576.8000000000466,
+            "sourceAt": 157.255335,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1603.8000000000466,
+            "sourceAt": 157.282357,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1629.6999999999534,
+            "sourceAt": 157.308272,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1655.8999999999069,
+            "sourceAt": 157.33429,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1682.5999999998603,
+            "sourceAt": 157.3612,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1709.6999999999534,
+            "sourceAt": 157.388285,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1735.8000000000466,
+            "sourceAt": 157.414348,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1761.3000000000466,
+            "sourceAt": 157.439886,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1786.5999999998603,
+            "sourceAt": 157.465145,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1812.3000000000466,
+            "sourceAt": 157.490914,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1838.3999999999069,
+            "sourceAt": 157.516793,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1863.5999999998603,
+            "sourceAt": 157.542219,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1889.8999999999069,
+            "sourceAt": 157.568551,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1915.5,
+            "sourceAt": 157.594093,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1941.8000000000466,
+            "sourceAt": 157.620384,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1968.3999999999069,
+            "sourceAt": 157.646923,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1993.8999999999069,
+            "sourceAt": 157.672459,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2019.3999999999069,
+            "sourceAt": 157.697969,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2044.5,
+            "sourceAt": 157.723049,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2070.5,
+            "sourceAt": 157.74901,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2095.899999999907,
+            "sourceAt": 157.774545,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2121.8000000000466,
+            "sourceAt": 157.800387,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2147,
+            "sourceAt": 157.825525,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2172.899999999907,
+            "sourceAt": 157.851392,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2198.399999999907,
+            "sourceAt": 157.876946,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2223.5,
+            "sourceAt": 157.902055,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2248.899999999907,
+            "sourceAt": 157.927453,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2274.899999999907,
+            "sourceAt": 157.953529,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2301.1999999999534,
+            "sourceAt": 157.97975,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2326.5,
+            "sourceAt": 158.005088,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2353.3000000000466,
+            "sourceAt": 158.031937,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2379.0999999998603,
+            "sourceAt": 158.057626,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2404.899999999907,
+            "sourceAt": 158.083519,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2430.1999999999534,
+            "sourceAt": 158.108739,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2455.8000000000466,
+            "sourceAt": 158.134394,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2481.899999999907,
+            "sourceAt": 158.160425,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2508.5,
+            "sourceAt": 158.187007,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2534.5999999998603,
+            "sourceAt": 158.213219,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2560,
+            "sourceAt": 158.238466,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2586,
+            "sourceAt": 158.26452,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2611.5999999998603,
+            "sourceAt": 158.29012,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2637,
+            "sourceAt": 158.315644,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2663.0999999998603,
+            "sourceAt": 158.341697,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2689.399999999907,
+            "sourceAt": 158.36787,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2719.399999999907,
+            "sourceAt": 158.397971,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2746.6999999999534,
+            "sourceAt": 158.425233,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2780,
+            "sourceAt": 158.458524,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2812.5,
+            "sourceAt": 158.49094,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2844.5999999998603,
+            "sourceAt": 158.523137,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2875.899999999907,
+            "sourceAt": 158.554369,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2906.899999999907,
+            "sourceAt": 158.585442,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2936.1999999999534,
+            "sourceAt": 158.614756,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2963.399999999907,
+            "sourceAt": 158.641962,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2997.0999999998603,
+            "sourceAt": 158.675607,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3029.899999999907,
+            "sourceAt": 158.70842,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3062.5,
+            "sourceAt": 158.741062,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3094.899999999907,
+            "sourceAt": 158.773465,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          }
+        ],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.037001,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourcePlayRequestedAt": 229.80000000004657,
+        "sourcePlayPromiseResolvedAt": 243.80000000004657,
+        "incomingStart": 0,
+        "sourceAtStart": 158.773465,
+        "incomingRequestedAt": 3324.8000000000466,
+        "incomingPlayResolvedAt": 3325.1999999999534,
+        "beforeStop": {
+          "sourcePaused": false,
+          "sourceAt": 158.977053,
+          "incomingPaused": false,
+          "incomingAt": 0
+        },
+        "reason": "source-seek",
+        "sourceTime": 158.978383,
+        "incomingTime": 0,
+        "sourcePaused": false,
+        "incomingPaused": true
+      },
+      "accepted": true
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "mode": "hidden",
+      "prime": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "primed",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 57.699999999953434,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 74,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 97,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 97,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 161.89999999990687,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 182.19999999995343,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.030403,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourceTime": 155.75,
+        "incomingTime": 0,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "result": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "stopped",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 57.699999999953434,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 74,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 97,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 97,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 161.89999999990687,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 1
+          },
+          {
+            "event": "prime-ready",
+            "wall": 182.19999999995343,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-request",
+            "wall": 222.30000000004657,
+            "time": 155.75,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play",
+            "wall": 236.69999999995343,
+            "time": 155.757626,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-playing",
+            "wall": 236.69999999995343,
+            "time": 155.757638,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "source-play-promise",
+            "wall": 236.69999999995343,
+            "time": 155.757678,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-overlap-request",
+            "wall": 3295.399999999907,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play",
+            "wall": 3295.5999999998603,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 3295.5999999998603,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-play-promise",
+            "wall": 3295.5999999998603,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "hidden",
+            "wall": 3304.0999999998603,
+            "time": 158.772188,
+            "duration": 161.088979,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 3304.1999999999534,
+            "time": 0,
+            "duration": 126.876708,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [
+          {
+            "wall": 0.19999999995343387,
+            "sourceAt": 155.75,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 25.600000000093132,
+            "sourceAt": 155.768824,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 52.199999999953434,
+            "sourceAt": 155.769983,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 77.89999999990687,
+            "sourceAt": 155.769983,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 104,
+            "sourceAt": 155.795212,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 129.10000000009313,
+            "sourceAt": 155.820357,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 155.69999999995343,
+            "sourceAt": 155.846938,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 182.30000000004657,
+            "sourceAt": 155.87353,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 207.39999999990687,
+            "sourceAt": 155.898616,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 233.39999999990687,
+            "sourceAt": 155.924672,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 260.60000000009313,
+            "sourceAt": 155.951805,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 285.80000000004657,
+            "sourceAt": 155.976999,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 311.30000000004657,
+            "sourceAt": 156.001859,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 337.39999999990687,
+            "sourceAt": 156.028554,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 363,
+            "sourceAt": 156.054175,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 388.69999999995343,
+            "sourceAt": 156.079902,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 414.60000000009313,
+            "sourceAt": 156.105809,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 439.69999999995343,
+            "sourceAt": 156.130203,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 465.39999999990687,
+            "sourceAt": 156.156635,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 490.69999999995343,
+            "sourceAt": 156.181909,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 516.3000000000466,
+            "sourceAt": 156.207467,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 542.3000000000466,
+            "sourceAt": 156.233495,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 567.8999999999069,
+            "sourceAt": 156.25911,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 593,
+            "sourceAt": 156.284205,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 619.3999999999069,
+            "sourceAt": 156.310574,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 645.8000000000466,
+            "sourceAt": 156.337026,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 672.1999999999534,
+            "sourceAt": 156.362725,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 697.8999999999069,
+            "sourceAt": 156.389063,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 723.1999999999534,
+            "sourceAt": 156.414415,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 749.8000000000466,
+            "sourceAt": 156.440966,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 775.8000000000466,
+            "sourceAt": 156.467034,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 801.8000000000466,
+            "sourceAt": 156.492373,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 827.3999999999069,
+            "sourceAt": 156.518606,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 853.1000000000931,
+            "sourceAt": 156.544358,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 878.6999999999534,
+            "sourceAt": 156.569899,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 903.8000000000466,
+            "sourceAt": 156.595041,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 929.8000000000466,
+            "sourceAt": 156.621057,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 955.8000000000466,
+            "sourceAt": 156.64702,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 981.1000000000931,
+            "sourceAt": 156.672231,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1006.3999999999069,
+            "sourceAt": 156.697592,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1033.1999999999534,
+            "sourceAt": 156.723786,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1058.8999999999069,
+            "sourceAt": 156.750025,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1084.8999999999069,
+            "sourceAt": 156.776143,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1110,
+            "sourceAt": 156.801224,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1136,
+            "sourceAt": 156.827243,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1162.1000000000931,
+            "sourceAt": 156.852628,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1188.1999999999534,
+            "sourceAt": 156.879338,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1214.1999999999534,
+            "sourceAt": 156.905374,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1239.6999999999534,
+            "sourceAt": 156.930912,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1266.6999999999534,
+            "sourceAt": 156.957979,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1292.6999999999534,
+            "sourceAt": 156.983911,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1318.8999999999069,
+            "sourceAt": 157.010072,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1345,
+            "sourceAt": 157.036206,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1372,
+            "sourceAt": 157.063214,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1397.1999999999534,
+            "sourceAt": 157.087655,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1423.1999999999534,
+            "sourceAt": 157.114339,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1448.6999999999534,
+            "sourceAt": 157.139859,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1474.1999999999534,
+            "sourceAt": 157.165406,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1500.1999999999534,
+            "sourceAt": 157.191435,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1525.8000000000466,
+            "sourceAt": 157.216294,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1552.3000000000466,
+            "sourceAt": 157.243486,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1577.8999999999069,
+            "sourceAt": 157.269041,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1604.8999999999069,
+            "sourceAt": 157.296064,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1630.3999999999069,
+            "sourceAt": 157.320848,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1655.8000000000466,
+            "sourceAt": 157.346907,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1682.1999999999534,
+            "sourceAt": 157.37345,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1707.8000000000466,
+            "sourceAt": 157.399003,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1733.3000000000466,
+            "sourceAt": 157.424514,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1758.8000000000466,
+            "sourceAt": 157.449357,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1785.3999999999069,
+            "sourceAt": 157.476563,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1810.3999999999069,
+            "sourceAt": 157.501597,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1835.8999999999069,
+            "sourceAt": 157.527114,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1861.8999999999069,
+            "sourceAt": 157.553184,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1887.5,
+            "sourceAt": 157.578699,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1913.1000000000931,
+            "sourceAt": 157.604219,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1938.6000000000931,
+            "sourceAt": 157.629815,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1964.1999999999534,
+            "sourceAt": 157.65536,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 1990.3000000000466,
+            "sourceAt": 157.680739,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2015.6999999999534,
+            "sourceAt": 157.706943,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2042.3999999999069,
+            "sourceAt": 157.733491,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2067.399999999907,
+            "sourceAt": 157.758545,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2093,
+            "sourceAt": 157.784224,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2118.8000000000466,
+            "sourceAt": 157.809228,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2144.1999999999534,
+            "sourceAt": 157.835437,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2169.8000000000466,
+            "sourceAt": 157.860992,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2195,
+            "sourceAt": 157.886201,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2220.600000000093,
+            "sourceAt": 157.911793,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2245.6999999999534,
+            "sourceAt": 157.936224,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2272.3000000000466,
+            "sourceAt": 157.963493,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2298.8000000000466,
+            "sourceAt": 157.990039,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2324.899999999907,
+            "sourceAt": 158.01606,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2350.899999999907,
+            "sourceAt": 158.041439,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2376.100000000093,
+            "sourceAt": 158.067248,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2402.1999999999534,
+            "sourceAt": 158.093317,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2427.600000000093,
+            "sourceAt": 158.118861,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2453.3000000000466,
+            "sourceAt": 158.144433,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2478.899999999907,
+            "sourceAt": 158.16937,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2504.399999999907,
+            "sourceAt": 158.195587,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2530.100000000093,
+            "sourceAt": 158.221318,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2555.6999999999534,
+            "sourceAt": 158.246865,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2581.1999999999534,
+            "sourceAt": 158.272314,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2606.899999999907,
+            "sourceAt": 158.297367,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2632.100000000093,
+            "sourceAt": 158.323159,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2658.100000000093,
+            "sourceAt": 158.349237,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2684.100000000093,
+            "sourceAt": 158.375276,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2710.100000000093,
+            "sourceAt": 158.400504,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2736.100000000093,
+            "sourceAt": 158.427279,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2763.600000000093,
+            "sourceAt": 158.454549,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2791.399999999907,
+            "sourceAt": 158.482573,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2822,
+            "sourceAt": 158.513185,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2847.6999999999534,
+            "sourceAt": 158.538901,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2880.600000000093,
+            "sourceAt": 158.571763,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2913.600000000093,
+            "sourceAt": 158.604784,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2947.3000000000466,
+            "sourceAt": 158.638417,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 2978.8000000000466,
+            "sourceAt": 158.669978,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3007,
+            "sourceAt": 158.698176,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3042.100000000093,
+            "sourceAt": 158.733251,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          },
+          {
+            "wall": 3073.100000000093,
+            "sourceAt": 158.76359,
+            "incomingAt": 0,
+            "sourcePaused": false,
+            "incomingPaused": true
+          }
+        ],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.030403,
+        "sourceNeverPlayedDuringPrime": true,
+        "sourceClockOffset": 0,
+        "targetClockOffset": 0,
+        "sourcePlayRequestedAt": 222.19999999995343,
+        "sourcePlayPromiseResolvedAt": 236.69999999995343,
+        "incomingStart": 0,
+        "sourceAtStart": 158.76359,
+        "incomingRequestedAt": 3295.399999999907,
+        "incomingPlayResolvedAt": 3295.5999999998603,
+        "beforeStop": {
+          "sourcePaused": false,
+          "sourceAt": 158.772188,
+          "incomingPaused": false,
+          "incomingAt": 0
+        },
+        "reason": "hidden",
+        "sourceTime": 158.774368,
+        "incomingTime": 0,
+        "sourcePaused": false,
+        "incomingPaused": true
+      },
+      "accepted": true
+    }
+  ]
+}

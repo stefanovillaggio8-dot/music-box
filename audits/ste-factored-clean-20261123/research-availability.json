@@ -1,0 +1,54 @@
+{
+  "evaluationOnly": true,
+  "notPublicRelease": true,
+  "personalSteRecordings": 222,
+  "examined": "stored same-account plans only; no quadratic scan, simulation or new PCM",
+  "sourceJsSha256": "caa48eb855787f9193f5155ea6a16134976e9c14d87f7cfc2e6460239b55da81",
+  "indexSha256": "b3c7d0ecbbb9ddc09f53ed238cc60ba2b297a54a77ab4caefc8f990a29bd8a91",
+  "counts": {
+    "full": 1,
+    "partial": 1,
+    "cleanDesktop": 2
+  },
+  "newCleanIPhone": 0,
+  "pairs": [
+    {
+      "from": "audio/songs/track-4.mp3",
+      "to": "audio/songs/track-38.mp3",
+      "kind": "partial",
+      "begin": 119.62671731448765,
+      "fade": 7.250282685512346,
+      "entry": 0,
+      "tempo": 1.0442804428044306
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-38.mp3",
+      "to": "audio/songs/track-4.mp3",
+      "kind": "cleanDesktop",
+      "begin": 158.75,
+      "fade": 2.3389999999999986,
+      "entry": 0,
+      "tempo": 1
+    },
+    {
+      "from": "audio/songs/track-705.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "kind": "full",
+      "begin": 148.52438815789475,
+      "fade": 10.77661184210524,
+      "entry": 0,
+      "tempo": 1.0167224080267576
+    }
+  ],
+  "physicalIPhone": false,
+  "humanListening": false
+}

@@ -1,0 +1,34 @@
+{
+  "checkpoint": "c4ab621b",
+  "source": {
+    "key": "audio/songs/track-6.mp3",
+    "begin": 138.733,
+    "end": 139.833,
+    "preRoll": 0.3
+  },
+  "endingSeconds": 8,
+  "sampleRates": [
+    44100,
+    48000
+  ],
+  "frameSeconds": 0.02,
+  "maximumChannelRms": 0.0001,
+  "maximumPeak": 0.001,
+  "minimumCoveredSuffixSeconds": 0.8,
+  "preRoll": 0.3,
+  "maximumOverlap": 3,
+  "noFittedClock": true,
+  "noInference": true,
+  "notPlaybackCertified": true,
+  "noPairSearch": true,
+  "hypothesis": "Late normalized onsets may be inaudible noise, distinct from failed WSOLA/native phase splice. If the fixed absolute quiet bound fails, do not relax it.",
+  "targets": [
+    "audio/songs/track-4.mp3",
+    "audio/songs/track-34.mp3"
+  ],
+  "rates": [
+    44100,
+    48000
+  ],
+  "firstTargetRejected": "Only 0.25s meaningful in 1.1s overlap, requirement 0.75 unchanged; no further native source work for this pair"
+}

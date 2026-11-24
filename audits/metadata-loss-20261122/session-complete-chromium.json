@@ -1,0 +1,57 @@
+{
+  "method": "actual-original-mp3-session-reopen-v1",
+  "physicalIPhone": false,
+  "results": [
+    {
+      "browser": "chromium",
+      "minutes": 119,
+      "resetDecoder": false,
+      "noAnimationFrames": false,
+      "restoredTime": 37.371313,
+      "refreshPosition": 37.375126,
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "noAutoplay": true
+    },
+    {
+      "browser": "chromium",
+      "minutes": 119,
+      "resetDecoder": true,
+      "noAnimationFrames": false,
+      "restoredTime": 37.372735,
+      "refreshPosition": 37.378565,
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "noAutoplay": true
+    },
+    {
+      "browser": "chromium",
+      "minutes": 119,
+      "resetDecoder": false,
+      "noAnimationFrames": true,
+      "restoredTime": 37.550417,
+      "refreshPosition": 37.553243,
+      "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+      "noAutoplay": true
+    },
+    {
+      "browser": "chromium",
+      "minutes": 121,
+      "emptySelection": true,
+      "shuffleReset": false,
+      "noAutoplay": true
+    },
+    {
+      "browser": "chromium",
+      "minutes": 299,
+      "emptySelection": true,
+      "shuffleReset": false,
+      "noAutoplay": true
+    },
+    {
+      "browser": "chromium",
+      "minutes": 301,
+      "emptySelection": true,
+      "shuffleReset": true,
+      "noAutoplay": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Exact resume — publication completed
+
+Music Box6.744 IS PUBLIC via ONLYPR94, merge6e843b987c646e976d02b1727c0ce8a5702fa126. Pages45471557329 passed;14public assets identical. Actual-parent19-file protection passed. Ste1full/1partial/11clean desktop; newfull0,partial0,clean4. New clean use+1/800, full4→4,partial4→4. No new mobile clean mode. Native52/52+Windows4;units806/808same2historicalfixtures,phrase/offline and fullSte browsers passed. Research merge3aecd601,29/29 postmerge tests. Final exact report/proof: FINAL-6744.md,public-6744-verification.json,actual-release-merge-preservation.json,final-ci/summary.json.
+
+NEXT: independent Ste/KidYugi vocal+metrical evidence for a new bounded full/partial geometry, not more near-identical clean searches or global scans. Current shuffle already searches all fresh personal candidates and preserves manual queues; no selector bug demonstrated. Long137.36Filmografo→Eva clipped and remains rejected. Four admitted prefixes/clean player cases finished; don't repeat. Phone physical/coldseek still unverified; no dual-player mode enabled. Whole-phrase Karaoke preserved;PR80offsets notapplied.
+
+Save/push final research checkpoint and confirm PR59 DRAFT. Never merge it wholesale. Future verified changes use a separate release PR from latestmain. Keep every public/user/download change and failure ledger. Earlier pendingPR94 instructions are superseded by this completed report.
+
+Final recovery also preserves main316919d4: later d05a08c4 missing-cover additions and concurrent listening statistics. Application/audio/index/worker bytes identical to validated14dda11e; no repeated audio tests warranted. Future user/stat updates are independent and must never be reset.

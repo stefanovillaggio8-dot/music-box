@@ -1,0 +1,27 @@
+{
+  "pair": {
+    "from": "audio/songs/track-1187.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "windows": [
+    {
+      "bars": 2,
+      "sourceDownbeat": 163.46,
+      "sourceBarEnd": 168.56,
+      "targetDownbeat": 0.2,
+      "targetBarEnd": 5.5
+    },
+    {
+      "bars": 4,
+      "sourceDownbeat": 158.34,
+      "sourceBarEnd": 168.56,
+      "targetDownbeat": 0.2,
+      "targetBarEnd": 10.76
+    }
+  ],
+  "geometrySource": "existing whole-record model hypotheses; not acoustic beat certification",
+  "purpose": "Check independent voice/harmony barriers before a new high-frequency onset experiment",
+  "newAudioDecodes": 0,
+  "newModelInferences": 0,
+  "allowInstallation": false
+}

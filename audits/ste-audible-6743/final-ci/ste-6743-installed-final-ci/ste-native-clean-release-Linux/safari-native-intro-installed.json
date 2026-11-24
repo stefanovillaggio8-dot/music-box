@@ -1,0 +1,98 @@
+{
+  "shadowIndex": false,
+  "published": false,
+  "physicalIPhone": false,
+  "controlledPhraseFixture": false,
+  "results": [
+    {
+      "browser": "chromium",
+      "platform": "linux",
+      "phoneNativeIntro": true,
+      "physicalIPhone": false,
+      "state": {
+        "calls": [
+          {
+            "sourceId": "b-track-38",
+            "sourceAt": 158.574195,
+            "sourceDuration": 161.088979,
+            "entry": 0
+          }
+        ],
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 0,
+            "sourceDuration": null
+          }
+        ],
+        "overlapEvents": [],
+        "current": "b-track-50",
+        "time": 0.26229,
+        "sameNativeElement": true,
+        "volume": 1,
+        "muted": false,
+        "rate": 1
+      },
+      "sourceStart": {
+        "fromZero": true,
+        "advancedBeforeSeek": 0.254462,
+        "duration": 161.088979,
+        "advancedAfterSeek": 151.82439
+      },
+      "logs": [
+        {
+          "failed": "http://127.0.0.1:35541/songs/track-38.mp3",
+          "error": {
+            "errorText": "net::ERR_ABORTED"
+          }
+        },
+        "[Music Box DJ] Finale misurato: avvio diretto del prossimo brano {outgoing: b-track-38, incoming: b-track-50, reason: coda digitale misurata: nessun mix in corso}"
+      ]
+    },
+    {
+      "browser": "webkit",
+      "platform": "linux",
+      "phoneNativeIntro": true,
+      "physicalIPhone": false,
+      "state": {
+        "calls": [
+          {
+            "sourceId": "b-track-38",
+            "sourceAt": 158.721291,
+            "sourceDuration": 161.136,
+            "entry": 0
+          }
+        ],
+        "trace": [
+          {
+            "event": "target-play",
+            "at": 0,
+            "volume": 1,
+            "rate": 1,
+            "sourceAt": 0,
+            "sourceDuration": null
+          }
+        ],
+        "overlapEvents": [],
+        "current": "b-track-50",
+        "time": 0.298198,
+        "sameNativeElement": true,
+        "volume": 1,
+        "muted": false,
+        "rate": 1
+      },
+      "sourceStart": {
+        "fromZero": true,
+        "advancedBeforeSeek": 0.272004,
+        "duration": 161.136,
+        "advancedAfterSeek": 151.811727
+      },
+      "logs": [
+        "[Music Box DJ] Finale misurato: avvio diretto del prossimo brano {outgoing: b-track-38, incoming: b-track-50, reason: coda digitale misurata: nessun mix in corso}"
+      ]
+    }
+  ]
+}

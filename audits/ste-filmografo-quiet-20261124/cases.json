@@ -1,0 +1,14 @@
+[
+  {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-4.mp3"
+  },
+  {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-50.mp3"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-11-23T18:59:23.322550+00:00",
+  "run": 45242349269,
+  "queueBudgetMinutes": 10,
+  "macOSLatestEdge": "cancel requested while queued, never tested; older 12/12 protocol remains separately valid",
+  "LinuxLatestEdge": {
+    "passed": 2,
+    "total": 2
+  },
+  "windowsChromiumLatestEdge": "passed",
+  "windowsWebKitLatestEdge": "failed before original first play; unknown provisional duration; no relaxed clock bounds",
+  "physicalIPhone": false,
+  "iPhoneEnabled": false,
+  "newCertifiedPairs": 0,
+  "unitContracts": {
+    "passed": 5,
+    "total": 5
+  },
+  "emptyHarnessExitsOne": true
+}

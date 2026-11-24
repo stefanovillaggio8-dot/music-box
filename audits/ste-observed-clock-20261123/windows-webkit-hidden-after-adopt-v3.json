@@ -1,0 +1,164 @@
+{
+  "method": "observed-native-clock-before-play-promise-v2",
+  "physicalIPhone": false,
+  "notApplicationIntegration": true,
+  "notPlaybackCertified": true,
+  "platform": "win32",
+  "results": [
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "mode": "hidden-after-adopt",
+      "prime": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "stopped",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 164,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 173,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 297,
+            "time": 0,
+            "duration": 126.8767083,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 298,
+            "time": 0,
+            "duration": 126.8767083,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 358,
+            "time": 0.0268125,
+            "duration": 126.8767083,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "bounded-native-readiness-timeout",
+            "wall": 5355,
+            "time": 0,
+            "duration": 161.16,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.0268125,
+        "sourceNeverPlayedDuringPrime": true,
+        "beforeStop": {
+          "sourcePaused": true,
+          "sourceAt": 0,
+          "incomingPaused": true,
+          "incomingAt": 0.0268125
+        },
+        "reason": "bounded-native-readiness-timeout",
+        "sourceTime": 0,
+        "incomingTime": 0.0268125,
+        "sourcePaused": true,
+        "incomingPaused": true
+      },
+      "accepted": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'stopped'\n- 'primed'\n",
+      "result": {
+        "method": "observed-native-clock-before-play-promise-v2",
+        "phase": "stopped",
+        "physicalIPhone": false,
+        "notApplicationIntegration": true,
+        "notPlaybackCertified": true,
+        "sourceSha": "5aaf50b322b06baf4a18e4d2085b6b4a2117f1c8",
+        "targetSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "events": [
+          {
+            "event": "incoming-prime-request",
+            "wall": 164,
+            "time": 0,
+            "duration": null,
+            "paused": true,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-play",
+            "wall": 173,
+            "time": 0,
+            "duration": null,
+            "paused": false,
+            "readyState": 0
+          },
+          {
+            "event": "incoming-playing",
+            "wall": 297,
+            "time": 0,
+            "duration": 126.8767083,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-prime-promise",
+            "wall": 298,
+            "time": 0,
+            "duration": 126.8767083,
+            "paused": false,
+            "readyState": 4
+          },
+          {
+            "event": "incoming-pause",
+            "wall": 358,
+            "time": 0.0268125,
+            "duration": 126.8767083,
+            "paused": true,
+            "readyState": 4
+          },
+          {
+            "event": "bounded-native-readiness-timeout",
+            "wall": 5355,
+            "time": 0,
+            "duration": 161.16,
+            "paused": true,
+            "readyState": 4
+          }
+        ],
+        "samples": [],
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+        "primerSeconds": 0.0268125,
+        "sourceNeverPlayedDuringPrime": true,
+        "beforeStop": {
+          "sourcePaused": true,
+          "sourceAt": 0,
+          "incomingPaused": true,
+          "incomingAt": 0.0268125
+        },
+        "reason": "bounded-native-readiness-timeout",
+        "sourceTime": 0,
+        "incomingTime": 0.0268125,
+        "sourcePaused": true,
+        "incomingPaused": true
+      }
+    }
+  ]
+}

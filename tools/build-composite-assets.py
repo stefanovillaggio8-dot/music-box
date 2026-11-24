@@ -232,8 +232,23 @@ def main():
                 if not exposure['accepted']:
                     raise ValueError('Rendered incoming introduction is persistently masked')
                 if cue.get('metricalPickupWindow'):
-                    if args.release_seconds!=1.5:raise ValueError('Metrical pickup requires the verified slow native reveal')
+                    expected_release=1.2 if cue.get('metricalCadenceWindow') else 1.5
+                    if args.release_seconds!=expected_release:raise ValueError('Metrical pickup requires its verified native reveal')
                     composite['renderedEntrance']=cue['preservedEntrance']
+                if cue.get('metricalCadenceWindow'):
+                    window=cue['structuralEvidence']['cadenceWindow']
+                    tail_cue={**cue,'structuralEvidence':{'rhythmicWindow':{'seconds':window['rhythmicSeconds']}}}
+                    def channel_tail(original,sr):
+                        result=rhythm.tail_evidence(original,sr,tail_cue,proof['preRoll'])
+                        result['sampleRate']=sr
+                        result['channelProofs']=[{**rhythm.tail_evidence(original[:,[c,c]],sr,tail_cue,proof['preRoll']),'sampleRate':sr} for c in range(2)]
+                        result['accepted']=result['accepted'] and all(t['accepted'] for t in result['channelProofs'])
+                        return result
+                    tail=channel_tail(outgoing,args.rate)
+                    tail44=channel_tail(raw44,44100)
+                    if not tail['accepted'] or not tail44['accepted']:raise ValueError('Unmodified cadence decay is not safe')
+                    composite['cadenceTailProof']={'sourceSha':cue['sourceSha'],'at48000':tail,'at44100':tail44}
+                    composite['nativeRecoveryCurve']=cue['nativeRecoveryCurve']
                 if cue.get('nativeOriginalReturn'):
                     splice=proof.get('nativeSplice')
                     if not splice or splice.get('targetSha')!=cue['targetSha']:raise ValueError('Missing original native return proof')
@@ -245,6 +260,24 @@ def main():
                     if difference>2e-6:raise ValueError('Encoded original native return differs from original PCM')
                     composite['nativeSplice']={**splice,'encodedMaximumDifference':difference,'unmodifiedOriginalComparison':True,
                         'sourceClock':clock_module.mp3_clock(a,cue['sourceSha']),'targetClock':clock_module.mp3_clock(b,cue['targetSha'])}
+                    # A timer may arrive late inside the original-only prefix.
+                    # Recover it only when the encoded samples still contain
+                    # exactly the outgoing component and a tightly bounded
+                    # version of the SAME original waveform under common gain.
+                    count=round((proof['preRoll']-.02)*args.rate)
+                    x=outgoing[:count].astype(np.float64);y=old[:count].astype(np.float64)
+                    power=np.sum(x*x,axis=1)
+                    gain=np.clip(np.divide(np.sum(x*y,axis=1),power,out=np.ones(count),where=power>1e-16),0,1)
+                    residual=float(np.max(np.abs(y-x*gain[:,None])))
+                    encoded_difference=float(np.max(np.abs(decoded[:count]-old[:count])))
+                    incoming_maximum=float(np.max(np.abs(new[:count])))
+                    reduction=float(-20*np.log10(max(1e-12,float(np.min(gain)))))
+                    if count>0 and residual<=2e-6 and encoded_difference<=2e-6 and incoming_maximum==0 and reduction<=.1:
+                        composite['sourcePrerollProof']={'method':'original-only-preroll-with-common-gain-v1',
+                            'assetSha256':sha,'sourceSha':cue['sourceSha'],'sampleRate':args.rate,'frames':count,
+                            'fromOffsetSeconds':0,'throughOffsetSeconds':count/args.rate,'sharedGainOnly':True,
+                            'maximumReductionDb':reduction,'maximumOriginalWaveformResidual':residual,
+                            'maximumEncodedDifference':encoded_difference,'incomingMaximumPeak':incoming_maximum}
                 if 'gainProof' in proof:composite['gainProof']=proof['gainProof']
                 if cue.get('preservedFileTail'):
                     composite.update({k:proof[k] for k in ('sourceReadThrough','outgoingEnvelope')})
@@ -258,6 +291,8 @@ def main():
                 composite['levelContinuity']={'method':'rendered-half-second-eof-rms-v1','beforeRms':before,'afterRms':after,
                     'changeDb':float(20*np.log10(after/before)) if min(before,after)>1e-9 else None,
                     'includesOriginalSongDynamics':True,'notHumanListening':True}
+                if cue.get('metricalCadenceWindow') and (composite['levelContinuity']['changeDb'] is None or abs(composite['levelContinuity']['changeDb'])>3):
+                    raise ValueError('Cadence native reveal changes level by more than 3 dB')
                 if post_rhythm:
                     composite['rhythmVerified']=True;composite['postRenderRhythm']=post_rhythm
                 if resampled_proof:composite['resampledCommonProof']={**resampled_proof,'assetSha256':sha}

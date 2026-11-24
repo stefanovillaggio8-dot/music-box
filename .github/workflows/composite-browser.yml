@@ -18,6 +18,14 @@ on:
       - '.github/workflows/composite-browser.yml'
   workflow_dispatch:
     inputs:
+      forensic_source_key:
+        description: 'Optional original recording for independent source-only control; actual personal Ste membership is mandatory'
+        type: string
+        default: ''
+      forensic_source_capture:
+        description: 'Offline Ste source-window artifacts only; never certify or change user playback'
+        type: boolean
+        default: false
       webkit_runner:
         description: 'Native media platform for WebKit; both platforms keep identical playback and peak checks'
         type: choice
@@ -65,6 +73,7 @@ permissions:
   contents: read
 jobs:
   native-decoders:
+    if: ${{ !inputs.forensic_source_capture }}
     strategy:
       fail-fast: false
       matrix:
@@ -177,7 +186,7 @@ jobs:
       - name: Verify native original entrance after rejecting a masked cue
         if: matrix.profile == 'Ste'
         run: node tests/composite-introduction.cjs > introduction-browser-result.json
-      - name: Verify Kid Yugi session resume and separate two/five hour expiry
+      - name: Verify real Kid Yugi session restore and separate two/five hour expiry
         if: matrix.profile == 'Ste'
         run: node tests/playback-session-browser.cjs > session-browser-result.json
       - name: Verify read-only offline inventory in real browser storage
@@ -193,6 +202,39 @@ jobs:
             storage-browser-result.json
             gstreamer-*.log
             linux-audio-output.txt
+          retention-days: 14
+
+  native-source-capture:
+    if: ${{ inputs.forensic_source_capture }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            browser: chromium
+          - runner: ubuntu-latest
+            browser: webkit
+          - runner: macos-26-intel
+            browser: webkit
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps ${{ matrix.browser }}
+          node tools/export-native-source-window.cjs
+        env:
+          MUSICBOX_NATIVE_BROWSER: ${{ matrix.browser }}
+          MUSICBOX_NATIVE_WINDOW_OUTPUT: native-window
+          MUSICBOX_NATIVE_SOURCE_KEY: ${{ inputs.forensic_source_key }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: forensic-source-${{ matrix.runner }}-${{ matrix.browser }}
+          path: native-window/
           retention-days: 14
 
 

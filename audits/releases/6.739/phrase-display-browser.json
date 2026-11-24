@@ -1,0 +1,121 @@
+{
+  "method": "actual-app-phrase-display-clock-v1",
+  "acousticAccuracyMeasured": false,
+  "physicalIPhone": false,
+  "results": [
+    {
+      "browser": "chromium",
+      "normal": [
+        {
+          "time": 2.5,
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "time": 6,
+          "active": [],
+          "wordSpans": 0
+        },
+        {
+          "time": 12.25,
+          "active": [
+            "Next complete phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "time": 2.75,
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        }
+      ],
+      "immersive": [
+        {
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "active": [],
+          "wordSpans": 0
+        },
+        {
+          "active": [
+            "Next complete phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        }
+      ],
+      "unknownEndPreserved": true,
+      "wordAlignmentRequests": 0
+    },
+    {
+      "browser": "webkit",
+      "normal": [
+        {
+          "time": 2.5,
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "time": 6,
+          "active": [],
+          "wordSpans": 0
+        },
+        {
+          "time": 12.25,
+          "active": [
+            "Next complete phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "time": 2.75,
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        }
+      ],
+      "immersive": [
+        {
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "active": [],
+          "wordSpans": 0
+        },
+        {
+          "active": [
+            "Next complete phrase"
+          ],
+          "wordSpans": 0
+        },
+        {
+          "active": [
+            "Entire sung phrase"
+          ],
+          "wordSpans": 0
+        }
+      ],
+      "unknownEndPreserved": true,
+      "wordAlignmentRequests": 0
+    }
+  ]
+}

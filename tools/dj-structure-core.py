@@ -27,7 +27,7 @@ def vocal_guard(vocals,mix,start,end,step=.1):
         'clear':bool(np.max(voice)<VOCAL_ABSOLUTE and np.max(ratio)<VOCAL_RELATIVE),
         'method':'spleeter-2stems-energy-v1','notHumanVerified':True}
 
-def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02,sparse_candidates=False):
+def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02,sparse_candidates=False,diagnostics=None):
     beats=np.asarray(beats);bars=[]
     if not len(beats):return bars
     # Refine only to real PCM attacks, retaining model locations separately.
@@ -39,11 +39,17 @@ def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02,sparse_candidates
         if onset[peak]>=.25 and (not observed or actual-observed[-1]['t']>.20):
             observed.append({'t':actual,'modelT':float(t),'p':at(beat_p,t,.02)})
     for index,start in enumerate(beats):
+        # Optional research trace only: never changes model/PCM thresholds,
+        # inserts a beat, or turns a posterior into calibrated accuracy.
+        def trace(gate,**details):
+            if diagnostics is not None:
+                diagnostics.append({'start':float(start),'gate':gate,**details})
         # Independently thresholding downbeat peaks produces extra "bars"
         # on isolated snare accents. Infer a coherent local metrical phase
         # from the complete neural evidence, comparing 3/4/5-beat hypotheses.
         lo=max(0,index-12);hi=min(len(beats),index+17)
-        if hi-lo<16:continue
+        if hi-lo<16:
+            trace('insufficientMetricalContext',beats=hi-lo);continue
         values=np.clip(np.array([at(down_p,t,.02) for t in beats[lo:hi]]),.001,.999)
         hypotheses=[]
         for meter in (3,4,5):
@@ -53,23 +59,30 @@ def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02,sparse_candidates
                 hypotheses.append((score,meter,phase))
         hypotheses.sort(reverse=True);winner=hypotheses[0]
         confidence=1/sum(np.exp(max(-80,x[0]-winner[0])) for x in hypotheses)
-        if winner[2]!=0 or confidence<.8:continue
+        if winner[2]!=0 or confidence<.8:
+            trace('metricalPhase',meter=winner[1],phase=winner[2],confidence=float(confidence));continue
         meter=winner[1]
-        if index+meter>=len(beats):continue
+        if index+meter>=len(beats):
+            trace('incompleteBar',meter=meter);continue
         end=beats[index+meter];raw=beats[index:index+meter]
         gaps=np.diff(np.r_[raw,end]);period=float(np.median(gaps))
-        if not .285<=period<=1.09 or np.max(abs(gaps-period))>period*.08:continue
+        if not .285<=period<=1.09 or np.max(abs(gaps-period))>period*.08:
+            trace('irregularBeatGrid',meter=meter,period=period,gaps=gaps.tolist());continue
         hits=[r for r in observed if start-.06<=r['modelT']<end-.06]
         # Metrical beats and audible drum attacks are different evidence.
         # Syncopation need not sound every quarter note. Only observed hits
         # are exported for the later independent >=90% pulse matcher.
         minimum=int(np.ceil(meter/2)) if sparse_candidates else meter-1
-        if len(hits)<minimum:continue
-        if sparse_candidates and not any(abs(r['t']-start)<=.06 for r in hits):continue
+        if len(hits)<minimum:
+            trace('insufficientObservedAttacks',meter=meter,observed=len(hits),required=minimum);continue
+        if sparse_candidates and not any(abs(r['t']-start)<=.06 for r in hits):
+            trace('missingObservedDownbeat',meter=meter,observed=[r['t'] for r in hits]);continue
         probabilities=np.array([max(.001,at(beat_p,t,.02)) for t in raw])
         bp=float(np.exp(np.mean(np.log(probabilities))))
         dp=min(at(down_p,start,.02),at(down_p,end,.02))
-        if bp<.70 or dp<.5:continue
+        if bp<.70 or dp<.5:
+            trace('neuralEvidence',beatGeometricMean=bp,downbeatMinimum=dp);continue
+        trace('acceptedCandidateBar',end=float(end),meter=meter)
         bars.append({'start':float(start),'end':float(end),'beats':[r['t'] for r in hits],
             'modelBeats':raw.tolist(),'beatProbabilityMin':float(np.min(probabilities)),
             'beatProbabilityGeometricMean':bp,'downbeatProbabilityMin':dp,

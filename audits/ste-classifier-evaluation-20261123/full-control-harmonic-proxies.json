@@ -1,0 +1,35 @@
+{
+  "raw": null,
+  "firstAttack": {
+    "method": "pcm-key-with-quiet-frame-bound-v1",
+    "compatibleKey": true,
+    "keyFrom": "10B",
+    "keyTo": "10B",
+    "keyConfidence": 0.7056428054513499,
+    "keyCompatibility": 1,
+    "dissonanceMax": -0.0006147876395247165,
+    "rawDissonanceMax": 0.33226014253741043,
+    "frames": 20,
+    "sharedTonalFrames": 17,
+    "boundedQuietFrames": 2,
+    "quietInteractionMaximum": 0.05,
+    "sourceGain": 1,
+    "incomingEnvelope": "first-attack-033-v1"
+  },
+  "foreground": {
+    "method": "pcm-key-with-quiet-frame-bound-v1",
+    "compatibleKey": true,
+    "keyFrom": "10B",
+    "keyTo": "10B",
+    "keyConfidence": 0.7056428054513499,
+    "keyCompatibility": 1,
+    "dissonanceMax": -0.0006147876395247165,
+    "rawDissonanceMax": 0.33226014253741043,
+    "frames": 20,
+    "sharedTonalFrames": 17,
+    "boundedQuietFrames": 2,
+    "quietInteractionMaximum": 0.05,
+    "sourceGain": 1,
+    "incomingEnvelope": "vocal-handoff-foreground-v1"
+  }
+}

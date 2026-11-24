@@ -1,0 +1,21 @@
+[
+  {
+    "from": "audio/songs/track-1187.mp3",
+    "to": "audio/songs/track-7.mp3",
+    "role": "development",
+    "sourceSha": "91880f7106a62122af82cff60cc00541b500369f",
+    "targetSha": "30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+    "begin": 161.76107669333334,
+    "entry": 0,
+    "fade": 7.056923306666675,
+    "rate": 1.0077502714207398,
+    "sourcePulses": 17,
+    "targetPulses": 17,
+    "matches": 15,
+    "ratio": 0.8823529411764706,
+    "first": 9,
+    "second": 6,
+    "rms": 0.03637098218482984,
+    "reason": "observedPulseAgreement"
+  }
+]

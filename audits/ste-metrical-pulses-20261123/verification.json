@@ -1,0 +1,44 @@
+{
+  "testedCodeCommit": "96a20fb1a2a4d31ab0f1f00ea87701aee7b5ac53",
+  "ci": {
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45129118843",
+    "status": "success",
+    "nodePassed": 9,
+    "pythonPassed": 14,
+    "failures": 0
+  },
+  "local": {
+    "nodePassed": 134,
+    "pythonPassed": 14,
+    "failures": 0,
+    "syntaxChecks": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "runtimeAndDataUnchangedSince": "06058c441f122f50b71a8f01afe01070235d9338",
+  "runtimeAndDataSha256": {
+    "app.js": "4c71f698d0cf4fccf8c0d3aa4e3a0e7c39a89340e4ae32e298764957cc712d97",
+    "mix-intelligente.js": "b363e868506e2129e09754b1fd91d70dc7002ace8c5771300f702bc02ad5cbb9",
+    "audio-stretch.js": "db149a393ab29fa1d9344a0d22917ca5a001cab8be233cd5f85ddf7bd620a578",
+    "audio-stretch-core.mjs": "5c29f9c0e728e18e83a62491ff8c0f28ba7e41465af8f8f985534273514cbc86",
+    "sw.js": "e985e470cff5203fb93085722facca2845dac86da3fee2df55e33a5591038dc7",
+    "versione.json": "09936b74749c217f6dd7166c3235e1d1b398928acb71072f469a48dd033b42ac",
+    "dj-deep-analysis.json": "5c0362c3da9e84d99e10d008c3d71810f1f1ae14d7c10e799807de7831fc728c",
+    "stato.json": "f68bde18883efbe0741c0c2aac4ecc412fb91143d72927ba272ba98409085c5a",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "online-imports.json": "fcfbb4ecd1fa80cc54a8c11893435b082a4342372d49c5f5526a5632276d4499",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "7e645c527e94583e76c94677837ab7d63e58f4e8888f0310db5795fb44b0262f"
+  },
+  "publication": {
+    "newRelease": false,
+    "publicVersion": "6.739",
+    "mainCommit": "379830d5728846445005e42a840b5deced8ab9c9",
+    "pr59RemainsDraft": true
+  },
+  "newBrowserMusicProof": false,
+  "physicalIphoneTest": false,
+  "oldUnresolvedRuns": [
+    "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45101340301",
+    "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/45101340339"
+  ]
+}

@@ -1,0 +1,19 @@
+✔ reopen after 119 minutes keeps independent two-hour and five-hour rules (0.6042ms)
+✔ reopen after 121 minutes keeps independent two-hour and five-hour rules (0.071ms)
+✔ reopen after 299 minutes keeps independent two-hour and five-hour rules (0.0498ms)
+✔ reopen after 301 minutes keeps independent two-hour and five-hour rules (0.083ms)
+✔ latest profile playback wins; missing timestamps, future clocks and an expired pause cannot resurrect a selection (0.1325ms)
+✔ expiry clears selection at two hours but preserves shuffle, downloads, favorites, playlists and other accounts (0.8611ms)
+✔ five hours clears only the current profile temporary shuffle history; advancing background audio remains active (0.6549ms)
+✔ startup seek remains pending through metadata and a decoder reset at Play; only real advancement reveals audio (0.373ms)
+✔ failed restoration pauses within the bounded deadline and leaves a real retry checkpoint, not an endless muted zero-time player (0.437ms)
+✔ a delayed background timeupdate confirms real progress instead of repeatedly rewinding a restored song (0.1873ms)
+✔ a deliberate pause during startup loading cancels the deadline and retains the requested real checkpoint for retry (0.1675ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 67.408

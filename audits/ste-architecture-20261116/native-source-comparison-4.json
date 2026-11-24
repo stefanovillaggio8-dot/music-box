@@ -1,0 +1,309 @@
+{
+  "method": "nominal-original-vs-actual-native-window-v1",
+  "sourceSha": "004e594c10688869197f21e31e748c1dd82901b4",
+  "originalSampleRate": 44100,
+  "decoderApi": "AudioContext.decodeAudioData",
+  "forensicOnly": true,
+  "playbackCertified": false,
+  "correctionApplied": false,
+  "references": {
+    "44100": {
+      "frames": 5595264,
+      "sha256": "df8e66e96d50a4467478baf172e50ad7852ecd202c4a596496ba6b5d1fb1761b"
+    },
+    "48000": {
+      "frames": 6090084,
+      "sha256": "85793530b0b2d2f848be378f0c36d9421b60060bca040d7bb7c5c58a6c2de1e5"
+    }
+  },
+  "captures": [
+    {
+      "nativePlatform": "darwin",
+      "browser": "webkit",
+      "sampleRate": 44100,
+      "nativeWindowSha256": "041d49d5c7241f8674a44dafa73a4224030a38e21730795bc72a3dec8b492c76",
+      "decodedSourceFrames": 5595264,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": -0.2420969912785858,
+            "relativeRms": 1.578162225861439
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": 0.9999999999995731,
+            "relativeRms": 9.368089515439519e-07
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": -0.49773432497415054,
+            "relativeRms": 1.729079401275203
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": 0.9999999999996977,
+            "relativeRms": 7.926518438160154e-07
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 22050,
+          "nominal": {
+            "correlation": -0.1646939285652101,
+            "relativeRms": 1.5247069263266715
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": 0.9999999999997321,
+            "relativeRms": 7.453046014010804e-07
+          }
+        }
+      ]
+    },
+    {
+      "nativePlatform": "linux",
+      "browser": "chromium",
+      "sampleRate": 44100,
+      "nativeWindowSha256": "7fb2f5ec90a88924c36093b9dd34f3e1cb89d45a325590b271b5c1ecdde88dc3",
+      "decodedSourceFrames": 5595264,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999999999994691,
+            "relativeRms": 1.0355056289120884e-06
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.24209698844481609,
+            "relativeRms": 1.5741095773152607
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999998445634414,
+            "relativeRms": 0.0005576051666549357
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.49773473757140047,
+            "relativeRms": 1.7324025996907966
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999999999996289,
+            "relativeRms": 8.653689505196157e-07
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.16469391103106518,
+            "relativeRms": 1.5277635013055557
+          }
+        }
+      ]
+    },
+    {
+      "nativePlatform": "linux",
+      "browser": "webkit",
+      "sampleRate": 44100,
+      "nativeWindowSha256": "026b213e65757696fa3863006c0acc4521c2d4b06426e84706f0034b2cc8c154",
+      "decodedSourceFrames": 5595264,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999999996099403,
+            "relativeRms": 2.793098376265687e-05
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.24209714997429085,
+            "relativeRms": 1.5741096461960542
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999998440824542,
+            "relativeRms": 0.0005584697429526156
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.49773469169811235,
+            "relativeRms": 1.7324023946750289
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 22050,
+          "nominal": {
+            "correlation": 0.9999999997094323,
+            "relativeRms": 2.4107172898680177e-05
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 529,
+            "correlation": -0.16469388723280423,
+            "relativeRms": 1.5277634373835727
+          }
+        }
+      ]
+    },
+    {
+      "nativePlatform": "darwin",
+      "browser": "webkit",
+      "sampleRate": 48000,
+      "nativeWindowSha256": "47cb6a0310dd633c36fac9b7ac607dbff44475b7000b7ae7c685296c0f80909f",
+      "decodedSourceFrames": 6090083,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": -0.24207067655895356,
+            "relativeRms": 1.5781536649024945
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": 0.9962272382709277,
+            "relativeRms": 0.08686497348710075
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": -0.4977585409070261,
+            "relativeRms": 1.7290599575860044
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": 0.9982447595140098,
+            "relativeRms": 0.05924935645492106
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 24000,
+          "nominal": {
+            "correlation": -0.1646913012218731,
+            "relativeRms": 1.524698588168607
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": 0.9987012791509053,
+            "relativeRms": 0.050965010202246606
+          }
+        }
+      ]
+    },
+    {
+      "nativePlatform": "linux",
+      "browser": "chromium",
+      "sampleRate": 48000,
+      "nativeWindowSha256": "596723d245e36e292234500dbb34c3ef2c8a3f9ecd0bf35efa21a237c4010af5",
+      "decodedSourceFrames": 6090083,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9999999984221177,
+            "relativeRms": 5.618079218414482e-05
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.24081386012293357,
+            "relativeRms": 1.5732889977580347
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9999998641612217,
+            "relativeRms": 0.000521242021882539
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.49728745704154376,
+            "relativeRms": 1.732188515046414
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9999999992367566,
+            "relativeRms": 4.177383427768841e-05
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.1634314451345097,
+            "relativeRms": 1.5269506164545346
+          }
+        }
+      ]
+    },
+    {
+      "nativePlatform": "linux",
+      "browser": "webkit",
+      "sampleRate": 48000,
+      "nativeWindowSha256": "8f7992edc3fb399d138d022d23da39e3d669743c13b7e4789510369ad234ecc4",
+      "decodedSourceFrames": 6090083,
+      "windows": [
+        {
+          "secondsIntoCapturedWindow": 0.5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9984312522010901,
+            "relativeRms": 0.05601360096181544
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.2400601442230822,
+            "relativeRms": 1.5728174841833802
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 5,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9992983783532763,
+            "relativeRms": 0.03745987269128729
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.49696694208902625,
+            "relativeRms": 1.7319990257077413
+          }
+        },
+        {
+          "secondsIntoCapturedWindow": 10,
+          "frames": 24000,
+          "nominal": {
+            "correlation": 0.9995137147495193,
+            "relativeRms": 0.031186191167082357
+          },
+          "fixedCodecDelayHypothesisOnly": {
+            "referenceOffsetFrames": 576,
+            "correlation": -0.16262904410386697,
+            "relativeRms": 1.5264189177812006
+          }
+        }
+      ]
+    }
+  ]
+}

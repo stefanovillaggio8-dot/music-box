@@ -1,0 +1,49 @@
+{
+  "profile": "Ste",
+  "priorCheckpoint": "85bb502b",
+  "method": "independent-htdemucs-components-plus-original-spectral-support-v1",
+  "developmentCase": {
+    "from": "audio/songs/track-1187.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "heldApartCase": {
+    "from": "audio/songs/track-33.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "roles": [
+    {
+      "key": "audio/songs/track-1187.mp3",
+      "role": "outro"
+    },
+    {
+      "key": "audio/songs/track-33.mp3",
+      "role": "outro"
+    },
+    {
+      "key": "audio/songs/track-34.mp3",
+      "role": "intro"
+    }
+  ],
+  "contextSeconds": 28,
+  "analysisSeconds": 24,
+  "model": "htdemucs",
+  "demucsVersion": "4.0.1",
+  "shifts": 0,
+  "overlap": 0.5,
+  "threads": 2,
+  "newSeparationCallsMaximum": 3,
+  "newBeatInferenceMaximum": 3,
+  "originalsUnmodified": true,
+  "qualityGatesUnchanged": true,
+  "allowInstallation": false,
+  "coherenceStudyThresholds": {
+    "cosineMin": 0.65,
+    "originalFluxSupportMin": 0.5,
+    "originalRmsMin": 0.001
+  },
+  "sources": [
+    "https://github.com/facebookresearch/demucs/blob/main/docs/api.md",
+    "https://github.com/CPJKU/beat_this/blob/v1.1.0/beat_this/inference.py"
+  ],
+  "interpretation": "Alternative component-derived hypotheses; reconstruction or model probability never alone proves drums, vocal absence, musical sections or a playable beatmatch."
+}
