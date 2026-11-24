@@ -1557,10 +1557,16 @@ self.addEventListener("fetch", (event) => {
       }
       try {
         const response=await fetch(request);
-        if(response?.status===200)
+        if(response?.status===200){
           persistence=cache.put(event.request,response.clone()).catch(()=>{});
+          return response;
+        }
+        // A failed refresh must not hide the exact verified cached revision.
+        // Keep every existing cache key and all downloaded music untouched.
+        if(saved?.status===200)return saved;
         return response;
       }catch(_){
+        if(saved?.status===200)return saved;
         const previous=await cache.match(event.request,{ignoreSearch:true}).catch(()=>null);
         return previous||new Response("",{status:504});
       }
