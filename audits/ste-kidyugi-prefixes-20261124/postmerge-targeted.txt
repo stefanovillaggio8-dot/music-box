@@ -1,0 +1,37 @@
+✔ offline explicit revalidation prefers the exact saved index over an older query variant (25.6811ms)
+✔ a temporary HTTP failure cannot hide an existing exact analysis index (0.9235ms)
+✔ successful refresh replaces the same key while preserving other cached variants (1.3743ms)
+✔ a known phrase end clears the normal reader during a long instrumental gap without advancing the next phrase (0.8328ms)
+✔ unknown or estimated word endings never fabricate a pause; close and sustained phrases stay intact (0.3859ms)
+✔ final-phrase expiry and phrase-only rendering from PR65 remain unchanged (0.4745ms)
+✔ continuous Ste listening carries the actual fresh pool and current track across reporting sessions (360.5177ms)
+✔ editing lyrics with the same number of phrases must not reuse another source text translation (5.2221ms)
+✔ a 60-of-61 phrase result is reusable without repeating sixty external requests (4.1133ms)
+✔ repeated complete phrases keep their positions but need one identical line request (2.8036ms)
+✔ a late rejected request cannot overwrite the new song button or show an obsolete error (2.3438ms)
+✔ reset aborts network work; even a provider ignoring abort cannot update the new view (2.7158ms)
+✔ entity text is readable while remaining literal text, with no injected markup (2.4975ms)
+✔ a late clean launch is bounded by actually meaningful original prefix and independently quiet native source (1.411ms)
+✔ rhythmic, altered, incomplete and insufficient evidence never expands the legacy 80ms launch bound (1.6741ms)
+✔ the actual native controller survives a delayed tick only inside the proven clean interval (2.1016ms)
+✔ actual paused-EOF tick claims the live incoming before ordinary paused-player cancellation (2.091ms)
+✔ an explicit pause or reordered manual queue never acquires EOF handoff ownership (0.6977ms)
+✔ an original audible stream is not a skipped intro merely because source EOF dispatch was delayed (0.8858ms)
+✔ a hidden, attenuated, accelerated, paused, seeking, buffering or discontinuous prefix is rejected (0.3297ms)
+✔ quiet continuation drains the old native pause before issuing a one-use zero-entry continuation (1.1472ms)
+✔ explicit pause, reordered queue, manual track change and missing pause acknowledgement cannot start a stale successor (0.625ms)
+✔ a rejected or declined native continuation restores the same original without a stale pause guard (1.1296ms)
+✔ installed Ste clean27→33 preserves originals and never promotes its class or enables iPhone (2.1863ms)
+✔ installed Ste clean27→87 preserves originals and never promotes its class or enables iPhone (0.2366ms)
+✔ installed Ste clean27→1187 preserves originals and never promotes its class or enables iPhone (0.163ms)
+✔ installed Ste clean27→138 preserves originals and never promotes its class or enables iPhone (0.1599ms)
+✔ four frozen new Ste prefixes never fabricate a published control or dual-player fixture (479.3717ms)
+✔ prefix-only study still rejects a recording beyond its frozen Ste cases (214.4193ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 845.1421

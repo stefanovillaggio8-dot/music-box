@@ -1,0 +1,94 @@
+{
+  "releaseVersion": "6.744",
+  "releasePR": 94,
+  "releaseMerge": "6e843b987c646e976d02b1727c0ce8a5702fa126",
+  "assets": {
+    "versione.json": {
+      "bytes": 43,
+      "expectedSha256": "729686230062cf57f5421b3510f57dd5370c904b243a74366a8bdf7b6a07b7c6",
+      "publicSha256": "729686230062cf57f5421b3510f57dd5370c904b243a74366a8bdf7b6a07b7c6",
+      "matches": true
+    },
+    "index.html": {
+      "bytes": 108263,
+      "expectedSha256": "5fec87fb6beb9b0cd914a73943ca6559ddc13ed9007ded1faa4e492f9f73e880",
+      "publicSha256": "5fec87fb6beb9b0cd914a73943ca6559ddc13ed9007ded1faa4e492f9f73e880",
+      "matches": true
+    },
+    "app.js": {
+      "bytes": 1119854,
+      "expectedSha256": "89db063c1b460224296e0f8fa5204c53313ada49e998dcd3f49c079d6d297b99",
+      "publicSha256": "89db063c1b460224296e0f8fa5204c53313ada49e998dcd3f49c079d6d297b99",
+      "matches": true
+    },
+    "mix-intelligente.js": {
+      "bytes": 482582,
+      "expectedSha256": "02f29e6f20e28c235caa5b5a213392014e4a823f855d98f2b1cfeaf3146d6977",
+      "publicSha256": "02f29e6f20e28c235caa5b5a213392014e4a823f855d98f2b1cfeaf3146d6977",
+      "matches": true
+    },
+    "sw.js": {
+      "bytes": 128754,
+      "expectedSha256": "b5205d3e59884112518cdd42e7e5f826afc2f6f20546db434be068dd34c1a5cc",
+      "publicSha256": "b5205d3e59884112518cdd42e7e5f826afc2f6f20546db434be068dd34c1a5cc",
+      "matches": true
+    },
+    "dj-deep-analysis.json": {
+      "bytes": 13562061,
+      "expectedSha256": "3245ce0f909bdda5d056603705b819e04c0da84a061b9e424c7e35d0a56f45fb",
+      "publicSha256": "3245ce0f909bdda5d056603705b819e04c0da84a061b9e424c7e35d0a56f45fb",
+      "matches": true
+    },
+    "immersive.js": {
+      "bytes": 27878,
+      "expectedSha256": "59e6b80ce9d303d948a274c906b5ba284b7028bbb3db12f305ae4d843fd39695",
+      "publicSha256": "59e6b80ce9d303d948a274c906b5ba284b7028bbb3db12f305ae4d843fd39695",
+      "matches": true
+    },
+    "immersive-animation.js": {
+      "bytes": 37360,
+      "expectedSha256": "b1501332d0d3245980a116cd5d75dcd622482934840c30807621179241c3b146",
+      "publicSha256": "b1501332d0d3245980a116cd5d75dcd622482934840c30807621179241c3b146",
+      "matches": true
+    },
+    "immersive-scenes.js": {
+      "bytes": 21217,
+      "expectedSha256": "fa6a0104fd12f9b46952e4b5b0e83e4ac4c8d100ce21344c765fea5c788d77ba",
+      "publicSha256": "fa6a0104fd12f9b46952e4b5b0e83e4ac4c8d100ce21344c765fea5c788d77ba",
+      "matches": true
+    },
+    "word-karaoke.js": {
+      "bytes": 14028,
+      "expectedSha256": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "publicSha256": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "matches": true
+    },
+    "audio-composite-mix.js": {
+      "bytes": 16008,
+      "expectedSha256": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+      "publicSha256": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+      "matches": true
+    },
+    "audio-stretch.js": {
+      "bytes": 2872,
+      "expectedSha256": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+      "publicSha256": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+      "matches": true
+    },
+    "style.css": {
+      "bytes": 205028,
+      "expectedSha256": "f2457ef198c68d958bcf0f1db7fb0d65d9b6b6844e05fe1569cefed35417df32",
+      "publicSha256": "f2457ef198c68d958bcf0f1db7fb0d65d9b6b6844e05fe1569cefed35417df32",
+      "matches": true
+    },
+    "immersive-textures.webp": {
+      "bytes": 78876,
+      "expectedSha256": "85383011082ab6612ea9a1b3e59b84ec4243ec8650f498db8e13390021bdd34b",
+      "publicSha256": "85383011082ab6612ea9a1b3e59b84ec4243ec8650f498db8e13390021bdd34b",
+      "matches": true
+    }
+  },
+  "allMatch": true,
+  "physicalIPhone": false,
+  "userDataWrites": false
+}
