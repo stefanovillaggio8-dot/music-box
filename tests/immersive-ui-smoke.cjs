@@ -51,8 +51,8 @@ const fixture=[
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
-// Four-second synthetic silent H.264 fixture, generated with FFmpeg and ffprobe-verified.
-const clip=Buffer.from("AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAANBbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAD6AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAmx0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAD6AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACAAAAAgAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAA+gAAAAAAABAAAAAAHkbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAABAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABj21pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAU9zdGJsAAAAt3N0c2QAAAAAAAAAAQAAAKdhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACAAIABIAAAASAAAAAAAAAABFUxhdmM2MS4xOS4xMDEgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALWF2Y0MBQsAK/+EAFmdCwAraJbARAAADAAEAAAMABA8SJqABAARozg/IAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAAAL4AAAAAAAAAGHN0dHMAAAAAAAAAAQAAAAgAACAAAAAAFHN0c3MAAAAAAAAAAQAAAAEAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAgAAAABAAAANHN0c3oAAAAAAAAAAAAAAAgAAAAZAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAACgAAABRzdGNvAAAAAAAAAAEAAANxAAAAYXVkdGEAAABZbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAsaWxzdAAAACSpdG9vAAAAHGRhdGEAAAABAAAAAExhdmY2MS43LjEwMwAAAAhmcmVlAAAAZ21kYXQAAAAVZYiEOhGKAAIlMcAAQOI4AAgpSddeAAAABkGaIBKiwAAAAAZBmkATosAAAAAGQZpgE6LAAAAABkGagBOiwAAAAAZBmqATosAAAAAGQZrAE6LAAAAABkGa4BOiwA==","base64");
+// Real synthetic silent H.264 fixture generated in the workflow, not a music video.
+const clip=fs.readFileSync(process.env.MB_VIDEO_FIXTURE||"/tmp/mb-video-fixture.mp4");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
  if(loc==="/fixture.mp4"){
@@ -331,7 +331,14 @@ async function run(){
     await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
     // The test context uses reduced motion; explicit activation is required.
     await page.locator("#imVideoToggle").click();
-    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:12000});
+    try{
+     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:12000});
+    }catch(e){
+     console.error("Video diagnostics",await page.evaluate(()=>{
+      const v=document.getElementById("imVideo");return {src:v.getAttribute("src"),currentSrc:v.currentSrc,readyState:v.readyState,networkState:v.networkState,error:v.error?.message,paused:v.paused,time:v.currentTime,duration:v.duration,buttonHidden:document.getElementById("imVideoToggle").hidden};
+     }));
+     throw e;
+    }
     const visual=await page.evaluate(()=>{
      const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade"),cover=document.getElementById("imCover");
      const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
