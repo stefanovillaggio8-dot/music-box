@@ -61,6 +61,9 @@ on:
 permissions:
   contents: read
 jobs:
+  component-evidence:
+    if: github.event_name == 'workflow_dispatch' && inputs.bounded_next_stage == 'component-evidence'
+    uses: ./.github/workflows/ste-component-study.yml
   four-prefixes:
     if: github.event_name == 'workflow_dispatch' && (inputs.bounded_next_stage == 'kidyugi-prefixes' || inputs.bounded_next_stage == 'kidyugi-player')
     uses: ./.github/workflows/ste-prefix-study.yml
