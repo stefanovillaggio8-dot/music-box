@@ -5,6 +5,9 @@ const {chromium,webkit}=require("playwright");
 const root=path.resolve(__dirname,"..");
 const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
 const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
+const scenes=fs.readFileSync(path.join(root,"immersive-scenes.js"),"utf8");
+const animation=fs.readFileSync(path.join(root,"immersive-animation.js"),"utf8");
+const textures=fs.readFileSync(path.join(root,"immersive-textures.webp"));
 const css=fs.readFileSync(path.join(root,"style.css"),"utf8");
 const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
@@ -22,7 +25,7 @@ assert.match(css,/@keyframes im-orbit/,"cinematic orbit has a keyframe");
 assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
  "Immersive cannot create a second audio engine");
 const fixture=[
- '<!doctype html><html lang="it"><head>',
+ '<!doctype html><html lang="it"><head><meta charset="utf-8">',
  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">',
  '<link rel="stylesheet" href="/style.css"></head><body>',
  '<button id="btnImmersive" hidden>Immersive</button>',
@@ -30,11 +33,13 @@ const fixture=[
  '<script>',
  'window.fakeAudio={currentTime:12,duration:240,paused:false};',
  'window.fakeSong={id:"track-a",title:"Notte stellata",artist:"Artista di prova",cover:""};',
+ 'window.fakeProfile="Ste";',
  'window.fakeCalls={toggle:0,next:0,prev:0};',
  'window.fakeLyricsOffset=0;',
  'window.fakeDelaySaves=[];',
  'window.fakeLyrics={text:"",synced:Array.from({length:26},(_,i)=>({t:i*8,text:"Riga karaoke originale di prova "+(i+1)}))};',
  'window.MusicBoxBridge={',
+ ' profile:()=>fakeProfile,',
  ' audio:()=>fakeAudio,currentId:()=>fakeSong.id,',
  ' allTracks:()=>[fakeSong],lyricsData:()=>fakeLyrics,',
  ' lyricsDelay:()=>fakeLyricsOffset,',
@@ -48,12 +53,44 @@ const fixture=[
  '</script>',
  fragment,
  lyricsFragment,
+ '<script src="/immersive-scenes.js"></script>',
+ '<script src="/immersive-animation.js"></script>',
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
+// Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
+const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
+// Inject only synthetic test recordings. The production catalog stays intact.
+const canvasFixtureEntries=Object.fromEntries(["short-loop","too-long"].map(id=>[id,{
+ file:"songs/canvas-fixture.mp3",title:"Brano di prova",artist:"Artista di prova",
+ kind:"official-loop",evidence:"https://example.test/test-permission",url:"/fixture.mp4"
+}]));
+const testImmersive=immersive.replace("const reviewedCanvasCatalog=Object.freeze({",
+ match=>match+JSON.stringify(canvasFixtureEntries).slice(1,-1)+",");
+const testScenes=scenes.replace("const scenes=Object.freeze({",match=>match+
+ JSON.stringify(Object.fromEntries(Object.keys(canvasFixtureEntries).map(id=>[
+  id,["songs/canvas-fixture.mp3","Brano di prova","Artista di prova","stars","violet","drift"]
+ ]))).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
- const contents=loc==="/style.css"?css:loc==="/immersive.js"?immersive:fixture;
+ if(loc==="/immersive-textures.webp"){
+  res.writeHead(200,{"Content-Type":"image/webp","Content-Length":textures.length}).end(textures);
+  return;
+ }
+ if(loc==="/fixture.mp4"){
+  const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
+  const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
+  if(range){
+   const start=Number(range[1]),end=Math.min(clip.length-1,range[2]?Number(range[2]):clip.length-1);
+   if(start>end){res.writeHead(416,{"Content-Range":"bytes */"+clip.length});res.end();return}
+   res.writeHead(206,{...headers,"Content-Length":end-start+1,"Content-Range":"bytes "+start+"-"+end+"/"+clip.length});
+   res.end(clip.subarray(start,end+1));return;
+  }
+  res.writeHead(200,{...headers,"Content-Length":clip.length});res.end(clip);return;
+ }
+
+ const contents={"/style.css":css,"/immersive.js":testImmersive,"/immersive-scenes.js":testScenes,
+  "/immersive-animation.js":animation}[loc]??fixture;
  res.writeHead(200,{"Content-Type":loc.endsWith(".css")?"text/css":
   loc.endsWith(".js")?"text/javascript":"text/html","Cache-Control":"no-store"});
  res.end(contents);
@@ -93,6 +130,20 @@ async function run(){
      overflow:root.scrollWidth-root.clientWidth};
    });
    assert.equal(state.title,"Notte stellata");
+   assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"no guessed video for an audio-only song");
+   assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
+   if(size.name==="desktop"){
+    const layout=await page.evaluate(()=>{
+     const rect=id=>document.getElementById(id).getBoundingClientRect();
+     return {coverRight:rect("imCover").right,lyricsLeft:rect("imKaraoke").left,
+      lyricsHeight:rect("imKaraoke").height,titleTop:rect("imTitle").top,
+      coverBottom:rect("imCover").bottom,controlsBottom:rect("imToggle").bottom};
+    });
+    assert.ok(layout.coverRight<layout.lyricsLeft,"artwork left and lyrics right");
+    assert.ok(layout.titleTop>=layout.coverBottom-5,"song title underneath artwork");
+    assert.ok(layout.lyricsHeight>=350,"cinematic lyric stage is tall");
+    assert.ok(layout.controlsBottom<=size.height,"desktop controls remain reachable");
+   }
    const atmosphere=await page.evaluate(()=>({
     hue:getComputedStyle(document.getElementById("immersivePanel")).getPropertyValue("--im-hue").trim(),
     halo:!!document.querySelector(".im-aura"),
@@ -291,6 +342,194 @@ async function run(){
    });
    assert.equal(await page.evaluate(()=>window.MusicBoxImmersive.isOpen()),true,
     "swiping the lyrics cannot dismiss immersive mode");
+
+   if(size.name==="desktop"||size.name==="iphone13"){
+    const video=page.locator("#imVideo");
+    const stage=page.locator("#imSongAnimation");
+    const textureResponse=page.waitForResponse(res=>res.url().includes("/immersive-textures.webp")&&res.ok());
+    const switchTrack=async(trackId,title="Brano di prova",file="songs/canvas-fixture.mp3",artist="Artista di prova")=>{
+     await page.evaluate(({trackId,title,file,artist})=>{
+      Object.assign(fakeSong,{id:trackId,file,title,artist});
+      Object.assign(fakeAudio,{currentTime:123,duration:240,paused:false});
+     },{trackId,title,file,artist});
+     await page.waitForFunction(title=>document.getElementById("imTitle").textContent===title,title);
+    };
+    await page.evaluate(()=>{fakeSong.videoUrl="/fixture.mp4";fakeSong.musicVideoUrl="/fixture.mp4"});
+    await switchTrack("b-track-179","Certe bugie");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"former full video stays disabled");
+    assert.equal(await video.getAttribute("src"),null,"track metadata cannot load video");
+    assert.equal(await page.locator("#immersivePanel iframe").count(),0);
+
+    await switchTrack("short-loop","Versione diversa");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the title must match the reviewed recording");
+    await switchTrack("another-track","Brano senza animazione");
+    await switchTrack("short-loop");
+    assert.equal(await video.getAttribute("src"),null,"reduced motion requires explicit activation");
+    await page.locator("#imClose").click();
+    await page.emulateMedia({reducedMotion:"no-preference"});
+    assert.equal(await video.getAttribute("src"),null,"no clip loads before entering immersive mode");
+    if(size.name==="iphone13")await page.locator("#btnImmersive").tap();
+    else await page.locator("#btnImmersive").click();
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:10000});
+    const visual=await page.evaluate(()=>{
+     const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade");
+     const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+     const lyrics=document.querySelector("#imKaraoke .im-line");
+     return {
+      muted:v.muted,inline:v.playsInline,
+      videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),
+      hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents,
+      lyricsVisible:getComputedStyle(lyrics).visibility==="visible",paused:fakeAudio.paused
+     };
+    });
+    assert.ok(visual.muted&&visual.inline);
+    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
+    assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
+    assert.equal(visual.pointer,"none");
+    assert.equal(await stage.isHidden(),true,"an approved clip takes priority over generated art");
+    assert.equal(await page.locator("#imAnimationLabel").isHidden(),true);
+    const loopProof=await video.evaluate(v=>new Promise(resolve=>{
+     let previous=v.currentTime,wraps=0;
+     const finish=()=>{
+      clearTimeout(deadline);
+      v.removeEventListener("timeupdate",observe);
+      resolve({wraps,time:v.currentTime,paused:v.paused,seeking:v.seeking,ready:v.readyState,error:v.error?.code});
+     };
+     const observe=()=>{
+      const time=v.currentTime;
+      if(previous>v.duration-1&&time<1)wraps++;
+      previous=time;
+      if(wraps>=2)finish();
+     };
+     const deadline=setTimeout(finish,12000);
+     v.addEventListener("timeupdate",observe);
+    }));
+    assert.ok(loopProof.wraps>=2&&!loopProof.paused&&!loopProof.error,
+     "the media clock must advance through two wraps: "+JSON.stringify(loopProof));
+    assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123,"loop does not seek the audio");
+
+    await page.evaluate(()=>{fakeAudio.paused=true});
+    await page.waitForFunction(()=>!document.getElementById("imVideo").hasAttribute("src"));
+    await page.evaluate(()=>{fakeAudio.paused=false});
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    await page.evaluate(()=>{
+     Object.defineProperty(document,"hidden",{value:true,configurable:true});
+     document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForFunction(()=>!document.getElementById("imVideo").hasAttribute("src"));
+    await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event("visibilitychange"))});
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+
+    await switchTrack("another-track","Brano senza animazione");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.equal(await video.getAttribute("src"),null);
+    await video.evaluate(v=>Object.defineProperty(v,"duration",{value:185,configurable:true}));
+    await switchTrack("too-long");
+    await stage.waitFor({state:"visible"});
+    assert.equal(await video.getAttribute("src"),null,"a full-length response must be released");
+    await video.evaluate(v=>{delete v.duration});
+
+    await page.evaluate(()=>{fakeProfile="Diego"});
+    await switchTrack("another-track","Brano senza animazione");
+    await switchTrack("short-loop");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the reviewed entry is exclusive to Ste");
+
+    await page.evaluate(()=>{fakeProfile="Ste"});
+    await switchTrack("b-track-27","Il Filmografo","songs/track-27.mp3","Kid Yugi");
+    await page.locator("#imClose").click();
+    assert.equal(await stage.isHidden(),true,"no art outside immersive mode");
+    if(size.name==="iphone13")await page.locator("#btnImmersive").tap();
+    else await page.locator("#btnImmersive").click();
+    await stage.waitFor({state:"visible"});
+    await page.locator("#imAnimationLabel").waitFor({state:"visible"});
+    assert.equal(await page.locator("#imAnimationLabel").innerText(),"Animazione Music Box");
+    assert.equal(await video.getAttribute("src"),null,"original Music Box art requires no video downloads");
+    const shot=await stage.evaluate(node=>{
+     const art=node.lastElementChild,shade=document.querySelector(".im-video-shade"),shell=document.querySelector(".im-shell");
+     const lyric=document.querySelector("#imKaraoke .im-line.active"),r=lyric.getBoundingClientRect();
+     const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+     return {transform:getComputedStyle(art).transform,duration:parseFloat(getComputedStyle(art).animationDuration),
+      width:art.width,height:art.height,layered:Number(getComputedStyle(node).zIndex)<Number(getComputedStyle(shade).zIndex)&&
+       Number(getComputedStyle(shade).zIndex)<Number(getComputedStyle(shell).zIndex),
+      lyricUsable:lyric.contains(hit),pointer:getComputedStyle(node).pointerEvents};
+    });
+    assert.ok(shot.layered&&shot.lyricUsable&&shot.pointer==="none",JSON.stringify(shot));
+    assert.ok(shot.duration>=6&&shot.duration<=8&&shot.width<=640&&shot.height<=440);
+    await page.waitForFunction(transform=>getComputedStyle(document.querySelector("#imSongAnimation canvas:last-child")).transform!==transform,shot.transform);
+    const fingerprint=async()=>stage.evaluate(node=>{
+     const pixels=node.lastElementChild.toDataURL();
+     let hash=0;
+     for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
+     return hash;
+    });
+    await textureResponse;
+    const film=await fingerprint();
+    await page.waitForFunction(previous=>{
+     // Read actual canvas pixels. CSS panning alone would leave this bitmap unchanged.
+     const pixels=document.querySelector("#imSongAnimation canvas:last-child").toDataURL();
+     let hash=0;
+     for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
+     return hash!==previous;
+    },film,{polling:120,timeout:4000});
+    await page.evaluate(()=>{fakeAudio.readyState=2});
+    await page.locator("#imSongAnimation[data-suspended]").waitFor({state:"visible"});
+    const held=await fingerprint();
+    await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,260)));
+    assert.equal(await fingerprint(),held,"the scene holds the last frame while audio buffers");
+    assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationPlayState),"paused");
+    assert.deepEqual(await page.evaluate(()=>[fakeAudio.paused,fakeAudio.currentTime]),[false,123]);
+    await page.evaluate(()=>{fakeAudio.readyState=4});
+    await page.waitForFunction(()=>!document.getElementById("imSongAnimation").hasAttribute("data-suspended"));
+    assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationPlayState),"running");
+    await page.waitForFunction(previous=>document.querySelector("#imSongAnimation canvas:last-child").toDataURL()!==previous,
+     await stage.evaluate(node=>node.lastElementChild.toDataURL()),{polling:120,timeout:4000});
+    await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
+    await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
+    assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
+    await page.evaluate(()=>{
+     const animation=MusicBoxImmersiveAnimation,apply=animation.setVerse;
+     animation.setVerse=(scene,index)=>{
+      apply(scene,index);
+      window.testLyricImage=scene?.lyricCue;
+     };
+     fakeLyrics={id:"b-track-40",synced:[
+      {t:10,text:"C'è la luna piena"},
+      {t:20,text:"Un pianoforte senza tasti"},
+      {t:30,text:"La pioggia nella stanza",estimated:true},
+      {t:40,text:"Una città"}
+     ]};
+     fakeAudio.currentTime=14;
+    });
+    await page.waitForFunction(()=>window.testLyricImage==="moon");
+    await page.evaluate(()=>{fakeAudio.currentTime=24});
+    await page.waitForFunction(()=>window.testLyricImage==="piano");
+    await page.evaluate(()=>{fakeAudio.currentTime=34});
+    await page.waitForFunction(()=>window.testLyricImage===null);
+    await page.evaluate(()=>{fakeAudio.currentTime=44});
+    await page.waitForFunction(()=>window.testLyricImage==="city");
+    const reviewed=await page.evaluate(()=>{
+     const animation=MusicBoxImmersiveAnimation;
+     return ["b-track-27","b-track-213","b-track-233","b-track-670","b-track-705"].map(id=>{
+      const [file,title,artist]=MusicBoxImmersiveScenes[id];
+      const scene=animation.find({id,file,title,artist},"Ste");
+      animation.describeLyrics(scene,[],false);
+      animation.setVerse(scene,0);
+      return [scene.lyricSubject??scene.subject,scene.lyricCue??null];
+     });
+    });
+    assert.deepEqual(reviewed,[["film",null],["monitor",null],["bridge",null],["sail",null],["skyline",null]],
+     "reviewed recording scenes work without timed lyrics and preserve Il Filmografo");
+    await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
+    await stage.waitFor({state:"visible"});
+    await page.evaluate(()=>{fakeAudio.paused=true});
+    await stage.waitFor({state:"hidden"});
+    assert.equal(await stage.evaluate(node=>node.lastElementChild.width),0,"pause releases the drawn planes");
+    await page.evaluate(()=>{fakeAudio.paused=false});
+    await stage.waitFor({state:"visible"});
+    await page.locator("#imClose").click();
+    assert.equal(await stage.isHidden(),true);
+    await page.locator("#btnImmersive").click();
+   }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");
    await page.waitForFunction(()=>!window.MusicBoxImmersive.isOpen());

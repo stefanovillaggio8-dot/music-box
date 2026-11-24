@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=8" />
+  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=15" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -962,6 +962,9 @@
   
 <div id="immersivePanel" class="im-root" hidden role="dialog" aria-modal="true" aria-label="Immersive Mode: player cinematografico">
   <div id="imBackdrop" class="im-backdrop" aria-hidden="true"></div>
+  <video id="imVideo" class="im-video" muted playsinline preload="metadata" disablepictureinpicture aria-hidden="true" hidden></video>
+  <div id="imSongAnimation" class="im-song-animation" aria-hidden="true" hidden><canvas></canvas><canvas></canvas></div>
+  <div class="im-video-shade" aria-hidden="true"></div>
   <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="im-ambient-bloom" aria-hidden="true"></div>
   <div class="im-shell">
@@ -972,6 +975,7 @@
       </div>
       <div class="im-head-right">
         <span class="im-mode"><span class="im-live-dot" aria-hidden="true"></span> IMMERSIVE</span>
+        <button id="imVideoToggle" type="button" class="im-focus-toggle im-video-toggle" aria-pressed="false" hidden>Animazione</button>
         <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode" title="Chiudi">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
         </button>
@@ -989,9 +993,10 @@
         <p class="im-art-tag"><span aria-hidden="true">✧</span> THE MUSIC IS THE MOMENT</p>
       </div>
       <div class="im-player">
-        <p class="im-eyebrow"><span class="im-song-indicator" aria-hidden="true"></span><span id="imState">ORA IN RIPRODUZIONE</span></p>
+        <p class="im-eyebrow"><span class="im-song-indicator" aria-hidden="true"></span><span id="imState">ORA IN RIPRODUZIONE</span><span id="imAnimationLabel" class="im-animation-label" hidden>Animazione Music Box</span></p>
         <h2 id="imTitle">Music Box</h2>
         <p id="imArtist" class="im-artist"></p>
+        <div class="im-cinema-stage">
         <div class="im-lyrics-head">
           <div class="im-lyrics-heading"><span class="im-section-symbol" aria-hidden="true">♫</span><span>TESTO</span><span id="imLyricModeLabel" class="im-lyric-status">KARAOKE</span></div>
           <div class="im-lyric-tools">
@@ -1009,6 +1014,7 @@
         </div>
         <div class="im-karaoke-frame">
           <div id="imKaraoke" class="im-karaoke" aria-live="off"><p class="im-line active">Musica, luci e atmosfera.</p></div>
+        </div>
         </div>
         <div class="im-timeline">
           <input id="imSeek" type="range" min="0" max="1000" step="1" value="0" aria-label="Posizione nella canzone" />
@@ -1636,6 +1642,8 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <script src="audio-composite-mix.js?v=18"></script>
 <script src="mix-intelligente.js?v=6743&amp;dj=63"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6734&amp;words=13"></script>
+<script src="immersive-scenes.js?v=1"></script>
+<script src="immersive-animation.js?v=5"></script>
+<script src="immersive.js?v=6734&amp;words=22"></script>
 </body>
 </html>
