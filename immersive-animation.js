@@ -787,6 +787,10 @@ function drawEnvironment(c,kind,w,h,grade){
 }
 
 function draw(shot){
+ if(shot.suspendedAt!=null){
+  shot.needsRedraw=true;
+  return true;
+ }
  const {stage,scene}=shot;
  const [world,ink]=stage.querySelectorAll("canvas");
  const bounds=stage.getBoundingClientRect(),aspect=bounds.width/bounds.height;
@@ -915,7 +919,7 @@ function paint(shot,t){
  f.globalAlpha=1;
 }
 function tick(now){
- if(!active)return;
+ if(!active||active.suspendedAt!=null)return;
  const elapsed=now-lastFrame;
  if(elapsed>=motionStep){
   lastFrame=now-elapsed%motionStep;
@@ -946,6 +950,7 @@ function start(stage,scene){
 function stop(stage){
  if(!stage||stage.hidden)return;
  stage.hidden=true;
+ stage.removeAttribute("data-suspended");
  if(active?.stage===stage){
   active=null;
   cancelAnimationFrame(frame);
@@ -953,6 +958,26 @@ function stop(stage){
  }
  for(const canvas of stage.querySelectorAll("canvas"))canvas.width=canvas.height=0;
 }
+function setSuspended(stage,suspended){
+ const shot=active;
+ if(!shot||shot.stage!==stage||(shot.suspendedAt!=null)===suspended)return;
+ stage.toggleAttribute("data-suspended",suspended);
+ const now=performance.now();
+ if(suspended){
+  shot.suspendedAt=now;
+  cancelAnimationFrame(frame);
+  frame=0;
+  return;
+ }
+ shot.started+=now-shot.suspendedAt;
+ shot.suspendedAt=null;
+ if(shot.needsRedraw){
+  shot.needsRedraw=false;
+  draw(shot);
+ }
+ lastFrame=0;
+ frame=requestAnimationFrame(tick);
+}
 window.addEventListener("resize",()=>{if(active)draw(active)},{passive:true});
-window.MusicBoxImmersiveAnimation={find,start,stop,describeLyrics,setVerse};
+window.MusicBoxImmersiveAnimation={find,start,stop,setSuspended,describeLyrics,setVerse};
 })();

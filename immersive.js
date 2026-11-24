@@ -85,11 +85,25 @@ function atmosphereForTrack(id,title,artist){
   stopCanvas();
   renderCanvasButton();
  }
+ function audioNeedsBuffer(audio){
+  return audio.seeking||audio.readyState<HTMLMediaElement.HAVE_FUTURE_DATA;
+ }
  function updateCanvas(audio){
   if(!opened||!canvasEnabled)return;
   const stage=$("imSongAnimation");
   if(document.hidden||window.MusicBoxRoom?.isActive?.()||!audio||audio.paused||audio.ended){
    if(canvasLoadStarted||stage&&!stage.hidden)stopCanvas();
+   return;
+  }
+  const needsBuffer=audioNeedsBuffer(audio);
+  window.MusicBoxImmersiveAnimation?.setSuspended?.(stage,needsBuffer);
+  if(needsBuffer){
+   // Leave the last visual frame in place while playback refills its buffer.
+   if(canvasLoadStarted){
+    canvasLoadStarted=Date.now();
+    canvasRequest=null;
+    $("imVideo")?.pause();
+   }
    return;
   }
   if(!canvasSource){
@@ -373,7 +387,7 @@ function precisionLyrics(){
  lyricAnimation=0;
  if(!opened||document.hidden)return;
  const a=api()?.audio?.();
- if(!a||a.paused||a.ended||a.seeking)return;
+ if(!a||a.paused||a.ended||audioNeedsBuffer(a))return;
  renderLyrics(false);
  lyricAnimation=requestAnimationFrame(precisionLyrics);
 }
@@ -416,7 +430,7 @@ function paint(){
  updateCanvas(a);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
  else renderLyrics(false);
- if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!a.seeking)
+ if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!audioNeedsBuffer(a))
    lyricAnimation=requestAnimationFrame(precisionLyrics);
  anim=window.setTimeout(paint,120);
 }

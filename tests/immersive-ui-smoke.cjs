@@ -471,6 +471,18 @@ async function run(){
      for(let i=0;i<pixels.length;i++)hash=Math.imul(hash,31)+pixels.charCodeAt(i)|0;
      return hash!==previous;
     },film,{polling:120,timeout:4000});
+    await page.evaluate(()=>{fakeAudio.readyState=2});
+    await page.locator("#imSongAnimation[data-suspended]").waitFor({state:"visible"});
+    const held=await fingerprint();
+    await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,260)));
+    assert.equal(await fingerprint(),held,"the scene holds the last frame while audio buffers");
+    assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationPlayState),"paused");
+    assert.deepEqual(await page.evaluate(()=>[fakeAudio.paused,fakeAudio.currentTime]),[false,123]);
+    await page.evaluate(()=>{fakeAudio.readyState=4});
+    await page.waitForFunction(()=>!document.getElementById("imSongAnimation").hasAttribute("data-suspended"));
+    assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationPlayState),"running");
+    await page.waitForFunction(previous=>document.querySelector("#imSongAnimation canvas:last-child").toDataURL()!==previous,
+     await stage.evaluate(node=>node.lastElementChild.toDataURL()),{polling:120,timeout:4000});
     await page.screenshot({path:"/tmp/immersive-song-"+engine+"-"+size.name+".png"});
     await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
     assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
