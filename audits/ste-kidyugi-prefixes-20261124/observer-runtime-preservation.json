@@ -1,0 +1,13 @@
+{
+  "candidatePR": 94,
+  "originalCandidate": "fb905a8a",
+  "observerCandidate": "719f591a",
+  "runtimeAndIndexUnchangedByObserverFix": {
+    "app.js": "89db063c1b460224296e0f8fa5204c53313ada49e998dcd3f49c079d6d297b99",
+    "mix-intelligente.js": "02f29e6f20e28c235caa5b5a213392014e4a823f855d98f2b1cfeaf3146d6977",
+    "dj-deep-analysis.json": "3245ce0f909bdda5d056603705b819e04c0da84a061b9e424c7e35d0a56f45fb",
+    "sw.js": "189c097621f193888da248eef836c7b42f2a6f7d52931959a01ea4597429fda6",
+    "index.html": "5fec87fb6beb9b0cd914a73943ca6559ddc13ed9007ded1faa4e492f9f73e880",
+    "versione.json": "729686230062cf57f5421b3510f57dd5370c904b243a74366a8bdf7b6a07b7c6"
+  }
+}
