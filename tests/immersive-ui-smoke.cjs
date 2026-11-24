@@ -366,18 +366,24 @@ async function run(){
     assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
     assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
     assert.equal(visual.pointer,"none");
-    await video.evaluate(v=>{
-     v.addEventListener("timeupdate",()=>{
-      const lastTime=v.dataset.testLoopTime;
-      v.dataset.testLoopTime=String(v.currentTime);
-      if(lastTime&&Number(lastTime)>v.duration-1&&v.currentTime<1)v.dataset.testLoopWrapped="true";
-     });
-    });
-    await page.waitForFunction(()=>document.getElementById("imVideo").dataset.testLoopWrapped==="true",null,{timeout:12000});
-    await page.waitForFunction(()=>{
-     const v=document.getElementById("imVideo");
-     return !v.paused&&!v.seeking&&v.currentTime>0&&v.currentTime<2;
-    });
+    const loopProof=await video.evaluate(v=>new Promise(resolve=>{
+     let previous=v.currentTime,wraps=0;
+     const finish=()=>{
+      clearTimeout(deadline);
+      v.removeEventListener("timeupdate",observe);
+      resolve({wraps,time:v.currentTime,paused:v.paused,seeking:v.seeking,ready:v.readyState,error:v.error?.code});
+     };
+     const observe=()=>{
+      const time=v.currentTime;
+      if(previous>v.duration-1&&time<1)wraps++;
+      previous=time;
+      if(wraps>=2&&time>.1&&time<1.5)finish();
+     };
+     const deadline=setTimeout(finish,12000);
+     v.addEventListener("timeupdate",observe);
+    }));
+    assert.ok(loopProof.wraps>=2&&!loopProof.paused&&loopProof.time>.1&&loopProof.time<1.5,
+     "native media clock must advance through two wraps: "+JSON.stringify(loopProof));
     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123,"loop does not seek the audio");
 
     await page.evaluate(()=>{fakeAudio.paused=true});
