@@ -66,6 +66,9 @@ const server=http.createServer((req,res)=>{
   // into another response containing old measurements for imported music.
   const refreshed=await page.evaluate(async prefix=>{
    const url=new URL('/dj-deep-analysis.json?pcm=1&structure=18',location.href).href;
+   // Retain an older unqueried revision too: offline fallback must prefer
+   // the exact revalidated request, never the first ignoreSearch match.
+   await(await caches.open(prefix+'-dj-index')).put(new URL('/dj-deep-analysis.json',location.href).href,new Response(JSON.stringify({version:2,entries:{},fixture:'older-base-index'}),{headers:{'Content-Type':'application/json'}}));
    await(await caches.open(prefix+'-dj-index')).put(url,new Response(JSON.stringify({version:2,entries:{},fixture:'stale-index'}),{headers:{'Content-Type':'application/json'}}));
    window.__djIndexKeyCountBefore=(await(await caches.open(prefix+'-dj-index')).keys()).length;
    const r=await fetch(url,{headers:{'X-MusicBox-DJ-Revalidate':'1'}}),data=await r.json();
