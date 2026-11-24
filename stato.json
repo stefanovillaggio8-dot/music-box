@@ -1295,7 +1295,7 @@
    },
    "[\"wonderwall\",\"oasis\"]": {
     "v": 2,
-    "s": 643,
+    "s": 665,
     "t": "Wonderwall",
     "a": "Oasis"
    },
@@ -2092,8 +2092,8 @@
     "a": "nayt"
    },
    "[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
-    "v": 2,
-    "s": 11,
+    "v": 3,
+    "s": 12,
     "t": "Antonello Venditti - Alta marea (Don't Dream It's Over) [Testo]",
     "a": "Antonello Venditti"
    },
@@ -3275,7 +3275,7 @@
    },
    "m:2026-11|[\"wonderwall\",\"oasis\"]": {
     "v": 2,
-    "s": 635,
+    "s": 657,
     "t": "Wonderwall",
     "a": "Oasis"
    },
@@ -4246,8 +4246,8 @@
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "m:2026-11|[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
-    "v": 0,
-    "s": 1,
+    "v": 1,
+    "s": 2,
     "t": "Alta marea (Don't Dream It's Over) [Testo]",
     "a": "Antonello Venditti"
    },
@@ -6879,6 +6879,18 @@
     "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
+   "[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 3,
+    "s": 316,
+    "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 3,
+    "s": 316,
+    "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
     "s": 576,
@@ -7664,18 +7676,6 @@
     "s": 403,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 316,
-    "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 316,
-    "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
     "v": 3,
