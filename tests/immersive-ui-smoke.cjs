@@ -483,7 +483,8 @@ async function run(){
      fakeLyrics={id:"b-track-40",synced:[
       {t:10,text:"C'è la luna piena"},
       {t:20,text:"Un pianoforte senza tasti"},
-      {t:30,text:"La pioggia nella stanza",estimated:true}
+      {t:30,text:"La pioggia nella stanza",estimated:true},
+      {t:40,text:"Una città"}
      ]};
      fakeAudio.currentTime=14;
     });
@@ -492,6 +493,8 @@ async function run(){
     await page.waitForFunction(()=>window.testLyricImage==="piano");
     await page.evaluate(()=>{fakeAudio.currentTime=34});
     await page.waitForFunction(()=>window.testLyricImage===null);
+    await page.evaluate(()=>{fakeAudio.currentTime=44});
+    await page.waitForFunction(()=>window.testLyricImage==="city");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});

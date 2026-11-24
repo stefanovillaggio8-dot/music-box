@@ -369,7 +369,7 @@ const lyricImages=[
  ["rain",/\b(piogg[ie][ae]?|piove|piovere|piovesse|temporale|tempesta|rain|storm|bufera)\b/i],
  ["water",/\b(mare|onde|oceano|porto|naufrag[io]+|ocean|waves?|harbou?r|sail(?:or|ing)?)\b/i],
  ["rail",/\b(treno|treni|binari|rotaie|railway|trains?)\b/i],
- ["city",/\b(città|quartier[ei]|grattaciel[oi]|strad[ae]|vicoli|neon|semafor[oi]|city|streets?|skyscrapers?)\b/i],
+ ["city",/\b(citta|quartier[ei]|grattaciel[oi]|strad[ae]|vicoli|neon|semafor[oi]|city|streets?|skyscrapers?)\b/i],
  ["window",/\b(finestr[ae]|finestrin[oi]|vetri|windows?)\b/i],
  ["mirror",/\b(specchi[oi]|rifless[oi]|mirrors?|reflection)\b/i],
  ["rose",/\b(rose|rosa rossa|petal[oi]|fior[ei]|flowers?|petals?)\b/i],
@@ -407,7 +407,8 @@ function describeLyrics(scene,rows,timed){
  if(!scene||scene.id==="b-track-27")return;
  const scores=Object.create(null);
  const cues=rows.map(row=>{
-  const images=lyricImages.filter(([,pattern])=>pattern.test(row.text));
+  const line=String(row.text??"").normalize("NFD").replace(/\p{M}/gu,"");
+  const images=lyricImages.filter(([,pattern])=>pattern.test(line));
   for(const [motif] of images)scores[motif]=(scores[motif]||0)+1;
   return timed&&row.estimated!==true?images[0]?.[0]??null:null;
  });
