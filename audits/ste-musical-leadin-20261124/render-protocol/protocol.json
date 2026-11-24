@@ -1,0 +1,14 @@
+{
+  "evaluationOnly": true,
+  "notPlaybackCertified": true,
+  "source": {
+    "key": "audio/songs/track-27.mp3",
+    "begin": 137.36,
+    "end": 146.333
+  },
+  "targets": [
+    "audio/songs/track-34.mp3"
+  ],
+  "frozenProtocol": "protocol.json",
+  "noRetuning": true
+}

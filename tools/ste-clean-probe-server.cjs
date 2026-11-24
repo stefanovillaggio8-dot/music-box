@@ -19,8 +19,11 @@ function prepare(data){
   if(crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex')!==r.sourceSha)throw Error('Changed original');
   originals.set(r.sourceSha,bytes);
  }
- const fixture={sourceSha:source.sourceSha,targetSha:control.sourceSha,begin:source.quietSuffix.begin,end:source.duration,
-  sourceClock:source.clock,targetClock:control.clock,physicalIPhone:false,notApplicationIntegration:true};
+ // A bounded incoming-prefix decode needs no pretend published positive.
+ // Such a dataset cannot supply the dual-player prototype's pair fixture.
+ if(!control&&data.prefixOnly!==true)throw Error('Published control required outside prefix-only study');
+ const fixture=control?{sourceSha:source.sourceSha,targetSha:control.sourceSha,begin:source.quietSuffix.begin,end:source.duration,
+  sourceClock:source.clock,targetClock:control.clock,physicalIPhone:false,notApplicationIntegration:true}:null;
  return {needed,originals,fixture};
 }
 function server(data){

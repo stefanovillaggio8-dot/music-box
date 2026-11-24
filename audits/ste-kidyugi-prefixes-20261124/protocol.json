@@ -1,0 +1,28 @@
+{
+  "profile": "Ste",
+  "source": "audio/songs/track-27.mp3",
+  "begin": 144.593,
+  "end": 146.333,
+  "entry": 0,
+  "tempo": 1,
+  "sourceGain": 1,
+  "targetGain": 1,
+  "targets": [
+    "audio/songs/track-33.mp3",
+    "audio/songs/track-87.mp3",
+    "audio/songs/track-1187.mp3",
+    "audio/songs/track-138.mp3"
+  ],
+  "prefixSeconds": 3.5,
+  "rates": [
+    44100,
+    48000
+  ],
+  "maximumSummedPeak": 0.96,
+  "minimumMeaningfulSeconds": 0.75,
+  "meaningfulRms": 0.001,
+  "kindUnderStudy": "clean only, never full or partial",
+  "sourceEvidence": "Existing SHA-bound 8 native source observations from released quiet suffix; no new source analysis",
+  "noGlobalSweep": true,
+  "allowInstallation": false
+}

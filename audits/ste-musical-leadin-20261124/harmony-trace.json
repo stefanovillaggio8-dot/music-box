@@ -1,0 +1,68 @@
+{
+  "method": "unchanged-owning-harmony-gate-trace-v1",
+  "profile": "Ste",
+  "pair": {
+    "from": "audio/songs/track-27.mp3",
+    "to": "audio/songs/track-34.mp3"
+  },
+  "sourceSha": "42cb3593ee9e81e557b34aa9cb3f331d40976a7a",
+  "targetSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+  "geometry": {
+    "begin": 137.36,
+    "end": 146.333,
+    "entry": 0,
+    "tempo": 1,
+    "fade": 8.972999999999985
+  },
+  "engineSha256": "9aa53eed95afeea26d2f2cab0b43f168b842f381aaab29b6885547ed76f2faf4",
+  "results": {
+    "pcmFullHarmony": {
+      "accepted": false,
+      "evidence": null,
+      "diagnostics": [
+        {
+          "gate": "pcmCompatibleKeyHarmony",
+          "site": 1,
+          "owningStatement": "  const x=close(outro,begin+t),y=close(intro,entry+t*rate);\n  if(!x||!y)"
+        },
+        {
+          "gate": "four-probes",
+          "average": 0.22088396666958618,
+          "weakest": 0,
+          "shared": 0,
+          "scores": [
+            0.21119325784672716,
+            0,
+            0,
+            0.6723426088316176
+          ]
+        }
+      ]
+    },
+    "pcmPreservedTailHarmony": {
+      "accepted": false,
+      "evidence": null,
+      "diagnostics": [
+        {
+          "gate": "preserved-frame-statistics",
+          "frames": 16,
+          "sharedTonalFrames": 7,
+          "boundedQuiet": 6,
+          "rawClashMax": 0.2914616068252462,
+          "excessClashMax": 0.06042392182682085
+        },
+        {
+          "gate": "pcmPreservedTailHarmony",
+          "site": 5,
+          "owningStatement": " }\n if(source.length<6||Math.max(...clashes)>.45||Math.max(...excess)>.05)"
+        }
+      ]
+    }
+  },
+  "originalDecodes": 0,
+  "newModels": 0,
+  "renders": 0,
+  "installed": false,
+  "certified": false,
+  "thresholdsChanged": false
+}
