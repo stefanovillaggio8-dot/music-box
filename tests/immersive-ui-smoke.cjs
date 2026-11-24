@@ -93,6 +93,20 @@ async function run(){
      overflow:root.scrollWidth-root.clientWidth};
    });
    assert.equal(state.title,"Notte stellata");
+   assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"no guessed video for an audio-only song");
+   assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
+   if(size.name==="desktop"){
+    const layout=await page.evaluate(()=>{
+     const rect=id=>document.getElementById(id).getBoundingClientRect();
+     return {coverRight:rect("imCover").right,lyricsLeft:rect("imKaraoke").left,
+      lyricsHeight:rect("imKaraoke").height,titleTop:rect("imTitle").top,
+      coverBottom:rect("imCover").bottom,controlsBottom:rect("imToggle").bottom};
+    });
+    assert.ok(layout.coverRight<layout.lyricsLeft,"artwork left and lyrics right");
+    assert.ok(layout.titleTop>=layout.coverBottom-5,"song title underneath artwork");
+    assert.ok(layout.lyricsHeight>=350,"cinematic lyric stage is tall");
+    assert.ok(layout.controlsBottom<=size.height,"desktop controls remain reachable");
+   }
    const atmosphere=await page.evaluate(()=>({
     hue:getComputedStyle(document.getElementById("immersivePanel")).getPropertyValue("--im-hue").trim(),
     halo:!!document.querySelector(".im-aura"),
