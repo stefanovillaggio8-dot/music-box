@@ -36,9 +36,25 @@ function atmosphereForTrack(id,title,artist){
 
 // Only an explicitly associated, directly playable video is eligible.
  // No YouTube iframe, audio extraction, search guess or unrelated video.
- let videoSource="",videoEnabled=false,videoFailed=false,videoPlayingRequest=null;
+ // Production associations are reviewed here by stable recording identity,
+ // not by search result title or Apple/YouTube catalogue availability.
+ // Add a row only with a full authorized asset and measured alignment.
+ // Fields: id key, file, title, artist, url, rightsEvidence, offsetSeconds.
+ const reviewedVideoCatalog=Object.freeze({});
+ let videoSource="",videoOffset=0,videoEnabled=false,videoFailed=false,videoPlayingRequest=null,videoLoadStarted=0;
+ function reviewedVideoFor(track){
+  if(!track?.id||!Object.hasOwn(reviewedVideoCatalog,String(track.id)))return null;
+  const entry=reviewedVideoCatalog[String(track.id)];
+  if(!entry||entry.file!==track.file||entry.title!==track.title||entry.artist!==track.artist||
+     typeof entry.rightsEvidence!=="string"||!entry.rightsEvidence.trim()||
+     !Number.isFinite(entry.offsetSeconds)||Math.abs(entry.offsetSeconds)>120)return null;
+  return entry;
+ }
  function directVideoSource(track){
-  const raw=track?.videoUrl||track?.musicVideoUrl||"";
+  const reviewed=reviewedVideoFor(track);
+  // A trusted application-supplied direct URL is also supported. No network
+  // lookup of arbitrary song names, and no use of catalogue preview URLs.
+  const raw=reviewed?.url||track?.videoUrl||track?.musicVideoUrl||"";
   if(typeof raw!=="string"||!raw.trim())return "";
   try{
    const url=new URL(raw,document.baseURI);
@@ -52,7 +68,7 @@ function atmosphereForTrack(id,title,artist){
   const video=$("imVideo"),root=$("immersivePanel");
   root?.classList.remove("im-video-live");
   if(!video)return;
-  videoPlayingRequest=null;
+  videoPlayingRequest=null;videoLoadStarted=0;
   video.pause();
   if(video.hasAttribute("src")){video.removeAttribute("src");video.load()}
   video.hidden=true;
@@ -64,7 +80,7 @@ function atmosphereForTrack(id,title,artist){
   button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
  }
  function configureVideo(track){
-  stopVideo();videoSource=directVideoSource(track);videoFailed=false;
+  stopVideo();videoSource=directVideoSource(track);videoOffset=reviewedVideoFor(track)?.offsetSeconds||0;videoFailed=false;
   // Mobile opts in: its native audio decoder must remain the priority.
   videoEnabled=!!videoSource&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
   videoButton();
@@ -82,12 +98,14 @@ function atmosphereForTrack(id,title,artist){
   if(!video.hasAttribute("src")){
    video.muted=true;video.defaultMuted=true;video.volume=0;
    // Request metadata explicitly: preload=none plus waiting for readyState before play deadlocks.
-   video.preload="metadata";video.hidden=false;video.src=videoSource;video.load();
+   videoLoadStarted=Date.now();video.preload="metadata";video.hidden=false;video.src=videoSource;video.load();
   }
   if(video.error){failVideo();return}
-  if(video.readyState<1)return;
-  const time=audio.currentTime;
+  if(video.readyState<1){if(videoLoadStarted&&Date.now()-videoLoadStarted>15000)failVideo();return}
+  const time=audio.currentTime+videoOffset;
+  if(time<0){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
   // Do not loop a short clip or play unrelated video beyond its end.
+  if(Number.isFinite(video.duration)&&Number.isFinite(audio.duration)&&audio.duration>10&&video.duration<Math.max(0,audio.duration+videoOffset)-2){failVideo();return}
   if(Number.isFinite(video.duration)&&time>=video.duration-.15){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
   if(Math.abs(video.currentTime-time)>.45&&!video.seeking){
    $("immersivePanel")?.classList.remove("im-video-live");
