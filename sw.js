@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6744&lyrics=15",
+  "./style.css?v=6744&lyrics=16",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -72,8 +72,9 @@ const CORE = [
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
   "./immersive-scenes.js?v=1",
-  "./immersive-animation.js?v=6",
+  "./immersive-animation.js?v=7",
   "./immersive-textures.webp?v=1",
+  "./immersive-kid-yugi.webp?v=1",
   "./immersive.js?v=6734&words=23",
   "./manifest.json",
   "./lyrics.json",
@@ -99,7 +100,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6744&lyrics=15",
+  "./style.css?v=6744&lyrics=16",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -122,7 +123,7 @@ const OFFLINE_SHELL = [
   "./mix-intelligente.js?v=6744&dj=63",
   "./mix-monitor-bridge.js?v=4",
   "./immersive-scenes.js?v=1",
-  "./immersive-animation.js?v=6",
+  "./immersive-animation.js?v=7",
   "./immersive-textures.webp?v=1",
   "./immersive.js?v=6734&words=23"
 ];

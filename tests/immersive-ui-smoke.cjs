@@ -8,6 +8,7 @@ const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
 const scenes=fs.readFileSync(path.join(root,"immersive-scenes.js"),"utf8");
 const animation=fs.readFileSync(path.join(root,"immersive-animation.js"),"utf8");
 const textures=fs.readFileSync(path.join(root,"immersive-textures.webp"));
+const photographedTextures=fs.readFileSync(path.join(root,"immersive-kid-yugi.webp"));
 const css=fs.readFileSync(path.join(root,"style.css"),"utf8");
 const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
@@ -73,8 +74,9 @@ const testScenes=scenes.replace("const scenes=Object.freeze({",match=>match+
  ]))).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
- if(loc==="/immersive-textures.webp"){
-  res.writeHead(200,{"Content-Type":"image/webp","Content-Length":textures.length}).end(textures);
+ if(loc==="/immersive-textures.webp"||loc==="/immersive-kid-yugi.webp"){
+  const image=loc==="/immersive-textures.webp"?textures:photographedTextures;
+  res.writeHead(200,{"Content-Type":"image/webp","Content-Length":image.length}).end(image);
   return;
  }
  if(loc==="/fixture.mp4"){
@@ -521,6 +523,12 @@ async function run(){
     });
     assert.deepEqual(reviewed,["film","monitor","bridge","sail","skyline"],
      "reviewed recording scenes work without timed lyrics and preserve Il Filmografo");
+    await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
+    const frameBefore=await stage.evaluate(node=>node.lastElementChild.toDataURL());
+    await page.waitForFunction(previous=>document.querySelector("#imSongAnimation canvas:last-child").toDataURL()!==previous,
+     frameBefore,{polling:120,timeout:4000});
+    assert.equal(await stage.evaluate(node=>getComputedStyle(node.lastElementChild).animationName),"none",
+     "the scene itself is animated in canvas pixels");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});
