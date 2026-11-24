@@ -41,7 +41,7 @@ Object.assign(environments,{
 const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
 const kidYugiTextures={file:"immersive-kid-yugi.webp?v=1",image:null,ready:false};
-const libraryTextures={file:"immersive-ste.webp?v=1",image:null,ready:false};
+const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
  "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
@@ -81,7 +81,19 @@ const libraryScenes={
  "b-track-189":[8,.53,.51,.025,-.029,"#dcb381"],
  "b-track-191":[9,.49,.51,-.044,.027,"#a1b3b9"],
  "b-track-210":[10,.56,.52,.065,.019,"#ca6a85"],
- "b-track-230":[11,.48,.50,-.054,-.026,"#e59453"]
+ "b-track-230":[11,.48,.50,-.054,-.026,"#e59453"],
+ "b-track-75":[12,.51,.44,.032,-.023,"#dc9e56"],
+ "b-track-89":[13,.52,.42,-.045,.036,"#d6d5d2"],
+ "b-track-120":[14,.54,.50,.058,.018,"#eeb848"],
+ "b-track-121":[15,.49,.59,-.046,-.022,"#76b6d2"],
+ "b-track-122":[16,.46,.52,.029,.032,"#c5924d"],
+ "b-track-192":[17,.61,.53,-.048,-.036,"#709dda"],
+ "b-track-200":[18,.32,.58,.060,.030,"#75ab8f"],
+ "b-track-240":[19,.55,.56,-.035,.021,"#efd1aa"],
+ "b-track-478":[20,.42,.53,.043,-.019,"#babac4"],
+ "b-track-483":[21,.51,.50,-.057,.028,"#7ed1e4"],
+ "b-track-509":[22,.43,.58,.045,-.027,"#be608e"],
+ "b-track-705":[23,.43,.45,-.051,.031,"#8d6ab4"]
 };
 let active=null,frame=0,lastFrame=0;
 function hash(id){
