@@ -4354,14 +4354,14 @@
     "a": "LP"
    },
    "[\"il filmografo\",\"kid yugi\"]": {
-    "v": 5,
-    "s": 240,
+    "v": 6,
+    "s": 242,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
-    "v": 5,
-    "s": 240,
+    "v": 6,
+    "s": 242,
     "t": "Il Filmografo",
     "a": "Kid Yugi"
    },
@@ -7701,82 +7701,16 @@
     "t": "Non ÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 9,
-    "s": 576,
-    "t": "Con Te PartirÃÂÃÂ²",
-    "a": "Andrea Bocelli"
-   },
-   "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 8,
-    "s": 574,
-    "t": "Con Te PartirÃÂÃÂ²",
-    "a": "Andrea Bocelli"
-   },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
+    "v": 2,
     "s": 366,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
+    "v": 2,
     "s": 366,
     "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"non ti dimentico\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂÃÂÃÂ "
-   },
-   "m:2026-11|[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 3,
-    "s": 650,
-    "t": "VENTANNI",
-    "a": "MÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 5,
-    "s": 638,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂÃÂÃÂ¨"
-   },
-   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 5,
-    "s": 638,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂÃÂÃÂ¨"
-   },
-   "[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 453,
-    "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 453,
-    "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
@@ -7803,6 +7737,12 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 9,
+    "s": 576,
+    "t": "Con Te PartirÃÂÃÂ²",
+    "a": "Andrea Bocelli"
+   },
    "m:2026-10|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 2,
@@ -7812,25 +7752,13 @@
    "[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'ÃÂÃÂ¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂ¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 3,
-    "s": 289,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 3,
-    "s": 289,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂ \"]": {
@@ -7946,6 +7874,12 @@
     "s": 841,
     "t": "La musica non c'ÃÂÃÂ¨",
     "a": "Coez"
+   },
+   "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 8,
+    "s": 574,
+    "t": "Con Te PartirÃÂÃÂ²",
+    "a": "Andrea Bocelli"
    },
    "[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 3,
@@ -8085,6 +8019,18 @@
     "t": "Voglio di piÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 3,
+    "s": 289,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 3,
+    "s": 289,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 2,
     "s": 735,
@@ -8169,18 +8115,6 @@
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 6,
-    "s": 1076,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 6,
-    "s": 1076,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
    "[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
     "v": 2,
     "s": 423,
@@ -8215,6 +8149,18 @@
     "v": 1,
     "s": 507,
     "t": "ArriverÃÂÃÂ ",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 6,
+    "s": 1076,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 6,
+    "s": 1076,
+    "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
@@ -8400,7 +8346,7 @@
    "[\"fragile\",\"modÃÂÃÂ \"]": {
     "v": 1,
     "s": 316,
-    "t": "Quello che non ti ho detto",
+    "t": "fragile",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"fragile\",\"modÃÂÃÂ \"]": {
@@ -8475,6 +8421,66 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 2,
+    "s": 366,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 2,
+    "s": 366,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"non ti dimentico\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 3,
+    "s": 650,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂ¥neskin"
+   },
+   "m:2026-11|[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 3,
+    "s": 650,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
+    "v": 5,
+    "s": 638,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
+    "v": 5,
+    "s": 638,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂ¨"
+   },
    "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 3,
     "s": 403,
@@ -8487,17 +8493,65 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
-   "[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
+   "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 5,
+    "s": 638,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
-   "m:2026-11|[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 5,
+    "s": 638,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨"
+   },
+   "[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 2,
+    "s": 453,
+    "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 2,
+    "s": 453,
+    "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 2,
+    "s": 453,
+    "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 2,
+    "s": 453,
+    "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 3,
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 3,
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 3,
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "[\"non ÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂ \"]": {
     "v": 3,
@@ -8511,17 +8565,29 @@
     "t": "Non ÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂ "
    },
-   "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 2,
-    "s": 366,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
+   "[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
    },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 2,
-    "s": 366,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
+   "m:2026-11|[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 4,
@@ -9255,29 +9321,11 @@
     "t": "Non ti dimentico",
     "a": "ModÃÂ "
    },
-   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
-   },
    "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 3,
     "s": 650,
     "t": "VENTANNI",
     "a": "MÃÂ¥neskin"
-   },
-   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 3,
-    "s": 650,
-    "t": "VENTANNI",
-    "a": "MÃÂÃÂ¥neskin"
    },
    "[\"nessuna\",\"luchÃÂ¨\"]": {
     "v": 5,
@@ -9303,18 +9351,6 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
-   "[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 5,
-    "s": 638,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂ¨"
-   },
-   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 5,
-    "s": 638,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂ¨"
-   },
    "[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
     "s": 453,
@@ -9325,18 +9361,6 @@
     "v": 2,
     "s": 453,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 453,
-    "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 2,
-    "s": 453,
-    "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
@@ -9350,18 +9374,6 @@
     "s": 241,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
     "v": 3,
@@ -9385,18 +9397,6 @@
     "v": 3,
     "s": 624,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"dimmi che c'ÃÂÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
