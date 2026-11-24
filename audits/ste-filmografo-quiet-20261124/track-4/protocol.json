@@ -1,0 +1,15 @@
+{
+  "source": {
+    "key": "audio/songs/track-27.mp3",
+    "begin": 144.593,
+    "end": 146.333
+  },
+  "targets": [
+    "audio/songs/track-4.mp3"
+  ],
+  "rates": [
+    44100,
+    48000
+  ],
+  "notPlaybackCertified": true
+}

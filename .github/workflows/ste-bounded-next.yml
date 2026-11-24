@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         # Standard Intel pool is a bounded alternative to a queued ARM latest.
-        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel' || inputs.stage == 'debug-source6') && '["macos-15-intel"]' || (inputs.stage == 'source-quiet' || inputs.stage == 'filmografo-quiet' || inputs.stage == 'finish' || inputs.stage == 'phone') && '["ubuntu-24.04","macos-15-intel"]' || inputs.stage == 'player' && '["ubuntu-24.04"]' || '["ubuntu-24.04","macos-latest"]') }}
+        os: ${{ fromJSON((inputs.stage == 'prepare-mac-intel' || inputs.stage == 'player-mac-intel' || inputs.stage == 'debug-source6') && '["macos-15-intel"]' || (inputs.stage == 'source-quiet' || inputs.stage == 'filmografo-quiet' || inputs.stage == 'filmografo-player' || inputs.stage == 'finish' || inputs.stage == 'phone') && '["ubuntu-24.04","macos-15-intel"]' || inputs.stage == 'player' && '["ubuntu-24.04"]' || '["ubuntu-24.04","macos-latest"]') }}
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.os == 'ubuntu-24.04' && 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f' || '' }}
     timeout-minutes: 10
@@ -49,8 +49,19 @@ jobs:
       - name: Preserve scope, cancellation and existing natural controls
         run: node --test tests/ios-native-observed.test.cjs tests/ste-research-scope.test.cjs tests/factored-native-clean.test.cjs
       - name: Three frozen Ste originals only, one new prefix
-        if: inputs.stage != 'source-quiet' && inputs.stage != 'filmografo-quiet' && inputs.stage != 'finish' && inputs.stage != 'phone' && inputs.stage != 'debug-source6'
+        if: inputs.stage != 'source-quiet' && inputs.stage != 'filmografo-quiet' && inputs.stage != 'filmografo-player' && inputs.stage != 'finish' && inputs.stage != 'phone' && inputs.stage != 'debug-source6'
         run: node tools/fetch-ste-clean-recordings.cjs audits/ste-next-clean-20261123/recordings.json
+      - name: Three frozen Filmografo SHADOW junctions in the actual Ste player
+        if: inputs.stage == 'filmografo-player'
+        env:
+          MUSICBOX_NATIVE_CLEAN_SHADOW: 'true'
+        run: |
+          node --test tests/native-clean-launch-window.test.cjs tests/native-eof-ownership.test.cjs
+          for id in 4 34 50; do
+            fixture="audits/ste-filmografo-quiet-20261124/track-${id}-shadow.json"
+            node tools/fetch-ste-clean-evaluation.cjs "$fixture"
+            MUSICBOX_NATIVE_CLEAN_FIXTURE="$fixture" MUSICBOX_NATIVE_CLEAN_OUTPUT="filmografo-${id}-player.json" node tests/native-clean-browser.cjs
+          done
       - name: One fresh Ste Kid Yugi quiet source with reused target evidence
         if: inputs.stage == 'filmografo-quiet'
         run: |
@@ -130,6 +141,9 @@ jobs:
             source6-shadow-repeat.json
             source-quiet-native.json
             filmografo-quiet-native.json
+            filmografo-4-player.json
+            filmografo-34-player.json
+            filmografo-50-player.json
             next-prefix.json
             silent-observed.json
             new-pair-shadow-player.json

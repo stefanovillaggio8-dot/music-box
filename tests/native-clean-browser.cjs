@@ -100,8 +100,9 @@ const server=http.createServer((req,res)=>{
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
    if(phoneNaturalMode){assert.ok(!inspection.cue?.neutralAmbientUnderlay);}
    else{assert.equal(inspection.approved,true);assert.equal(inspection.beatCertified,false);assert.equal(inspection.cue.nativeCleanTail,true);}
-   await page.evaluate(begin=>{
+   await page.evaluate(({begin,stall})=>{
     window.__phoneHandoffs=[];window.__overlapEvents=[];
+    window.__nativeStallEnabled=stall;
     addEventListener('musicbox:mix-overlap',e=>__overlapEvents.push(e.detail));
     window.__eofChecks=[];const natural=MusicBoxMix.naturalEndHandoff;
     MusicBoxMix.naturalEndHandoff=(...args)=>{const before={ended:MusicBoxBridge.audio().ended,paused:MusicBoxBridge.audio().paused,at:MusicBoxBridge.audio().currentTime,live:MusicBoxMix.diagnostics().liveTransition,
@@ -129,13 +130,21 @@ const server=http.createServer((req,res)=>{
       };
       window.__nativeCleanSampling=setInterval(()=>{
        __captureNativeOverlap();
+       if(__nativeStallEnabled&&!window.__nativeStall&&window.__outgoingNative&&!__outgoingNative.ended){
+        const clock=MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId)?.cue?.nativeCleanEvidence?.sourceClock;
+        const offset=MusicBoxCompositeMix.nativeClockOffset(clock,clock?.sourceSha,__outgoingNative.duration);
+        if(offset!==null&&__outgoingNative.currentTime>=begin+offset-.2){
+         const from=__outgoingNative.currentTime,at=performance.now();while(performance.now()-at<350){}
+         window.__nativeStall={from,through:__outgoingNative.currentTime,seconds:(performance.now()-at)/1000};
+        }
+       }
        if(__nativeCleanTimeline.length<110)__nativeCleanTimeline.push(MusicBoxMix.diagnostics());
        if(__nativeTranslationMode&&__nativeLyricSamples.length<110)__nativeLyricSamples.push({beforeAdoption:!window.__beforeNativeAdoption,
         readerOpen:!document.getElementById('lyricsPanel').hidden,id:MusicBoxBridge.currentId(),sourceAt:__outgoingNative.currentTime,lyrics:document.getElementById('lyricsBody').textContent});
       },100);
      }catch(e){window.__setupError=e.message}
     };document.body.append(b);
-   },fixture.record.cue.begin);
+   },{begin:fixture.record.cue.begin,stall:process.env.MUSICBOX_NATIVE_CUE_STALL==='true'});
    await page.click('#start-native-clean');
    try{
     await page.waitForFunction(()=>window.__setupDone||window.__setupError,null,{timeout:15000});
@@ -185,9 +194,19 @@ const server=http.createServer((req,res)=>{
     // Validate the actual launch clock at launch, not a later EOF duration
     // estimate. EOF still independently requires ended=true and intact source.
     const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,c.duration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha,duration:start.sourceDuration});
-    assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
+    assert.notEqual(sourceOffset,null);
+    const actualBegin=start.sourceAt-sourceOffset,p=fixture.record.cue;
+    assert.ok(actualBegin>=p.begin-.02,'no early launch before the independently quiet source interval');
+    if(actualBegin>p.begin+.08){
+     const margin=.1+Math.max(0,...p.nativeCleanEvidence.nativeMeasurements.flatMap(m=>[m.targetDecodedOffset||0,m.targetMediaOffset||0]));
+     const meaningful=p.nativeCleanEvidence.introductionExposure.rows.filter(r=>r.at+.25<=p.end-actualBegin-margin+1e-6&&r.originalRms>=.001).length*.25;
+     assert.ok(meaningful>=.75,'late native launch still exposes >=750ms meaningful ORIGINAL prefix with decoder margin');
+    }else assert.ok(Math.abs(actualBegin-p.begin)<.15);
+    if(process.env.MUSICBOX_NATIVE_CUE_STALL==='true'){
+     const stall=await page.evaluate(()=>window.__nativeStall);assert.ok(stall?.seconds>=.35);assert.ok(actualBegin>p.begin+.08,'exercise a real media-clock delay beyond the legacy timing point');
+    }
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
-    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),
+    report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),stall:await page.evaluate(()=>window.__nativeStall||null),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),clockAttempts:window.__nativeClockAttempts,timeline:window.__nativeCleanTimeline}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
