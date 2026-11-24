@@ -364,11 +364,13 @@ async function run(){
      }));
      throw e;
     }
-    const visual=await page.evaluate(()=>{
+    const visualHandle=await page.waitForFunction(()=>{
+     if(!document.getElementById("immersivePanel").classList.contains("im-video-live"))return false;
      const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade"),cover=document.getElementById("imCover");
      const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
      return {muted:v.muted,volume:v.volume,videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),cover:getComputedStyle(cover).visibility,hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents};
     });
+    const visual=await visualHandle.jsonValue();
     assert.equal(visual.muted,true);
     assert.equal(visual.volume,0);
     assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ,"video stays beneath shade and controls");
@@ -412,6 +414,22 @@ async function run(){
     await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Certe bugie");
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
     assert.equal(embedRequests,1);
+
+    if(process.env.IMMERSIVE_LIVE_VIMEO==="1"&&size.name==="desktop"){
+     await page.unroute("https://player.vimeo.com/video/1028937342?*");
+     await page.evaluate(()=>{
+      fakeProfile="Ste";
+      const start=performance.now();
+      setInterval(()=>{fakeAudio.currentTime=28+(performance.now()-start)/1000},50);
+     });
+     await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
+     await page.locator("#imVideoToggle").click();
+     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:14000});
+     const live=page.frameLocator("#imVimeo iframe").locator("video").first();
+     const playback=await live.evaluate(video=>({muted:video.muted,paused:video.paused,time:video.currentTime}));
+     assert.ok(playback.muted&&!playback.paused&&playback.time>20,"official Vimeo video is decoding in the Immersive background");
+     console.log("Official Vimeo playback verified in Immersive Mode");
+    }
    }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");

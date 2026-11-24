@@ -41,6 +41,12 @@ jobs:
           test -x /usr/bin/google-chrome
       - name: Test desktop and mobile viewport karaoke, controls and scrolling
         run: node tests/immersive-ui-smoke.cjs
+      - name: Check live official Vimeo playback
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        env:
+          IMMERSIVE_LIVE_VIMEO: '1'
+        run: node tests/immersive-ui-smoke.cjs
       - name: Test full lyrics reader in Chromium before installing WebKit
         run: node tests/lyrics-full-view-layout.cjs
       - name: Install WebKit for Safari-style layout verification
