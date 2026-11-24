@@ -71,7 +71,7 @@ function atmosphereForTrack(id,title,artist){
  function configureCanvas(track){
   stopCanvas();
   canvasSource=canvasFor(track);
-  const conserve=window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches||navigator.connection?.saveData;
+  const conserve=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches||navigator.connection?.saveData;
   canvasEnabled=!!canvasSource&&!conserve;
   renderCanvasButton();
  }
