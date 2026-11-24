@@ -38,8 +38,51 @@ Object.assign(environments,{
  tear:2,rewind:7,razor:8,wax:4,breath:2,
  eye:8,ribbon:8,signal:8,ink:8,notes:8,lens:8
 });
-const textures={image:null,ready:false};
-const textureUrl=new URL("immersive-textures.webp?v=1",document.currentScript?.src||document.baseURI);
+const assetRoot=document.currentScript?.src||document.baseURI;
+const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
+const kidYugiTextures={file:"immersive-kid-yugi.webp?v=1",image:null,ready:false};
+const libraryTextures={file:"immersive-ste.webp?v=1",image:null,ready:false};
+// Atlas tile, framing, camera direction and the practical light in the scene.
+const kidYugiScenes={
+ "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
+ "b-track-37":[1,.53,.58,.021,-.039,"#bdc1bd"],
+ "b-track-38":[2,.36,.40,-.044,.021,"#ca9b5e"],
+ "b-track-39":[3,.55,.51,-.023,.028,"#cd8b5a"],
+ "b-track-41":[4,.44,.47,.064,-.016,"#a94238"],
+ "b-track-87":[5,.51,.57,-.044,-.038,"#db9d65"],
+ "b-track-138":[6,.42,.48,.047,.024,"#a34741"],
+ "b-track-205":[7,.35,.46,.066,.016,"#b4b3ae"],
+ "b-track-206":[8,.53,.40,-.027,-.023,"#e38644"],
+ "b-track-208":[9,.49,.53,-.051,.018,"#a19b91"],
+ "b-track-213":[10,.48,.54,.046,-.034,"#f1a356"],
+ "b-track-1187":[11,.41,.52,-.061,.033,"#b09a7b"],
+ "b-track-6":[12,.36,.52,.044,-.029,"#bb4877"],
+ "b-track-30":[12,.59,.56,-.061,.026,"#91503f"],
+ "b-track-33":[13,.38,.44,.055,-.029,"#a668a4"],
+ "b-track-34":[14,.58,.55,-.035,.024,"#ee9e50"],
+ "b-track-40":[15,.59,.43,.034,-.035,"#e0dcce"],
+ "b-track-49":[16,.48,.57,.059,.023,"#66a3ac"],
+ "b-track-134":[17,.46,.55,.035,-.035,"#699fbb"],
+ "b-track-488":[17,.64,.60,-.046,.044,"#a17481"],
+ "b-track-207":[18,.41,.52,-.039,.015,"#b98252"],
+ "b-track-215":[19,.49,.54,-.055,.020,"#99bbca"],
+ "b-youtube-S8oUoa0pwpo":[20,.37,.61,.063,.026,"#719eae"],
+ "b-track-20":[21,.59,.52,-.030,-.026,"#b98050"]
+};
+const libraryScenes={
+ "b-track-14":[0,.52,.48,.041,-.018,"#e2ac55"],
+ "b-track-23":[1,.53,.54,-.057,.025,"#7b99ee"],
+ "b-track-25":[2,.44,.46,.033,.017,"#eab6a6"],
+ "b-track-105":[3,.53,.51,.061,-.021,"#f08561"],
+ "b-track-108":[4,.49,.56,-.051,.035,"#9a69de"],
+ "b-track-116":[5,.52,.49,.023,-.047,"#b65560"],
+ "b-track-133":[6,.41,.62,-.045,.026,"#d78843"],
+ "b-track-136":[7,.45,.64,.051,.023,"#d28a5b"],
+ "b-track-189":[8,.53,.51,.025,-.029,"#dcb381"],
+ "b-track-191":[9,.49,.51,-.044,.027,"#a1b3b9"],
+ "b-track-210":[10,.56,.52,.065,.019,"#ca6a85"],
+ "b-track-230":[11,.48,.50,-.054,-.026,"#e59453"]
+};
 let active=null,frame=0,lastFrame=0;
 function hash(id){
  let value=2166136261;
@@ -224,28 +267,29 @@ function describeLyrics(scene,rows){
  scene.lyricPalette=palette;
  if(changed&&active?.scene===scene)draw(active);
 }
-function loadTextures(){
- if(textures.image)return;
+function loadTextures(atlas){
+ if(atlas.image)return;
  const image=new Image();
- textures.image=image;
+ atlas.image=image;
  image.onload=()=>{
-  textures.ready=true;
-  if(active)draw(active);
+  atlas.ready=true;
+  if(active&&(atlas===textures||active.photoAtlas===atlas))draw(active);
  };
- image.src=textureUrl;
+ image.src=new URL(atlas.file,assetRoot);
 }
 
-function drawEnvironment(c,kind,w,h,grade){
- if(!textures.ready)return;
- const {image}=textures;
+function drawEnvironment(c,kind,w,h,grade,atlas,photo){
+ if(!atlas.ready)return;
+ const {image}=atlas;
+ const index=photo?.[0]??kind;
  const tile=image.naturalWidth/3,aspect=w/h;
  // Center crop a tile. The inset avoids filtering pixels from its neighbours.
  const usable=tile-8,sw=usable*Math.min(aspect,1),sh=usable/Math.max(aspect,1);
- const sx=kind%3*tile+(tile-sw)*(kind===0 ? .25 : .5);
- const sy=Math.floor(kind/3)*tile+(tile-sh)*(kind===0 ? .38 : .5);
- c.globalAlpha=.94;
+ const sx=index%3*tile+(tile-sw)*(photo?.[1]??(kind===0 ? .25 : .5));
+ const sy=Math.floor(index/3)*tile+(tile-sh)*(photo?.[2]??(kind===0 ? .38 : .5));
+ c.globalAlpha=photo ? 1 : .94;
  c.drawImage(image,sx,sy,sw,sh,0,0,w,h);
- c.globalAlpha=.18;c.fillStyle=grade;c.fillRect(0,0,w,h);
+ c.globalAlpha=photo ? .05 : .18;c.fillStyle=grade;c.fillRect(0,0,w,h);
  c.globalAlpha=1;
  return {sx,sy,sw,sh,tile};
 }
@@ -268,13 +312,15 @@ function draw(shot){
  const [dark,mid,color,light]=palettes[scene.lyricPalette??scene.palette],r=random(scene.seed);
  const subject=scene.lyricSubject??scene.subject;
  const wide=aspect>1.15,kind=environments[subject]??8;
+ const photo=shot.photoAtlas.ready?shot.photoView:null;
+ stage.toggleAttribute("data-photographed-scene",!!photo);
  const x=w*((wide ? .30 : .50)+(r()-.5)*(wide ? .07 : .11));
  const y=h*((wide ? .45 : .36)+(r()-.5)*.07);
  const size=Math.min(w*.33,h*(wide ? .39 : .20));
  const glow=c.createRadialGradient(x,y,size*.1,x,y,Math.max(w*.7,h*.59));
  glow.addColorStop(0,mid);glow.addColorStop(1,dark);
  c.fillStyle=glow;c.fillRect(0,0,w,h);
- const crop=drawEnvironment(c,kind,w,h,dark);
+ const crop=drawEnvironment(c,kind,w,h,dark,photo?shot.photoAtlas:textures,photo);
  const veil=c.createLinearGradient(0,0,wide?w:0,wide?0:h);
  veil.addColorStop(0,"#0001");veil.addColorStop(.48,"#0002");veil.addColorStop(1,"#030309ed");
  c.fillStyle=veil;c.fillRect(0,0,w,h);
@@ -287,9 +333,70 @@ function draw(shot){
  const particles=Array.from({length:22},()=>[r(),r(),r(),r()]);
  const wash=f.createLinearGradient(0,0,w*.28,0);
  wash.addColorStop(0,"transparent");wash.addColorStop(.55,color);wash.addColorStop(1,"transparent");
- Object.assign(shot,{f,w,h,x,y,size,kind,color,light,particles,wash,crop,tilt:(r()-.5)*.22});
+ const localLight=photo?f.createRadialGradient(w*.45,h*.42,0,w*.45,h*.42,w*.56):null;
+ if(localLight){
+  localLight.addColorStop(0,photo[5]);
+  localLight.addColorStop(1,"transparent");
+ }
+ Object.assign(shot,{world,f,w,h,x,y,size,kind,color,light,particles,wash,crop,photo,localLight,
+  detail:photo?prepareSceneDetail(world,photo):null,tilt:(r()-.5)*.22});
  paint(shot,0);
  return true;
+}
+
+function prepareSceneDetail(world,photo){
+ const {width:w,height:h}=world;
+ const image=document.createElement("canvas");
+ image.width=Math.max(1,Math.round(w*.74));
+ image.height=Math.max(1,Math.round(h*.74));
+ const left=Math.round((w-image.width)*photo[1]);
+ const top=Math.round((h-image.height)*photo[2]);
+ const c=image.getContext("2d");
+ if(!c)return null;
+ c.drawImage(world,-left,-top);
+ c.globalCompositeOperation="destination-in";
+ c.setTransform(image.width/2,0,0,image.height/2,image.width/2,image.height/2);
+ const feather=c.createRadialGradient(0,0,.35,0,0,1);
+ feather.addColorStop(0,"#000");
+ feather.addColorStop(1,"transparent");
+ c.fillStyle=feather;
+ c.fillRect(-1,-1,2,2);
+ return {image,left,top};
+}
+function paintScenery(shot,t){
+ const {world,f,w,h,kind,scene,photo,detail}=shot;
+ const arc=Math.sin(t),depth=(1-Math.cos(t))*.5;
+ const push=scene.camera==="push"||scene.camera==="pulse";
+ const scale=1.16+(push ? .19 : .095)*depth;
+ const width=w*scale,height=h*scale;
+ const driftX=photo?.[3]??(push ? .023 : .043),driftY=photo?.[4]??.026;
+ const left=(w-width)*.5+w*arc*driftX;
+ const top=(h-height)*.47+h*Math.sin(t+.65)*driftY;
+ f.drawImage(world,left,top,width,height);
+ if(detail){
+  // Move a feathered, in-scene detail against the background by a few pixels.
+  const {image,left:x,top:y}=detail;
+  f.drawImage(image,left+x*scale+arc*driftX*w*.34,top+y*scale+Math.sin(t*2)*driftY*h*.34,
+   image.width*scale,image.height*scale);
+ }else if(kind===1||kind===3){
+  // Moving reflections are drawn from the scenery itself.
+  const band=h*.10;
+  for(let row=0;row<3;row++){
+   const y=h*.68+row*band;
+   const shimmer=Math.sin(t*2+row*.86+scene.seed%7)*w*(.004+row*.003);
+   f.drawImage(world,0,y,w,band,left+shimmer,top+y*scale,width,band*scale);
+  }
+ }
+}
+function exposeScene(shot,t){
+ const {f,w,h,photo,localLight}=shot;
+ f.save();
+ f.translate(Math.sin(t)*photo[3]*w*3,Math.sin(t+.65)*h*.08);
+ f.globalCompositeOperation="soft-light";
+ f.fillStyle=localLight;
+ f.globalAlpha=.18+.32*(.5+.5*Math.sin(t*2+.75));
+ f.fillRect(-w*.25,-h*.15,w*1.5,h*1.3);
+ f.restore();
 }
 
 function atmosphere(shot,t){
@@ -362,11 +469,15 @@ function turnReels(shot,t){
 function paint(shot,t){
  const {f,w,h,kind,crop,scene}=shot;
  f.clearRect(0,0,w,h);
- if(kind===0&&crop)turnReels(shot,t);
- atmosphere(shot,t);
- // Only Il Filmografo has the original film-strip treatment before its
- // projector texture loads. Other scenes animate their environment alone.
- if(scene.id==="b-track-27"&&!crop)paintFilmStrip(shot,t);
+ if(scene.id==="b-track-27"){
+  if(kind===0&&crop)turnReels(shot,t);
+  atmosphere(shot,t);
+  if(!crop)paintFilmStrip(shot,t);
+ }else{
+  paintScenery(shot,t);
+  if(shot.photo)exposeScene(shot,t);
+  else atmosphere(shot,t);
+ }
  f.globalAlpha=1;
 }
 function paintFilmStrip(shot,t){
@@ -402,20 +513,27 @@ function start(stage,scene){
  stage.style.setProperty("--im-shot-angle",angle+"deg");
  stage.style.setProperty("--im-shot-time",period+"ms");
  stage.dataset.environment=scene.subject;
+ stage.toggleAttribute("data-moving-scene",scene.id!=="b-track-27");
  stage.hidden=false;
- const shot={stage,scene,period,started:performance.now()};
+ const kidYugiView=kidYugiScenes[scene.id];
+ const photoView=kidYugiView??libraryScenes[scene.id]??null;
+ const photoAtlas=photoView?(kidYugiView?kidYugiTextures:libraryTextures):textures;
+ const shot={stage,scene,period,photoView,photoAtlas,started:performance.now()};
  if(!draw(shot)){stage.hidden=true;return false}
  active=shot;
  lastFrame=0;
  cancelAnimationFrame(frame);
  frame=requestAnimationFrame(tick);
- loadTextures();
+ loadTextures(textures);
+ if(photoView)loadTextures(photoAtlas);
  return true;
 }
 function stop(stage){
  if(!stage||stage.hidden)return;
  stage.hidden=true;
  stage.removeAttribute("data-suspended");
+ stage.removeAttribute("data-moving-scene");
+ stage.removeAttribute("data-photographed-scene");
  if(active?.stage===stage){
   active=null;
   cancelAnimationFrame(frame);
