@@ -495,6 +495,18 @@ async function run(){
     await page.waitForFunction(()=>window.testLyricImage===null);
     await page.evaluate(()=>{fakeAudio.currentTime=44});
     await page.waitForFunction(()=>window.testLyricImage==="city");
+    const reviewed=await page.evaluate(()=>{
+     const animation=MusicBoxImmersiveAnimation;
+     return ["b-track-27","b-track-213","b-track-233","b-track-670","b-track-705"].map(id=>{
+      const [file,title,artist]=MusicBoxImmersiveScenes[id];
+      const scene=animation.find({id,file,title,artist},"Ste");
+      animation.describeLyrics(scene,[],false);
+      animation.setVerse(scene,0);
+      return [scene.lyricSubject??scene.subject,scene.lyricCue??null];
+     });
+    });
+    assert.deepEqual(reviewed,[["film",null],["monitor",null],["bridge",null],["sail",null],["skyline",null]],
+     "reviewed recording scenes work without timed lyrics and preserve Il Filmografo");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.paused=true});

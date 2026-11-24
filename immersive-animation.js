@@ -29,6 +29,14 @@ const environments={
  rose:5,branch:5,heart:5,leaf:5,peak:6,sun:6,wings:6,ember:6,
  moon:7,orbit:7,stars:7
 };
+// The environment is shared; subjects, palette, camera and cues are track-specific.
+Object.assign(environments,{
+ astronaut:7,mars:7,skyline:1,road:1,stadium:1,
+ lighthouse:3,bridge:3,sail:3,snow:6,tightrope:6,desert:6,
+ home:2,letter:2,coffee:2,record:2,radio:2,monitor:8,bills:8,trophy:8,
+ halves:5,bubbles:5,mushrooms:5,petalMaze:4,circus:8,club:8,
+ tear:2,rewind:7,razor:8,wax:4,breath:2
+});
 const textures={image:null,ready:false};
 const textureUrl=new URL("immersive-textures.webp?v=1",document.currentScript?.src||document.baseURI);
 let active=null,frame=0,lastFrame=0;
@@ -71,6 +79,266 @@ function curveGrid(c,n,strength){
  }
 }
 const subjects={
+ petalMaze(c,_random,t){
+  c.save();c.globalAlpha*=.65;subjects.maze(c);c.restore();
+  c.save();c.translate(.28*Math.sin(t),.22-.49*Math.sin(t/2)**2);
+  c.rotate(t);ellipse(c,0,0,.20,.33,-.16);
+  curve(c,[0,-.30],[-.06,-.09,.12,.07],[0,.32]);c.restore();
+ },
+ circus(c,_random,t){
+  line(c,[[-.87,-.17],[0,-.75],[.87,-.17],[-.87,-.17]]);
+  line(c,[[-.71,-.17],[-.71,.67],[.71,.67],[.71,-.17]]);
+  line(c,[[0,-.75],[0,-.95],[.24,-.89],[0,-.83]]);
+  for(let i=-5;i<=5;i++)line(c,[[i*.128,-.17],[i*.125+.04*Math.sin(t+i),.67]]);
+  curve(c,[-.26,.67],[-.18,.23,.18,.23],[.26,.67]);
+ },
+ club(c,_random,t){
+  ellipse(c,0,-.45,.18,.11);
+  for(let i=-3;i<=3;i++){
+   const x=i*.28,y=.69+.15*Math.sin(t+i*.66);
+   c.globalAlpha=.16+.12*Math.cos(t+i*.57)**2;
+   line(c,[[i*.055,-.39],[x-.16,y],[x+.16,y],[i*.055,-.39]],true);
+   ellipse(c,x,y,.16,.04);
+  }
+ },
+ monitor(c,_random,t){
+  c.strokeRect(-.87,-.59,1.74,1.14);
+  c.strokeRect(-.73,-.47,1.46,.88);
+  line(c,[[-.42,.76],[.42,.76]]);
+  line(c,[[0,.55],[0,.76]]);
+  const y=.11+.31*Math.sin(t);
+  c.globalAlpha*=.55;
+  c.fillRect(-.70,y,1.4,.065);
+  for(let i=0;i<12;i++)c.fillRect(-.6+i*.11,.27,.055,-.24-.14*Math.sin(2*t+i*.7));
+ },
+ astronaut(c,_random,t){
+  ellipse(c,0,-.16,.62,.72);
+  ellipse(c,.07,-.16,.47,.48,-.18);
+  curve(c,[-.28,-.29],[-.11,-.58,.24,-.52],[.4,-.35]);
+  curve(c,[-.61,.49],[-.5,.92,.57,.92],[.65,.46]);
+  line(c,[[-.41,.36],[-.64,.67],[-.77,.81]]);
+  circle(c,.14+.21*Math.sin(t),-.16+.15*Math.cos(t),.09);
+ },
+ trophy(c,_random,t){
+  ellipse(c,0,-.35,.51,.51);
+  ellipse(c,0,-.35,.36+.12*Math.cos(t),.5);
+  line(c,[[-.39,-.16],[-.19,.15],[.18,.15],[.4,-.16]]);
+  line(c,[[-.14,.15],[-.19,.51],[-.47,.63],[.47,.63],[.18,.51],[.13,.15]]);
+  c.strokeRect(-.56,.64,1.12,.18);
+  c.save();c.translate(0,-.35);rays(c,10,.57,.71,t);c.restore();
+ },
+ coffee(c,_random,t){
+  ellipse(c,-.16,.05,.47,.13);
+  curve(c,[-.63,.04],[-.61,.95,.36,.96],[.31,.04]);
+  curve(c,[.31,.16],[.85,.05,.89,.49],[.26,.49]);
+  ellipse(c,-.12,.70,.67,.105);
+  for(let i=0;i<3;i++){
+   const x=-.36+i*.24;
+   curve(c,[x,-.14],[x+.29*Math.sin(t+i),-.33,x-.28*Math.cos(t+i),-.55],[x+.07,-.81]);
+  }
+ },
+ radio(c,_random,t){
+  c.strokeRect(-.93,-.46,1.86,.91);
+  line(c,[[-.74,-.46],[.44,-.80]]);
+  ellipse(c,-.55,0,.22,.22);
+  ellipse(c,.56,.15,.13,.13);
+  c.strokeRect(-.14,-.22,.82,.19);
+  line(c,[[.25+.30*Math.sin(t),-.21],[.25+.30*Math.sin(t),-.04]]);
+  for(let i=0;i<5;i++)line(c,[[-.63,-.12+i*.06],[-.46,-.12+i*.06]]);
+ },
+ mars(c,_random,t){
+  c.save();c.globalAlpha*=.45;
+  circle(c,0,0,.62);
+  c.restore();
+  c.globalAlpha*=.63;
+  ellipse(c,0,0,.74,.74);
+  for(let i=0;i<8;i++){
+   const a=i*2.4+t;
+   ellipse(c,Math.cos(a)*.42,Math.sin(a)*.4,.07+i*.008,.05+i*.004,a);
+  }
+  curve(c,[-.9,.21],[-.2,.59,.51,-.1],[.89,-.39]);
+ },
+ letter(c,_random,t){
+  const open=.12+.51*(.5+.5*Math.sin(t));
+  c.strokeRect(-.7,-.01,1.4,.82);
+  line(c,[[-.7,0],[0,.48],[.7,0]]);
+  c.strokeRect(-.55,-open,1.05,open+.02);
+  for(let i=0;i<3;i++){
+   const y=-open+.11+i*.121;
+   if(y<-.02)line(c,[[-.4,y],[.24+i*.05,y]]);
+  }
+ },
+ lighthouse(c,_random,t){
+  line(c,[[-.52,.71],[.53,.71]]);
+  line(c,[[-.18,.69],[-.11,-.45],[.11,-.45],[.18,.69]]);
+  c.strokeRect(-.15,-.65,.30,.19);
+  line(c,[[-.21,-.65],[0,-.82],[.21,-.65]]);
+  c.globalAlpha*=.45;
+  for(let i=0;i<4;i++){
+   const y=.74+i*.07;
+   curve(c,[-.95,y],[-.45,y+.14*Math.sin(t+i),.45,y-.14*Math.sin(t+i)],[.95,y]);
+  }
+ },
+ snow(c,r,t){
+  for(let i=0;i<19;i++){
+   const x=2*r()-1,y=2*((r()+t/tau)%1)-1,sz=.018+r()*.046;
+   c.save();c.translate(x+.11*Math.sin(t+i),y);
+   rays(c,6,0,sz,t/3);c.restore();
+  }
+  ellipse(c,0,-.10,.40,.40);
+  line(c,[[.21,.12],[0,-.10],[.03,-.34]]);
+ },
+ bridge(c,_random,t){
+  line(c,[[-1,.34],[1,.34]]);
+  for(const x of [-.62,.62])line(c,[[x,.68],[x,-.68]]);
+  curve(c,[-1,-.2],[-.38,-.93,.38,-.93],[1,-.2]);
+  for(let i=-6;i<=6;i++){
+   const x=i*.14;
+   line(c,[[x,-.75+.60*x*x],[x,.34]]);
+  }
+  for(let i=0;i<4;i++){
+   const y=.49+i*.13;
+   curve(c,[-.96,y],[-.4,y+.10*Math.cos(t+i),.35,y-.10*Math.sin(t+i)],[.96,y]);
+  }
+ },
+ sail(c,_random,t){
+  c.translate(.09*Math.sin(t),.08*Math.cos(t));c.rotate(.12*Math.sin(t));
+  line(c,[[-.69,.44],[-.46,.65],[.50,.65],[.72,.44],[-.69,.44]]);
+  line(c,[[0,.40],[0,-.75],[-.55,.30],[0,.30]]);
+  line(c,[[.08,-.53],[.56,.31],[.08,.31],[.08,-.53]]);
+ },
+ desert(c,_random,t){
+  for(let i=0;i<6;i++){
+   const y=-.34+i*.24;
+   curve(c,[-1,y],[-.52,y-.81+.10*Math.sin(t+i),.27,y+.49],[1,y-.08]);
+  }
+  ellipse(c,.58,-.49,.19,.19);
+ },
+ skyline(c,r,t){
+  const opacity=c.globalAlpha;
+  for(let i=0;i<11;i++){
+   const x=-.99+i*.18,top=i===4?-.82:i===7?-.61:-.17-r()*.37;
+   c.strokeRect(x,top,.16,.45-top);
+   if(i===4)for(const a of [.025,.13])line(c,[[x+a,top],[x+a,top-.20]]);
+   for(let j=0;j<3;j++)if(top+.11*j<.36){
+    c.globalAlpha=opacity*(.45+.45*Math.cos(t+i+j)**2);
+    c.fillRect(x+.03,top+.10+.11*j,.095,.024);
+   }
+   c.globalAlpha=opacity;
+  }
+  for(let i=0;i<6;i++)line(c,[[-.84+i*.17,.53+i*.06],[.89-i*.14,.53+i*.06]]);
+ },
+ road(c,_random,t){
+  line(c,[[-.93,.87],[-.12,-.49]]);
+  line(c,[[.93,.87],[.12,-.49]]);
+  for(let i=0;i<8;i++){
+   const d=((i/8+t/tau)%1)**1.5,y=-.45+1.26*d;
+   line(c,[[0,y],[0,y+.035+d*.11]]);
+  }
+  ellipse(c,0,-.48,.22,.16);
+ },
+ tightrope(c,_random,t){
+  const sag=.13+.055*Math.sin(t);
+  curve(c,[-1,-.02],[-.5,sag,.5,sag],[1,-.02]);
+  c.save();c.translate(.42*Math.sin(t),sag*.55);c.rotate(-.17*Math.cos(t));
+  ellipse(c,0,-.31,.065,.065);
+  line(c,[[0,-.25],[0,-.09],[-.09,0]]);
+  line(c,[[0,-.09],[.11,-.02]]);
+  line(c,[[-.30,-.18],[.30,-.22]]);c.restore();
+ },
+ rewind(c,_random,t){
+  ellipse(c,0,0,.64,.64);
+  for(let i=0;i<5;i++)ellipse(c,0,0,.15+.48*Math.abs(Math.cos(t+i*.64)),.63);
+  ellipse(c,0,0,.63,.21);
+  c.save();c.rotate(-t);
+  line(c,[[.59,-.65],[.76,-.37],[.88,-.65]]);c.restore();
+ },
+ halves(c,_random,t){
+  const split=.19+.18*Math.sin(t);
+  for(const side of [-1,1]){
+   c.save();c.translate(side*split,0);c.scale(side,1);
+   curve(c,[.04,.65],[.77,.27,1.02,-.84],[.04,-.32]);
+   line(c,[[.04,-.32],[.21,-.02],[.02,.18],[.18,.36],[.04,.65]]);
+   c.restore();
+  }
+ },
+ wax(c,r,t){
+  line(c,[[-.63,-.69],[-.34,-.82],[.35,-.82],[.69,-.59],[.42,.40],[0,.65],[-.43,.42],[-.63,-.69]]);
+  ellipse(c,-.30,-.25,.22,.12,.13);ellipse(c,.30,-.25,.22,.12,-.13);
+  for(let i=0;i<7;i++){
+   const y=((i*.24+t/tau)%1)*.72+.31;
+   circle(c,-.52+1.04*r(),y,.019+.018*r());
+  }
+ },
+ mushrooms(c,_random,t){
+  for(let i=0;i<4;i++){
+   const x=-.64+i*.42,y=.22-.31*Math.cos(i+1);
+   curve(c,[x,y],[x-.24,y-.45,x+.18,y-.49],[x+.24,y-.02]);
+   line(c,[[x-.19,y],[x+.24,y-.02]]);
+   curve(c,[x+.07,y],[x+.08+.06*Math.sin(t+i),y+.24,x-.12,y+.32],[x+.05,y+.51]);
+  }
+ },
+ bills(c,r,t){
+  for(let i=0;i<10;i++){
+   const x=2*r()-1,y=2*((r()+t/tau)%1)-1;
+   c.save();c.translate(x+.13*Math.sin(t+i),y);c.rotate(t+i*.69);
+   c.strokeRect(-.18,-.081,.36,.162);ellipse(c,0,0,.049,.052);c.restore();
+  }
+ },
+ phone(c,_random,t){
+  c.strokeRect(-.49,-.86,.98,1.72);
+  line(c,[[-.18,.72],[.18,.72]]);
+  for(let i=0;i<18;i++)c.fillRect(-.38+.042*i,-.14,.025,.12+.18*Math.sin(i*.43+3*t));
+ },
+ stadium(c,_random,t){
+  c.strokeRect(-.88,-.63,1.76,1.26);
+  line(c,[[0,-.63],[0,.63]]);
+  ellipse(c,0,0,.20,.20);
+  c.strokeRect(-.88,-.29,.31,.58);c.strokeRect(.57,-.29,.31,.58);
+  circle(c,.49*Math.sin(t),.22*Math.sin(2*t),.057);
+ },
+ bubbles(c,r,t){
+  for(let i=0;i<13;i++){
+   const x=1.8*r()-.90,y=1-2*((r()+t/tau)%1),s=.04+r()*.14;
+   ellipse(c,x+.09*Math.sin(t+i),y,s,s*.94);
+  }
+ },
+ tear(c,_random,t){
+  subjects.eye(c);
+  const y=.30+.68*t/tau;
+  const opacity=1-t/tau;
+  c.globalAlpha*=opacity;
+  curve(c,[.26,y-.14],[.10,y+.14,.41,y+.12],[.26,y-.14]);
+ },
+ record(c,_random,t){
+  for(let i=1;i<=8;i++)ellipse(c,0,0,.11+i*.08,.11+i*.08);
+  c.save();c.rotate(t);
+  line(c,[[.09,-.29],[.32,-.68]]);c.restore();
+  line(c,[[.83,-.78],[.68,-.37],[.37,-.21]]);
+ },
+ breath(c,_random,t){
+  for(const side of [-1,1]){
+   c.save();c.scale(side,1);
+   for(let i=0;i<4;i++){
+    const y=(i-1.5)*.24;
+    curve(c,[.11,y],[.40,y-.23*Math.sin(t+i),.65,y+.21*Math.cos(t+i)],[.92,y]);
+   }
+   c.restore();
+  }
+ },
+ home(c,_random,t){
+  line(c,[[-.83,-.28],[0,-.88],[.81,-.28]]);
+  c.strokeRect(-.61,-.29,1.22,1.05);
+  c.strokeRect(-.19,.27,.37,.49);
+  c.globalAlpha*=.55+.45*Math.sin(t)**2;
+  for(const x of [-.45,.19])c.fillRect(x,-.13,.25,.23);
+ },
+ razor(c,_random,t){
+  c.rotate(-.59+.12*Math.sin(t));
+  line(c,[[-.90,-.24],[-.59,-.40],[.72,-.40],[.91,-.23],[.68,.23],[-.73,.23],[-.90,-.24]]);
+  line(c,[[-.70,.08],[.75,.08]]);
+  for(const x of [-.59,.59])ellipse(c,x,-.08,.08,.08);
+ },
  shell(c,_random,t){
   for(let i=-5;i<=5;i++){
    const x=i*.16;
@@ -355,6 +623,21 @@ function find(track,profile){
 // Concrete imagery in Italian and English. Timed cues use only the active
 // lyric line supplied by the player; untimed lyrics establish the backdrop.
 const lyricImages=[
+ ["lighthouse",/\b(faro spento|fari spenti|lighthouses?)\b/i],
+ ["monitor",/\b(monitor|computer screen)\b/i],
+ ["radio",/\b(flippin.? through stations|radiofonic[oa]|stazioni radio)\b/i],
+ ["bridge",/\b(su di un ponte|dal ponte|sul ponte|cross the bridge)\b/i],
+ ["snow",/\b(come neve|neve che cade|falling snow)\b/i],
+ ["wax",/\b(maschera di cera|wax mask)\b/i],
+ ["letter",/\b(preferito scriverlo|ho preferito scrivere|scrivo una lettera)\b/i],
+ ["bills",/\b(banconote colorate|money rain)\b/i],
+ ["astronaut",/\b(astronaut[ai]|astronauts?)\b/i],
+ ["mars",/\b(su marte|sopra marte|land on mars)\b/i],
+ ["stadium",/\b(derby di coppa|derby della capitale)\b/i],
+ ["skyline",/\b(chicago|windy city)\b/i],
+ ["mushrooms",/\b(funghi in salsa rosa)\b/i],
+ ["record",/\b(disco in vinile|il mio disco|vinyl record)\b/i],
+ ["coffee",/\b(caffe del mattino)\b/i],
  ["shell",/\b(conchigli[ae]|seashells?)\b/i],
  ["headlights",/\b(fari|automobil[ei]|suv|headlights?)\b/i],
  ["piano",/\b(pianoforte|piano keys|tasti del piano)\b/i],
@@ -367,7 +650,8 @@ const lyricImages=[
  ["stars",/\b(stell[ae]|stelle cadenti|stars?|costellazion[ei]|constellations?)\b/i],
  ["sun",/\b(sole|alba|tramont[oi]|sorgere del sole|sun(?:rise|set)?|daybreak)\b/i],
  ["rain",/\b(piogg[ie][ae]?|piove|piovere|piovesse|temporale|tempesta|rain|storm|bufera)\b/i],
- ["water",/\b(mare|onde|oceano|porto|naufrag[io]+|ocean|waves?|harbou?r|sail(?:or|ing)?)\b/i],
+ ["sail",/\b(su navi|vela spiegata|navigare nel buio)\b/i],
+ ["water",/\b(mare|mari|onde|oceano|porto|naufrag[io]+|ocean|waves?|harbou?r|sail(?:or|ing)?)\b/i],
  ["rail",/\b(treno|treni|binari|rotaie|railway|trains?)\b/i],
  ["city",/\b(citta|quartier[ei]|grattaciel[oi]|strad[ae]|vicoli|neon|semafor[oi]|city|streets?|skyscrapers?)\b/i],
  ["window",/\b(finestr[ae]|finestrin[oi]|vetri|windows?)\b/i],
@@ -382,7 +666,7 @@ const lyricImages=[
  ["fold",/\b(letter[ae]|cartolin[ae]|bust[ae] di carta|envelopes?|letters?)\b/i],
  ["crown",/\b(coron[ae]|trono|castell[oi]|regno|impero|kingdom|crowns?|throne)\b/i],
  ["notes",/\b(melodi[ae]|spartit[oi]|musica|strument[oi]|canzon[ei]|chorus|music|melody|songs?)\b/i],
- ["heart",/\b(cuor[ei]|amore|baci[oi]|abbracci[oi]|hearts?|love|kiss)\b/i]
+ ["heart",/\b(cuor[ei]|amore|baci[oi]|abbracci[oi]|hearts?|love|kiss|besos?|abrazarte)\b/i]
 ];
 const authoredLyrics={
  "b-track-29":"water", // porto di Taranto e immagini del ritornello
@@ -399,9 +683,54 @@ const authoredLyrics={
  "b-track-208":"branch",
  "b-track-488":"city",
  "b-track-518":"water",
- "b-track-670":"water",
  "b-track-1187":"headlights", // Stratos: automobile in corsa
- "b-youtube-S8oUoa0pwpo":"shell" // Sentire La Musica: mare e conchiglia
+ "b-youtube-S8oUoa0pwpo":"shell", // Sentire La Musica: mare e conchiglia
+ "b-track-6":["petalMaze","garnet"], // il dedalo e il petalo nella voce di Sintetico, verificata sul mix
+ "b-track-11":["home","gold"], // rientro e famiglia
+ "b-track-20":["circus","garnet"], // il circo evocato nella strofa del Ferro, verificata sul mix
+ "b-track-23":["astronaut","ice"], // la Terra vista da fuori
+ "b-track-35":["halves","rose"], // due metà
+ "b-track-68":["mars","violet"], // Marte e porpora
+ "b-track-78":["desert","clay"], // deserto, sabbia e vento
+ "b-track-88":["bills","violet"], // banconote colorate
+ "b-track-89":["halves","clay"], // uno nell’altro
+ "b-track-95":["trophy","gold"], // pallone e trofeo
+ "b-track-114":["water","ice"], // alta marea
+ "b-track-118":["radio","teal"], // telefonate e stazioni
+ "b-track-124":["mars","ember"], // atterraggio su Marte
+ "b-track-125":["branch","teal"], // giungla e strada smarrita
+ "b-track-126":["phone","violet"], // voce di Siri
+ "b-track-140":["water","lagoon"], // il mare evocato nel ritornello
+ "b-track-170":["letter","peach"], // scrivere ciò che non si riesce a dire
+ "b-track-191":["eye","scarlet"], // occhi rossi e abisso
+ "b-track-198":["mirror","ice"], // sguardo nello specchio e vetro
+ "b-track-200":["lighthouse","slate"], // faro spento
+ "b-track-212":["signal","violet"], // ciocche viola e colori
+ "b-track-213":["monitor","acid"], // monitor
+ "b-track-215":["razor","steel"], // rasoio di Occam
+ "b-track-232":["tightrope","gold"], // equilibrio e filo sottile
+ "b-track-233":["bridge","lagoon"], // ponte sull’acqua scura
+ "b-track-234":["rewind","ice"], // mondo che torna indietro
+ "b-track-236":["snow","ice"], // neve che scende
+ "b-track-243":["headlights","clay"], // incontro fugace in auto
+ "b-track-245":["wax","acid"], // maschera di cera
+ "b-track-390":["club","fuchsia"], // luci soffuse del locale e fine serata nella registrazione di Thyna
+ "b-track-457":["mushrooms","rose"], // funghi nella salsa rosa
+ "b-track-514":["halves","peach"], // due persone che vogliono rimanere insieme
+ "b-track-515":["bubbles","gold"], // bollicine nell’aria
+ "b-track-520":["gate","steel"], // portoni chiusi
+ "b-track-574":["headlights","rose"], // occhi come fari
+ "b-track-627":["road","garnet"], // cabriolet sulla tangenziale
+ "b-track-658":["rewind","plum"], // mondo che cade e prospettiva cosmica
+ "b-track-664":["sail","slate"], // navigare nel buio
+ "b-track-670":["sail","lagoon"], // navi e mari
+ "b-track-705":["skyline","jade"], // ritorno a Chicago
+ "b-track-724":["coffee","peach"], // caffè al risveglio
+ "b-track-855":["stadium","garnet"], // incontro come derby
+ "b-track-954":["road","gold"], // strada ancora da fare
+ "b-track-963":["tear","violet"], // occhi lucidi
+ "b-track-977":["record","acid"], // disco e rime
+ "b-track-1197":["breath","rose"], // respiro che manca e luce nel ritrovarsi
 };
 function describeLyrics(scene,rows,timed){
  if(!scene||scene.id==="b-track-27")return;
@@ -417,9 +746,13 @@ function describeLyrics(scene,rows,timed){
   const score=(scores[motif]||0)*weight;
   return score>best.score?{motif,score}:best;
  },{motif:null,score:0}).motif;
- const subject=authoredLyrics[scene.id]??strongest??scene.subject;
- const changed=scene.lyricSubject!==subject;
+ const authored=authoredLyrics[scene.id];
+ const [reviewedSubject,reviewedPalette]=Array.isArray(authored)?authored:[authored];
+ const subject=reviewedSubject??strongest??scene.subject;
+ const palette=reviewedPalette??scene.palette;
+ const changed=scene.lyricSubject!==subject||scene.lyricPalette!==palette;
  scene.lyricSubject=subject;
+ scene.lyricPalette=palette;
  scene.lyricCues=cues;
  scene.lyricCue=null;
  if(changed&&active?.scene===scene)draw(active);
@@ -464,7 +797,7 @@ function draw(shot){
  world.height=ink.height=h;
  const c=world.getContext("2d"),f=ink.getContext("2d");
  if(!c||!f)return false;
- const [dark,mid,color,light]=palettes[scene.palette],r=random(scene.seed);
+ const [dark,mid,color,light]=palettes[scene.lyricPalette??scene.palette],r=random(scene.seed);
  const subject=scene.lyricSubject??scene.subject;
  const wide=aspect>1.15,kind=environments[subject]??8;
  const x=w*((wide ? .30 : .50)+(r()-.5)*(wide ? .07 : .11));
