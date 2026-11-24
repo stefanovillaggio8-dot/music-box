@@ -76,6 +76,19 @@ const server=http.createServer((req,res)=>{
     return route.abort();
    });
    await page.addInitScript(({targetFile,fromId,toId,translationMode,eventTrace})=>{
+    window.__nativeTranslationSignals=[];
+    if(translationMode){
+     const nativeFetch=window.fetch;
+     window.fetch=function(input,options){
+      if(String(input?.url||input).includes('api.mymemory.translated.net')){
+       const signal=options?.signal||input?.signal;
+       const row={signal,requestedAt:performance.now(),abortedAt:null};
+       __nativeTranslationSignals.push(row);
+       signal?.addEventListener('abort',()=>{row.abortedAt=performance.now()},{once:true});
+      }
+      return nativeFetch.apply(this,arguments);
+     };
+    }
     window.__nativePair={targetFile,fromId,toId};window.__nativeEventTrace=eventTrace;
     window.__nativeTranslationMode=translationMode;window.__nativeLyricSamples=[];
     localStorage.setItem('mb.profile',JSON.stringify('Ste'));localStorage.setItem('mb.djmix','on');
@@ -187,7 +200,11 @@ const server=http.createServer((req,res)=>{
     await page.waitForFunction(()=>MusicBoxBridge.currentId()===__nativePair.toId,null,{timeout:10000});
     if(translationMode){
      await page.waitForFunction(()=>document.getElementById('lyricsBody').textContent.includes('Native incoming phrase'),null,{timeout:5000});
-     for(let i=0;i<50&&!translationAborted;i++)await new Promise(r=>setTimeout(r,20));assert.equal(translationAborted,true);
+     // Playwright's intercepted WebKit request can remain pending without a
+     // requestfailed notification. Observe the ACTUAL client abort signal;
+     // stale-text and new-phrase assertions independently remain mandatory.
+     const signals=await page.evaluate(()=>__nativeTranslationSignals.map(r=>({aborted:r.signal?.aborted===true,abortedAt:r.abortedAt})));
+     assert.ok(signals.length>0);assert.ok(signals.every(r=>r.aborted&&Number.isFinite(r.abortedAt)),'old translation fetch signals must actually be aborted');
      assert.equal(await page.locator('#lyricsTraduci').textContent(),'Traduci');assert.equal(wordModels.length,0);
      const samples=await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen));
      assert.ok(samples.length>=8);assert.ok(samples.every(s=>s.id===fromId&&s.lyrics.includes('Native outgoing phrase')&&!s.lyrics.includes('Native incoming phrase')));
@@ -224,7 +241,7 @@ const server=http.createServer((req,res)=>{
     }
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,sourceStart:await page.evaluate(()=>__sourceStartProof),eofChecks:await page.evaluate(()=>__eofChecks),stall:await page.evaluate(()=>window.__nativeStall||null),
-     ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
+     ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:await page.evaluate(()=>__nativeTranslationSignals.every(r=>r.signal?.aborted===true)),networkAbortNotification:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
       observedOldPhraseSamples:await page.evaluate(()=>__nativeLyricSamples.filter(s=>s.beforeAdoption&&s.readerOpen).length)}}:{}),logs});
    }catch(e){const failure=await page.evaluate(()=>({setup:window.__setupError,src:MusicBoxBridge.audio()?.currentSrc,trace:window.__nativeCleanTrace,eofChecks:window.__eofChecks,diagnostics:MusicBoxMix.diagnostics(),clockAttempts:window.__nativeClockAttempts,timeline:window.__nativeCleanTimeline}));report.results.push({browser:name,platform:process.platform,failed:e.message,failure,logs});console.error(name,e.message,JSON.stringify(failure));throw e;}
    await context.close();
