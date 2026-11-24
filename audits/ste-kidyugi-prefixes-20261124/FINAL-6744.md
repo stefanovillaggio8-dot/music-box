@@ -43,3 +43,5 @@ Read the current shuffle code before proposing changes: it ALREADY inspects the 
 Physical Safari/PWA, lock screen/background and isolated cold-start seek still need device evidence; private corrected readiness attempt2 remains unanswered, no public dual-player enablement. Karaoke remains FULL PHRASES ONLY; PR80 experimental phrase timestamps remain uninstalled. Future-song full certification is not automatically solved by these four plans.
 
 PR59 MUST remain DRAFT; never merge it wholesale. This checkpoint is completed, not waiting forPR94 publication. Begin next task from the final research commit referenced in the PR59 Conversation, preserving all public changes and user data.
+
+Final concurrent recovery: main316919d4 includes four missing cover entries (d05a08c4) and newer listening statistics. Both preserved in research; application/audio/index/worker bytes unchanged from the validated checkpoint. No additional publication or musical certification inferred.
