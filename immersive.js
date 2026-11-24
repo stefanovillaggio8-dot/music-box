@@ -37,6 +37,10 @@ function atmosphereForTrack(id,title,artist){
 // Reviewed associations use the stable recording identity. Vimeo playback
 // uses the uploader-enabled official player in its documented chromeless mode.
  const reviewedVideoCatalog=Object.freeze({
+  "b-track-40":{
+   file:"songs/track-40.mp3",title:"Donna",artist:"Kid Yugi",
+   vimeoId:"1206478261",embedHash:"b05a806f89",aspectRatio:1.5,offsetSeconds:0
+  },
   "b-track-179":{
    file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt",
    vimeoId:"1028937342",offsetSeconds:0
@@ -98,6 +102,11 @@ function atmosphereForTrack(id,title,artist){
   const initialTime=Math.max(0,Math.floor(audio.currentTime+videoOffset));
   if(initialTime>0)src.hash="t="+initialTime+"s";
   const iframe=document.createElement("iframe");
+  if(vimeoSource.aspectRatio){
+   const ratio=vimeoSource.aspectRatio;
+   iframe.style.width="max(100cqw, "+(100*ratio)+"cqh)";
+   iframe.style.height="max(100cqh, "+(100/ratio)+"cqw)";
+  }
   iframe.title="Filmato musicale";
   iframe.tabIndex=-1;
   iframe.allow="autoplay; encrypted-media";

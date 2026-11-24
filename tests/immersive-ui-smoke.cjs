@@ -426,6 +426,23 @@ async function run(){
     await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
     await page.locator("#imVideoToggle").click();
     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+
+    await page.route("https://player.vimeo.com/video/1206478261?*",route=>
+     route.fulfill({contentType:"text/html",body:vimeoFixture(185.121)}));
+    await page.evaluate(()=>{
+     Object.assign(fakeSong,{id:"b-track-40",file:"songs/track-40.mp3",title:"Donna",artist:"Kid Yugi"});
+     Object.assign(fakeAudio,{currentTime:28,duration:185.121,paused:false});
+    });
+    const filmButton=page.getByRole("button",{name:"Filmato",exact:true});
+    await filmButton.click();
+    const donnaFrame=page.locator('#imVimeo iframe[src*="/1206478261"]');
+    await donnaFrame.waitFor();
+    const framing=await donnaFrame.evaluate(frame=>{
+     const video=frame.getBoundingClientRect(),holder=frame.parentElement.getBoundingClientRect();
+     return {aspect:video.width/video.height,covers:video.width>=holder.width-1&&video.height>=holder.height-1};
+    });
+    assert.ok(framing.covers&&Math.abs(framing.aspect-1.5)<.01,"Donna's 3:2 frame covers the video area");
+
     await page.evaluate(()=>{
      fakeProfile="Diego";
      Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie"});
