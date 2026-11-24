@@ -4799,10 +4799,11 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .im-song-animation[hidden],.im-animation-label[hidden]{display:none}
 .im-song-animation canvas:first-child{animation:im-scene-light var(--im-shot-time) ease-in-out infinite}
 .im-song-animation canvas:last-child{animation:im-scene-subject var(--im-shot-time) ease-in-out infinite}
+.im-song-animation[data-environment="film"] canvas:last-child{animation-name:im-scene-light}
 .im-animation-label{padding:3px 6px;border:1px solid #fff3;border-radius:4px;background:#08091699;color:#fff;font-size:9px;letter-spacing:.025em;white-space:nowrap}
 @keyframes im-scene-light{
  0%,100%{transform:scale(1.02)}
- 50%{transform:scale(1.08) translate(-1.25%,.7%)}
+ 50%{transform:scale(1.13) translate(-2.3%,.9%)}
 }
 @keyframes im-scene-subject{
  0%,100%{transform:translate(0,0) scale(1);opacity:.86}
