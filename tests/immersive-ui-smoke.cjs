@@ -55,32 +55,15 @@ const fixture=[
 ].join("\n");
 // Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
 const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
-const vimeoSdk=fs.readFileSync(path.join(root,"vendor","vimeo","player.min.js"));
-const vimeoFixture=(duration=208.689)=>`<!doctype html><html><body><output id="status"></output><script>
-let time=Number(location.hash.match(/^#t=([0-9]+)s$/)?.[1])||0,paused=true,muted=false;
-window.addEventListener("message",event=>{
- if(event.source!==parent)return;
- const request=typeof event.data==="string"?JSON.parse(event.data):event.data;
- const {method,value}=request;
- let result;
- if(method==="ping")result=true;
- else if(method==="setMuted")result=muted=value;
- else if(method==="getDuration")result=${duration};
- else if(method==="getCurrentTime")result=time;
- else if(method==="setCurrentTime")result=time=value;
- else if(method==="play")paused=false;
- else if(method==="pause")paused=true;
- else return;
- document.getElementById("status").textContent=JSON.stringify({time,paused,muted});
- parent.postMessage({method,value:result},event.origin);
-});
-parent.postMessage({event:"ready"},"*");
-</script></body></html>`;
+// Inject only synthetic test recordings. The production catalog stays intact.
+const canvasFixtureEntries=Object.fromEntries(["short-loop","too-long"].map(id=>[id,{
+ file:"songs/canvas-fixture.mp3",title:"Brano di prova",artist:"Artista di prova",
+ kind:"official-loop",evidence:"https://example.test/test-permission",url:"/fixture.mp4"
+}]));
+const testImmersive=immersive.replace("const reviewedCanvasCatalog=Object.freeze({",
+ match=>match+JSON.stringify(canvasFixtureEntries).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
- if(loc==="/vendor/vimeo/player.min.js"){
-  res.writeHead(200,{"Content-Type":"text/javascript"});res.end(vimeoSdk);return;
- }
  if(loc==="/fixture.mp4"){
   const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
   const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
@@ -93,7 +76,7 @@ const server=http.createServer((req,res)=>{
   res.writeHead(200,{...headers,"Content-Length":clip.length});res.end(clip);return;
  }
 
- const contents=loc==="/style.css"?css:loc==="/immersive.js"?immersive:fixture;
+ const contents=loc==="/style.css"?css:loc==="/immersive.js"?testImmersive:fixture;
  res.writeHead(200,{"Content-Type":loc.endsWith(".css")?"text/css":
   loc.endsWith(".js")?"text/javascript":"text/html","Cache-Control":"no-store"});
  res.end(contents);
@@ -347,135 +330,75 @@ async function run(){
     "swiping the lyrics cannot dismiss immersive mode");
 
    if(size.name==="desktop"||size.name==="iphone13"){
-    // Unsupported links are intentionally invisible and never loaded.
-    await page.evaluate(()=>{fakeSong.id="external-video";fakeSong.videoUrl="https://www.youtube.com/watch?v=example";});
-    await page.waitForTimeout(250);
-    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
-    assert.equal(await page.locator("#imVideo").getAttribute("src"),null);
-    await page.evaluate(()=>{fakeSong.id="verified-video";fakeSong.videoUrl="/fixture.mp4";
-     fakeAudio.currentTime=.5;fakeAudio.duration=4;fakeAudio.paused=false;});
-    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
-    // The test context uses reduced motion; explicit activation is required.
-    await page.locator("#imVideoToggle").click();
-    try{
-     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:12000});
-    }catch(e){
-     console.error("Video diagnostics",await page.evaluate(()=>{
-      const v=document.getElementById("imVideo");return {src:v.getAttribute("src"),currentSrc:v.currentSrc,readyState:v.readyState,networkState:v.networkState,error:v.error?.message,paused:v.paused,time:v.currentTime,duration:v.duration,buttonHidden:document.getElementById("imVideoToggle").hidden};
-     }));
-     throw e;
-    }
-    const visualHandle=await page.waitForFunction(()=>{
-     if(!document.getElementById("immersivePanel").classList.contains("im-video-live"))return false;
-     const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade"),cover=document.getElementById("imCover");
+    const video=page.locator("#imVideo");
+    const switchTrack=async(trackId,title="Brano di prova")=>{
+     await page.evaluate(({trackId,title})=>{
+      Object.assign(fakeSong,{id:trackId,file:"songs/canvas-fixture.mp3",title,artist:"Artista di prova"});
+      Object.assign(fakeAudio,{currentTime:123,duration:240,paused:false});
+     },{trackId,title});
+     await page.waitForFunction(title=>document.getElementById("imTitle").textContent===title,title);
+    };
+    await page.evaluate(()=>{fakeSong.videoUrl="/fixture.mp4";fakeSong.musicVideoUrl="/fixture.mp4"});
+    await switchTrack("b-track-179","Certe bugie");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"former full video stays disabled");
+    assert.equal(await video.getAttribute("src"),null,"track metadata cannot load video");
+    assert.equal(await page.locator("#immersivePanel iframe").count(),0);
+
+    await switchTrack("short-loop","Versione diversa");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the title must match the reviewed recording");
+    await switchTrack("another-track","Brano senza animazione");
+    await switchTrack("short-loop");
+    assert.equal(await video.getAttribute("src"),null,"reduced motion requires explicit activation");
+    await page.getByRole("button",{name:"Animazione",exact:true}).click();
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
+    const visual=await page.evaluate(()=>{
+     const v=document.getElementById("imVideo"),shell=document.querySelector(".im-shell"),shade=document.querySelector(".im-video-shade");
      const b=document.getElementById("imToggle"),r=b.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
-     return {muted:v.muted,volume:v.volume,videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),cover:getComputedStyle(cover).visibility,hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents};
+     const lyrics=document.querySelector("#imKaraoke .im-line");
+     return {
+      muted:v.muted,loop:v.loop,inline:v.playsInline,
+      videoZ:Number(getComputedStyle(v).zIndex),shadeZ:Number(getComputedStyle(shade).zIndex),shellZ:Number(getComputedStyle(shell).zIndex),
+      hit:b.contains(hit),pointer:getComputedStyle(v).pointerEvents,
+      lyricsVisible:getComputedStyle(lyrics).visibility==="visible",paused:fakeAudio.paused
+     };
     });
-    const visual=await visualHandle.jsonValue();
-    assert.equal(visual.muted,true);
-    assert.equal(visual.volume,0);
-    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ,
-     "video stays beneath shade and controls: "+JSON.stringify(visual));
-    assert.equal(visual.cover,"hidden","cover must not overlay the video");
-    assert.equal(visual.hit,true,"play button remains the top clickable element");
+    assert.ok(visual.muted&&visual.loop&&visual.inline);
+    assert.ok(visual.videoZ<visual.shadeZ&&visual.shadeZ<visual.shellZ);
+    assert.ok(visual.hit&&visual.lyricsVisible&&!visual.paused);
     assert.equal(visual.pointer,"none");
-    await page.evaluate(()=>fakeAudio.paused=true);
-    await page.waitForFunction(()=>document.getElementById("imVideo").paused);
-    await page.evaluate(()=>{fakeSong.id="no-video";delete fakeSong.videoUrl;});
-    await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden&&
-      !document.getElementById("immersivePanel").classList.contains("im-video-live")&&
-      !document.getElementById("imVideo").hasAttribute("src"));
+    await video.evaluate(v=>{v.currentTime=v.duration-.30});
+    await page.waitForFunction(()=>{
+     const v=document.getElementById("imVideo");
+     return !v.paused&&!v.seeking&&v.currentTime>0&&v.currentTime<1.5;
+    });
+    assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123,"loop does not seek the audio");
 
-    let embedRequests=0;
-    await page.route("https://player.vimeo.com/video/1028937342?*",route=>{
-     embedRequests++;
-     const params=new URL(route.request().url()).searchParams;
-     assert.equal(params.get("controls"),"0");
-     assert.equal(params.get("muted"),"1");
-     assert.equal(params.get("autoplay"),"1");
-     return route.fulfill({contentType:"text/html",body:vimeoFixture()});
-    });
-    await page.evaluate(()=>{
-     Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt"});
-     Object.assign(fakeAudio,{currentTime:28,duration:208.689,paused:false});
-    });
-    const vimeo=page.frameLocator("#imVimeo iframe");
-    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
-    assert.equal(embedRequests,0,"mobile and reduced-motion contexts require a tap before loading Vimeo");
-    await page.locator("#imVideoToggle").click();
-    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
-    assert.deepEqual(JSON.parse(await vimeo.locator("#status").textContent()),{time:28,paused:false,muted:true});
-    await page.evaluate(()=>{fakeAudio.currentTime=90;fakeAudio.paused=true});
-    await vimeo.getByText('{"time":28,"paused":true,"muted":true}',{exact:true}).waitFor();
+    await page.evaluate(()=>{fakeAudio.paused=true});
+    await page.waitForFunction(()=>!document.getElementById("imVideo").hasAttribute("src"));
     await page.evaluate(()=>{fakeAudio.paused=false});
-    await vimeo.getByText('{"time":90,"paused":false,"muted":true}',{exact:true}).waitFor();
-    await page.evaluate(()=>{fakeSong.id="no-video";fakeSong.title="Brano senza filmato"});
-    await page.waitForFunction(()=>!document.querySelector("#imVimeo iframe")&&
-      !document.getElementById("immersivePanel").classList.contains("im-video-live"));
-
-    await page.route("https://player.vimeo.com/video/919117318?*",route=>{
-     const params=new URL(route.request().url()).searchParams;
-     assert.equal(params.keys().next().value,"h");
-     assert.equal(params.get("h"),"30a90a146d");
-     return route.fulfill({contentType:"text/html",body:vimeoFixture(253.376)});
-    });
-    await page.evaluate(()=>{
-     Object.assign(fakeSong,{id:"b-track-478",file:"songs/track-478.mp3",title:"VENTANNI",artist:"Måneskin"});
-     Object.assign(fakeAudio,{currentTime:28,duration:253.376,paused:false});
-    });
-    await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
-    await page.locator("#imVideoToggle").click();
     await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
     await page.evaluate(()=>{
-     fakeProfile="Diego";
-     Object.assign(fakeSong,{id:"b-track-179",file:"songs/track-179.mp3",title:"Certe bugie"});
-     fakeAudio.duration=208.689;
+     Object.defineProperty(document,"hidden",{value:true,configurable:true});
+     document.dispatchEvent(new Event("visibilitychange"));
     });
-    await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Certe bugie");
-    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
-    assert.equal(await page.locator("#imVimeo iframe").count(),0);
-    assert.equal(embedRequests,1);
+    await page.waitForFunction(()=>!document.getElementById("imVideo").hasAttribute("src"));
+    await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event("visibilitychange"))});
+    await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"));
 
-    if(process.env.IMMERSIVE_LIVE_VIMEO==="1"&&size.name==="desktop"){
-     await page.unroute("https://player.vimeo.com/video/1028937342?*");
-     const network=[];
-     page.on("response",response=>{
-      const url=new URL(response.url());
-      if((/vimeo(?:cdn)?\.com$/.test(url.hostname)||response.request().resourceType()==="media")&&response.status()>=400)
-       network.push([url.hostname,response.status()]);
-     });
-     page.on("requestfailed",request=>{
-      const url=new URL(request.url());
-      if(/vimeo(?:cdn)?\.com$/.test(url.hostname)||request.resourceType()==="media")network.push([url.hostname,request.failure()?.errorText]);
-     });
-     await page.evaluate(()=>{
-      window.vimeoProbe=[];
-      window.addEventListener("message",e=>{
-       if(e.origin!=="https://player.vimeo.com")return;
-       const data=typeof e.data==="string"?JSON.parse(e.data):e.data;
-       if(data.method||data.event)vimeoProbe.push([data.method||data.event,data.data?.name,data.data?.method]);
-      });
-      fakeProfile="Ste";
-      fakeAudio.currentTime=28;
-     });
-     await page.waitForFunction(()=>!document.getElementById("imVideoToggle").hidden);
-     await page.locator("#imVideoToggle").click();
-     try{
-      await page.waitForFunction(()=>document.getElementById("immersivePanel").classList.contains("im-video-live"),null,{timeout:24000});
-     }catch(error){
-      const playerFrame=page.frames().find(frame=>frame.url().startsWith("https://player.vimeo.com/video/"));
-      const media=await playerFrame?.evaluate(()=>{
-       const video=document.querySelector("video");
-       return {video:video&&{time:video.currentTime,paused:video.paused,readyState:video.readyState,error:video.error?.code}};
-      }).catch(()=>null);
-      console.error("Official Vimeo diagnostics",JSON.stringify({network,media,events:await page.evaluate(()=>vimeoProbe.slice(-20))}));
-      throw error;
-     }
-     const live=page.frameLocator("#imVimeo iframe").locator("video").first();
-     const playback=await live.evaluate(video=>({muted:video.muted,paused:video.paused,time:video.currentTime}));
-     assert.ok(playback.muted&&!playback.paused&&playback.time>20,"official Vimeo video is decoding in the Immersive background");
-     console.log("Official Vimeo playback verified in Immersive Mode");
-    }
+    await switchTrack("another-track","Brano senza animazione");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.equal(await video.getAttribute("src"),null);
+    await switchTrack("too-long");
+    await video.evaluate(v=>Object.defineProperty(v,"duration",{value:185,configurable:true}));
+    await page.getByRole("button",{name:"Animazione",exact:true}).click();
+    await page.waitForFunction(()=>document.getElementById("imVideoToggle").hidden);
+    assert.equal(await video.getAttribute("src"),null,"a full-length response must be released");
+    await video.evaluate(v=>{delete v.duration});
+
+    await page.evaluate(()=>{fakeProfile="Diego"});
+    await switchTrack("another-track","Brano senza animazione");
+    await switchTrack("short-loop");
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the reviewed entry is exclusive to Ste");
    }
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");
