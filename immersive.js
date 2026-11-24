@@ -249,7 +249,7 @@ function renderLyrics(force){
       ...(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))?{sourceT:Number(row.sourceT)}:{}),
       ...(row.estimated?{estimated:true}:{})})):
     plainRows.map(text=>({text}))).slice(0,500);
-   window.MusicBoxImmersiveAnimation?.describeLyrics?.(songAnimation,lyricRows,lyricTimed);
+   window.MusicBoxImmersiveAnimation?.describeLyrics?.(songAnimation,lyricRows);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
    const fragment=document.createDocumentFragment();
    for(let i=0;i<lyricRows.length;i++){
@@ -332,7 +332,6 @@ function renderLyrics(force){
    if(lastLine>=0&&lastLine<karaoke.children.length)
     karaoke.children[lastLine].classList.remove("active");
    lastLine=-1;
-   window.MusicBoxImmersiveAnimation?.setVerse?.(songAnimation,-1);
    return;
   }
  }
@@ -346,7 +345,6 @@ function renderLyrics(force){
  // rows at every sung line caused layout/style stalls on GPU-busy desktops.
  const previous=lastLine;
  lastLine=index;
- window.MusicBoxImmersiveAnimation?.setVerse?.(songAnimation,index);
  const lines=karaoke.children;
  if(previous>=0&&previous<lines.length)
   lines[previous].classList.remove("active");
