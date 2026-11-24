@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=11" />
+  <link rel="stylesheet" href="style.css?v=6743&amp;lyrics=12" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -962,8 +962,7 @@
   
 <div id="immersivePanel" class="im-root" hidden role="dialog" aria-modal="true" aria-label="Immersive Mode: player cinematografico">
   <div id="imBackdrop" class="im-backdrop" aria-hidden="true"></div>
-  <video id="imVideo" class="im-video" muted playsinline preload="metadata" aria-hidden="true" hidden></video>
-  <div id="imVimeo" class="im-video im-vimeo" aria-hidden="true" hidden></div>
+  <video id="imVideo" class="im-video" muted playsinline preload="metadata" disablepictureinpicture aria-hidden="true" hidden></video>
   <div class="im-video-shade" aria-hidden="true"></div>
   <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="im-ambient-bloom" aria-hidden="true"></div>
@@ -975,7 +974,7 @@
       </div>
       <div class="im-head-right">
         <span class="im-mode"><span class="im-live-dot" aria-hidden="true"></span> IMMERSIVE</span>
-        <button id="imVideoToggle" type="button" class="im-focus-toggle im-video-toggle" aria-pressed="false" hidden>Filmato</button>
+        <button id="imVideoToggle" type="button" class="im-focus-toggle im-video-toggle" aria-pressed="false" hidden>Animazione</button>
         <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode" title="Chiudi">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
         </button>
@@ -1642,6 +1641,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <script src="audio-composite-mix.js?v=14"></script>
 <script src="mix-intelligente.js?v=6743&amp;dj=63"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6734&amp;words=17"></script>
+<script src="immersive.js?v=6734&amp;words=18"></script>
 </body>
 </html>

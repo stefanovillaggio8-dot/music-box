@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6743&lyrics=11",
+  "./style.css?v=6743&lyrics=12",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -71,7 +71,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6734&words=17",
+  "./immersive.js?v=6734&words=18",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -96,7 +96,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6743&lyrics=11",
+  "./style.css?v=6743&lyrics=12",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -118,7 +118,7 @@ const OFFLINE_SHELL = [
   "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6743&dj=63",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6734&words=17"
+  "./immersive.js?v=6734&words=18"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
@@ -1487,7 +1487,7 @@ const _coreRevalidateAfter=new Map();
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  if (event.request.method !== "GET") return;
+  if (event.request.method !== "GET" || event.request.destination === "video") return;
 
   /* Le canzoni sono ospitate su raw.githubusercontent.com, fuori dall'origine
      della pagina: prima venivano escluse e quindi le copie offline non suonavano. */

@@ -34,224 +34,100 @@ function atmosphereForTrack(id,title,artist){
  root.classList.add("im-track-enter");
 }
 
-// Reviewed associations use the stable recording identity. Vimeo playback
-// uses the uploader-enabled official player in its documented chromeless mode.
- const reviewedVideoCatalog=Object.freeze({
-  "b-track-179":{
-   file:"songs/track-179.mp3",title:"Certe bugie",artist:"nayt",
-   vimeoId:"1028937342",offsetSeconds:0
-  },
-  "b-track-188":{
-   file:"songs/track-188.mp3",title:"Prima che",artist:"nayt",
-   vimeoId:"1169917470",embedHash:"be8861987b",offsetSeconds:0
-  },
-  "b-track-478":{
-   file:"songs/track-478.mp3",title:"VENT'ANNI",alternateTitle:"VENTANNI",artist:"Måneskin",
-   vimeoId:"919117318",embedHash:"30a90a146d",offsetSeconds:0
-  },
-  "b-track-520":{
-   file:"songs/track-520.mp3",title:"ZITTI E BUONI",artist:"Måneskin",
-   vimeoId:"890571298",offsetSeconds:0
-  }
- });
- let videoSource="",videoOffset=0,videoEnabled=false,videoFailed=false,videoPlayingRequest=null,videoLoadStarted=0;
- let vimeoSource=null,vimeoSession=null,vimeoSdk=null;
- function reviewedVideoFor(track){
-  if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedVideoCatalog,String(track.id)))return null;
-  const entry=reviewedVideoCatalog[String(track.id)];
-  if(!entry||entry.file!==track.file||entry.artist!==track.artist)return null;
-  if(entry.title!==track.title&&(!entry.alternateTitle||entry.alternateTitle!==track.title))return null;
-  return entry;
- }
- function directVideoSource(track){
-  const raw=track?.videoUrl||track?.musicVideoUrl||"";
-  if(typeof raw!=="string"||!raw.trim())return "";
+// Each entry binds an authorized short file to one published recording.
+ // Source kinds: spotify-canvas, official-loop, official-excerpt.
+ // Record the permission URL in evidence when adding a source.
+ const reviewedCanvasCatalog=Object.freeze({});
+ let canvasSource="",canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
+ function canvasFor(track){
+  if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedCanvasCatalog,track.id))return "";
+  const entry=reviewedCanvasCatalog[track.id];
+  if(entry.file!==track.file||entry.artist!==track.artist||entry.title!==track.title)return "";
+  if(!["spotify-canvas","official-loop","official-excerpt"].includes(entry.kind)||!entry.evidence)return "";
   try{
-   const url=new URL(raw,document.baseURI);
-   if(url.username||url.password)return "";
-   if(url.protocol!=="https:"&&!(url.origin===location.origin&&url.protocol==="http:"))return "";
-   if(!/\.(mp4|webm|m4v)$/i.test(url.pathname))return "";
-   return url.href;
+   const url=new URL(entry.url,document.baseURI);
+   if(url.username||url.password||!/\.(mp4|m4v|webm)$/i.test(url.pathname))return "";
+   return url.protocol==="https:"||(url.protocol==="http:"&&url.origin===location.origin)?url.href:"";
   }catch(_){return ""}
  }
- function loadVimeoSdk(){
-  if(!vimeoSdk){
-   vimeoSdk=new Promise((resolve,reject)=>{
-    const script=document.createElement("script");
-    script.src=new URL("vendor/vimeo/player.min.js?v=2.30.4",document.baseURI).href;
-    script.onload=()=>window.Vimeo?.Player?resolve(window.Vimeo.Player):reject(Error("Vimeo Player unavailable"));
-    script.onerror=reject;
-    document.head.append(script);
-   }).catch(error=>{vimeoSdk=null;throw error});
-  }
-  return vimeoSdk;
- }
- function startVimeo(audio){
-  const holder=$("imVimeo");
-  if(!holder)return;
-  const src=new URL("https://player.vimeo.com/video/"+vimeoSource.vimeoId);
-  const embedHash=vimeoSource.embedHash;
-  src.search=new URLSearchParams({
-   ...(embedHash?{h:embedHash}:{}),
-   controls:"0",muted:"1",autoplay:"1",loop:"0",keyboard:"0",playsinline:"1",dnt:"1"
-  });
-  const initialTime=Math.max(0,Math.floor(audio.currentTime+videoOffset));
-  if(initialTime>0)src.hash="t="+initialTime+"s";
-  const iframe=document.createElement("iframe");
-  iframe.title="Filmato musicale";
-  iframe.tabIndex=-1;
-  iframe.allow="autoplay; encrypted-media";
-  iframe.referrerPolicy="strict-origin-when-cross-origin";
-  iframe.src=src.href;
-  const session={iframe,player:null,duration:0,started:Date.now(),busy:false,nextPoll:0,paused:true,rate:1,seekDelay:0};
-  vimeoSession=session;
-  holder.append(iframe);
-  holder.hidden=false;
-  loadVimeoSdk().then(async Player=>{
-   if(vimeoSession!==session)return;
-   const player=new Player(iframe);
-   session.player=player;
-   await player.ready();
-   if(vimeoSession!==session)return;
-   await player.setMuted(true);
-   session.duration=await player.getDuration();
-  }).catch(()=>{if(vimeoSession===session)failVideo()});
- }
- function syncVimeo(audio){
-  if(!vimeoSession&&!audio.paused&&!audio.seeking)startVimeo(audio);
-  const session=vimeoSession;
-  if(!session)return;
-  const now=Date.now();
-  if((!session.duration||session.busy)&&now-session.started>25000){failVideo();return}
-  if(!session.duration||session.busy||now<session.nextPoll)return;
-  if(Number.isFinite(audio.duration)&&audio.duration>10&&session.duration<audio.duration+videoOffset-2){failVideo();return}
-  const time=audio.currentTime+videoOffset;
-  const inRange=time>=0&&time<session.duration-.15;
-  const shouldPause=audio.paused||audio.seeking||!inRange;
-  const root=$("immersivePanel"),player=session.player;
-  if(!inRange||audio.seeking)root?.classList.remove("im-video-live");
-  if(shouldPause&&session.paused)return;
-  session.busy=true;
-  session.started=now;
-  session.nextPoll=now+250;
-  (async()=>{
-   if(shouldPause){
-    await player.pause();
-    session.paused=true;
-    return;
-   }
-   const rate=audio.playbackRate||1;
-   if(session.rate!==rate){
-    await player.setPlaybackRate(rate);
-    session.rate=rate;
-   }
-   if(vimeoSession!==session||audio.paused||audio.seeking)return;
-   // Start decoding before seeking. The player can keep a pre-play seek
-   // pending while media is being initialized.
-   if(session.paused){
-    await player.play();
-    session.paused=false;
-   }
-   if(vimeoSession!==session||audio.paused||audio.seeking)return;
-   let position=await player.getCurrentTime();
-   if(vimeoSession!==session||audio.paused||audio.seeking)return;
-   const target=audio.currentTime+videoOffset;
-   if(target<0||target>=session.duration-.15)return;
-   if(Math.abs(position-target)>.55){
-    root?.classList.remove("im-video-live");
-    const seekStarted=performance.now();
-    const seekTarget=Math.min(session.duration-.15,target+session.seekDelay*rate);
-    position=await player.setCurrentTime(seekTarget);
-    session.seekDelay=Math.min(1.25,(performance.now()-seekStarted)/1000);
-   }
-   if(vimeoSession!==session)return;
-   if(audio.paused||audio.seeking){
-    await player.pause();
-    session.paused=true;
-    return;
-   }
-   if(vimeoSession===session&&!audio.paused&&!audio.seeking){
-    const drift=Math.abs(position-(audio.currentTime+videoOffset));
-    root?.classList.toggle("im-video-live",drift<=.85);
-   }
-  })().catch(()=>{if(vimeoSession===session)failVideo()}).finally(()=>{session.busy=false});
- }
- function stopVideo(){
-  const video=$("imVideo"),root=$("immersivePanel");
-  root?.classList.remove("im-video-live");
-  if(vimeoSession){
-   const session=vimeoSession;
-   vimeoSession=null;
-   session.iframe.remove();
-   if(session.player)session.player.destroy().catch(()=>{});
-   $("imVimeo").hidden=true;
-  }
-  if(!video)return;
-  videoPlayingRequest=null;videoLoadStarted=0;
+ function stopCanvas(){
+  $("immersivePanel")?.classList.remove("im-video-live");
+  canvasRequest=null;
+  canvasLoadStarted=0;
+  const video=$("imVideo");
+  if(!video?.hasAttribute("src"))return;
   video.pause();
-  if(video.hasAttribute("src")){video.removeAttribute("src");video.load()}
+  video.removeAttribute("src");
+  video.load();
   video.hidden=true;
  }
- function videoButton(){
-  const button=$("imVideoToggle");if(!button)return;
-  button.hidden=!(videoSource||vimeoSource)||videoFailed;
-  button.setAttribute("aria-pressed",String(videoEnabled&&!videoFailed));
-  button.textContent=videoEnabled&&!videoFailed?"Copertina":"Filmato";
+ function renderCanvasButton(){
+  const button=$("imVideoToggle");
+  if(!button)return;
+  button.hidden=!canvasSource;
+  button.setAttribute("aria-pressed",String(canvasEnabled));
+  button.textContent=canvasEnabled?"Copertina":"Animazione";
  }
- function configureVideo(track){
-  stopVideo();
-  const reviewed=reviewedVideoFor(track);
-  vimeoSource=reviewed;videoSource=vimeoSource?"":directVideoSource(track);
-  videoOffset=reviewed?.offsetSeconds||0;videoFailed=false;
-  // Mobile opts in: its native audio decoder must remain the priority.
-  videoEnabled=!!(videoSource||vimeoSource)&&!window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches;
-  videoButton();
+ function configureCanvas(track){
+  stopCanvas();
+  canvasSource=canvasFor(track);
+  const conserve=window.matchMedia?.("(max-width:850px), (prefers-reduced-motion: reduce)")?.matches||navigator.connection?.saveData;
+  canvasEnabled=!!canvasSource&&!conserve;
+  renderCanvasButton();
  }
- function failVideo(){
-  videoFailed=true;videoEnabled=false;stopVideo();videoButton();
+ function failCanvas(){
+  canvasSource="";
+  canvasEnabled=false;
+  stopCanvas();
+  renderCanvasButton();
  }
- function updateVideo(audio){
-  if(!opened||!videoEnabled||videoFailed||!(videoSource||vimeoSource))return;
-  // Never start a second media decoder during a shared listening session,
-  // an inactive page, or while audio is paused/has no valid media clock.
-  if(document.hidden||window.MusicBoxRoom?.isActive?.()){stopVideo();return}
-  if(!audio||audio.ended||!Number.isFinite(audio.currentTime)){stopVideo();return}
-  if(vimeoSource){syncVimeo(audio);return}
-  const video=$("imVideo");if(!video)return;
-  if(audio.paused||audio.seeking){video.pause();return}
-  if(!video.hasAttribute("src")){
-   video.muted=true;video.defaultMuted=true;video.volume=0;
-   // Request metadata explicitly: preload=none plus waiting for readyState before play deadlocks.
-   videoLoadStarted=Date.now();video.preload="metadata";video.hidden=false;video.src=videoSource;video.load();
+ function updateCanvas(audio){
+  if(!opened||!canvasEnabled||!canvasSource)return;
+  if(document.hidden||window.MusicBoxRoom?.isActive?.()||!audio||audio.paused||audio.ended){
+   if(canvasLoadStarted)stopCanvas();
+   return;
   }
-  if(video.error){failVideo();return}
-  if(video.readyState<1){if(videoLoadStarted&&Date.now()-videoLoadStarted>15000)failVideo();return}
-  const time=audio.currentTime+videoOffset;
-  if(time<0){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
-  // Do not loop a short clip or play unrelated video beyond its end.
-  if(Number.isFinite(video.duration)&&Number.isFinite(audio.duration)&&audio.duration>10&&video.duration<Math.max(0,audio.duration+videoOffset)-2){failVideo();return}
-  if(Number.isFinite(video.duration)&&time>=video.duration-.15){video.pause();$("immersivePanel")?.classList.remove("im-video-live");return}
-  if(Math.abs(video.currentTime-time)>.45&&!video.seeking){
-   $("immersivePanel")?.classList.remove("im-video-live");
-   try{video.currentTime=time}catch(_){failVideo();return}
+  const video=$("imVideo");
+  if(!video)return;
+  if(!canvasLoadStarted){
+   canvasLoadStarted=Date.now();
+   video.muted=true;
+   video.defaultMuted=true;
+   video.hidden=false;
+   video.src=canvasSource;
+   video.load();
   }
-  if(Number.isFinite(audio.playbackRate)&&audio.playbackRate>0&&video.playbackRate!==audio.playbackRate)
-   video.playbackRate=audio.playbackRate;
-  if(video.paused&&!videoPlayingRequest){
-   const source=videoSource;
-   let request;try{request=Promise.resolve(video.play())}catch(_){failVideo();return}
-   videoPlayingRequest=request;
-   request.then(()=>{if(videoPlayingRequest===request)videoPlayingRequest=null},
-    ()=>{if(videoPlayingRequest===request){videoPlayingRequest=null;if(source===videoSource&&videoEnabled)failVideo()}});
+  if(video.error){failCanvas();return}
+  if(video.readyState<1){
+   if(Date.now()-canvasLoadStarted>12000)failCanvas();
+   return;
   }
-  if(video.readyState>=2&&!video.seeking&&!video.paused&&Math.abs(video.currentTime-time)<.7)
-   $("immersivePanel")?.classList.add("im-video-live");
+  if(!Number.isFinite(video.duration)||video.duration<3||video.duration>8.05){failCanvas();return}
+  const panel=$("immersivePanel");
+  if(video.readyState>=2&&!video.paused&&!video.seeking){
+   panel?.classList.add("im-video-live");
+  }else if(!panel?.classList.contains("im-video-live")&&Date.now()-canvasLoadStarted>12000){
+   failCanvas();
+   return;
+  }
+  if((video.paused||video.ended)&&!canvasRequest){
+   // Restart a finished clip once. WebKit can repeatedly seek with the native loop flag.
+   if(video.ended)video.currentTime=0;
+   const request=video.play();
+   canvasRequest=request;
+   request.then(()=>{
+    if(canvasRequest===request)canvasRequest=null;
+   },()=>{
+    if(canvasRequest===request)failCanvas();
+   });
+  }
  }
- function toggleVideo(){
-  if(!opened||!(videoSource||vimeoSource)||videoFailed)return;
-  videoEnabled=!videoEnabled;
-  if(!videoEnabled)stopVideo();else updateVideo(api()?.audio?.());
-  videoButton();
+ function toggleCanvas(){
+  if(!opened||!canvasSource)return;
+  canvasEnabled=!canvasEnabled;
+  if(canvasEnabled)updateCanvas(api()?.audio?.());
+  else stopCanvas();
+  renderCanvasButton();
  }
  function closeSyncControls(){
  const panel=$("imSyncPanel"),button=$("imSyncToggle");
@@ -298,7 +174,7 @@ function fillCurrent(){
  $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
  atmosphereForTrack(id,title,artist);
- configureVideo(t);
+ configureCanvas(t);
  closeSyncControls();
  lastLyricsId="";
  lastLyrics=null;
@@ -520,7 +396,7 @@ function paint(){
  if(!$("imSyncPanel")?.hidden)updateSyncValue();
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
- updateVideo(a);
+ updateCanvas(a);
  if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
  else renderLyrics(false);
  if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!a.seeking)
@@ -546,7 +422,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopVideo();videoSource="";vimeoSource=null;videoEnabled=false;videoButton();
+ stopCanvas();canvasSource="";canvasEnabled=false;renderCanvasButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -619,13 +495,13 @@ function start(){
  $("imLyrics")?.addEventListener("click",textPanel);
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
- $("imVideoToggle")?.addEventListener("click",toggleVideo);
- $("imVideo")?.addEventListener("error",()=>{if(opened&&videoEnabled&&$("imVideo")?.hasAttribute("src"))failVideo()});
+ $("imVideoToggle")?.addEventListener("click",toggleCanvas);
+ $("imVideo")?.addEventListener("ended",()=>updateCanvas(api()?.audio?.()));
  document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)stopVideo();
-  else if(opened&&lastId===api()?.currentId?.()&&lastProfile===api()?.profile?.())updateVideo(api()?.audio?.());
+  if(document.hidden)stopCanvas();
+  else if(opened&&lastId===api()?.currentId?.()&&lastProfile===api()?.profile?.())updateCanvas(api()?.audio?.());
  });
- window.addEventListener("pagehide",stopVideo);
+ window.addEventListener("pagehide",stopCanvas);
  $("imSyncEarlier")?.addEventListener("click",()=>changeSyncDelay(-.2));
  $("imSyncLater")?.addEventListener("click",()=>changeSyncDelay(.2));
  $("imSyncReset")?.addEventListener("click",()=>{

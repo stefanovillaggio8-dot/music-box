@@ -8,7 +8,6 @@ on:
       - 'index.html'
       - 'tests/immersive-ui-smoke.cjs'
       - 'tests/fixtures/immersive-silent.mp4'
-      - 'vendor/vimeo/**'
       - '.github/workflows/immersive-ui-smoke.yml'
   pull_request:
     paths:
@@ -18,7 +17,6 @@ on:
       - 'index.html'
       - 'tests/immersive-ui-smoke.cjs'
       - 'tests/fixtures/immersive-silent.mp4'
-      - 'vendor/vimeo/**'
       - 'tests/lyrics-full-view-layout.cjs'
       - '.github/workflows/immersive-ui-smoke.yml'
   workflow_dispatch:
@@ -40,12 +38,6 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.64.1
           test -x /usr/bin/google-chrome
       - name: Test desktop and mobile viewport karaoke, controls and scrolling
-        run: node tests/immersive-ui-smoke.cjs
-      - name: Check live official Vimeo playback
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-        continue-on-error: true
-        env:
-          IMMERSIVE_LIVE_VIMEO: '1'
         run: node tests/immersive-ui-smoke.cjs
       - name: Test full lyrics reader in Chromium before installing WebKit
         run: node tests/lyrics-full-view-layout.cjs
