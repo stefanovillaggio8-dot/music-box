@@ -1,3 +1,5 @@
+> Superseding pending point: releaseHEAD ed5482c3, native45469767746, phrase/offline45469767602. Offline exact-cache bug fixed and counterfactually reproduced; direct native audibility observer now replaces the false EOF-delay heuristic. See REPORT final correction. Public still6.743 until merge+Pages.
+
 # Exact next point, 24 November2026
 
 Interrupted archive finished0020fb75; public6.743/PR81 preserved plus main PR82–93. Research4c120a89 plus current report/observer-proof/metre inventory, not yet committed. PR59 draft; never merge it.

@@ -1,3 +1,5 @@
+> Latest continuation: ../ste-kidyugi-prefixes-20261124/RESUME.md and REPORT.md. The long lead-in below was completed/rejected; PR94 is the separate pending6.744 release.
+
 # Exact resume checkpoint — 24 November 2026
 
 PR59 remains DRAFT. Interrupted publication archival is now completed. RESUME-before-publication.md preserves the superseded prepublication instructions.
