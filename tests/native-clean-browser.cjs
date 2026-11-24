@@ -100,7 +100,7 @@ const server=http.createServer((req,res)=>{
    const inspection=await page.evaluate(()=>MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId));
    if(phoneNaturalMode){assert.ok(!inspection.cue?.neutralAmbientUnderlay);}
    else{assert.equal(inspection.approved,true);assert.equal(inspection.beatCertified,false);assert.equal(inspection.cue.nativeCleanTail,true);}
-   await page.evaluate(({begin,stall})=>{
+   await page.evaluate(({begin,stall,sourceClock,sourceSha})=>{
     window.__phoneHandoffs=[];window.__overlapEvents=[];
     window.__nativeStallEnabled=stall;
     addEventListener('musicbox:mix-overlap',e=>__overlapEvents.push(e.detail));
@@ -115,7 +115,7 @@ const server=http.createServer((req,res)=>{
     const adopt=MusicBoxBridge.mixAdoptHandoff;
     MusicBoxBridge.mixAdoptHandoff=(id,audio)=>{
      window.__beforeNativeAdoption={oldEnded:__outgoingNative.ended,sourceAt:__outgoingNative.currentTime,sourceDuration:__outgoingNative.duration,
-      incomingAt:audio.currentTime,incomingPaused:audio.paused,incomingSeeking:audio.seeking,observedAt:performance.now()};
+      incomingAt:audio.currentTime,incomingDuration:audio.duration,incomingPaused:audio.paused,incomingSeeking:audio.seeking,observedAt:performance.now()};
      return adopt(id,audio);
     };
     const b=document.createElement('button');b.id='start-native-clean';b.textContent='Start Ste native clean trial';b.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
@@ -131,8 +131,8 @@ const server=http.createServer((req,res)=>{
       window.__nativeCleanSampling=setInterval(()=>{
        __captureNativeOverlap();
        if(__nativeStallEnabled&&!window.__nativeStall&&window.__outgoingNative&&!__outgoingNative.ended){
-        const clock=MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId)?.cue?.nativeCleanEvidence?.sourceClock;
-        const offset=MusicBoxCompositeMix.nativeClockOffset(clock,clock?.sourceSha,__outgoingNative.duration);
+        const clock=sourceClock;
+        const offset=MusicBoxCompositeMix.nativeClockOffset(clock,sourceSha,__outgoingNative.duration);
         if(offset!==null&&__outgoingNative.currentTime>=begin+offset-.2){
          const from=__outgoingNative.currentTime,at=performance.now();while(performance.now()-at<350){}
          window.__nativeStall={from,through:__outgoingNative.currentTime,seconds:(performance.now()-at)/1000};
@@ -144,7 +144,7 @@ const server=http.createServer((req,res)=>{
       },100);
      }catch(e){window.__setupError=e.message}
     };document.body.append(b);
-   },{begin:fixture.record.cue.begin,stall:process.env.MUSICBOX_NATIVE_CUE_STALL==='true'});
+   },{begin:fixture.record.cue.begin,stall:process.env.MUSICBOX_NATIVE_CUE_STALL==='true',sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha});
    await page.click('#start-native-clean');
    try{
     await page.waitForFunction(()=>window.__setupDone||window.__setupError,null,{timeout:15000});
@@ -186,7 +186,13 @@ const server=http.createServer((req,res)=>{
      isPlaying:!MusicBoxBridge.audio().paused,sourceEndedAt:__outgoingNative.currentTime}));
     assert.equal(adopted.sameElement,true);assert.equal(adopted.beforeAdoption.oldEnded,true);assert.equal(adopted.isPlaying,true);assert.equal(adopted.rate,1);
     assert.ok(Math.abs(adopted.beforeAdoption.sourceAt-adopted.beforeAdoption.sourceDuration)<.002);
-    assert.ok(adopted.beforeAdoption.incomingAt>1&&adopted.beforeAdoption.incomingAt<4,'already heard original prefix at actual EOF adoption');
+    const receipt=fixture.record.cue.nativeCleanEvidence;
+    const offsets=[...new Set(receipt.nativeMeasurements.filter(m=>Math.abs(m.targetMediaDuration-adopted.beforeAdoption.incomingDuration)<=.002).map(m=>m.targetMediaOffset))];
+    assert.equal(offsets.length,1,'recognized incoming native clock at actual EOF adoption');
+    const originalHeard=adopted.beforeAdoption.incomingAt-offsets[0];
+    const heard=receipt.introductionExposure.rows.filter(r=>r.at+.25<=originalHeard+.000001&&r.originalRms>=.001).length*.25;
+    assert.ok(heard>=.75,'already heard >=750ms meaningful ORIGINAL prefix at actual EOF adoption');
+    assert.ok(originalHeard<=fixture.record.cue.fade+.2,'introduction never silently advanced beyond the original overlap');
     const advanced=adopted.targetTime-adopted.beforeAdoption.incomingAt,wall=(adopted.observedAt-adopted.beforeAdoption.observedAt)/1000;
     assert.ok(advanced>=-.02&&Math.abs(advanced-wall)<.5,'same native decoder continues from its observed adoption clock');
     assert.equal(adopted.trace.filter(t=>t.event==='target-seek').length,0);

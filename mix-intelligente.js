@@ -5838,7 +5838,7 @@ function claimLiveTransitionEOF(app,audio,id){
 // Beat, partial, unknown-clock and unsupported evidence keep their old bounds.
 function nativeCleanLaunchLimit(p){
  const legacy=Number(p?.begin)+.08,e=p?.nativeCleanEvidence,screen=e?.introductionExposure;
- if(!p?.nativeCleanTail||p.measuredFullBeat||p.metricalRhythmic||p.entry!==0||p.tempo!==1||
+ if(!p?.nativeCleanTail||p.measuredFullBeat||p.metricalRhythmic||p.entry!==0||p.tempo!==1||p.gain!==1||
     e?.sourceSha!==p.sourceSha||e?.targetSha!==p.targetSha||
     e.sourceUnityThroughEOF!==true||e.incomingUnityFromZero!==true||
     screen?.accepted!==true||screen.method!=='rendered-introduction-band-masking-screen-v2'||
@@ -5847,12 +5847,12 @@ function nativeCleanLaunchLimit(p){
     !Array.isArray(e.nativeMeasurements)||e.nativeMeasurements.length!==8||
     new Set(e.nativeMeasurements.map(m=>m.platform+'/'+m.browser+'/'+m.rate)).size!==8||
     e.nativeMeasurements.some(m=>!['linux','darwin'].includes(m.platform)||!['chromium','webkit'].includes(m.browser)||![44100,48000].includes(m.rate)||
-      ![m.sourceTailPeak,m.sourceTailRmsMax,m.targetNativeOverlapPeak].every(Number.isFinite)||m.sourceTailPeak<0||m.sourceTailPeak>.001||
-      m.sourceTailRmsMax<0||Math.SQRT2*m.sourceTailRmsMax>.0001||m.targetNativeOverlapPeak<0||m.targetNativeOverlapPeak+m.sourceTailPeak>.96)||
+      ![m.sourceTailPeak,m.sourceTailRmsMax,m.targetNativeOverlapPeak,m.targetDecodedOffset,m.targetMediaOffset].every(Number.isFinite)||m.sourceTailPeak<0||m.sourceTailPeak>.001||
+      m.sourceTailRmsMax<0||Math.SQRT2*m.sourceTailRmsMax>.0001||m.targetDecodedOffset<0||m.targetMediaOffset<0||m.targetDecodedOffset>.1||m.targetMediaOffset>.1||m.targetNativeOverlapPeak<0||m.targetNativeOverlapPeak+m.sourceTailPeak>.96)||
     !Array.isArray(screen.rows))return legacy;
  let through=0,meaningful=0;
  for(const row of screen.rows){
-  if(!Number.isFinite(row.at)||Math.abs(row.at-through)>.000001||Math.abs(row.originalAt-row.at)>.000001||
+  if(![row.at,row.originalAt,row.originalRms].every(Number.isFinite)||Math.abs(row.at-through)>.000001||Math.abs(row.originalAt-row.at)>.000001||
      !Number.isFinite(row.originalRms)||row.originalRms<0||row.obscured!==false)return legacy;
   through+=.25;if(through>p.fade+.000001)break;
   if(row.originalRms>=.001)meaningful+=.25;
@@ -6320,7 +6320,21 @@ function continueQuietNative(app,audio,id,next,entry){
       return false;
      }
      return app.mixHandoff(next.id,0);
-    }).then(resolve,reject).finally(()=>{if(audio._mbQuietNativeContinuation===token)delete audio._mbQuietNativeContinuation});
+    }).then(value=>{
+     // A declined handoff leaves the original paused. Restore only while
+     // the same original still owns the player; a manual Pause still wins.
+     if(owns()){
+      audio._mbCambioBrano=previousGuard;
+      if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)Promise.resolve(app.playCurrent?.()).catch(()=>{});
+     }
+     resolve(value);
+    },error=>{
+     if(owns()){
+      audio._mbCambioBrano=previousGuard;
+      if(app.wantsPlayback?.()!==false&&audio.paused&&!audio.ended)Promise.resolve(app.playCurrent?.()).catch(()=>{});
+     }
+     reject(error);
+    }).finally(()=>{if(audio._mbQuietNativeContinuation===token)delete audio._mbQuietNativeContinuation});
     return;
    }
    audio._mbCambioBrano=previousGuard;
