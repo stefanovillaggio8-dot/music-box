@@ -133,8 +133,8 @@ const server=http.createServer((req,res)=>{
        if(__nativeStallEnabled&&!window.__nativeStall&&window.__outgoingNative&&!__outgoingNative.ended){
         const clock=MusicBoxMix.inspectPair(__nativePair.fromId,__nativePair.toId)?.cue?.nativeCleanEvidence?.sourceClock;
         const offset=MusicBoxCompositeMix.nativeClockOffset(clock,clock?.sourceSha,__outgoingNative.duration);
-        if(offset!==null&&__outgoingNative.currentTime>=begin+offset-.1){
-         const from=__outgoingNative.currentTime,at=performance.now();while(performance.now()-at<220){}
+        if(offset!==null&&__outgoingNative.currentTime>=begin+offset-.2){
+         const from=__outgoingNative.currentTime,at=performance.now();while(performance.now()-at<350){}
          window.__nativeStall={from,through:__outgoingNative.currentTime,seconds:(performance.now()-at)/1000};
         }
        }
@@ -194,7 +194,17 @@ const server=http.createServer((req,res)=>{
     // Validate the actual launch clock at launch, not a later EOF duration
     // estimate. EOF still independently requires ended=true and intact source.
     const sourceOffset=await page.evaluate(c=>MusicBoxCompositeMix.nativeClockOffset(c.sourceClock,c.sourceSha,c.duration),{sourceClock:fixture.record.cue.nativeCleanEvidence.sourceClock,sourceSha:fixture.record.fromSha,duration:start.sourceDuration});
-    assert.notEqual(sourceOffset,null);assert.ok(Math.abs(start.sourceAt-fixture.record.cue.begin-sourceOffset)<.15);
+    assert.notEqual(sourceOffset,null);
+    const actualBegin=start.sourceAt-sourceOffset,p=fixture.record.cue;
+    assert.ok(actualBegin>=p.begin-.02,'no early launch before the independently quiet source interval');
+    if(actualBegin>p.begin+.08){
+     const margin=.1+Math.max(0,...p.nativeCleanEvidence.nativeMeasurements.flatMap(m=>[m.targetDecodedOffset||0,m.targetMediaOffset||0]));
+     const meaningful=p.nativeCleanEvidence.introductionExposure.rows.filter(r=>r.at+.25<=p.end-actualBegin-margin+1e-6&&r.originalRms>=.001).length*.25;
+     assert.ok(meaningful>=.75,'late native launch still exposes >=750ms meaningful ORIGINAL prefix with decoder margin');
+    }else assert.ok(Math.abs(actualBegin-p.begin)<.15);
+    if(process.env.MUSICBOX_NATIVE_CUE_STALL==='true'){
+     const stall=await page.evaluate(()=>window.__nativeStall);assert.ok(stall?.seconds>=.35);assert.ok(actualBegin>p.begin+.08,'exercise a real media-clock delay beyond the legacy timing point');
+    }
     await page.evaluate(()=>MusicBoxBridge.audio().pause());
     report.results.push({browser:name,version:browser.version(),platform:process.platform,overlap,adopted,eofChecks:await page.evaluate(()=>__eofChecks),stall:await page.evaluate(()=>window.__nativeStall||null),
      ...(translationMode?{translation:{obsoleteRequestGoneByHandoff:translationAborted,oldPhrasesThroughOriginalEof:true,wordModelRequests:wordModels.length,
