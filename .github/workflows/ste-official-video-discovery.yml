@@ -19,7 +19,10 @@ jobs:
         with:
           node-version: '22'
       - run: node --check tools/audit-ste-official-videos.cjs
-      - run: node tools/audit-ste-official-videos.cjs ste-video-discovery.json
+      - if: github.event_name == 'pull_request'
+        run: node tools/audit-ste-official-videos.cjs ste-video-discovery.json --scope-only
+      - if: github.event_name == 'workflow_dispatch'
+        run: node tools/audit-ste-official-videos.cjs ste-video-discovery.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

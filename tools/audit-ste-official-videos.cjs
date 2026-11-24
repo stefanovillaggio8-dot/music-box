@@ -3,7 +3,7 @@
 // Metadata-only discovery. Never downloads, caches or republishes a video.
 // An Apple listing proves catalogue availability, NOT a background-use right.
 // Archive hits are candidates for manual provenance review, never playback URLs.
-const fs=require("node:fs"),vm=require("node:vm"),crypto=require("node:crypto");
+const fs=require("node:fs"),vm=require("node:vm");
 const {publishedCatalog}=require("./published-personal-catalog.cjs");
 const read=f=>fs.readFileSync(f,"utf8");
 const app=read("app.js"),state=JSON.parse(read("stato.json")),playlists=JSON.parse(read("playlist.json"));
@@ -14,13 +14,24 @@ const catalog=publishedCatalog(app,builtin,JSON.parse(read("online-imports.json"
 const i=app.indexOf("function _idBranoStabile("),j=app.indexOf("// Queste funzioni",i);
 const stableId=new Function("BUILTIN",app.slice(i,j)+"return _idBranoStabile;")(catalog);
 const copies=new Set(state.miei?.Ste||[]),deleted=new Set(state.eliminati||[]);
-const inPlaylists=new Set(playlists.filter(p=>p.nascostaDa==="Ste").flatMap(p=>p.tracks||[]));
+const stePlaylists=playlists.filter(p=>p.nascostaDa==="Ste");
+const isGym=p=>String(p.name||"").trim().toLowerCase()==="gym";
+const gymPlaylists=stePlaylists.filter(isGym);
+const gym=new Set(gymPlaylists.flatMap(p=>p.tracks||[]));
+const hiddenGym=new Set(gymPlaylists.filter(p=>p.nascosta===true).flatMap(p=>p.tracks||[]));
+const otherPlaylists=new Set(stePlaylists.filter(p=>!isGym(p)).flatMap(p=>p.tracks||[]));
+const playlistOnly=new Set((state.soloInPlaylist||[]).filter(x=>x.startsWith("Ste.")).map(x=>x.slice(4)));
+const excludedGym=new Set();
 const tracks=new Map();
 for(const t of catalog){
  const id=stableId(t);
- if(((t.profile||"Ste")==="Ste"||copies.has(id)||inPlaylists.has(id))&&
- !deleted.has("Ste."+id)&&!deleted.has(id)&&!tracks.has(id))
-  tracks.set(id,{id,title:String(t.title||""),artist:String(t.artist||"")});
+ const personal=(t.profile||"Ste")==="Ste"||copies.has(id);
+ if(deleted.has("Ste."+id)||deleted.has(id)||tracks.has(id))continue;
+ if(gym.has(id)&&!otherPlaylists.has(id)&&(!personal||hiddenGym.has(id)||playlistOnly.has(id))){
+  excludedGym.add(id);
+  continue;
+ }
+ if(personal||otherPlaylists.has(id))tracks.set(id,{id,title:String(t.title||""),artist:String(t.artist||"")});
 }
 const normalize=s=>String(s||"").normalize("NFKD").replace(/\p{M}/gu,"").toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim().replace(/\s+/g," ");
 const titleKey=s=>normalize(String(s||"").replace(/\s*\((?:official (?:music )?video|visual(?: video)?|music video)\)\s*$/i,"").replace(/\s*-\s*(?:official (?:music )?video|visual(?: video)?|music video)\s*$/i,""));
@@ -70,11 +81,16 @@ async function scan(t){
 (async()=>{
  const output=process.argv[2]||"ste-video-discovery.json";
  if(fs.existsSync(output))throw Error("Refusing to overwrite evidence");
- const report={profile:"Ste",scope:"Published personal catalogue plus Ste playlists; excludes deleted entries and cannot see unpublished device-only songs.",
+ const report={profile:"Ste",scope:"Published personal catalogue plus Ste playlists other than Gym; excludes Gym-only and deleted entries. Unpublished device-only songs are outside the available data.",
  sources:{apple:"https://performance-partners.apple.com/search-api",archive:"https://archive.org/advancedsearch.php"},
  notes:"No preview URLs or media bytes requested. Catalogue match is not a playback licence. Archive self-reported claims require rights-holder proof, a full recording, matching version and audiovisual alignment. Nothing is automatically enabled.",
- catalogCount:tracks.size,rows:[]};
+ catalogCount:tracks.size,gymOnlyExcluded:excludedGym.size,rows:[]};
  const checkpoint=()=>fs.writeFileSync(output,JSON.stringify(report,null,2)+"\n");
+ if(process.argv.includes("--scope-only")){
+  report.rows=[...tracks.values()];checkpoint();
+  console.log(JSON.stringify({catalogCount:tracks.size,gymOnlyExcluded:excludedGym.size}));
+  return;
+ }
  const cache=new Map();
  for(const t of tracks.values()){
   const key=JSON.stringify([titleKey(t.title),normalize(t.artist)]);
