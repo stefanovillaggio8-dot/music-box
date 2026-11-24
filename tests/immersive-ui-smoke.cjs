@@ -487,11 +487,10 @@ async function run(){
     await switchTrack("b-track-40","Donna","songs/track-40.mp3","Kid Yugi");
     assert.notEqual(await fingerprint(),film,"two titles by the same artist have different original art");
     await page.evaluate(()=>{
-     const animation=MusicBoxImmersiveAnimation,apply=animation.setVerse;
-     animation.setVerse=(scene,index)=>{
-      apply(scene,index);
-      window.testLyricImage=scene?.lyricCue;
-     };
+     const context=document.querySelector("#imSongAnimation canvas:last-child").getContext("2d");
+     const scale=context.scale.bind(context);
+     window.subjectScales=0;
+     context.scale=(x,y)=>{window.subjectScales++;scale(x,y)};
      fakeLyrics={id:"b-track-40",synced:[
       {t:10,text:"C'è la luna piena"},
       {t:20,text:"Un pianoforte senza tasti"},
@@ -500,24 +499,27 @@ async function run(){
      ]};
      fakeAudio.currentTime=14;
     });
-    await page.waitForFunction(()=>window.testLyricImage==="moon");
+    const activeLine=page.locator("#imKaraoke .im-line.active");
+    await activeLine.filter({hasText:"C'è la luna piena"}).waitFor({state:"visible"});
+    const donna=await fingerprint();
     await page.evaluate(()=>{fakeAudio.currentTime=24});
-    await page.waitForFunction(()=>window.testLyricImage==="piano");
+    await activeLine.filter({hasText:"Un pianoforte senza tasti"}).waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.currentTime=34});
-    await page.waitForFunction(()=>window.testLyricImage===null);
+    await activeLine.filter({hasText:"La pioggia nella stanza"}).waitFor({state:"visible"});
     await page.evaluate(()=>{fakeAudio.currentTime=44});
-    await page.waitForFunction(()=>window.testLyricImage==="city");
+    await activeLine.filter({hasText:"Una città"}).waitFor({state:"visible"});
+    assert.notEqual(await fingerprint(),donna,"Donna still has a moving background");
+    assert.equal(await page.evaluate(()=>window.subjectScales),0,"Donna never draws a detached foreground subject");
     const reviewed=await page.evaluate(()=>{
      const animation=MusicBoxImmersiveAnimation;
      return ["b-track-27","b-track-213","b-track-233","b-track-670","b-track-705"].map(id=>{
       const [file,title,artist]=MusicBoxImmersiveScenes[id];
       const scene=animation.find({id,file,title,artist},"Ste");
-      animation.describeLyrics(scene,[],false);
-      animation.setVerse(scene,0);
-      return [scene.lyricSubject??scene.subject,scene.lyricCue??null];
+      animation.describeLyrics(scene,[]);
+      return scene.lyricSubject??scene.subject;
      });
     });
-    assert.deepEqual(reviewed,[["film",null],["monitor",null],["bridge",null],["sail",null],["skyline",null]],
+    assert.deepEqual(reviewed,["film","monitor","bridge","sail","skyline"],
      "reviewed recording scenes work without timed lyrics and preserve Il Filmografo");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
