@@ -38,7 +38,7 @@ function atmosphereForTrack(id,title,artist){
  // Record the permission URL in evidence for third-party clips.
  const reviewedCanvasCatalog=Object.freeze({});
  const musicBoxClips=Object.freeze({
-  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=2"},
+  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=3",framing:"eva"},
   "b-track-30":{file:"songs/track-30.mp3",title:"Sintetico",artist:"Kid Yugi",url:"immersive-loops/sintetico.mp4?v=2"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
@@ -53,7 +53,7 @@ function atmosphereForTrack(id,title,artist){
    const url=new URL(entry.url,document.baseURI);
    if(url.username||url.password||!/\.(mp4|m4v|webm)$/i.test(url.pathname))return null;
    if(musicBox&&url.origin!==location.origin)return null;
-   return url.protocol==="https:"||(url.protocol==="http:"&&url.origin===location.origin)?{url:url.href,musicBox}:null;
+   return url.protocol==="https:"||(url.protocol==="http:"&&url.origin===location.origin)?{url:url.href,musicBox,framing:entry.framing}:null;
   }catch(_){return null}
  }
  function stopCanvas(){
@@ -129,7 +129,7 @@ function atmosphereForTrack(id,title,artist){
    video.muted=true;
    video.defaultMuted=true;
    video.hidden=false;
-   video.toggleAttribute("data-music-box-clip",canvasSource.musicBox);
+   if(canvasSource.musicBox)video.dataset.musicBoxClip=canvasSource.framing||"";
    video.src=canvasSource.url;
    video.load();
   }
