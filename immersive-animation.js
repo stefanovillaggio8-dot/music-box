@@ -40,7 +40,7 @@ Object.assign(environments,{
 });
 const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
-const kidYugiTextures={file:"immersive-kid-yugi.webp?v=1",image:null,ready:false};
+const kidYugiTextures={file:"immersive-kid-yugi.webp?v=2",image:null,ready:false};
 const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
@@ -102,6 +102,54 @@ const libraryScenes={
  "b-track-7":[30,.49,.41,-.039,.021,"#7386ba"],
  "b-track-69":[31,.44,.51,.049,-.028,"#dfb66f"],
  "b-track-73":[32,.60,.56,-.063,.024,"#c2888d"]
+};
+// Cue positions are fractions of the loop, followed by the shot to show.
+// The close view reframes the original Music Box art. Eight alternate scenes
+// use their own atlas tile, based on a second shot in the matching reference.
+const photoEdits={
+ "b-track-29":[5.33,[[0,2],[.22,1],[.43,2],[.65,1],[.78,2]],26],
+ "b-track-37":[6.1,[[0,1],[.19,0],[.55,1],[.71,0],[.90,1]]],
+ "b-track-38":[7.5,[[0,0],[.13,1],[.53,2],[.69,1],[.80,0]],22],
+ "b-track-39":[7.5,[[0,0],[.25,2],[.59,0],[.75,2]],28],
+ "b-track-41":[3.2,[[0,2],[.19,0],[.73,2]],27],
+ "b-track-87":[7.5,[[0,1],[.15,0],[.34,1],[.60,0],[.79,1]]],
+ "b-track-138":[5.1,[[0,0],[.51,1],[.79,0]]],
+ "b-track-205":[7.5,[[0,0],[.15,1],[.31,2],[.59,0],[.76,2],[.91,1]],24],
+ "b-track-206":[7.5,[[0,0],[.13,2],[.39,0],[.63,2],[.80,0]],29],
+ "b-track-208":[6.2,[[0,1],[.33,0],[.72,1]]],
+ "b-track-213":[7.5,[[0,0],[.18,1],[.37,2],[.66,0],[.82,1]],23],
+ "b-track-1187":[7.5,[[0,2],[.18,0],[.35,1],[.58,2],[.74,1],[.90,0]],25],
+ "b-track-14":[7.88,[[0,0],[.46,1]]],
+ "b-track-23":[6,[[0,0],[.46,1],[.83,0]]],
+ "b-track-25":[5,[[0,0]]],
+ "b-track-75":[7.62,[[0,0]]],
+ "b-track-89":[7.38,[[0,0],[.56,1],[.66,0],[.83,1]]],
+ "b-track-92":[7.88,[[0,0],[.6,1],[.71,0]]],
+ "b-track-103":[7.62,[[0,0]]],
+ "b-track-105":[8,[[0,0],[.3,1],[.75,0],[.83,1],[.92,0]]],
+ "b-track-108":[8,[[0,0],[.33,1],[.69,0]]],
+ "b-track-116":[8,[[0,0],[.88,1]]],
+ "b-track-120":[8,[[0,0],[.2,1],[.34,0],[.56,1],[.77,0]]],
+ "b-track-121":[6,[[0,0],[.21,1],[.38,0],[.46,1],[.77,0]]],
+ "b-track-122":[8,[[0,0],[.38,1],[.61,0]]],
+ "b-track-127":[8,[[0,0],[.17,1],[.55,0],[.73,1],[.91,0]]],
+ "b-track-133":[5.88,[[0,0],[.38,1],[.47,0],[.57,1],[.81,0]]],
+ "b-track-134":[7.62,[[0,0],[.2,1],[.46,0],[.59,1],[.89,0]]],
+ "b-track-136":[7.25,[[0,0],[.26,1],[.67,0],[.91,1]]],
+ "b-track-189":[5,[[0,0]]],
+ "b-track-191":[5,[[0,0]]],
+ "b-track-192":[6,[[0,0],[.52,1]]],
+ "b-track-200":[4.62,[[0,0],[.43,1]]],
+ "b-track-210":[3.25,[[0,0],[.46,1]]],
+ "b-track-230":[7.75,[[0,0],[.1,1],[.45,0],[.58,1],[.65,0]]],
+ "b-track-240":[7.62,[[0,0],[.18,1],[.7,0]]],
+ "b-track-349":[8,[[0,0]]],
+ "b-track-478":[8,[[0,0]]],
+ "b-track-483":[6,[[0,0],[.12,1],[.23,0],[.54,1],[.85,0]]],
+ "b-track-488":[7.62,[[0,0],[.2,1],[.46,0],[.59,1],[.89,0]]],
+ "b-track-509":[7,[[0,0]]],
+ "b-track-513":[7.75,[[0,0],[.11,1]]],
+ "b-track-705":[7,[[0,0],[.2,1],[.27,0],[.45,1],[.7,0]]]
 };
 let active=null,frame=0,lastFrame=0;
 function hash(id){
@@ -365,24 +413,40 @@ function draw(shot){
 function preparePhotograph(shot,world,c,f,w,h,wide,dark,photo){
  const {image}=shot.photoAtlas;
  const tile=image.naturalWidth/3;
- const index=photo[0],light=photo[5];
- const sx=index%3*tile+3,sy=Math.floor(index/3)*tile+3,span=tile-6;
- const side=Math.max(1,Math.round(Math.min(w*(wide ? .67 : 1.06),h*(wide ? .99 : .84))));
- const left=wide ? -.030*side : (w-side)*.5;
- const top=wide ? -.026*side : Math.max(-.026*side,h*.32-side*.5);
- const canvas=document.createElement("canvas");
+ const light=photo[5];
+ const index=photo[0],sx=index%3*tile+3,sy=Math.floor(index/3)*tile+3,span=tile-6;
+ const side=Math.max(1,Math.round(Math.min(w*(wide ? .73 : 1.06),h*(wide ? 1.04 : .84))));
+ const left=wide ? -.018*side : (w-side)*.5;
+ const top=wide ? -.018*side : Math.max(-.026*side,h*.32-side*.5);
  const ambient=document.createElement("canvas");
- canvas.width=canvas.height=side;
  ambient.width=ambient.height=12;
- const imageContext=canvas.getContext("2d"),ambientContext=ambient.getContext("2d");
- if(!imageContext||!ambientContext)return false;
- imageContext.drawImage(image,sx,sy,span,span,0,0,side,side);
+ const ambientContext=ambient.getContext("2d");
+ if(!ambientContext)return false;
 
  // The same photograph gives the background its colors outside the full frame.
  ambientContext.drawImage(image,sx,sy,span,span,0,0,12,12);
  c.drawImage(ambient,0,0,w,h);
- c.globalAlpha=.75;c.fillStyle=dark;c.fillRect(0,0,w,h);c.globalAlpha=1;
+ c.globalAlpha=wide ? .57 : .72;c.fillStyle=dark;c.fillRect(0,0,w,h);c.globalAlpha=1;
 
+ const alternate=shot.edit?.[2];
+ const frames=alternate==null?[index]:[index,alternate];
+ const images=frames.map(tileIndex=>photoPlane(image,tile,tileIndex,side,w,wide));
+ if(!images[0])return false;
+ const detail=shot.edit?null:prepareSceneDetail(images[0],photo);
+ const centerX=left+side*.5,centerY=top+side*.5;
+ const localLight=f.createRadialGradient(centerX,centerY,0,centerX,centerY,side*.59);
+ localLight.addColorStop(0,light);localLight.addColorStop(1,"transparent");
+ Object.assign(shot,{world,f,w,h,photo,photoFrame:{images,side,left,top,detail,localLight}});
+ return true;
+}
+
+function photoPlane(image,tile,index,side,w,wide){
+ const canvas=document.createElement("canvas");
+ canvas.width=canvas.height=side;
+ const imageContext=canvas.getContext("2d");
+ if(!imageContext)return null;
+ const sx=index%3*tile+3,sy=Math.floor(index/3)*tile+3,span=tile-6;
+ imageContext.drawImage(image,sx,sy,span,span,0,0,side,side);
  imageContext.globalCompositeOperation="destination-in";
  // Blend inward from the screen, leaving the desktop top and left edges
  // full like Il Filmografo. The opposite edges fade into the lyrics area.
@@ -403,12 +467,7 @@ function preparePhotograph(shot,world,c,f,w,h,wide,dark,photo){
  imageContext.fillStyle=down;
  imageContext.fillRect(0,0,side,side);
 
- const detail=prepareSceneDetail(canvas,photo);
- const centerX=left+side*.5,centerY=top+side*.5;
- const localLight=f.createRadialGradient(centerX,centerY,0,centerX,centerY,side*.55);
- localLight.addColorStop(0,light);localLight.addColorStop(1,"transparent");
- Object.assign(shot,{world,f,w,h,photo,photoFrame:{canvas,side,left,top,detail,localLight}});
- return true;
+ return canvas;
 }
 
 function prepareSceneDetail(world,photo){
@@ -434,9 +493,9 @@ function paintScenery(shot,t){
  const {world,f,w,h,kind,scene}=shot;
  const arc=Math.sin(t),depth=(1-Math.cos(t))*.5;
  const push=scene.camera==="push"||scene.camera==="pulse";
- const scale=1.16+(push ? .19 : .095)*depth;
+ const scale=1.09+(push ? .13 : .068)*depth;
  const width=w*scale,height=h*scale;
- const driftX=push ? .023 : .043,driftY=.026;
+ const driftX=push ? .016 : .027,driftY=.016;
  const left=(w-width)*.5+w*arc*driftX;
  const top=(h-height)*.47+h*Math.sin(t+.65)*driftY;
  f.drawImage(world,left,top,width,height);
@@ -452,15 +511,22 @@ function paintScenery(shot,t){
 }
 function paintPhotograph(shot,t){
  const {world,f,w,h,photo,photoFrame}=shot;
- const {canvas,side,left,top,detail,localLight}=photoFrame;
- const scale=.985+.025*(1-Math.cos(t))*.5;
+ const {images,side,left,top,detail,localLight}=photoFrame;
+ const position=t/tau;
+ const cues=shot.edit?.[1];
+ const cue=cues?.findLast(([start])=>position>=start);
+ const mode=cue?.[1]??0;
+ const canvas=images[mode===2?1:0]??images[0];
+ const camera=position-(cue?.[0]??0);
+ const scale=(mode===1?1.073:1.003)+.026*(1-Math.cos(camera*tau))*.5;
  const length=side*scale;
  const dx=Math.sin(t)*photo[3]*side,dy=Math.sin(t+.65)*photo[4]*side;
  const margin=(side-length)*.5;
- const x=left+margin+dx*.30,y=top+margin+dy*.30;
+ const x=left+margin+dx*.51+(mode===1?(.5-photo[1])*side*.14:0);
+ const y=top+margin+dy*.46+(mode===1?(.5-photo[2])*side*.14:0);
  f.drawImage(world,0,0);
  f.drawImage(canvas,x,y,length,length);
- if(detail){
+ if(detail&&mode===0&&!cues){
   const {image,left,top}=detail;
   f.drawImage(image,x+left*scale+dx*.18,y+top*scale+dy*.18,image.width*scale,image.height*scale);
  }
@@ -468,7 +534,7 @@ function paintPhotograph(shot,t){
  f.translate(dx,dy);
  f.globalCompositeOperation="soft-light";
  f.fillStyle=localLight;
- f.globalAlpha=.18+.32*(.5+.5*Math.sin(t*2+.75));
+ f.globalAlpha=.22+.38*(.5+.5*Math.sin(t*2+.75));
  f.fillRect(-w*.25,-h*.15,w*1.5,h*1.3);
  f.restore();
 }
@@ -551,7 +617,7 @@ function paint(shot,t){
   paintPhotograph(shot,t);
  }else{
   paintScenery(shot,t);
-  atmosphere(shot,t);
+  if(kind===1||kind===3||kind===5)atmosphere(shot,t);
  }
  f.globalAlpha=1;
 }
@@ -581,7 +647,8 @@ function tick(now){
 function start(stage,scene){
  if(!stage||!scene||!Object.hasOwn(environments,scene.subject)||!palettes[scene.palette]||!cameras[scene.camera])return false;
  const [x,y,scale,angle]=cameras[scene.camera];
- const period=6400+scene.seed%1600;
+ const edit=photoEdits[scene.id];
+ const period=edit?edit[0]*1000:6400+scene.seed%1600;
  stage.style.setProperty("--im-shot-x",x);
  stage.style.setProperty("--im-shot-y",y);
  stage.style.setProperty("--im-shot-scale",scale);
@@ -593,7 +660,7 @@ function start(stage,scene){
  const kidYugiView=kidYugiScenes[scene.id];
  const photoView=kidYugiView??libraryScenes[scene.id]??null;
  const photoAtlas=photoView?(kidYugiView?kidYugiTextures:libraryTextures):textures;
- const shot={stage,scene,period,photoView,photoAtlas,started:performance.now()};
+ const shot={stage,scene,period,edit,photoView,photoAtlas,started:performance.now()};
  if(!draw(shot)){stage.hidden=true;return false}
  active=shot;
  lastFrame=0;
