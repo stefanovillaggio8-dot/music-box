@@ -64,7 +64,7 @@ const fixture=[
 ].join("\n");
 // Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
 const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
-const originalClips=Object.fromEntries(["eva","sintetico","quanto-forte-ti-pensavo","per-una-notte-insieme","star-shopping"].map(name=>[
+const originalClips=Object.fromEntries(["eva","quanto-forte-ti-pensavo","per-una-notte-insieme","star-shopping"].map(name=>[
  "/immersive-loops/"+name+".mp4",fs.readFileSync(path.join(root,"immersive-loops",name+".mp4"))
 ]));
 // Inject only synthetic test recordings. The production catalog stays intact.
@@ -446,7 +446,6 @@ async function run(){
     await page.evaluate(()=>{fakeProfile="Ste"});
     for(const [trackId,title,file,artist,asset,duration,version] of [
      ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K","eva",6.76,"8"],
-     ["b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi","sintetico",5.4,"6"],
      ["b-track-2","QUANTO FORTE TI PENSAVO","songs/track-2.mp3","Madame","quanto-forte-ti-pensavo",6,"1"],
      ["b-track-160","Per una notte insieme","songs/track-160.mp3","Modà","per-una-notte-insieme",7,"1"],
      ["b-track-7","Star Shopping","songs/track-7.mp3","Lil Peep","star-shopping",7,"1"]
@@ -466,7 +465,7 @@ async function run(){
        viewportWidth:innerWidth,viewportHeight:innerHeight,framing:v.dataset.musicBoxClip,
        sourceRatio:v.videoWidth/v.videoHeight};
      });
-     const framedClips={eva:5/4,sintetico:16/9};
+     const framedClips={eva:5/4};
      const framing=Object.hasOwn(framedClips,asset)?asset:"";
      assert.equal(frame.framing,framing);
      // The full scene, including the soft extension, fits in the viewport.
@@ -479,6 +478,15 @@ async function run(){
      assert.equal(await page.locator("#imAnimationLabel").isHidden(),false);
      assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
     }
+    await page.evaluate(()=>{fakeSong.cover="/immersive-textures.webp"});
+    await switchTrack("b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi");
+    assert.equal(await video.getAttribute("src"),null,"Sintetico releases the previous clip");
+    assert.equal(await stage.isHidden(),true);
+    assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
+    assert.match(await page.locator("#imBackdrop").evaluate(el=>el.style.backgroundImage),/immersive-textures\.webp/);
+    assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
+    await page.evaluate(()=>{fakeSong.cover=""});
+
     await switchTrack("b-track-27","Il Filmografo","songs/track-27.mp3","Kid Yugi");
     assert.equal(await video.getAttribute("src"),null,"changing away releases the clip");
     await page.locator("#imClose").click();
