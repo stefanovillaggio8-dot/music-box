@@ -44,6 +44,88 @@ function atmosphereForTrack(id,title,artist){
   "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=11",framing:"eva"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
+ let localCanvasUrl=null,canvasRevision=0;
+ function canUseLocalCanvas(track){
+  return api()?.profile?.()==="Ste"&&track?.id==="b-track-30"&&track.file==="songs/track-30.mp3";
+ }
+ function isLocalCanvasTrackOpen(){
+  const b=api(),id=b?.currentId?.();
+  return opened&&id==="b-track-30"&&canUseLocalCanvas(b?.allTracks?.().find(track=>track.id===id));
+ }
+ function localCanvasFile(file){
+  return new Promise((resolve,reject)=>{
+   const open=indexedDB.open("musicbox-local-canvases",1);
+   open.onupgradeneeded=()=>open.result.createObjectStore("clips");
+   open.onerror=()=>reject(open.error);
+   open.onsuccess=()=>{
+    const db=open.result;
+    const tx=db.transaction("clips",file?"readwrite":"readonly"),store=tx.objectStore("clips");
+    const key="Ste:b-track-30";
+    const req=file?store.put(file,key):store.get(key);
+    tx.oncomplete=()=>{db.close();resolve(req.result)};
+    tx.onabort=()=>{db.close();reject(tx.error)};
+   };
+  });
+ }
+ function hasCanvasDuration(video){
+  return Number.isFinite(video.duration)&&video.duration>=3&&video.duration<=8.05;
+ }
+ function isHorizontalCanvas(video){
+  return video.videoHeight>0&&Math.abs(video.videoWidth/video.videoHeight-16/9)<.02;
+ }
+ function verifyLocalCanvas(file){
+  return new Promise(resolve=>{
+   const probe=document.createElement("video"),url=URL.createObjectURL(file);
+   const finish=valid=>{
+    clearTimeout(timeout);
+    probe.onloadedmetadata=probe.onerror=null;
+    probe.removeAttribute("src");
+    probe.load();
+    URL.revokeObjectURL(url);
+    resolve(valid);
+   };
+   const timeout=setTimeout(()=>finish(false),12000);
+   probe.onloadedmetadata=()=>finish(hasCanvasDuration(probe)&&isHorizontalCanvas(probe));
+   probe.onerror=()=>finish(false);
+   probe.preload="metadata";
+   probe.src=url;
+  });
+ }
+ function releaseLocalCanvas(){
+  if(localCanvasUrl)URL.revokeObjectURL(localCanvasUrl);
+  localCanvasUrl=null;
+ }
+ function wantsCanvasMotion(){
+  return !window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches&&!navigator.connection?.saveData;
+ }
+ function showLocalCanvas(file){
+  stopCanvas();
+  releaseLocalCanvas();
+  localCanvasUrl=URL.createObjectURL(file);
+  canvasSource={url:localCanvasUrl,musicBox:true,framing:"sintetico"};
+  canvasEnabled=wantsCanvasMotion();
+  renderCanvasButton();
+  updateCanvas(api()?.audio?.());
+ }
+ async function importLocalCanvas(event){
+  const input=event.currentTarget,file=input.files?.[0],button=$("imVideoImport");
+  input.value="";
+  if(!file||!button||button.disabled||!isLocalCanvasTrackOpen())return;
+  button.disabled=true;
+  try{
+   if(!/\.mp4$/i.test(file.name)||!await verifyLocalCanvas(file)){
+    if(isLocalCanvasTrackOpen())api()?.toast?.("Scegli un MP4 orizzontale 16:9 da 3 a 8 secondi.");
+    return;
+   }
+   await localCanvasFile(file);
+   if(isLocalCanvasTrackOpen()){
+    ++canvasRevision;
+    showLocalCanvas(file);
+    api()?.toast?.("Canvas salvato su questo dispositivo.");
+   }
+  }catch(e){if(isLocalCanvasTrackOpen())api()?.toast?.("Non riesco a salvare il Canvas su questo dispositivo.")}
+  finally{button.disabled=false}
+ }
  function canvasFor(track){
   if(api()?.profile?.()!=="Ste"||!track?.id)return null;
   const musicBox=Object.hasOwn(musicBoxClips,track.id);
@@ -62,7 +144,7 @@ function atmosphereForTrack(id,title,artist){
   $("immersivePanel")?.classList.remove("im-video-live");
   window.MusicBoxImmersiveAnimation?.stop($("imSongAnimation"));
   const label=$("imAnimationLabel");
-  if(label)label.hidden=true;
+  if(label){label.hidden=true;label.textContent="Animazione Music Box"}
   canvasRequest=null;
   canvasLoadStarted=0;
   const video=$("imVideo");
@@ -79,19 +161,31 @@ function atmosphereForTrack(id,title,artist){
   button.hidden=!canvasSource&&!songAnimation;
   button.setAttribute("aria-pressed",String(canvasEnabled));
   button.textContent=canvasEnabled?"Copertina":"Animazione";
+  const importer=$("imVideoImport");
+  if(importer){
+   importer.hidden=!isLocalCanvasTrackOpen();
+   importer.textContent=localCanvasUrl?"Cambia Canvas":"Aggiungi Canvas";
+  }
  }
  function configureCanvas(track){
+  const revision=++canvasRevision;
   stopCanvas();
+  releaseLocalCanvas();
   canvasSource=canvasFor(track);
   songAnimation=window.MusicBoxImmersiveAnimation?.find(track,api()?.profile?.())??null;
-  const conserve=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches||navigator.connection?.saveData;
-  canvasEnabled=!!(canvasSource||songAnimation)&&!conserve;
+  canvasEnabled=!!(canvasSource||songAnimation)&&wantsCanvasMotion();
   renderCanvasButton();
+  if(canUseLocalCanvas(track)){
+   localCanvasFile().then(file=>{
+    if(canvasRevision===revision&&isLocalCanvasTrackOpen()&&file instanceof Blob)showLocalCanvas(file);
+   }).catch(()=>{});
+  }
  }
  function failCanvas(){
   canvasSource=null;
   canvasEnabled=!!songAnimation&&canvasEnabled;
   stopCanvas();
+  releaseLocalCanvas();
   renderCanvasButton();
  }
  function audioNeedsBuffer(audio){
@@ -140,11 +234,13 @@ function atmosphereForTrack(id,title,artist){
    if(Date.now()-canvasLoadStarted>12000)failCanvas();
    return;
   }
-  if(!Number.isFinite(video.duration)||video.duration<3||video.duration>8.05){failCanvas();return}
+  if(!hasCanvasDuration(video)||(localCanvasUrl&&!isHorizontalCanvas(video))){failCanvas();return}
   const panel=$("immersivePanel");
   if(video.readyState>=2&&!video.paused&&!video.seeking){
    panel?.classList.add("im-video-live");
-   $("imAnimationLabel").hidden=!canvasSource.musicBox;
+   const label=$("imAnimationLabel");
+   label.textContent=localCanvasUrl?"Canvas personale":"Animazione Music Box";
+   label.hidden=!canvasSource.musicBox;
   }else if(!panel?.classList.contains("im-video-live")&&Date.now()-canvasLoadStarted>12000){
    failCanvas();
    return;
@@ -462,7 +558,8 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopCanvas();canvasSource=null;songAnimation=null;canvasEnabled=false;renderCanvasButton();
+ ++canvasRevision;
+ stopCanvas();releaseLocalCanvas();canvasSource=null;songAnimation=null;canvasEnabled=false;renderCanvasButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -536,6 +633,8 @@ function start(){
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
  $("imVideoToggle")?.addEventListener("click",toggleCanvas);
+ $("imVideoImport")?.addEventListener("click",()=>$("imVideoFile")?.click());
+ $("imVideoFile")?.addEventListener("change",importLocalCanvas);
  $("imVideo")?.addEventListener("ended",()=>updateCanvas(api()?.audio?.()));
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden)stopCanvas();

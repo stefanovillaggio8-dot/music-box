@@ -485,6 +485,37 @@ async function run(){
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
     assert.match(await page.locator("#imBackdrop").evaluate(el=>el.style.backgroundImage),/immersive-textures\.webp/);
     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
+    const importer=page.locator("#imVideoImport"),input=page.locator("#imVideoFile");
+    await importer.waitFor({state:"visible"});
+    assert.equal(await importer.innerText(),"Aggiungi Canvas");
+    await input.setInputFiles({name:"quadrato.mp4",mimeType:"video/mp4",buffer:clip});
+    await page.waitForFunction(()=>!document.getElementById("imVideoImport").disabled);
+    assert.equal(await video.getAttribute("src"),null,"a square local clip is rejected");
+    await input.setInputFiles({
+     name:"Canvas-16x9.mp4",mimeType:"video/mp4",buffer:originalClips["/immersive-loops/eva.mp4"]
+    });
+    const waitForPrivateCanvas=()=>page.waitForFunction(()=>{
+     const v=document.getElementById("imVideo");
+     return v.currentSrc.startsWith("blob:")&&v.currentTime>.2&&v.muted&&v.playsInline;
+    });
+    await waitForPrivateCanvas();
+    const localUrl=await video.getAttribute("src");
+    assert.equal(await video.getAttribute("data-music-box-clip"),"sintetico");
+    assert.equal(await page.locator("#imAnimationLabel").innerText(),"Canvas personale");
+    assert.equal(await importer.innerText(),"Cambia Canvas");
+    await context.setOffline(true);
+    await page.locator("#imClose").click();
+    assert.equal(await video.getAttribute("src"),null,"closing releases the private clip");
+    await page.locator("#btnImmersive").click();
+    await waitForPrivateCanvas();
+    assert.notEqual(await video.getAttribute("src"),localUrl,"reopening offline reads a fresh URL from storage");
+    await context.setOffline(false);
+    await page.evaluate(()=>{fakeProfile="Diego"});
+    await page.waitForFunction(()=>document.getElementById("imVideoImport").hidden);
+    assert.equal(await video.getAttribute("src"),null,"the private clip is scoped to Ste");
+    await page.evaluate(()=>{fakeProfile="Ste"});
+    await waitForPrivateCanvas();
+    assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
     await page.evaluate(()=>{fakeSong.cover=""});
 
     await switchTrack("b-track-27","Il Filmografo","songs/track-27.mp3","Kid Yugi");
