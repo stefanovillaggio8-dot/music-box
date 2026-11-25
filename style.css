@@ -4836,7 +4836,7 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
  .im-root.im-video-live .im-eyebrow:has(.im-animation-label:not([hidden])) > :not(.im-animation-label){display:none}
 }
 
-/* Eva keeps the detail on the left and carries the soft edge into the lyrics. */
+/* Only the blurred side of Eva overlaps the lyrics. */
 .im-video[data-music-box-clip="eva"]{
  inset:50% auto auto 0;width:min(100%,177.7778dvh);aspect-ratio:16/9;
  transform:translateY(-50%);
@@ -4846,7 +4846,10 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .im-root.im-video-live:has(.im-video[data-music-box-clip="eva"]) .im-video-shade{
  background:linear-gradient(0deg,#080612f5,transparent 31%),
   linear-gradient(90deg,#07051104 0%,#07051106 36%,#12101a50 72%,#080612b8),
-  radial-gradient(ellipse at 73% 41%,#7c566e72,transparent 72%)
+  radial-gradient(ellipse at 68% 42%,#77717a50,transparent 74%)
+}
+@media(min-width:851px){
+ .im-root.im-focus .im-video[data-music-box-clip="eva"]{width:min(76%,177.7778dvh)}
 }
 @media(orientation:portrait){
  .im-video[data-music-box-clip="eva"]{
