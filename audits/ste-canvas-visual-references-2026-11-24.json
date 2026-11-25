@@ -9,8 +9,8 @@
   "maxDurationDifferenceSecondsForVisualMatch": 0.5,
   "summary": {
     "preserved": 1,
-    "canvas-inspired": 47,
-    "song-inspired-photograph": 9,
+    "canvas-inspired": 49,
+    "song-inspired-photograph": 7,
     "song-inspired-environment": 165
   },
   "tracks": [
@@ -110,7 +110,15 @@
       "id": "b-track-49",
       "title": "Mostro (Visual)",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3QWxjzsBDPpmN45dcMIybB",
+      "durationDifferenceSeconds": -2.091,
+      "audioPreviewMatch": {
+        "fileSha": "db545d9e16290dc62f08773eb90dd9e23b073257",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9962,
+        "previewOffsetInRecordingSeconds": 61.9619
+      }
     },
     {
       "id": "b-track-87",
@@ -216,9 +224,15 @@
       "id": "b-youtube-S8oUoa0pwpo",
       "title": "Sentire La Musica",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/70m2SuBHRCkxVpgqpXZPDk",
-      "candidateDurationDifferenceSeconds": null
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/70m2SuBHRCkxVpgqpXZPDk",
+      "durationDifferenceSeconds": 0.147,
+      "audioPreviewMatch": {
+        "fileSha": "66829ed8dcbdd8f5cef9670042316e6537bbf60a",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9589,
+        "previewOffsetInRecordingSeconds": 91.0846
+      }
     },
     {
       "id": "b-track-2",
@@ -1539,5 +1553,5 @@
       "candidateDurationDifferenceSeconds": 5.364
     }
   ],
-  "additionalReferenceMethod": "For the four tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
+  "additionalReferenceMethod": "For the six tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
 }

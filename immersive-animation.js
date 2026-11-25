@@ -49,7 +49,7 @@ const kidYugiScenes={
  "b-track-38":[2,.36,.40,-.044,.021,"#ca9b5e"],
  "b-track-39":[3,.55,.51,-.023,.028,"#cd8b5a"],
  "b-track-41":[4,.44,.47,.064,-.016,"#a94238"],
- "b-track-87":[5,.51,.57,-.044,-.038,"#db9d65"],
+ "b-track-87":[37,.53,.54,-.039,-.021,"#cb9970"],
  "b-track-138":[6,.42,.48,.047,.024,"#a34741"],
  "b-track-205":[7,.35,.46,.066,.016,"#b4b3ae"],
  "b-track-206":[8,.53,.40,-.027,-.023,"#e38644"],
@@ -61,10 +61,10 @@ const kidYugiScenes={
  "b-track-33":[30,.51,.51,.043,-.021,"#a75a60"],
  "b-track-34":[14,.58,.55,-.035,.024,"#ee9e50"],
  "b-track-40":[31,.53,.57,.029,-.024,"#e0dcce"],
- "b-track-49":[16,.48,.57,.059,.023,"#66a3ac"],
+ "b-track-49":[34,.48,.57,.023,.011,"#c6c1bd"],
  "b-track-207":[32,.52,.52,-.047,.017,"#b8a38a"],
  "b-track-215":[33,.52,.55,-.037,.018,"#ad5143"],
- "b-youtube-S8oUoa0pwpo":[20,.37,.61,.063,.026,"#719eae"],
+ "b-youtube-S8oUoa0pwpo":[36,.53,.56,.043,.024,"#b08f68"],
  "b-track-20":[21,.59,.52,-.030,-.026,"#b98050"]
 };
 const libraryScenes={
@@ -107,6 +107,8 @@ const libraryScenes={
 // The close view reframes the original Music Box art. Alternate scenes
 // use their own atlas tile, based on a second shot in the matching reference.
 const photoEdits={
+ "b-track-49":[5.96,[[0,0]]],
+ "b-youtube-S8oUoa0pwpo":[7.96,[[0,0],[.12,1],[.22,0],[.39,1],[.54,0],[.71,1],[.88,0]]],
  "b-track-33":[5.6,[[0,0],[.11,1],[.22,0],[.36,1],[.58,0],[.78,1],[.92,0]]],
  "b-track-40":[8,[[0,2],[.31,0],[.46,2],[.58,1],[.69,0]],15],
  "b-track-207":[5.96,[[0,1],[.16,0],[.39,1],[.61,0],[.78,1],[.89,0]]],
@@ -116,7 +118,7 @@ const photoEdits={
  "b-track-38":[7.5,[[0,0],[.13,1],[.53,2],[.69,1],[.80,0]],22],
  "b-track-39":[7.5,[[0,0],[.25,2],[.59,0],[.75,2]],28],
  "b-track-41":[3.2,[[0,2],[.19,0],[.73,2]],27],
- "b-track-87":[7.5,[[0,1],[.15,0],[.34,1],[.60,0],[.79,1]]],
+ "b-track-87":[7.5,[[0,0],[.14,2],[.33,1],[.55,2],[.72,0],[.89,2]],38],
  "b-track-138":[5.1,[[0,0],[.51,1],[.79,0]]],
  "b-track-205":[7.5,[[0,0],[.15,1],[.31,2],[.59,0],[.76,2],[.91,1]],24],
  "b-track-206":[7.5,[[0,0],[.13,2],[.39,0],[.63,2],[.80,0]],29],
@@ -530,6 +532,18 @@ function paintPhotograph(shot,t){
  const y=top+margin+dy*.46+(mode===1?(.5-photo[2])*side*.14:0);
  f.drawImage(world,0,0);
  f.drawImage(canvas,x,y,length,length);
+ if(shot.scene.id==="b-track-49"){
+  f.save();
+  // Displace only the lower part of the picture to suggest wind in the cloth.
+  const strip=canvas.height*.045;
+  for(let index=0;index<6;index++){
+   const top=canvas.height*.58+index*strip;
+   const offset=Math.sin(t*2+index*.57)*length*.009;
+   f.globalAlpha=.3*Math.sin((index+1)*Math.PI/7);
+   f.drawImage(canvas,0,top,canvas.width,strip,x+offset,y+top*scale,length,strip*scale);
+  }
+  f.restore();
+ }
  if(detail&&mode===0&&!cues){
   const {image,left,top}=detail;
   f.drawImage(image,x+left*scale+dx*.18,y+top*scale+dy*.18,image.width*scale,image.height*scale);
