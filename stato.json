@@ -3251,14 +3251,14 @@
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 597,
+    "v": 3,
+    "s": 616,
     "t": "Lulu - Acoustic Version",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 597,
+    "v": 3,
+    "s": 616,
     "t": "Lulu - Acoustic Version",
     "a": "nayt, 3D"
    },
@@ -10092,13 +10092,13 @@
    },
    "[\"la notte\",\"modÃ \"]": {
     "v": 4,
-    "s": 586,
+    "s": 620,
     "t": "La notte",
     "a": "ModÃ "
    },
    "m:2026-11|[\"la notte\",\"modÃ \"]": {
     "v": 4,
-    "s": 586,
+    "s": 620,
     "t": "La notte",
     "a": "ModÃ "
    },
@@ -10914,13 +10914,13 @@
    },
    "[\"la notte\",\"modà\"]": {
     "v": 4,
-    "s": 620,
+    "s": 682,
     "t": "La notte",
     "a": "Modà"
    },
    "m:2026-11|[\"la notte\",\"modà\"]": {
     "v": 4,
-    "s": 620,
+    "s": 682,
     "t": "La notte",
     "a": "Modà"
    },
