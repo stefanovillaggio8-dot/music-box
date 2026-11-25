@@ -42,6 +42,7 @@ const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
 const kidYugiTextures={file:"immersive-kid-yugi.webp?v=3",image:null,ready:false};
 const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
+const referenceTextures={file:"immersive-ste-references.webp?v=1",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
  "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
@@ -106,7 +107,55 @@ const libraryScenes={
 // Cue positions are fractions of the loop, followed by the shot to show.
 // The close view reframes the original Music Box art. Alternate scenes
 // use their own atlas tile, based on a second shot in the matching reference.
+const referenceScenes={
+ "b-track-26":[0,0.52,0.5,0.026,0.016,"#92a49b"],
+ "b-track-48":[1,0.52,0.5,0.041,-0.022,"#ec352e","haze"],
+ "b-track-72":[2,0.52,0.5,-0.026,0.026,"#4b8cd9","haze"],
+ "b-track-88":[3,0.52,0.5,-0.033,-0.024,"#da4f4e"],
+ "b-track-110":[4,0.52,0.5,0.026,0.016,"#755def"],
+ "b-track-117":[5,0.52,0.5,0.041,-0.022,"#e17737","flame"],
+ "b-track-129":[6,0.52,0.5,-0.026,0.026,"#b974ec"],
+ "b-track-146":[7,0.52,0.5,-0.033,-0.024,"#5c75ea","screen"],
+ "b-track-150":[8,0.52,0.5,0.026,0.016,"#dab564"],
+ "b-track-179":[9,0.52,0.5,0.041,-0.022,"#aa8e75"],
+ "b-track-185":[10,0.52,0.5,-0.026,0.026,"#769be9","screen"],
+ "b-track-188":[11,0.52,0.5,-0.033,-0.024,"#566da6","screen"],
+ "b-track-193":[12,0.52,0.5,0.026,0.016,"#83a9bd","screen"],
+ "b-track-194":[13,0.52,0.5,0.041,-0.022,"#9b8c65","screen"],
+ "b-track-196":[14,0.52,0.5,-0.026,0.026,"#96b4ad","screen"],
+ "b-track-226":[15,0.52,0.5,-0.033,-0.024,"#c9bab0"],
+ "b-track-228":[16,0.52,0.5,0.026,0.016,"#b5a281"],
+ "b-track-229":[17,0.52,0.5,0.041,-0.022,"#91c5da"],
+ "b-track-250":[18,0.52,0.5,-0.026,0.026,"#e19a44","haze"],
+ "b-track-304":[19,0.52,0.5,-0.033,-0.024,"#bcbcb8"],
+ "b-track-516":[20,0.52,0.5,0.026,0.016,"#c7ac8a"],
+ "b-track-855":[21,0.52,0.5,0.041,-0.022,"#be9b70"],
+ "b-track-406":[6,0.52,0.5,-0.026,0.026,"#b974ec"]
+};
 const photoEdits={
+ "b-track-26":[7.875,[[0,0]]],
+ "b-track-48":[8,[[0,0]]],
+ "b-track-72":[8,[[0,0],[0.25,1],[0.59,0],[0.8,1]]],
+ "b-track-88":[7.0,[[0,0],[0.7,1]]],
+ "b-track-110":[7.875,[[0,0],[0.14,1],[0.33,0],[0.48,1],[0.76,0]]],
+ "b-track-117":[4.125,[[0,0],[0.27,1],[0.55,0],[0.76,1]]],
+ "b-track-129":[7.75,[[0,0],[0.34,1],[0.56,0],[0.76,1],[0.84,0],[0.92,1]]],
+ "b-track-146":[7.75,[[0,0],[0.24,1],[0.32,0],[0.84,1]]],
+ "b-track-150":[7.0,[[0,0]]],
+ "b-track-179":[7.125,[[0,0],[0.25,1],[0.47,0],[0.63,1],[0.84,0]]],
+ "b-track-185":[8,[[0,0]]],
+ "b-track-188":[8,[[0,0],[0.33,1],[0.45,0],[0.52,1],[0.7,0],[0.8,1]]],
+ "b-track-193":[6.0,[[0,0],[0.23,1],[0.69,0]]],
+ "b-track-194":[6.0,[[0,0],[0.21,1],[0.67,0],[0.81,1]]],
+ "b-track-196":[6.0,[[0,0]]],
+ "b-track-226":[7.875,[[0,0],[0.25,1],[0.41,0],[0.56,1],[0.65,0],[0.78,1]]],
+ "b-track-228":[7.875,[[0,0],[0.57,1],[0.63,0]]],
+ "b-track-229":[8,[[0,0],[0.44,1]]],
+ "b-track-250":[7.0,[[0,0],[0.21,1],[0.39,0],[0.52,1],[0.68,0],[0.84,1]]],
+ "b-track-304":[7.75,[[0,0],[0.55,1]]],
+ "b-track-516":[7.875,[[0,0],[0.29,1],[0.54,0],[0.65,1],[0.71,0]]],
+ "b-track-855":[7.875,[[0,0]]],
+ "b-track-406":[7.75,[[0,0],[0.34,1],[0.56,0],[0.76,1],[0.84,0],[0.92,1]]],
  "b-track-49":[5.96,[[0,0]]],
  "b-youtube-S8oUoa0pwpo":[7.96,[[0,0],[.12,1],[.22,0],[.39,1],[.54,0],[.71,1],[.88,0]]],
  "b-track-33":[5.6,[[0,0],[.11,1],[.22,0],[.36,1],[.58,0],[.78,1],[.92,0]]],
@@ -532,6 +581,7 @@ function paintPhotograph(shot,t){
  const y=top+margin+dy*.46+(mode===1?(.5-photo[2])*side*.14:0);
  f.drawImage(world,0,0);
  f.drawImage(canvas,x,y,length,length);
+ paintPracticalMotion(f,canvas,x,y,scale,t,photo[6]);
  if(shot.scene.id==="b-track-49"){
   f.save();
   // Displace only the lower part of the picture to suggest wind in the cloth.
@@ -555,6 +605,22 @@ function paintPhotograph(shot,t){
  f.globalAlpha=.22+.38*(.5+.5*Math.sin(t*2+.75));
  f.fillRect(-w*.25,-h*.15,w*1.5,h*1.3);
  f.restore();
+}
+
+function paintPracticalMotion(context,asset,left,top,scale,t,effect){
+ if(!effect)return;
+ const side=asset.width;
+ // Animate texture inside the frame around flames, screens and haze.
+ const [start,span,amount]=effect==="flame"?[.29,.44,.015]:effect==="screen"?[.39,.32,.005]:[.20,.46,.009];
+ const band=side*span/5;
+ context.save();
+ for(let i=0;i<5;i++){
+  const y=side*start+i*band;
+  const sway=Math.sin(t*2+i*.65)*side*amount;
+  context.globalAlpha=.29*Math.sin(Math.PI*(i+1)/6);
+  context.drawImage(asset,0,y,side,band,left+sway,top+y*scale,side*scale,band*scale);
+ }
+ context.restore();
 }
 
 function atmosphere(shot,t){
@@ -676,8 +742,9 @@ function start(stage,scene){
  stage.toggleAttribute("data-moving-scene",scene.id!=="b-track-27");
  stage.hidden=false;
  const kidYugiView=kidYugiScenes[scene.id];
- const photoView=kidYugiView??libraryScenes[scene.id]??null;
- const photoAtlas=photoView?(kidYugiView?kidYugiTextures:libraryTextures):textures;
+ const referenceView=referenceScenes[scene.id];
+ const photoView=kidYugiView??referenceView??libraryScenes[scene.id]??null;
+ const photoAtlas=kidYugiView?kidYugiTextures:referenceView?referenceTextures:photoView?libraryTextures:textures;
  const shot={stage,scene,period,edit,photoView,photoAtlas,started:performance.now()};
  if(!draw(shot)){stage.hidden=true;return false}
  active=shot;
