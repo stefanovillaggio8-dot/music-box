@@ -9,9 +9,9 @@
   "maxDurationDifferenceSecondsForVisualMatch": 0.5,
   "summary": {
     "preserved": 1,
-    "canvas-inspired": 73,
+    "canvas-inspired": 81,
     "song-inspired-photograph": 6,
-    "song-inspired-environment": 142
+    "song-inspired-environment": 134
   },
   "tracks": [
     {
@@ -294,9 +294,15 @@
       "id": "b-track-13",
       "title": "Victoria",
       "artist": "Tony Boy",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1r5WCFulDtvAdCNmJfH1wA",
-      "candidateDurationDifferenceSeconds": -1.224
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1r5WCFulDtvAdCNmJfH1wA",
+      "durationDifferenceSeconds": -1.224,
+      "audioPreviewMatch": {
+        "fileSha": "ab0890d6c9a63fb2697f904884e33eab37983f67",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8136,
+        "previewOffsetInRecordingSeconds": 64.5635
+      }
     },
     {
       "id": "b-track-14",
@@ -376,9 +382,15 @@
       "id": "b-track-31",
       "title": "ROMANTICA",
       "artist": "Ultimo",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3jG1o72wNvvjQn2kDoNsIu",
-      "candidateDurationDifferenceSeconds": 6.501
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3jG1o72wNvvjQn2kDoNsIu",
+      "durationDifferenceSeconds": 6.5,
+      "audioPreviewMatch": {
+        "fileSha": "af103ae2e1e683c802194b27f198f499a5e38b42",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9904,
+        "previewOffsetInRecordingSeconds": 104.185
+      }
     },
     {
       "id": "b-track-35",
@@ -408,9 +420,15 @@
       "id": "b-track-46",
       "title": "sailor song",
       "artist": "gigi perez",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/2262bWmqomIaJXwCRHr13j",
-      "candidateDurationDifferenceSeconds": 3.979
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/2262bWmqomIaJXwCRHr13j",
+      "durationDifferenceSeconds": 3.979,
+      "audioPreviewMatch": {
+        "fileSha": "e5a94fd8d85b4c3da386d83fe13b194d0067f61a",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8093,
+        "previewOffsetInRecordingSeconds": 117.6635
+      }
     },
     {
       "id": "b-track-47",
@@ -688,9 +706,15 @@
       "id": "b-track-112",
       "title": "Concedimi",
       "artist": "Matteo Romano",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5v4HwZG7b30ORymByjjqY8",
-      "candidateDurationDifferenceSeconds": -0.553
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5v4HwZG7b30ORymByjjqY8",
+      "durationDifferenceSeconds": -0.553,
+      "audioPreviewMatch": {
+        "fileSha": "d066e73519b3f3742204ba1042781a16ee78a87b",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.887,
+        "previewOffsetInRecordingSeconds": 115.5072
+      }
     },
     {
       "id": "b-track-113",
@@ -892,9 +916,15 @@
       "id": "b-track-147",
       "title": "È sempre bello",
       "artist": "Coez",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6IdiuMw1FSAvU3e6bgWQVX",
-      "candidateDurationDifferenceSeconds": 2.31
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6IdiuMw1FSAvU3e6bgWQVX",
+      "durationDifferenceSeconds": 2.31,
+      "audioPreviewMatch": {
+        "fileSha": "67675871b80e06d8beea33796467f4dbe5661daf",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8762,
+        "previewOffsetInRecordingSeconds": 93.8705
+      }
     },
     {
       "id": "b-track-148",
@@ -1076,9 +1106,15 @@
       "id": "b-track-181",
       "title": "Non ti dimentico",
       "artist": "Modà",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3xZW8lrovQJj6xszgLSg1S",
-      "candidateDurationDifferenceSeconds": 4.232
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3xZW8lrovQJj6xszgLSg1S",
+      "durationDifferenceSeconds": 4.232,
+      "audioPreviewMatch": {
+        "fileSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9883,
+        "previewOffsetInRecordingSeconds": 117.467
+      }
     },
     {
       "id": "b-track-182",
@@ -1292,9 +1328,15 @@
       "id": "b-track-222",
       "title": "Miami Vice",
       "artist": "Luchè, Sfera Ebbasta, Simba La Rue",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/76iZw9dIF3hdT0dYLKBai5",
-      "candidateDurationDifferenceSeconds": 2.67
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/76iZw9dIF3hdT0dYLKBai5",
+      "durationDifferenceSeconds": 2.67,
+      "audioPreviewMatch": {
+        "fileSha": "d3d8636a264aa43285d61b8145b4b0082d9abbae",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9277,
+        "previewOffsetInRecordingSeconds": 150.3843
+      }
     },
     {
       "id": "b-track-225",
@@ -1534,9 +1576,15 @@
       "id": "b-track-466",
       "title": "Senza Di Me (feat. Venerus & Franco126)",
       "artist": "Gemitaiz, Venerus, Franco126",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/24AowPNxQUXZynz8yrZ9bP",
-      "candidateDurationDifferenceSeconds": -6.658
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/24AowPNxQUXZynz8yrZ9bP",
+      "durationDifferenceSeconds": -6.658,
+      "audioPreviewMatch": {
+        "fileSha": "7dbc8322cf5372ae4c72af2ba50fe4599a3c88c5",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9059,
+        "previewOffsetInRecordingSeconds": 73.5875
+      }
     },
     {
       "id": "b-track-478",
@@ -1699,5 +1747,5 @@
       }
     }
   ],
-  "additionalReferenceMethod": "For tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
+  "additionalReferenceMethod": "For tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit. For short or deliberately processed previews, four windows span the preview and are evaluated at a shared sample offset. The Occhi Lucidi candidate, with a duration difference of 57 seconds, remains unconfirmed."
 }

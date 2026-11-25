@@ -42,7 +42,7 @@ const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
 const kidYugiTextures={file:"immersive-kid-yugi.webp?v=3",image:null,ready:false};
 const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
-const referenceTextures={file:"immersive-ste-references.webp?v=1",image:null,ready:false};
+const referenceTextures={file:"immersive-ste-references.webp?v=2",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
  "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
@@ -108,6 +108,14 @@ const libraryScenes={
 // The close view reframes the original Music Box art. Alternate scenes
 // use their own atlas tile, based on a second shot in the matching reference.
 const referenceScenes={
+ "b-track-13":[22,0.52,0.5,0.034,0.022,"#b06c9b","haze"],
+ "b-track-31":[23,0.52,0.5,-0.034,0.022,"#d86ce2"],
+ "b-track-46":[24,0.52,0.5,0.034,0.022,"#85a9ba","haze"],
+ "b-track-112":[25,0.52,0.5,-0.034,0.022,"#37699e"],
+ "b-track-147":[26,0.52,0.5,0.034,0.022,"#da6140"],
+ "b-track-181":[27,0.52,0.5,-0.034,0.022,"#638bb3","haze"],
+ "b-track-222":[28,0.52,0.5,0.034,0.022,"#d36335","haze"],
+ "b-track-466":[29,0.52,0.5,-0.034,0.022,"#a3888d"],
  "b-track-26":[0,0.52,0.5,0.026,0.016,"#92a49b"],
  "b-track-48":[1,0.52,0.5,0.041,-0.022,"#ec352e","haze"],
  "b-track-72":[2,0.52,0.5,-0.026,0.026,"#4b8cd9","haze"],
@@ -133,6 +141,14 @@ const referenceScenes={
  "b-track-406":[6,0.52,0.5,-0.026,0.026,"#b974ec"]
 };
 const photoEdits={
+ "b-track-13":[8,[[0,0]]],
+ "b-track-31":[8,[[0,0]]],
+ "b-track-46":[6.0,[[0,0],[0.23,1],[0.31,0],[0.56,1],[0.79,0]]],
+ "b-track-112":[7.0,[[0,0]]],
+ "b-track-147":[3.5,[[0,0]]],
+ "b-track-181":[7.875,[[0,0],[0.25,1],[0.41,0],[0.57,1]]],
+ "b-track-222":[4.125,[[0,0],[0.24,1],[0.55,0]]],
+ "b-track-466":[7.875,[[0,0],[0.16,1],[0.3,0],[0.51,1],[0.62,0],[0.75,1]]],
  "b-track-26":[7.875,[[0,0]]],
  "b-track-48":[8,[[0,0]]],
  "b-track-72":[8,[[0,0],[0.25,1],[0.59,0],[0.8,1]]],
