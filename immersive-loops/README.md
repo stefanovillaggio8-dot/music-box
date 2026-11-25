@@ -1,6 +1,6 @@
 # Animazioni Music Box
 
-- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Mantiene lo sfondo, la mela con il serpente e la sfocatura laterale. Le iscrizioni, le corone frastagliate e i sigilli rossi sono disegnati per il loop e seguono le apparizioni osservate fotogramma per fotogramma. I tratti rossi hanno uno spessore maggiore per restare visibili su schermi piccoli.
+- **Eva**. Ricostruzione orizzontale 16:9 da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Mantiene lo sfondo, la mela con il serpente e la sfocatura laterale. Le iscrizioni, le corone frastagliate e i sigilli rossi sono disegnati per il loop e seguono le apparizioni osservate fotogramma per fotogramma. I simboli sono semitrasparenti per lasciare vedere lo sfondo durante le apparizioni.
 - **Sintetico**. Montaggio orizzontale 16:9 da 5,4 secondi con la foto autentica [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg) di Riccardobusato (CC0 1.0). Gli interni dell’auto, il garage, la portiera e gli stacchi VHS seguono il [Canvas Spotify](https://open.spotify.com/track/3NLdcu14EPntcZIn3mxSR7) come riferimento. Il ritratto usa i pixel del fotografo. Per questa registrazione è disponibile anche il [visual ufficiale](https://www.youtube.com/watch?v=umdg7hCEGI8).
 
 I file contengono soltanto video.

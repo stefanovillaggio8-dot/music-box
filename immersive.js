@@ -41,7 +41,7 @@ function atmosphereForTrack(id,title,artist){
   "b-track-2":{file:"songs/track-2.mp3",title:"QUANTO FORTE TI PENSAVO",artist:"Madame",url:"immersive-loops/quanto-forte-ti-pensavo.mp4?v=1"},
   "b-track-160":{file:"songs/track-160.mp3",title:"Per una notte insieme",artist:"Modà",url:"immersive-loops/per-una-notte-insieme.mp4?v=1"},
   "b-track-7":{file:"songs/track-7.mp3",title:"Star Shopping",artist:"Lil Peep",url:"immersive-loops/star-shopping.mp4?v=1"},
-  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=8",framing:"eva"}
+  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=9",framing:"eva"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
  function canvasFor(track){
