@@ -3156,13 +3156,13 @@
    },
    "[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 5,
-    "s": 635,
+    "s": 679,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
    "m:2026-11|[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 5,
-    "s": 635,
+    "s": 679,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
@@ -10349,14 +10349,14 @@
     "a": "thasup"
    },
    "[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 99,
+    "v": 3,
+    "s": 101,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 99,
+    "v": 3,
+    "s": 101,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
