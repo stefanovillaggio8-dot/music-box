@@ -6,7 +6,6 @@ const scenes=Object.freeze({
   "b-track-6":["songs/track-6.mp3","Kid Yugi x Lil Peep MASHUP","Kid Yugi / Lil Peep","moon","violet","orbit"],
   "b-track-27":["songs/track-27.mp3","Il Filmografo","Kid Yugi","film","jade","push"],
   "b-track-29":["songs/track-29.mp3","terr1","kid yugi","gate","clay","push"],
-  "b-track-30":["songs/track-30.mp3","Sintetico","Kid Yugi","mask","acid","pulse"],
   "b-track-33":["songs/track-33.mp3","Lilith","Kid Yugi","moon","plum","orbit"],
   "b-track-34":["songs/track-34.mp3","Eva","Kid Yugi, Tedua & Junior K","branch","jade","sway"],
   "b-track-37":["songs/track-37.mp3","La Violenza Necessaria","Kid Yugi & Shiva","blade","scarlet","push"],
