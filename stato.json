@@ -1782,13 +1782,13 @@
    },
    "[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 13,
+    "s": 17,
     "t": "Numb",
     "a": "Linkin Park"
    },
    "m:2026-11|[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 13,
+    "s": 17,
     "t": "Numb",
     "a": "Linkin Park"
    },
@@ -4439,14 +4439,14 @@
     "a": "Three Days Grace"
    },
    "[\"somewhere i belong\",\"linkin park\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 2,
+    "s": 1,
     "t": "Somewhere I Belong",
     "a": "Linkin Park"
    },
    "m:2026-11|[\"somewhere i belong\",\"linkin park\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 2,
+    "s": 1,
     "t": "Somewhere I Belong",
     "a": "Linkin Park"
    },
