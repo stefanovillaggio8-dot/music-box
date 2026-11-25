@@ -1,7 +1,7 @@
 # Animazioni Music Box
 
-- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Mantiene lo sfondo, la mela con il serpente e la sfocatura laterale. Le iscrizioni, le corone frastagliate e i sigilli rossi sono disegnati per il loop e seguono le apparizioni osservate fotogramma per fotogramma.
-- **Sintetico**. Montaggio verticale originale da 5,4 secondi, basato sui tagli e sul trattamento VHS del [Canvas Spotify](https://open.spotify.com/track/3NLdcu14EPntcZIn3mxSR7). Alcune immagini richiamano il [visual ufficiale](https://www.youtube.com/watch?v=umdg7hCEGI8). Il ritratto parte da [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg), fotografia di Riccardobusato (CC0 1.0).
+- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Mantiene lo sfondo, la mela con il serpente e la sfocatura laterale. Le iscrizioni, le corone frastagliate e i sigilli rossi sono disegnati per il loop e seguono le apparizioni osservate fotogramma per fotogramma. I tratti rossi hanno uno spessore maggiore per restare visibili su schermi piccoli.
+- **Sintetico**. Montaggio originale in orizzontale 16:9 da 5,4 secondi, basato sui tagli e sul trattamento VHS del [Canvas Spotify](https://open.spotify.com/track/3NLdcu14EPntcZIn3mxSR7). Alcune immagini richiamano il [visual ufficiale](https://www.youtube.com/watch?v=umdg7hCEGI8). Il ritratto parte da [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg), fotografia di Riccardobusato (CC0 1.0).
 
 I file contengono soltanto video.
 
