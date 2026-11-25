@@ -12,3 +12,11 @@ Il montaggio Music Box riprende il ritmo di 81 anteprime già associate alle reg
 Per Lilith, Donna, Mostro, Per te che Lotto, Il Ferro di Čechov e Sentire La Musica la corrispondenza è stata verificata anche su più passaggi di audio, a partire dalle anteprime Spotify e dai file effettivi di Ste.
 
 Il secondo atlante di Ste è richiesto soltanto quando parte una scena dei nuovi brani, tra cui NON MI RICONOSCO di MACE, Nessuna di Luchè e Prima che di nayt.
+
+## Altri riferimenti Ste
+
+- **QUANTO FORTE TI PENSAVO**. Display digitale blu con separatore intermittente.
+- **Per una notte insieme**. Biglietti colorati con fiori e cuori si sovrappongono in un loop di sette secondi.
+- **Star Shopping**. Titolo verticale tra bagliori argentati, in un loop di sette secondi.
+
+35 brani usano le nuove scene dell’atlante, caricato al bisogno. I disegni e i fotogrammi sono stati creati per Music Box usando come riferimento i Canvas o le anteprime dei videoclip associati nell'audit.

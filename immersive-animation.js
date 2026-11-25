@@ -43,6 +43,7 @@ const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
 const kidYugiTextures={file:"immersive-kid-yugi.webp?v=3",image:null,ready:false};
 const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
 const referenceTextures={file:"immersive-ste-references.webp?v=2",image:null,ready:false};
+const videoStills={file:"immersive-ste-video-stills.webp?v=1",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
  "b-track-29":[0,.43,.60,.050,.018,"#b87858"],
@@ -140,7 +141,79 @@ const referenceScenes={
  "b-track-855":[21,0.52,0.5,0.041,-0.022,"#be9b70"],
  "b-track-406":[6,0.52,0.5,-0.026,0.026,"#b974ec"]
 };
+const videoScenes={
+ "b-track-11":[32,.52,.55,.032,-.016,"#cca25f"],
+ "b-track-4":[0,0.53,0.52,0.026,-0.018,"#a0ada8"],
+ "b-track-8":[1,0.53,0.52,-0.03,0.018,"#72985d"],
+ "b-track-9":[2,0.53,0.52,0.034,-0.018,"#8ba386","haze"],
+ "b-track-18":[3,0.53,0.52,-0.038,0.018,"#edb37c","haze"],
+ "b-track-79":[4,0.53,0.52,0.026,-0.018,"#829ba5","haze"],
+ "b-track-95":[5,0.53,0.52,-0.03,0.018,"#789377"],
+ "b-track-96":[6,0.53,0.52,0.034,-0.018,"#7995b0"],
+ "b-track-97":[7,0.53,0.52,-0.038,0.018,"#80b1de"],
+ "b-track-113":[8,0.53,0.52,0.026,-0.018,"#ab3152"],
+ "b-track-115":[9,0.53,0.52,-0.03,0.018,"#a4a3a4"],
+ "b-track-135":[10,0.53,0.52,0.034,-0.018,"#a94050"],
+ "b-track-143":[11,0.53,0.52,-0.038,0.018,"#68849b"],
+ "b-track-148":[12,0.53,0.52,0.026,-0.018,"#ccb78d","haze"],
+ "b-track-155":[13,0.53,0.52,-0.03,0.018,"#ab7050"],
+ "b-track-159":[14,0.53,0.52,0.034,-0.018,"#748ab2","haze"],
+ "b-track-161":[15,0.53,0.52,-0.038,0.018,"#bc8c70"],
+ "b-track-168":[16,0.53,0.52,0.026,-0.018,"#80b5a0","haze"],
+ "b-track-169":[17,0.53,0.52,-0.03,0.018,"#96867e"],
+ "b-track-182":[18,0.53,0.52,0.034,-0.018,"#a8a5a2","haze"],
+ "b-track-209":[19,0.53,0.52,-0.038,0.018,"#90a7b7"],
+ "b-track-217":[20,0.53,0.52,0.026,-0.018,"#846ecc","haze"],
+ "b-track-218":[21,0.53,0.52,-0.03,0.018,"#6885c1","haze"],
+ "b-track-220":[22,0.53,0.52,0.034,-0.018,"#9070b4","haze"],
+ "b-track-221":[23,0.53,0.52,-0.038,0.018,"#929293"],
+ "b-track-239":[24,0.53,0.52,0.026,-0.018,"#b99a78","haze"],
+ "b-track-242":[25,0.53,0.52,-0.03,0.018,"#9ba77f"],
+ "b-track-243":[26,0.53,0.52,0.034,-0.018,"#b19b84"],
+ "b-track-309":[27,0.53,0.52,-0.038,0.018,"#b66f5e","haze"],
+ "b-track-954":[28,0.53,0.52,0.026,-0.018,"#76b1c7"],
+ "b-track-963":[29,0.53,0.52,-0.03,0.018,"#a392ae","flame"],
+ "b-track-664":[30,0.53,0.52,0.034,-0.018,"#aa8b69","haze"],
+ "b-track-165":[31,0.53,0.52,-0.038,0.018,"#a08966"],
+ "b-track-180":[7,0.53,0.52,-0.038,0.018,"#80b1de"],
+ "b-track-658":[23,0.53,0.52,-0.038,0.018,"#929293"]
+};
 const photoEdits={
+ "b-track-11":[8,[[0,0],[.13,1],[.31,0],[.44,2],[.58,0],[.74,1],[.86,2]],33],
+ "b-track-4":[7.86,[[0,0]]],
+ "b-track-8":[8.0,[[0,0],[0.14,1],[0.39,0],[0.51,1],[0.74,0]]],
+ "b-track-9":[7.5,[[0,0],[0.19,1],[0.31,0],[0.46,1],[0.61,0],[0.72,1],[0.91,0]]],
+ "b-track-18":[7.5,[[0,0],[0.08,1],[0.19,0],[0.32,1],[0.45,0],[0.58,1],[0.69,0],[0.82,1]]],
+ "b-track-79":[8.0,[[0,0],[0.77,1]]],
+ "b-track-95":[6.16,[[0,0],[0.23,1],[0.6,0],[0.79,1]]],
+ "b-track-96":[7.5,[[0,0]]],
+ "b-track-97":[7.37,[[0,0]]],
+ "b-track-113":[7.01,[[0,0],[0.15,1],[0.45,0]]],
+ "b-track-115":[7.6,[[0,0],[0.37,1],[0.52,0],[0.75,1]]],
+ "b-track-135":[7.01,[[0,0],[0.15,1],[0.45,0]]],
+ "b-track-143":[7.5,[[0,0],[0.53,1]]],
+ "b-track-148":[7.5,[[0,0],[0.09,1],[0.24,0],[0.42,1],[0.65,0],[0.8,1]]],
+ "b-track-155":[7.5,[[0,0],[0.12,1],[0.26,0],[0.43,1],[0.55,0],[0.75,1]]],
+ "b-track-159":[7.5,[[0,0],[0.41,1],[0.55,0],[0.69,1],[0.82,0]]],
+ "b-track-161":[7.5,[[0,0],[0.09,1],[0.3,0],[0.58,1],[0.77,0],[0.9,1]]],
+ "b-track-168":[7.5,[[0,0],[0.16,1],[0.32,0],[0.47,1],[0.61,0],[0.72,1]]],
+ "b-track-169":[7.5,[[0,0],[0.09,1],[0.24,0],[0.37,1],[0.53,0],[0.67,1]]],
+ "b-track-182":[7.5,[[0,0],[0.55,1],[0.73,0]]],
+ "b-track-209":[7.5,[[0,0],[0.09,1],[0.28,0],[0.41,1],[0.56,0],[0.71,1],[0.9,0]]],
+ "b-track-217":[7.5,[[0,0]]],
+ "b-track-218":[7.5,[[0,0]]],
+ "b-track-220":[7.5,[[0,0]]],
+ "b-track-221":[7.0,[[0,0]]],
+ "b-track-239":[7.5,[[0,0],[0.76,1]]],
+ "b-track-242":[7.5,[[0,0],[0.08,1],[0.24,0],[0.4,1],[0.57,0],[0.68,1],[0.82,0]]],
+ "b-track-243":[7.5,[[0,0],[0.08,1],[0.34,0],[0.55,1],[0.7,0],[0.83,1]]],
+ "b-track-309":[7.5,[[0,0],[0.11,1],[0.3,0],[0.46,1],[0.59,0],[0.72,1],[0.86,0]]],
+ "b-track-954":[7.5,[[0,0],[0.26,1],[0.38,0],[0.53,1],[0.92,0]]],
+ "b-track-963":[7.88,[[0,0]]],
+ "b-track-664":[7.5,[[0,0]]],
+ "b-track-165":[7.5,[[0,0],[0.3,1],[0.53,0]]],
+ "b-track-180":[7.37,[[0,0]]],
+ "b-track-658":[7.0,[[0,0]]],
  "b-track-13":[8,[[0,0]]],
  "b-track-31":[8,[[0,0]]],
  "b-track-46":[6.0,[[0,0],[0.23,1],[0.31,0],[0.56,1],[0.79,0]]],
@@ -759,8 +832,9 @@ function start(stage,scene){
  stage.hidden=false;
  const kidYugiView=kidYugiScenes[scene.id];
  const referenceView=referenceScenes[scene.id];
- const photoView=kidYugiView??referenceView??libraryScenes[scene.id]??null;
- const photoAtlas=kidYugiView?kidYugiTextures:referenceView?referenceTextures:photoView?libraryTextures:textures;
+ const videoView=videoScenes[scene.id];
+ const photoView=kidYugiView??referenceView??videoView??libraryScenes[scene.id]??null;
+ const photoAtlas=kidYugiView?kidYugiTextures:referenceView?referenceTextures:videoView?videoStills:photoView?libraryTextures:textures;
  const shot={stage,scene,period,edit,photoView,photoAtlas,started:performance.now()};
  if(!draw(shot)){stage.hidden=true;return false}
  active=shot;
