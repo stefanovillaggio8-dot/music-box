@@ -445,7 +445,7 @@ async function run(){
 
     await page.evaluate(()=>{fakeProfile="Ste"});
     for(const [trackId,title,file,artist,asset,duration,version] of [
-     ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K","eva",6.75,"5"],
+     ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K","eva",6.76,"6"],
      ["b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi","sintetico",7.5,"2"],
      ["b-track-2","QUANTO FORTE TI PENSAVO","songs/track-2.mp3","Madame","quanto-forte-ti-pensavo",6,"1"],
      ["b-track-160","Per una notte insieme","songs/track-160.mp3","Modà","per-una-notte-insieme",7,"1"],
@@ -467,8 +467,8 @@ async function run(){
      });
      const eva=title==="Eva";
      assert.equal(frame.framing,eva?"eva":"");
-     // The last quarter of Eva's source is the soft extension, not the subject.
-     const subjectRight=eva?frame.left+frame.width*.75:frame.right;
+     // The full scene, including the soft extension, fits in the viewport.
+     const subjectRight=frame.right;
      assert.ok(frame.left>=-1&&frame.top>=-1&&subjectRight<=frame.viewportWidth+1&&frame.bottom<=frame.viewportHeight+1,
       "the subject fits in the viewport: "+JSON.stringify(frame));
      assert.ok(frame.fit==="contain"&&frame.mask.split("linear-gradient").length===3);

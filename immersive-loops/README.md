@@ -1,6 +1,6 @@
 # Animazioni Music Box
 
-- **Eva**. Scena originale con mela, ramo e serpente ispirata al riferimento del brano. Simboli rossi ridisegnati e collage bianco che si alterna fra due dimensioni, seguendo il montaggio del Canvas verificato, con il lato destro della scena sfocato sotto il testo. Animazione e montaggio per Music Box.
+- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Riprende l’inquadratura dall’alto, l’alternanza di due scale della mela e del serpente e i cambi di forma e posizione dei segni rossi, osservati fotogramma per fotogramma. Il lato destro sfuma e si sfoca sotto il testo.
 - **Sintetico**. Montaggio in bianco e nero da [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg), fotografia di Riccardobusato (CC0 1.0). La foto documenta un DJ set. Il montaggio Music Box è ispirato al trattamento video di Sintetico.
 
 I file contengono soltanto video.
