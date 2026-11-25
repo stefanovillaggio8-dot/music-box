@@ -38,7 +38,7 @@ function atmosphereForTrack(id,title,artist){
  // Record the permission URL in evidence for third-party clips.
  const reviewedCanvasCatalog=Object.freeze({});
  const musicBoxClips=Object.freeze({
-  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=3",framing:"eva"},
+  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=4",framing:"eva"},
   "b-track-30":{file:"songs/track-30.mp3",title:"Sintetico",artist:"Kid Yugi",url:"immersive-loops/sintetico.mp4?v=2"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;

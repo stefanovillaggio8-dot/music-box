@@ -451,7 +451,7 @@ async function run(){
       const v=document.getElementById("imVideo");
       if(!v.currentSrc||v.currentTime<=.2||v.paused)return false;
       const url=new URL(v.currentSrc);
-      return url.pathname.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&url.searchParams.get("v")===(title==="Eva"?"3":"2");
+      return url.pathname.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&url.searchParams.get("v")===(title==="Eva"?"4":"2");
      },title,{timeout:12000});
      assert.ok(await video.evaluate(v=>v.muted&&v.playsInline&&v.duration===7.5&&v.hasAttribute("data-music-box-clip")));
      const frame=await video.evaluate(v=>{
