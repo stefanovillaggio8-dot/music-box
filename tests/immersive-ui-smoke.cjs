@@ -62,6 +62,9 @@ const fixture=[
 ].join("\n");
 // Four seconds of silent synthetic H.264. The browser decodes it over HTTP.
 const clip=fs.readFileSync(path.join(__dirname,"fixtures","immersive-silent.mp4"));
+const originalClips=Object.fromEntries(["eva","sintetico"].map(name=>[
+ "/immersive-loops/"+name+".mp4",fs.readFileSync(path.join(root,"immersive-loops",name+".mp4"))
+]));
 // Inject only synthetic test recordings. The production catalog stays intact.
 const canvasFixtureEntries=Object.fromEntries(["short-loop","too-long"].map(id=>[id,{
  file:"songs/canvas-fixture.mp3",title:"Brano di prova",artist:"Artista di prova",
@@ -80,16 +83,17 @@ const server=http.createServer((req,res)=>{
   res.writeHead(200,{"Content-Type":"image/webp","Content-Length":image.length}).end(image);
   return;
  }
- if(loc==="/fixture.mp4"){
+ const videoBytes=loc==="/fixture.mp4"?clip:originalClips[loc];
+ if(videoBytes){
   const headers={"Content-Type":"video/mp4","Accept-Ranges":"bytes","Cache-Control":"no-store"};
   const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||"");
   if(range){
-   const start=Number(range[1]),end=Math.min(clip.length-1,range[2]?Number(range[2]):clip.length-1);
-   if(start>end){res.writeHead(416,{"Content-Range":"bytes */"+clip.length});res.end();return}
-   res.writeHead(206,{...headers,"Content-Length":end-start+1,"Content-Range":"bytes "+start+"-"+end+"/"+clip.length});
-   res.end(clip.subarray(start,end+1));return;
+   const start=Number(range[1]),end=Math.min(videoBytes.length-1,range[2]?Number(range[2]):videoBytes.length-1);
+   if(start>end){res.writeHead(416,{"Content-Range":"bytes */"+videoBytes.length});res.end();return}
+   res.writeHead(206,{...headers,"Content-Length":end-start+1,"Content-Range":"bytes "+start+"-"+end+"/"+videoBytes.length});
+   res.end(videoBytes.subarray(start,end+1));return;
   }
-  res.writeHead(200,{...headers,"Content-Length":clip.length});res.end(clip);return;
+  res.writeHead(200,{...headers,"Content-Length":videoBytes.length});res.end(videoBytes);return;
  }
 
  const contents={"/style.css":css,"/immersive.js":testImmersive,"/immersive-scenes.js":testScenes,
@@ -438,7 +442,21 @@ async function run(){
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true,"the reviewed entry is exclusive to Ste");
 
     await page.evaluate(()=>{fakeProfile="Ste"});
+    for(const [trackId,title,file,artist] of [
+     ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K"],
+     ["b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi"]
+    ]){
+     await switchTrack(trackId,title,file,artist);
+     await page.waitForFunction(title=>{
+      const v=document.getElementById("imVideo");
+      return v.currentSrc.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&v.currentTime>.2&&!v.paused;
+     },title,{timeout:12000});
+     assert.ok(await video.evaluate(v=>v.muted&&v.playsInline&&v.duration===7.5&&v.hasAttribute("data-music-box-clip")));
+     assert.equal(await page.locator("#imAnimationLabel").isHidden(),false);
+     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
+    }
     await switchTrack("b-track-27","Il Filmografo","songs/track-27.mp3","Kid Yugi");
+    assert.equal(await video.getAttribute("src"),null,"changing away releases the clip");
     await page.locator("#imClose").click();
     assert.equal(await stage.isHidden(),true,"no art outside immersive mode");
     if(size.name==="iphone13")await page.locator("#btnImmersive").tap();

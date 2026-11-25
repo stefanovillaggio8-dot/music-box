@@ -34,21 +34,27 @@ function atmosphereForTrack(id,title,artist){
  root.classList.add("im-track-enter");
 }
 
-// Each entry binds an authorized short file to one published recording.
- // Source kinds: spotify-canvas, official-loop, official-excerpt.
- // Record the permission URL in evidence when adding a source.
+ // Each entry binds a short visual to one published recording.
+ // Record the permission URL in evidence for third-party clips.
  const reviewedCanvasCatalog=Object.freeze({});
- let canvasSource="",songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
+ const musicBoxClips=Object.freeze({
+  "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4"},
+  "b-track-30":{file:"songs/track-30.mp3",title:"Sintetico",artist:"Kid Yugi",url:"immersive-loops/sintetico.mp4"}
+ });
+ let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
  function canvasFor(track){
-  if(api()?.profile?.()!=="Ste"||!track?.id||!Object.hasOwn(reviewedCanvasCatalog,track.id))return "";
-  const entry=reviewedCanvasCatalog[track.id];
-  if(entry.file!==track.file||entry.artist!==track.artist||entry.title!==track.title)return "";
-  if(!["spotify-canvas","official-loop","official-excerpt"].includes(entry.kind)||!entry.evidence)return "";
+  if(api()?.profile?.()!=="Ste"||!track?.id)return null;
+  const musicBox=Object.hasOwn(musicBoxClips,track.id);
+  if(!musicBox&&!Object.hasOwn(reviewedCanvasCatalog,track.id))return null;
+  const entry=(musicBox?musicBoxClips:reviewedCanvasCatalog)[track.id];
+  if(entry.file!==track.file||entry.artist!==track.artist||entry.title!==track.title)return null;
+  if(!musicBox&&(!["spotify-canvas","official-loop","official-excerpt"].includes(entry.kind)||!entry.evidence))return null;
   try{
    const url=new URL(entry.url,document.baseURI);
-   if(url.username||url.password||!/\.(mp4|m4v|webm)$/i.test(url.pathname))return "";
-   return url.protocol==="https:"||(url.protocol==="http:"&&url.origin===location.origin)?url.href:"";
-  }catch(_){return ""}
+   if(url.username||url.password||!/\.(mp4|m4v|webm)$/i.test(url.pathname))return null;
+   if(musicBox&&url.origin!==location.origin)return null;
+   return url.protocol==="https:"||(url.protocol==="http:"&&url.origin===location.origin)?{url:url.href,musicBox}:null;
+  }catch(_){return null}
  }
  function stopCanvas(){
   $("immersivePanel")?.classList.remove("im-video-live");
@@ -61,6 +67,7 @@ function atmosphereForTrack(id,title,artist){
   if(!video?.hasAttribute("src"))return;
   video.pause();
   video.removeAttribute("src");
+  video.removeAttribute("data-music-box-clip");
   video.load();
   video.hidden=true;
  }
@@ -80,7 +87,7 @@ function atmosphereForTrack(id,title,artist){
   renderCanvasButton();
  }
  function failCanvas(){
-  canvasSource="";
+  canvasSource=null;
   canvasEnabled=!!songAnimation&&canvasEnabled;
   stopCanvas();
   renderCanvasButton();
@@ -122,7 +129,8 @@ function atmosphereForTrack(id,title,artist){
    video.muted=true;
    video.defaultMuted=true;
    video.hidden=false;
-   video.src=canvasSource;
+   video.toggleAttribute("data-music-box-clip",canvasSource.musicBox);
+   video.src=canvasSource.url;
    video.load();
   }
   if(video.error){failCanvas();return}
@@ -134,6 +142,7 @@ function atmosphereForTrack(id,title,artist){
   const panel=$("immersivePanel");
   if(video.readyState>=2&&!video.paused&&!video.seeking){
    panel?.classList.add("im-video-live");
+   $("imAnimationLabel").hidden=!canvasSource.musicBox;
   }else if(!panel?.classList.contains("im-video-live")&&Date.now()-canvasLoadStarted>12000){
    failCanvas();
    return;
@@ -451,7 +460,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- stopCanvas();canvasSource="";songAnimation=null;canvasEnabled=false;renderCanvasButton();
+ stopCanvas();canvasSource=null;songAnimation=null;canvasEnabled=false;renderCanvasButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
