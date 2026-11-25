@@ -445,8 +445,8 @@ async function run(){
 
     await page.evaluate(()=>{fakeProfile="Ste"});
     for(const [trackId,title,file,artist,asset,duration,version] of [
-     ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K","eva",6.76,"6"],
-     ["b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi","sintetico",7.5,"2"],
+     ["b-track-34","Eva","songs/track-34.mp3","Kid Yugi, Tedua & Junior K","eva",6.76,"7"],
+     ["b-track-30","Sintetico","songs/track-30.mp3","Kid Yugi","sintetico",5.4,"3"],
      ["b-track-2","QUANTO FORTE TI PENSAVO","songs/track-2.mp3","Madame","quanto-forte-ti-pensavo",6,"1"],
      ["b-track-160","Per una notte insieme","songs/track-160.mp3","Modà","per-una-notte-insieme",7,"1"],
      ["b-track-7","Star Shopping","songs/track-7.mp3","Lil Peep","star-shopping",7,"1"]
@@ -463,16 +463,19 @@ async function run(){
       const rect=v.getBoundingClientRect(),style=getComputedStyle(v);
       return {left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom,
        width:rect.width,height:rect.height,fit:style.objectFit,mask:style.maskImage,
-       viewportWidth:innerWidth,viewportHeight:innerHeight,framing:v.dataset.musicBoxClip};
+       viewportWidth:innerWidth,viewportHeight:innerHeight,framing:v.dataset.musicBoxClip,
+       sourceRatio:v.videoWidth/v.videoHeight};
      });
-     const eva=title==="Eva";
-     assert.equal(frame.framing,eva?"eva":"");
+     const framedClips={eva:5/4,sintetico:23/50};
+     const framing=Object.hasOwn(framedClips,asset)?asset:"";
+     assert.equal(frame.framing,framing);
      // The full scene, including the soft extension, fits in the viewport.
      const subjectRight=frame.right;
      assert.ok(frame.left>=-1&&frame.top>=-1&&subjectRight<=frame.viewportWidth+1&&frame.bottom<=frame.viewportHeight+1,
       "the subject fits in the viewport: "+JSON.stringify(frame));
      assert.ok(frame.fit==="contain"&&frame.mask.split("linear-gradient").length===3);
-     assert.ok(Math.abs(frame.width-frame.height*(eva?1.25:1))<1);
+     assert.equal(frame.sourceRatio,framedClips[asset]??1);
+     assert.ok(Math.abs(frame.width-frame.height*frame.sourceRatio)<1,"the encoded frame fits without cropping");
      assert.equal(await page.locator("#imAnimationLabel").isHidden(),false);
      assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
     }

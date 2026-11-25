@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6744&lyrics=20",
+  "./style.css?v=6744&lyrics=21",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -76,7 +76,7 @@ const CORE = [
   "./immersive-textures.webp?v=1",
   "./immersive-kid-yugi.webp?v=3",
   "./immersive-ste.webp?v=2",
-  "./immersive.js?v=6734&words=30",
+  "./immersive.js?v=6734&words=31",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -101,7 +101,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6744&lyrics=20",
+  "./style.css?v=6744&lyrics=21",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -126,7 +126,7 @@ const OFFLINE_SHELL = [
   "./immersive-scenes.js?v=1",
   "./immersive-animation.js?v=15",
   "./immersive-textures.webp?v=1",
-  "./immersive.js?v=6734&words=30"
+  "./immersive.js?v=6734&words=31"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",

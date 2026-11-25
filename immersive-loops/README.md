@@ -1,7 +1,7 @@
 # Animazioni Music Box
 
-- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Riprende l’inquadratura dall’alto, l’alternanza di due scale della mela e del serpente e i cambi di forma e posizione dei segni rossi, osservati fotogramma per fotogramma. Il lato destro sfuma e si sfoca sotto il testo.
-- **Sintetico**. Montaggio in bianco e nero da [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg), fotografia di Riccardobusato (CC0 1.0). La foto documenta un DJ set. Il montaggio Music Box è ispirato al trattamento video di Sintetico.
+- **Eva**. Ricostruzione da 6,76 secondi del [Canvas Spotify della registrazione](https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA). Mantiene lo sfondo, la mela con il serpente e la sfocatura laterale. Le iscrizioni, le corone frastagliate e i sigilli rossi sono disegnati per il loop e seguono le apparizioni osservate fotogramma per fotogramma.
+- **Sintetico**. Montaggio verticale originale da 5,4 secondi, basato sui tagli e sul trattamento VHS del [Canvas Spotify](https://open.spotify.com/track/3NLdcu14EPntcZIn3mxSR7). Alcune immagini richiamano il [visual ufficiale](https://www.youtube.com/watch?v=umdg7hCEGI8). Il ritratto parte da [Kid Yugi.jpg](https://commons.wikimedia.org/wiki/File:Kid_Yugi.jpg), fotografia di Riccardobusato (CC0 1.0).
 
 I file contengono soltanto video.
 
