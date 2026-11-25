@@ -10,6 +10,7 @@ const animation=fs.readFileSync(path.join(root,"immersive-animation.js"),"utf8")
 const textures=fs.readFileSync(path.join(root,"immersive-textures.webp"));
 const photographedTextures=fs.readFileSync(path.join(root,"immersive-kid-yugi.webp"));
 const libraryTextures=fs.readFileSync(path.join(root,"immersive-ste.webp"));
+const referenceTextures=fs.readFileSync(path.join(root,"immersive-ste-references.webp"));
 const css=fs.readFileSync(path.join(root,"style.css"),"utf8");
 const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
@@ -78,8 +79,8 @@ const testScenes=scenes.replace("const scenes=Object.freeze({",match=>match+
  ]))).slice(1,-1)+",");
 const server=http.createServer((req,res)=>{
  const loc=new URL(req.url,"http://127.0.0.1").pathname;
- if(loc==="/immersive-textures.webp"||loc==="/immersive-kid-yugi.webp"||loc==="/immersive-ste.webp"){
-  const image=loc==="/immersive-textures.webp"?textures:loc==="/immersive-kid-yugi.webp"?photographedTextures:libraryTextures;
+ if(loc==="/immersive-textures.webp"||loc==="/immersive-kid-yugi.webp"||loc==="/immersive-ste.webp"||loc==="/immersive-ste-references.webp"){
+  const image=loc==="/immersive-textures.webp"?textures:loc==="/immersive-kid-yugi.webp"?photographedTextures:loc==="/immersive-ste.webp"?libraryTextures:referenceTextures;
   res.writeHead(200,{"Content-Type":"image/webp","Content-Length":image.length}).end(image);
   return;
  }
@@ -451,9 +452,9 @@ async function run(){
       const v=document.getElementById("imVideo");
       if(!v.currentSrc||v.currentTime<=.2||v.paused)return false;
       const url=new URL(v.currentSrc);
-      return url.pathname.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&url.searchParams.get("v")===(title==="Eva"?"4":"2");
+      return url.pathname.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&url.searchParams.get("v")===(title==="Eva"?"5":"2");
      },title,{timeout:12000});
-     assert.ok(await video.evaluate(v=>v.muted&&v.playsInline&&v.duration===7.5&&v.hasAttribute("data-music-box-clip")));
+     assert.ok(await video.evaluate((v,duration)=>v.muted&&v.playsInline&&v.duration===duration&&v.hasAttribute("data-music-box-clip"),title==="Eva"?6.75:7.5));
      const frame=await video.evaluate(v=>{
       const rect=v.getBoundingClientRect(),style=getComputedStyle(v);
       return {left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom,
@@ -589,6 +590,12 @@ async function run(){
      assert.ok(photo.left>250&&photo.top>250&&photo.right<30,
       "desktop art reaches the screen edges and fades toward the lyrics");
     }
+    const extraAtlas=page.waitForResponse(response=>response.url().includes("/immersive-ste-references.webp")&&response.ok());
+    const [file,title,artist]=await page.evaluate(()=>MusicBoxImmersiveScenes["b-track-117"]);
+    await switchTrack("b-track-117",title,file,artist);
+    await extraAtlas;
+    await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});
+    assert.equal(await video.getAttribute("src"),null,"new Ste reference uses local artwork");
     await switchTrack("b-track-478","VENTANNI","songs/track-478.mp3","Måneskin");
     await stage.waitFor({state:"visible"});
     await page.locator("#imSongAnimation[data-photographed-scene]").waitFor({state:"visible"});

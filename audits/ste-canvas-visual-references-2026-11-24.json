@@ -9,9 +9,9 @@
   "maxDurationDifferenceSecondsForVisualMatch": 0.5,
   "summary": {
     "preserved": 1,
-    "canvas-inspired": 49,
-    "song-inspired-photograph": 7,
-    "song-inspired-environment": 165
+    "canvas-inspired": 73,
+    "song-inspired-photograph": 6,
+    "song-inspired-environment": 142
   },
   "tracks": [
     {
@@ -58,7 +58,15 @@
       "id": "b-track-34",
       "title": "Eva",
       "artist": "Kid Yugi, Tedua & Junior K",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/29nqe5lhK8JmNcVXum7UuA",
+      "durationDifferenceSeconds": 0.151,
+      "audioPreviewMatch": {
+        "fileSha": "b22e3f5eede1efcaf6929a845e83b50c8c5aa6dd",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9764,
+        "previewOffsetInRecordingSeconds": 99.1225
+      }
     },
     {
       "id": "b-track-37",
@@ -354,9 +362,15 @@
       "id": "b-track-26",
       "title": "NON MI RICONOSCO",
       "artist": "MACE",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/02qmjMWNK9hiO9PsndeLLQ",
-      "candidateDurationDifferenceSeconds": 1.612
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/02qmjMWNK9hiO9PsndeLLQ",
+      "durationDifferenceSeconds": 1.612,
+      "audioPreviewMatch": {
+        "fileSha": "f0ec0a6049f8d0688f23030ef7c00907c39a44b2",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.957,
+        "previewOffsetInRecordingSeconds": 101.0755
+      }
     },
     {
       "id": "b-track-31",
@@ -408,9 +422,15 @@
       "id": "b-track-48",
       "title": "NEON",
       "artist": "Sfera Ebbasta & Shiva",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0jkAr7eZsvWDLYiQCfaxak",
-      "candidateDurationDifferenceSeconds": 0.731
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0jkAr7eZsvWDLYiQCfaxak",
+      "durationDifferenceSeconds": 0.731,
+      "audioPreviewMatch": {
+        "fileSha": "a77162334802ca64537543dc517a9c369495a187",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9405,
+        "previewOffsetInRecordingSeconds": 98.0733
+      }
     },
     {
       "id": "b-track-50",
@@ -434,9 +454,15 @@
       "id": "b-track-72",
       "title": "HO SBAGLIATO ANCORA",
       "artist": "Chiello",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/33LYvdSbeXaVc5PEIsjR6Z",
-      "candidateDurationDifferenceSeconds": 11.332
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/33LYvdSbeXaVc5PEIsjR6Z",
+      "durationDifferenceSeconds": 11.332,
+      "audioPreviewMatch": {
+        "fileSha": "5e9c8850891b2e4679bd829432b403c9c10b3d25",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9925,
+        "previewOffsetInRecordingSeconds": 91.3113
+      }
     },
     {
       "id": "b-track-68",
@@ -504,9 +530,15 @@
       "id": "b-track-88",
       "title": "SOGNO AMERICANO",
       "artist": "Artie 5ive",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7i0zYckMTyvLyKAFxfOKIS",
-      "candidateDurationDifferenceSeconds": 2.643
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7i0zYckMTyvLyKAFxfOKIS",
+      "durationDifferenceSeconds": 2.643,
+      "audioPreviewMatch": {
+        "fileSha": "bd0e813d2024a0b0ce46606491986aa4affb54d0",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9012,
+        "previewOffsetInRecordingSeconds": 58.7383
+      }
     },
     {
       "id": "b-track-89",
@@ -636,9 +668,15 @@
       "id": "b-track-110",
       "title": "Non Abbiamo Età",
       "artist": "Luchè",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0NwuXciw6eQc4edjwSBnV3",
-      "candidateDurationDifferenceSeconds": 0.952
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0NwuXciw6eQc4edjwSBnV3",
+      "durationDifferenceSeconds": 0.952,
+      "audioPreviewMatch": {
+        "fileSha": "69106c9c7955d53b35b219698aaa9ae41219461a",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9526,
+        "previewOffsetInRecordingSeconds": 60.4075
+      }
     },
     {
       "id": "b-track-111",
@@ -684,9 +722,15 @@
       "id": "b-track-117",
       "title": "Nessuna",
       "artist": "Luchè",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1ZOC7H5JfPtj8OW9lRz6pm",
-      "candidateDurationDifferenceSeconds": 2.7
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1ZOC7H5JfPtj8OW9lRz6pm",
+      "durationDifferenceSeconds": 2.7,
+      "audioPreviewMatch": {
+        "fileSha": "b7b41d092ddcc54330870f07406a0c7e575778d7",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9205,
+        "previewOffsetInRecordingSeconds": 139.9673
+      }
     },
     {
       "id": "b-track-118",
@@ -760,9 +804,15 @@
       "id": "b-track-129",
       "title": "CRUDELIA - Inervi",
       "artist": "Marracash",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
-      "candidateDurationDifferenceSeconds": 0.976
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
+      "durationDifferenceSeconds": 0.976,
+      "audioPreviewMatch": {
+        "fileSha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9615,
+        "previewOffsetInRecordingSeconds": 62.3247
+      }
     },
     {
       "id": "b-track-130",
@@ -828,9 +878,15 @@
       "id": "b-track-146",
       "title": "Qualcosa di grande",
       "artist": "Coez",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7LHCJnWkQgmHGUhQyZeoW5",
-      "candidateDurationDifferenceSeconds": -1.388
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7LHCJnWkQgmHGUhQyZeoW5",
+      "durationDifferenceSeconds": -1.388,
+      "audioPreviewMatch": {
+        "fileSha": "74ea0669645e1c2b026b44eed6ef2b5ffca266d7",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9814,
+        "previewOffsetInRecordingSeconds": 77.914
+      }
     },
     {
       "id": "b-track-147",
@@ -856,9 +912,15 @@
       "id": "b-track-150",
       "title": "Quel sorriso in volto",
       "artist": "Modà",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/4KNumtDS7aWRwDZDmWJ2lN",
-      "candidateDurationDifferenceSeconds": 85.259
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/4KNumtDS7aWRwDZDmWJ2lN",
+      "durationDifferenceSeconds": 85.259,
+      "audioPreviewMatch": {
+        "fileSha": "598f3ae12e70e7454d8ff86bb426a1554ca08b58",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9638,
+        "previewOffsetInRecordingSeconds": 153.538
+      }
     },
     {
       "id": "b-track-152",
@@ -994,9 +1056,15 @@
       "id": "b-track-179",
       "title": "Certe bugie",
       "artist": "nayt",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/51nYuZtAfpx4XZaWCAeFPw",
-      "candidateDurationDifferenceSeconds": 21.742
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/51nYuZtAfpx4XZaWCAeFPw",
+      "durationDifferenceSeconds": 21.743,
+      "audioPreviewMatch": {
+        "fileSha": "a7999daeac0fc48e4da0aacc6195061baeaafe5c",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9945,
+        "previewOffsetInRecordingSeconds": 115.585
+      }
     },
     {
       "id": "b-track-180",
@@ -1028,9 +1096,15 @@
       "id": "b-track-185",
       "title": "Dimenticare",
       "artist": "nayt, 3D",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5EOJ7bFZhGQv61R7vTFXk3",
-      "candidateDurationDifferenceSeconds": -1.077
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5EOJ7bFZhGQv61R7vTFXk3",
+      "durationDifferenceSeconds": -1.077,
+      "audioPreviewMatch": {
+        "fileSha": "bd00d01c06cd712b0618984e7027aadde26c460a",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9766,
+        "previewOffsetInRecordingSeconds": 88.736
+      }
     },
     {
       "id": "b-track-187",
@@ -1042,9 +1116,15 @@
       "id": "b-track-188",
       "title": "Prima che",
       "artist": "nayt",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1bXER40RxwNWTf9fnQOY64",
-      "candidateDurationDifferenceSeconds": 15.206
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1bXER40RxwNWTf9fnQOY64",
+      "durationDifferenceSeconds": 15.206,
+      "audioPreviewMatch": {
+        "fileSha": "7c88d30be99ed7ea55f8832fecb715f2982879b1",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9272,
+        "previewOffsetInRecordingSeconds": 105.919
+      }
     },
     {
       "id": "b-track-189",
@@ -1080,17 +1160,29 @@
       "id": "b-track-193",
       "title": "Punto d'incontro",
       "artist": "nayt",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6d76kTlyGcBSeOP2DjraHt",
-      "candidateDurationDifferenceSeconds": 0.845
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6d76kTlyGcBSeOP2DjraHt",
+      "durationDifferenceSeconds": 0.845,
+      "audioPreviewMatch": {
+        "fileSha": "d1600f4fee84e9f04aac8d63913e4e21385005e0",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9937,
+        "previewOffsetInRecordingSeconds": 62.149
+      }
     },
     {
       "id": "b-track-194",
       "title": "Forte",
       "artist": "nayt",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6apJOtqLZ0IhzX3dW7scxy",
-      "candidateDurationDifferenceSeconds": 0.807
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6apJOtqLZ0IhzX3dW7scxy",
+      "durationDifferenceSeconds": 0.807,
+      "audioPreviewMatch": {
+        "fileSha": "e7fd57c44877d0aa34c22393fb5a61013c92abf3",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.993,
+        "previewOffsetInRecordingSeconds": 120.349
+      }
     },
     {
       "id": "b-track-195",
@@ -1102,9 +1194,15 @@
       "id": "b-track-196",
       "title": "Esistere (più di me)",
       "artist": "nayt",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5ZKZZpxznehDO5LK6ai466",
-      "candidateDurationDifferenceSeconds": 0.567
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5ZKZZpxznehDO5LK6ai466",
+      "durationDifferenceSeconds": 0.567,
+      "audioPreviewMatch": {
+        "fileSha": "116560350f54ad970489622d28c4af63a892dc16",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9952,
+        "previewOffsetInRecordingSeconds": 104.691
+      }
     },
     {
       "id": "b-track-198",
@@ -1208,9 +1306,15 @@
       "id": "b-track-226",
       "title": "Torna Da Me",
       "artist": "Luchè",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5iSHLCuc0K3pUW16b7sSP4",
-      "candidateDurationDifferenceSeconds": 28.567
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5iSHLCuc0K3pUW16b7sSP4",
+      "durationDifferenceSeconds": 28.567,
+      "audioPreviewMatch": {
+        "fileSha": "1fb9c99f6a26ab31983a46f6458933cf91d169f8",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9958,
+        "previewOffsetInRecordingSeconds": 81.7537
+      }
     },
     {
       "id": "b-track-227",
@@ -1222,17 +1326,29 @@
       "id": "b-track-228",
       "title": "Cosa mi manchi a fare",
       "artist": "Calcutta",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/7L8cIUKXToCr6PV9hFoX3Q",
-      "candidateDurationDifferenceSeconds": 3.102
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7L8cIUKXToCr6PV9hFoX3Q",
+      "durationDifferenceSeconds": 3.102,
+      "audioPreviewMatch": {
+        "fileSha": "40ba477eeaca5931d7d76cb7837086b80736e1eb",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9304,
+        "previewOffsetInRecordingSeconds": 65.7717
+      }
     },
     {
       "id": "b-track-229",
       "title": "Tutti",
       "artist": "Calcutta",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/3G5VUAzCpvaaWEMk9NkHFT",
-      "candidateDurationDifferenceSeconds": 1.53
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3G5VUAzCpvaaWEMk9NkHFT",
+      "durationDifferenceSeconds": 1.53,
+      "audioPreviewMatch": {
+        "fileSha": "e2b27dd98fa0e3c5aad761557ba3e1d502559198",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9734,
+        "previewOffsetInRecordingSeconds": 136.5948
+      }
     },
     {
       "id": "b-track-230",
@@ -1338,17 +1454,29 @@
       "id": "b-track-250",
       "title": "we fell in love in october",
       "artist": "girl in red",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6IPwKM3fUUzlElbvKw2sKl",
-      "candidateDurationDifferenceSeconds": 3.111
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6IPwKM3fUUzlElbvKw2sKl",
+      "durationDifferenceSeconds": 3.111,
+      "audioPreviewMatch": {
+        "fileSha": "593654e25364824133f6a2c7e7d8b557b49d9c22",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9935,
+        "previewOffsetInRecordingSeconds": 88.639
+      }
     },
     {
       "id": "b-track-304",
       "title": "QUELLI CHE NON PENSANO - Il cervello",
       "artist": "Marracash, Coez",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1VOi03r3FelbsYHJXFjphg",
-      "candidateDurationDifferenceSeconds": 1.309
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1VOi03r3FelbsYHJXFjphg",
+      "durationDifferenceSeconds": 1.309,
+      "audioPreviewMatch": {
+        "fileSha": "bdca769009cb08fc40d872888190e5058f38d61e",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9688,
+        "previewOffsetInRecordingSeconds": 122.5023
+      }
     },
     {
       "id": "b-track-309",
@@ -1380,9 +1508,15 @@
       "id": "b-track-406",
       "title": "CRUDELIA - I nervi",
       "artist": "Marracash",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
-      "candidateDurationDifferenceSeconds": 0.976
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5dsz7MTrNdN9aMTrnp7sOG",
+      "durationDifferenceSeconds": 0.976,
+      "audioPreviewMatch": {
+        "fileSha": "988f80328f3c6d378fb7d37a2dd9fb2710848882",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9615,
+        "previewOffsetInRecordingSeconds": 62.3247
+      }
     },
     {
       "id": "b-track-440",
@@ -1514,9 +1648,15 @@
       "id": "b-track-855",
       "title": "Superclassico",
       "artist": "Ernia",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/6Ahg1hncxUdK0ICqU03BCu",
-      "candidateDurationDifferenceSeconds": 7.569
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6Ahg1hncxUdK0ICqU03BCu",
+      "durationDifferenceSeconds": 7.569,
+      "audioPreviewMatch": {
+        "fileSha": "840888ad1240fc96294778f1e0cb23618926e021",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9162,
+        "previewOffsetInRecordingSeconds": 54.6058
+      }
     },
     {
       "id": "b-track-954",
@@ -1548,10 +1688,16 @@
       "id": "b-track-516",
       "title": "non avere paura",
       "artist": "tommaso paradiso",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1qMx707PFdFXdwLvcUTNz3",
-      "candidateDurationDifferenceSeconds": 5.364
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1qMx707PFdFXdwLvcUTNz3",
+      "durationDifferenceSeconds": 5.364,
+      "audioPreviewMatch": {
+        "fileSha": "f134034e8838c67914cea0fc051e9794c9d29c59",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9273,
+        "previewOffsetInRecordingSeconds": 155.994
+      }
     }
   ],
-  "additionalReferenceMethod": "For the six tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
+  "additionalReferenceMethod": "For tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
 }
