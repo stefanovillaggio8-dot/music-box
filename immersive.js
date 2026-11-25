@@ -42,7 +42,7 @@ function atmosphereForTrack(id,title,artist){
   "b-track-160":{file:"songs/track-160.mp3",title:"Per una notte insieme",artist:"Modà",url:"immersive-loops/per-una-notte-insieme.mp4?v=1"},
   "b-track-7":{file:"songs/track-7.mp3",title:"Star Shopping",artist:"Lil Peep",url:"immersive-loops/star-shopping.mp4?v=1"},
   "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=8",framing:"eva"},
-  "b-track-30":{file:"songs/track-30.mp3",title:"Sintetico",artist:"Kid Yugi",url:"immersive-loops/sintetico.mp4?v=5",framing:"sintetico"}
+  "b-track-30":{file:"songs/track-30.mp3",title:"Sintetico",artist:"Kid Yugi",url:"immersive-loops/sintetico.mp4?v=6",framing:"sintetico"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
  function canvasFor(track){
