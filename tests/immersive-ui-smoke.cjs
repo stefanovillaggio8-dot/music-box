@@ -449,9 +449,20 @@ async function run(){
      await switchTrack(trackId,title,file,artist);
      await page.waitForFunction(title=>{
       const v=document.getElementById("imVideo");
-      return v.currentSrc.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&v.currentTime>.2&&!v.paused;
+      if(!v.currentSrc||v.currentTime<=.2||v.paused)return false;
+      const url=new URL(v.currentSrc);
+      return url.pathname.endsWith("/immersive-loops/"+title.toLowerCase()+".mp4")&&url.searchParams.get("v")==="2";
      },title,{timeout:12000});
      assert.ok(await video.evaluate(v=>v.muted&&v.playsInline&&v.duration===7.5&&v.hasAttribute("data-music-box-clip")));
+     const frame=await video.evaluate(v=>{
+      const rect=v.getBoundingClientRect(),style=getComputedStyle(v);
+      return {left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom,
+       width:rect.width,height:rect.height,fit:style.objectFit,mask:style.maskImage,
+       viewportWidth:innerWidth,viewportHeight:innerHeight};
+     });
+     assert.ok(frame.left>=-1&&frame.top>=-1&&frame.right<=frame.viewportWidth+1&&frame.bottom<=frame.viewportHeight+1,
+      "the full scene fits in the viewport: "+JSON.stringify(frame));
+     assert.ok(frame.fit==="contain"&&frame.mask.split("linear-gradient").length===3&&Math.abs(frame.width-frame.height)<1);
      assert.equal(await page.locator("#imAnimationLabel").isHidden(),false);
      assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
     }
