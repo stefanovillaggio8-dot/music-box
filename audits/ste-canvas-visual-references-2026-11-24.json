@@ -8,10 +8,11 @@
   "titleArtistCandidates": 81,
   "maxDurationDifferenceSecondsForVisualMatch": 0.5,
   "summary": {
+    "song-inspired-photograph": 4,
     "preserved": 1,
-    "canvas-inspired": 81,
-    "song-inspired-photograph": 6,
-    "song-inspired-environment": 134
+    "canvas-inspired": 98,
+    "official-video-inspired": 22,
+    "song-inspired-environment": 97
   },
   "tracks": [
     {
@@ -38,7 +39,15 @@
       "id": "b-track-30",
       "title": "Sintetico",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3NLdcu14EPntcZIn3mxSR7",
+      "audioPreviewMatch": {
+        "fileSha": "1ebd28bcab8b1339e4c3238ce2fb793ea3fe8ed8",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.913,
+        "previewOffsetInRecordingSeconds": 95.979,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-33",
@@ -246,31 +255,72 @@
       "id": "b-track-2",
       "title": "QUANTO FORTE TI PENSAVO",
       "artist": "Madame",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7ldyOPtbSh2t7iOEAsFOlR",
+      "audioPreviewMatch": {
+        "fileSha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9504,
+        "previewOffsetInRecordingSeconds": 138.8505,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-4",
       "title": "Sono Ok",
       "artist": "XCarme",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/73xpwqRiCdnhR6YTzqfE0A",
+      "audioPreviewMatch": {
+        "fileSha": "004e594c10688869197f21e31e748c1dd82901b4",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9435,
+        "previewOffsetInRecordingSeconds": 67.53,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-7",
       "title": "Star Shopping",
       "artist": "Lil Peep",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6Ox1rvlwEpB49drasQm6RF",
+      "audioPreviewMatch": {
+        "fileSha": "30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8985,
+        "previewOffsetInRecordingSeconds": 65.4903,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-8",
       "title": "Malpensa",
       "artist": "G.Mineiro, Flatpearl, Succo",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7egOkqMIKAjbnPtomUfu8g",
+      "audioPreviewMatch": {
+        "fileSha": "f3984ac6fc22355cb6ac09cb1917719e050ab4d4",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9976,
+        "previewOffsetInRecordingSeconds": 35.113,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-9",
       "title": "LA CITTÀ",
       "artist": "MOSTRO",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/la-citt%C3%A0/1840586990?uo=4",
+      "appleVideoId": 1840586990,
+      "audioPreviewMatch": {
+        "fileSha": "48f947b6aa3b103ce9def6537ee2d3b3f8d087ff",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9981,
+        "previewOffsetInRecordingSeconds": 42.0255,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-10",
@@ -282,7 +332,15 @@
       "id": "b-track-11",
       "title": "Romantici Terroni",
       "artist": "SAITTA",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5eOlxKrKsvtN8iLDcN4Oxw",
+      "audioPreviewMatch": {
+        "fileSha": "09aaa5809875ee187fe388bfcefbbc3f6e0f305b",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9807,
+        "previewOffsetInRecordingSeconds": 88.9725,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-12",
@@ -334,7 +392,16 @@
       "id": "b-track-18",
       "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
       "artist": "Jovanotti",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/il-pi%C3%B9-grande-spettacolo-dopo-il-big-bang/1445858771?uo=4",
+      "appleVideoId": 1445858771,
+      "audioPreviewMatch": {
+        "fileSha": "427dcfda67c44bb05335627ebf1ca805f6fefc44",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9966,
+        "previewOffsetInRecordingSeconds": 44.6003,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-19",
@@ -530,7 +597,15 @@
       "id": "b-track-79",
       "title": "G&V",
       "artist": "ivanBì",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6poK4dgWF5wQmmB7i92mhh",
+      "audioPreviewMatch": {
+        "fileSha": "873b4620fa414409628681c56875867cb8086444",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9941,
+        "previewOffsetInRecordingSeconds": 56.731,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-80",
@@ -596,19 +671,44 @@
       "id": "b-track-95",
       "title": "Ballon d'Or",
       "artist": "Gemitaiz, nayt",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5aVUDn1F4x26UkHFVgWsiE",
+      "audioPreviewMatch": {
+        "fileSha": "659bebdacaa4a6ea6a0ab5a280537f96200f5d06",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.901,
+        "previewOffsetInRecordingSeconds": 65.0215,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-96",
       "title": "un'idea",
       "artist": "nayt, 3D",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/unidea-visualizer/1692312648?uo=4",
+      "appleVideoId": 1692312648,
+      "audioPreviewMatch": {
+        "fileSha": "00738c793a8901d673e9a96d783d8aabf973c8ec",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9148,
+        "previewOffsetInRecordingSeconds": 13.9558,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-97",
       "title": "guerra dentro",
       "artist": "nayt, 3D",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/2aPz4c03AsOhTgbuSnfrCs",
+      "audioPreviewMatch": {
+        "fileSha": "27297febddf9ef8c318048c2a7d5ec103f2ac1d3",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9946,
+        "previewOffsetInRecordingSeconds": 75.345,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-98",
@@ -720,7 +820,15 @@
       "id": "b-track-113",
       "title": "INTRO (La Bella Vita)",
       "artist": "Artie 5ive",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1lslS1hUsIvAScXvWVTLt2",
+      "audioPreviewMatch": {
+        "fileSha": "549785208dbf3d49d122f0232d8f2f2deda8cd4b",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8561,
+        "previewOffsetInRecordingSeconds": 72.5373,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-114",
@@ -732,7 +840,15 @@
       "id": "b-track-115",
       "title": "15 Piani",
       "artist": "Sfera Ebbasta, Marracash",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/05wb6MEyJeG2z1MVCIXxC8",
+      "audioPreviewMatch": {
+        "fileSha": "9941e9b42640088f7be9039b9802ebd243bbbcdc",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9392,
+        "previewOffsetInRecordingSeconds": 129.261,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-116",
@@ -864,7 +980,15 @@
       "id": "b-track-135",
       "title": "DAVVERODAVVERO",
       "artist": "Artie 5ive",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6bdTp8Jkp3IAU15rVPWFuJ",
+      "audioPreviewMatch": {
+        "fileSha": "a074b2be7650c7f28df0d1fc592a900d4f5bc1ba",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9142,
+        "previewOffsetInRecordingSeconds": 84.8773,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-136",
@@ -890,7 +1014,16 @@
       "id": "b-track-143",
       "title": "La tua canzone",
       "artist": "Coez",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/la-tua-canzone/1480792262?uo=4",
+      "appleVideoId": 1480792262,
+      "audioPreviewMatch": {
+        "fileSha": "66310180747c213adc257e4c7bc803482a370222",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.8863,
+        "previewOffsetInRecordingSeconds": -0.444,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-144",
@@ -930,7 +1063,16 @@
       "id": "b-track-148",
       "title": "Domenica",
       "artist": "Coez",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/domenica/1461882564?uo=4",
+      "appleVideoId": 1461882564,
+      "audioPreviewMatch": {
+        "fileSha": "24ce93501e0e464f482ca36fe71d02a97b052662",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8523,
+        "previewOffsetInRecordingSeconds": 44.956,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-149",
@@ -978,7 +1120,16 @@
       "id": "b-track-155",
       "title": "Tappeto di fragole",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/tappeto-di-fragole/601381729?uo=4",
+      "appleVideoId": 601381729,
+      "audioPreviewMatch": {
+        "fileSha": "858a6a691a0b46d23f83b6ca2f9145c9d30b0e31",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9353,
+        "previewOffsetInRecordingSeconds": -0.845,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-157",
@@ -996,19 +1147,45 @@
       "id": "b-track-159",
       "title": "La notte",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/la-notte/601397365?uo=4",
+      "appleVideoId": 601397365,
+      "audioPreviewMatch": {
+        "fileSha": "2ae54af9a0b2bc9604bfc48f667a21eef958b263",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.8761,
+        "previewOffsetInRecordingSeconds": 1.4935,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-160",
       "title": "Per una notte insieme",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7vzchc58oNgiClOEBhVFPs",
+      "audioPreviewMatch": {
+        "fileSha": "9e4386e29e2571d578fbcc3a6c7c85b0a22f53b8",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9931,
+        "previewOffsetInRecordingSeconds": 78.9813,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-161",
       "title": "E non c'è mai una fine",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/e-non-c%C3%A8-mai-una-fine/1056107029?uo=4",
+      "appleVideoId": 1056107029,
+      "audioPreviewMatch": {
+        "fileSha": "183752a506f1d5f82d398c0e9ade666411bdb7dc",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.882,
+        "previewOffsetInRecordingSeconds": 45.961,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-163",
@@ -1026,7 +1203,16 @@
       "id": "b-track-165",
       "title": "Lasciami",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/lasciami-official-video-sanremo-2023/1673992826?uo=4",
+      "appleVideoId": 1673992826,
+      "audioPreviewMatch": {
+        "fileSha": "dc7b0e063f5a7b1fa115b163089ccd1ff254b60a",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.993,
+        "previewOffsetInRecordingSeconds": -0.3787,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-166",
@@ -1038,13 +1224,31 @@
       "id": "b-track-168",
       "title": "Quelli come me",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/quelli-come-me/1475895962?uo=4",
+      "appleVideoId": 1475895962,
+      "audioPreviewMatch": {
+        "fileSha": "06bf09ec29123b2220eef11e470aabde9394f588",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9899,
+        "previewOffsetInRecordingSeconds": 120.0293,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-169",
       "title": "Salvami",
       "artist": "Modà",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/salvami/601377218?uo=4",
+      "appleVideoId": 601377218,
+      "audioPreviewMatch": {
+        "fileSha": "c587042538abaf2c58dee2a3f7019d00ab91c8f8",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9476,
+        "previewOffsetInRecordingSeconds": -0.0013,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-170",
@@ -1100,7 +1304,15 @@
       "id": "b-track-180",
       "title": "se ne va",
       "artist": "nayt, 3D",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/3zWXAQuZ2cgRb2p0xqAORS",
+      "audioPreviewMatch": {
+        "fileSha": "20b356b0b284676c863cbff2d4e322767782a617",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9861,
+        "previewOffsetInRecordingSeconds": 105.394,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-181",
@@ -1120,7 +1332,16 @@
       "id": "b-track-182",
       "title": "Le Tasche Piene Di Sassi",
       "artist": "Jovanotti",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/le-tasche-piene-di-sassi/1445828104?uo=4",
+      "appleVideoId": 1445828104,
+      "audioPreviewMatch": {
+        "fileSha": "703269232a1338e4b9efa4afee36cd2fec849afe",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9865,
+        "previewOffsetInRecordingSeconds": 45.4438,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-184",
@@ -1270,7 +1491,16 @@
       "id": "b-track-209",
       "title": "cosa conta davvero",
       "artist": "nayt, 3D",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/cosa-conta-davvero-visualizer/1692312605?uo=4",
+      "appleVideoId": 1692312605,
+      "audioPreviewMatch": {
+        "fileSha": "c56a93a1aec44b17db556fe57de10a8d0c22d99b",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9362,
+        "previewOffsetInRecordingSeconds": 58.9558,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-210",
@@ -1304,25 +1534,60 @@
       "id": "b-track-217",
       "title": "Bocca di rosa",
       "artist": "Fabrizio De André",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/bocca-di-rosa-live/1538592801?uo=4",
+      "appleVideoId": 1538592801,
+      "audioPreviewMatch": {
+        "fileSha": "7bc2eca365b6b44a6eec418572ac8ef9445a29a7",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.995,
+        "previewOffsetInRecordingSeconds": 60.9772,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-218",
       "title": "Via del campo",
       "artist": "Fabrizio De André",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/via-del-campo-live/1538885348?uo=4",
+      "appleVideoId": 1538885348,
+      "audioPreviewMatch": {
+        "fileSha": "9efed4dc03aad75a9e2635a3bd0636c20e7b0cbe",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9957,
+        "previewOffsetInRecordingSeconds": 50.9772,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-220",
       "title": "Il pescatore",
       "artist": "Fabrizio De André",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/il-pescatore-live/1538863344?uo=4",
+      "appleVideoId": 1538863344,
+      "audioPreviewMatch": {
+        "fileSha": "6ec33e57dd42e95328ce241d35f23e3a80029373",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9915,
+        "previewOffsetInRecordingSeconds": 49.9772,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-221",
       "title": "Ti Amo",
       "artist": "Luchè",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/1pq4fzp7UvGPLGzueOKaEf",
+      "audioPreviewMatch": {
+        "fileSha": "aff42b6f760df3ec68e0c8d26d33b8ec1939920e",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9701,
+        "previewOffsetInRecordingSeconds": 82.1653,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-222",
@@ -1434,7 +1699,16 @@
       "id": "b-track-239",
       "title": "A mano a mano",
       "artist": "Rino Gaetano",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/a-mano-a-mano/1484961687?uo=4",
+      "appleVideoId": 1484961687,
+      "audioPreviewMatch": {
+        "fileSha": "27f89ce447b15bab428c8b83c78dd140e2b547e9",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8466,
+        "previewOffsetInRecordingSeconds": 86.956,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-240",
@@ -1454,13 +1728,31 @@
       "id": "b-track-242",
       "title": "Il Regalo Più Grande",
       "artist": "Tiziano Ferro",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/il-regalo-pi%C3%B9-grande/719702524?uo=4",
+      "appleVideoId": 719702524,
+      "audioPreviewMatch": {
+        "fileSha": "432b65cc91f06b13dba010548b097d9d3c1bbdd1",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.969,
+        "previewOffsetInRecordingSeconds": 44.9375,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-243",
       "title": "L'universo tranne noi",
       "artist": "Max Pezzali",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/luniverso-tranne-noi/657604906?uo=4",
+      "appleVideoId": 657604906,
+      "audioPreviewMatch": {
+        "fileSha": "87ac5dbf8c3e5150d9fa3bef000fa0d2573e11c9",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8381,
+        "previewOffsetInRecordingSeconds": 50.0,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-244",
@@ -1524,7 +1816,16 @@
       "id": "b-track-309",
       "title": "Morirò da Re",
       "artist": "Måneskin",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/morir%C3%B2-da-re/1363154764?uo=4",
+      "appleVideoId": 1363154764,
+      "audioPreviewMatch": {
+        "fileSha": "0ae677c54055bc089720c66fd4b85b3aa074e7ef",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.8757,
+        "previewOffsetInRecordingSeconds": 40.956,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-315",
@@ -1664,13 +1965,30 @@
       "id": "b-track-658",
       "title": "Che Dio Mi Benedica",
       "artist": "Luchè",
-      "scene": "song-inspired-environment"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7ohj51SSBsOPh2phOZkn9d",
+      "audioPreviewMatch": {
+        "fileSha": "25478deb4b95bdceaf9f3c2ede1a598e1bec3c94",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.986,
+        "previewOffsetInRecordingSeconds": 192.9675,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-664",
       "title": "Poetica",
       "artist": "Cesare Cremonini",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/poetica/1445293567?uo=4",
+      "appleVideoId": 1445293567,
+      "audioPreviewMatch": {
+        "fileSha": "6100ddace519a0681baf5df4f6561e04a0416d89",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9115,
+        "previewOffsetInRecordingSeconds": 44.956,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-670",
@@ -1710,15 +2028,30 @@
       "id": "b-track-954",
       "title": "Buon Viaggio (Share The Love)",
       "artist": "Cesare Cremonini",
-      "scene": "song-inspired-environment"
+      "scene": "official-video-inspired",
+      "officialVideo": "https://music.apple.com/it/music-video/buon-viaggio-share-the-love/1444344705?uo=4",
+      "appleVideoId": 1444344705,
+      "audioPreviewMatch": {
+        "fileSha": "c0a0a865af55172630f20a477f2acd06d82e11af",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9102,
+        "previewOffsetInRecordingSeconds": 44.556,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-963",
       "title": "Occhi Lucidi",
       "artist": "Leon Faun, Duffy",
-      "scene": "song-inspired-environment",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/0viz6QyUJatttRM40GnXsN",
-      "candidateDurationDifferenceSeconds": 57.082
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/7dYgzrhdIIjTQTvUjlrWxa",
+      "audioPreviewMatch": {
+        "fileSha": "be6982659be9be3ff5fbca15d6adecb5618465d5",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9755,
+        "previewOffsetInRecordingSeconds": 101.8365,
+        "windowDurationSeconds": 3.25
+      }
     },
     {
       "id": "b-track-977",
@@ -1747,5 +2080,5 @@
       }
     }
   ],
-  "additionalReferenceMethod": "For tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit. For short or deliberately processed previews, four windows span the preview and are evaluated at a shared sample offset. The Occhi Lucidi candidate, with a duration difference of 57 seconds, remains unconfirmed."
+  "additionalReferenceMethod": "For tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit. For short or deliberately processed previews, four windows span the preview and are evaluated at a shared sample offset. The Occhi Lucidi candidate, with a duration difference of 57 seconds, remains unconfirmed. Official video references use catalogue previews matched against the indexed recording across multiple audio windows. The previews were inspected as visual references."
 }
