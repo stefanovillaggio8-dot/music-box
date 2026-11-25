@@ -4859,3 +4859,15 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
    radial-gradient(ellipse at 69% 44%,#7c566e68,transparent 61%)
  }
 }
+
+/* Keep the vertical Sintetico frame visible from top to bottom. */
+.im-video[data-music-box-clip="sintetico"]{
+ inset:49% auto auto 27.5%;width:min(47vw,42dvh);aspect-ratio:23/50;
+ mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),
+  linear-gradient(180deg,transparent,#000 4%,#000 95%,transparent)
+}
+@media(max-width:850px),(orientation:portrait){
+ .im-video[data-music-box-clip="sintetico"]{
+  top:35.5dvh;left:50%;width:min(88vw,31.5dvh)
+ }
+}
