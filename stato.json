@@ -2273,14 +2273,14 @@
     "a": "Negromaro"
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
-    "v": 4,
-    "s": 722,
+    "v": 5,
+    "s": 757,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
-    "v": 4,
-    "s": 722,
+    "v": 5,
+    "s": 757,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -2334,13 +2334,13 @@
    },
    "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 5,
-    "s": 564,
+    "s": 608,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 5,
-    "s": 564,
+    "s": 608,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
