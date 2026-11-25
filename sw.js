@@ -72,9 +72,9 @@ const CORE = [
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
   "./immersive-scenes.js?v=1",
-  "./immersive-animation.js?v=11",
+  "./immersive-animation.js?v=12",
   "./immersive-textures.webp?v=1",
-  "./immersive-kid-yugi.webp?v=2",
+  "./immersive-kid-yugi.webp?v=3",
   "./immersive-ste.webp?v=2",
   "./immersive.js?v=6734&words=27",
   "./manifest.json",
@@ -124,7 +124,7 @@ const OFFLINE_SHELL = [
   "./mix-intelligente.js?v=6744&dj=63",
   "./mix-monitor-bridge.js?v=4",
   "./immersive-scenes.js?v=1",
-  "./immersive-animation.js?v=11",
+  "./immersive-animation.js?v=12",
   "./immersive-textures.webp?v=1",
   "./immersive.js?v=6734&words=27"
 ];

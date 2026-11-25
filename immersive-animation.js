@@ -40,7 +40,7 @@ Object.assign(environments,{
 });
 const assetRoot=document.currentScript?.src||document.baseURI;
 const textures={file:"immersive-textures.webp?v=1",image:null,ready:false};
-const kidYugiTextures={file:"immersive-kid-yugi.webp?v=2",image:null,ready:false};
+const kidYugiTextures={file:"immersive-kid-yugi.webp?v=3",image:null,ready:false};
 const libraryTextures={file:"immersive-ste.webp?v=2",image:null,ready:false};
 // Atlas tile, framing, camera direction and the practical light in the scene.
 const kidYugiScenes={
@@ -58,12 +58,12 @@ const kidYugiScenes={
  "b-track-1187":[11,.41,.52,-.061,.033,"#b09a7b"],
  "b-track-6":[12,.36,.52,.044,-.029,"#bb4877"],
  "b-track-30":[12,.59,.56,-.061,.026,"#91503f"],
- "b-track-33":[13,.38,.44,.055,-.029,"#a668a4"],
+ "b-track-33":[30,.51,.51,.043,-.021,"#a75a60"],
  "b-track-34":[14,.58,.55,-.035,.024,"#ee9e50"],
- "b-track-40":[15,.59,.43,.034,-.035,"#e0dcce"],
+ "b-track-40":[31,.53,.57,.029,-.024,"#e0dcce"],
  "b-track-49":[16,.48,.57,.059,.023,"#66a3ac"],
- "b-track-207":[18,.41,.52,-.039,.015,"#b98252"],
- "b-track-215":[19,.49,.54,-.055,.020,"#99bbca"],
+ "b-track-207":[32,.52,.52,-.047,.017,"#b8a38a"],
+ "b-track-215":[33,.52,.55,-.037,.018,"#ad5143"],
  "b-youtube-S8oUoa0pwpo":[20,.37,.61,.063,.026,"#719eae"],
  "b-track-20":[21,.59,.52,-.030,-.026,"#b98050"]
 };
@@ -104,9 +104,13 @@ const libraryScenes={
  "b-track-73":[32,.60,.56,-.063,.024,"#c2888d"]
 };
 // Cue positions are fractions of the loop, followed by the shot to show.
-// The close view reframes the original Music Box art. Eight alternate scenes
+// The close view reframes the original Music Box art. Alternate scenes
 // use their own atlas tile, based on a second shot in the matching reference.
 const photoEdits={
+ "b-track-33":[5.6,[[0,0],[.11,1],[.22,0],[.36,1],[.58,0],[.78,1],[.92,0]]],
+ "b-track-40":[8,[[0,2],[.31,0],[.46,2],[.58,1],[.69,0]],15],
+ "b-track-207":[5.96,[[0,1],[.16,0],[.39,1],[.61,0],[.78,1],[.89,0]]],
+ "b-track-215":[7.72,[[0,2],[.10,0]],35],
  "b-track-29":[5.33,[[0,2],[.22,1],[.43,2],[.65,1],[.78,2]],26],
  "b-track-37":[6.1,[[0,1],[.19,0],[.55,1],[.71,0],[.90,1]]],
  "b-track-38":[7.5,[[0,0],[.13,1],[.53,2],[.69,1],[.80,0]],22],

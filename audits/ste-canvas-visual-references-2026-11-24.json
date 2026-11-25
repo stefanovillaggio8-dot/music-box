@@ -9,8 +9,8 @@
   "maxDurationDifferenceSecondsForVisualMatch": 0.5,
   "summary": {
     "preserved": 1,
-    "canvas-inspired": 43,
-    "song-inspired-photograph": 13,
+    "canvas-inspired": 47,
+    "song-inspired-photograph": 9,
     "song-inspired-environment": 165
   },
   "tracks": [
@@ -44,7 +44,15 @@
       "id": "b-track-33",
       "title": "Lilith",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/6YB8rH5Lr340A4ps8eV7hw",
+      "durationDifferenceSeconds": 0.152,
+      "audioPreviewMatch": {
+        "fileSha": "87ac95c6c1e141a822414e3a16aacd7d9020824f",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9898,
+        "previewOffsetInRecordingSeconds": 95.5316
+      }
     },
     {
       "id": "b-track-34",
@@ -80,9 +88,15 @@
       "id": "b-track-40",
       "title": "Donna",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph",
-      "unconfirmedCanvasCandidate": "https://open.spotify.com/track/5t0pLWfUeP5fYVxKaMB2MD",
-      "candidateDurationDifferenceSeconds": 6.049
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/5t0pLWfUeP5fYVxKaMB2MD",
+      "durationDifferenceSeconds": 6.049,
+      "audioPreviewMatch": {
+        "fileSha": "0f1ac7429eba1ab2df58bd9ccad8ae7d5429d362",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.9743,
+        "previewOffsetInRecordingSeconds": 71.537
+      }
     },
     {
       "id": "b-track-41",
@@ -142,7 +156,15 @@
       "id": "b-track-207",
       "title": "Per te che Lotto",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/70600tukZat0m8rM0yqDoD",
+      "durationDifferenceSeconds": 0.115,
+      "audioPreviewMatch": {
+        "fileSha": "d747047edd58b7725f595a9676241a5d5c624864",
+        "passages": 3,
+        "lowestWaveformCorrelation": 0.9892,
+        "previewOffsetInRecordingSeconds": 59.6388
+      }
     },
     {
       "id": "b-track-208",
@@ -164,7 +186,15 @@
       "id": "b-track-215",
       "title": "Il Ferro di Echov",
       "artist": "Kid Yugi",
-      "scene": "song-inspired-photograph"
+      "scene": "canvas-inspired",
+      "spotifyTrack": "https://open.spotify.com/track/0fNKABHyuS6JHqmQyZv3fM",
+      "durationDifferenceSeconds": 4.583,
+      "audioPreviewMatch": {
+        "fileSha": "7d7b064ba371e9cf775525b1a6110b03ae2cd92f",
+        "passages": 4,
+        "lowestWaveformCorrelation": 0.982,
+        "previewOffsetInRecordingSeconds": 124.0329
+      }
     },
     {
       "id": "b-track-488",
@@ -1508,5 +1538,6 @@
       "unconfirmedCanvasCandidate": "https://open.spotify.com/track/1qMx707PFdFXdwLvcUTNz3",
       "candidateDurationDifferenceSeconds": 5.364
     }
-  ]
+  ],
+  "additionalReferenceMethod": "For the four tracks with audioPreviewMatch, compare separated passages of the Spotify preview with the indexed Music Box recording. The preview confirms the shared performance in those passages. Differences in total duration may reflect differences elsewhere in the edit."
 }
