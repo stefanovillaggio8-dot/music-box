@@ -1,0 +1,31 @@
+name: Ste official video catalogue discovery
+on:
+  pull_request:
+    paths:
+      - 'tools/audit-ste-official-videos.cjs'
+      - '.github/workflows/ste-official-video-discovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  catalogue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check tools/audit-ste-official-videos.cjs
+      - if: github.event_name == 'pull_request'
+        run: node tools/audit-ste-official-videos.cjs ste-video-discovery.json --scope-only
+      - if: github.event_name == 'workflow_dispatch'
+        run: node tools/audit-ste-official-videos.cjs ste-video-discovery.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ste-video-discovery
+          path: ste-video-discovery.json
+          retention-days: 14
