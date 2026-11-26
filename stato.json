@@ -1122,7 +1122,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 84,
-    "s": 2178,
+    "s": 2240,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1746,7 +1746,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 83,
-    "s": 2170,
+    "s": 2232,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -5915,14 +5915,14 @@
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
    "[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 615,
+    "v": 4,
+    "s": 647,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 615,
+    "v": 4,
+    "s": 647,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6732,13 +6732,13 @@
    },
    "[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 4,
-    "s": 647,
+    "s": 672,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 4,
-    "s": 647,
+    "s": 672,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -8730,13 +8730,13 @@
    },
    "[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 719,
+    "s": 724,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 719,
+    "s": 724,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
@@ -9552,13 +9552,13 @@
    },
    "[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 724,
+    "s": 754,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 724,
+    "s": 754,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
