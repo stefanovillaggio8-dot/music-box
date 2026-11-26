@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.752";
+  const APP_VERSION = "6.753";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13351,6 +13351,12 @@ $("btnPrev").addEventListener("click", () => {
 /* Bridge ristretto fra il lettore locale e la stanza privata.
    Nessuna chiave e nessun accesso al database vengono esposti. */
 window.MusicBoxBridge = {
+  canUsePersonalCanvas(track){
+    if(profile!=="Ste"||!track?.id||track.source==="stanza-condivisa")return false;
+    const id=track.id;
+    return !_nascostiDallePlaylist().has(id)&&
+      !_soloInPlaylist.has(_chiaveSoloInPlaylist(id))&&!_soloInPlaylist.has(id);
+  },
   // Read-only inventory for comparing the same profile across devices.
   // Never sends or removes any MP3; user chooses whether to copy it.
   librarySnapshot:()=>{
