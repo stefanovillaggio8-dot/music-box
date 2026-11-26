@@ -37,6 +37,7 @@ const fixture=[
  '<script>',
  'window.fakeAudio={currentTime:12,duration:240,paused:false};',
  'window.fakeSong={id:"track-a",title:"Notte stellata",artist:"Artista di prova",cover:""};',
+ 'window.fakeLibraryTracks=[];',
  'window.fakeProfile="Ste";',
  'window.fakeCalls={toggle:0,next:0,prev:0};',
  'window.fakeLyricsOffset=0;',
@@ -45,7 +46,7 @@ const fixture=[
  'window.MusicBoxBridge={',
  ' profile:()=>fakeProfile,',
  ' audio:()=>fakeAudio,currentId:()=>fakeSong.id,',
- ' allTracks:()=>[fakeSong],lyricsData:()=>fakeLyrics,',
+ ' canUsePersonalCanvas:t=>fakeProfile==="Ste"&&Boolean(t?.id)&&t.id!=="gym-only",allTracks:()=>[fakeSong,...fakeLibraryTracks],lyricsData:()=>fakeLyrics,',
  ' lyricsDelay:()=>fakeLyricsOffset,',
  ' setLyricsDelay:(id,value)=>{if(id!==fakeSong.id||!Number.isFinite(value))return false;',
  '   fakeLyricsOffset=Math.max(-8,Math.min(8,Math.round(value*10)/10));',
@@ -485,13 +486,17 @@ async function run(){
     assert.equal(await page.locator("#imVideoToggle").isHidden(),true);
     assert.match(await page.locator("#imBackdrop").evaluate(el=>el.style.backgroundImage),/immersive-textures\.webp/);
     assert.equal(await page.evaluate(()=>fakeAudio.currentTime),123);
-    const importer=page.locator("#imVideoImport"),input=page.locator("#imVideoFile");
+    const importer=page.locator("#imVideoImport");
+    const choose=async files=>{
+     const [chooser]=await Promise.all([page.waitForEvent("filechooser"),importer.click()]);
+     await chooser.setFiles(files);
+    };
     await importer.waitFor({state:"visible"});
     assert.equal(await importer.innerText(),"Aggiungi Canvas");
-    await input.setInputFiles({name:"quadrato.mp4",mimeType:"video/mp4",buffer:clip});
+    await choose({name:"quadrato.mp4",mimeType:"video/mp4",buffer:clip});
     await page.waitForFunction(()=>!document.getElementById("imVideoImport").disabled);
     assert.equal(await video.getAttribute("src"),null,"a square local clip is rejected");
-    await input.setInputFiles({
+    await choose({
      name:"Canvas-16x9.mp4",mimeType:"video/mp4",buffer:originalClips["/immersive-loops/eva.mp4"]
     });
     const waitForPrivateCanvas=()=>page.waitForFunction(()=>{
@@ -500,9 +505,24 @@ async function run(){
     });
     await waitForPrivateCanvas();
     const localUrl=await video.getAttribute("src");
-    assert.equal(await video.getAttribute("data-music-box-clip"),"sintetico");
+    assert.equal(await video.getAttribute("data-music-box-clip"),"personal");
     assert.equal(await page.locator("#imAnimationLabel").innerText(),"Canvas personale");
     assert.equal(await importer.innerText(),"Cambia Canvas");
+    await page.evaluate(()=>{fakeLibraryTracks=[{id:"allowed-a"},{id:"allowed-b"},{id:"gym-only"}]});
+    await choose(["allowed-a","gym-only","allowed-b"].map(id=>({
+     name:"Track ["+id+"].mp4",mimeType:"video/mp4",buffer:originalClips["/immersive-loops/eva.mp4"]
+    })));
+    await page.waitForFunction(()=>!document.getElementById("imVideoImport").disabled);
+    const keys=await page.evaluate(()=>new Promise((resolve,reject)=>{
+     const request=indexedDB.open("musicbox-local-canvases");
+     request.onsuccess=()=>{
+      const db=request.result,read=db.transaction("clips").objectStore("clips").getAllKeys();
+      read.onsuccess=()=>{resolve(read.result);db.close()};
+      read.onerror=()=>reject(read.error);
+     };
+     request.onerror=()=>reject(request.error);
+    }));
+    assert.deepEqual(keys,["Ste:allowed-a","Ste:allowed-b","Ste:b-track-30"]);
     await context.setOffline(true);
     await page.locator("#imClose").click();
     assert.equal(await video.getAttribute("src"),null,"closing releases the private clip");

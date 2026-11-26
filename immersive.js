@@ -44,15 +44,16 @@ function atmosphereForTrack(id,title,artist){
   "b-track-34":{file:"songs/track-34.mp3",title:"Eva",artist:"Kid Yugi, Tedua & Junior K",url:"immersive-loops/eva.mp4?v=11",framing:"eva"}
  });
  let canvasSource=null,songAnimation=null,canvasEnabled=false,canvasRequest=null,canvasLoadStarted=0;
- let localCanvasUrl=null,canvasRevision=0;
- function canUseLocalCanvas(track){
-  return api()?.profile?.()==="Ste"&&track?.id==="b-track-30"&&track.file==="songs/track-30.mp3";
+ let localCanvasUrl=null,canvasRevision=0,localCanvasKey=null,canvasImportKey=null,publishedCanvasSource=null;
+ function personalCanvasKey(track){
+  if(!api()?.canUsePersonalCanvas?.(track))return null;
+  return "Ste:"+track.id;
  }
- function isLocalCanvasTrackOpen(){
+ function currentPersonalCanvasKey(){
   const b=api(),id=b?.currentId?.();
-  return opened&&id==="b-track-30"&&canUseLocalCanvas(b?.allTracks?.().find(track=>track.id===id));
+  return opened?personalCanvasKey(b?.allTracks?.().find(track=>track.id===id)):null;
  }
- function localCanvasFile(file){
+ function localCanvasFile(key,file){
   return new Promise((resolve,reject)=>{
    const open=indexedDB.open("musicbox-local-canvases",1);
    open.onupgradeneeded=()=>open.result.createObjectStore("clips");
@@ -60,7 +61,6 @@ function atmosphereForTrack(id,title,artist){
    open.onsuccess=()=>{
     const db=open.result;
     const tx=db.transaction("clips",file?"readwrite":"readonly"),store=tx.objectStore("clips");
-    const key="Ste:b-track-30";
     const req=file?store.put(file,key):store.get(key);
     tx.oncomplete=()=>{db.close();resolve(req.result)};
     tx.onabort=()=>{db.close();reject(tx.error)};
@@ -102,29 +102,52 @@ function atmosphereForTrack(id,title,artist){
   stopCanvas();
   releaseLocalCanvas();
   localCanvasUrl=URL.createObjectURL(file);
-  canvasSource={url:localCanvasUrl,musicBox:true,framing:"sintetico"};
+  canvasSource={url:localCanvasUrl,musicBox:true,framing:"personal"};
   canvasEnabled=wantsCanvasMotion();
   renderCanvasButton();
   updateCanvas(api()?.audio?.());
  }
+ function canvasAssignments(files,currentKey){
+  const available=new Map((api()?.allTracks?.()??[]).map(track=>[track.id,track]));
+  const assignments=new Map();
+  for(const file of files){
+   const trackId=/\[([^\[\]]+)\]\.mp4$/i.exec(file.name)?.[1];
+   const key=trackId?personalCanvasKey(available.get(trackId)):files.length===1?currentKey:null;
+   if(key&&!assignments.has(key))assignments.set(key,file);
+  }
+  return assignments;
+ }
  async function importLocalCanvas(event){
-  const input=event.currentTarget,file=input.files?.[0],button=$("imVideoImport");
+  const input=event.currentTarget,files=Array.from(input.files??[]),button=$("imVideoImport");
+  const key=canvasImportKey;
+  canvasImportKey=null;
   input.value="";
-  if(!file||!button||button.disabled||!isLocalCanvasTrackOpen())return;
+  if(!files.length||!button||button.disabled||!key||currentPersonalCanvasKey()!==key)return;
+  const assignments=canvasAssignments(files,key);
+  let saved=0,storageError=false;
   button.disabled=true;
   try{
-   if(!/\.mp4$/i.test(file.name)||!await verifyLocalCanvas(file)){
-    if(isLocalCanvasTrackOpen())api()?.toast?.("Scegli un MP4 orizzontale 16:9 da 3 a 8 secondi.");
-    return;
+   for(const [trackKey,file] of assignments){
+    if(!/\.mp4$/i.test(file.name)||!await verifyLocalCanvas(file))continue;
+    await localCanvasFile(trackKey,file);
+    ++saved;
+    if(currentPersonalCanvasKey()===trackKey){
+     ++canvasRevision;
+     showLocalCanvas(file);
+    }
    }
-   await localCanvasFile(file);
-   if(isLocalCanvasTrackOpen()){
-    ++canvasRevision;
-    showLocalCanvas(file);
-    api()?.toast?.("Canvas salvato su questo dispositivo.");
-   }
-  }catch(e){if(isLocalCanvasTrackOpen())api()?.toast?.("Non riesco a salvare il Canvas su questo dispositivo.")}
+  }catch(e){storageError=true}
   finally{button.disabled=false}
+  if(api()?.profile?.()!=="Ste")return;
+  if(files.length>1){
+   api()?.toast?.(`Canvas salvati su questo dispositivo: ${saved} di ${files.length}.`);
+  }else if(saved){
+   api()?.toast?.("Canvas salvato su questo dispositivo.");
+  }else if(storageError){
+   api()?.toast?.("Non riesco a salvare il Canvas su questo dispositivo.");
+  }else{
+   api()?.toast?.("Scegli un MP4 orizzontale 16:9 da 3 a 8 secondi per un brano di Ste.");
+  }
  }
  function canvasFor(track){
   if(api()?.profile?.()!=="Ste"||!track?.id)return null;
@@ -163,7 +186,7 @@ function atmosphereForTrack(id,title,artist){
   button.textContent=canvasEnabled?"Copertina":"Animazione";
   const importer=$("imVideoImport");
   if(importer){
-   importer.hidden=!isLocalCanvasTrackOpen();
+   importer.hidden=!localCanvasKey;
    importer.textContent=localCanvasUrl?"Cambia Canvas":"Aggiungi Canvas";
   }
  }
@@ -171,19 +194,20 @@ function atmosphereForTrack(id,title,artist){
   const revision=++canvasRevision;
   stopCanvas();
   releaseLocalCanvas();
-  canvasSource=canvasFor(track);
+  canvasSource=publishedCanvasSource=canvasFor(track);
+  const key=localCanvasKey=personalCanvasKey(track);
   songAnimation=window.MusicBoxImmersiveAnimation?.find(track,api()?.profile?.())??null;
   canvasEnabled=!!(canvasSource||songAnimation)&&wantsCanvasMotion();
   renderCanvasButton();
-  if(canUseLocalCanvas(track)){
-   localCanvasFile().then(file=>{
-    if(canvasRevision===revision&&isLocalCanvasTrackOpen()&&file instanceof Blob)showLocalCanvas(file);
+  if(key){
+   localCanvasFile(key).then(file=>{
+    if(canvasRevision===revision&&currentPersonalCanvasKey()===key&&file instanceof Blob)showLocalCanvas(file);
    }).catch(()=>{});
   }
  }
  function failCanvas(){
-  canvasSource=null;
-  canvasEnabled=!!songAnimation&&canvasEnabled;
+  canvasSource=localCanvasUrl?publishedCanvasSource:null;
+  canvasEnabled=!!(canvasSource||songAnimation)&&canvasEnabled;
   stopCanvas();
   releaseLocalCanvas();
   renderCanvasButton();
@@ -559,7 +583,8 @@ function close(){
  if(!opened)return;
  opened=false;
  ++canvasRevision;
- stopCanvas();releaseLocalCanvas();canvasSource=null;songAnimation=null;canvasEnabled=false;renderCanvasButton();
+ stopCanvas();releaseLocalCanvas();canvasSource=null;publishedCanvasSource=null;
+ localCanvasKey=null;canvasImportKey=null;songAnimation=null;canvasEnabled=false;renderCanvasButton();
  closeSyncControls();
  lyricPointer=null;suppressLyricTapUntil=0;
  if(anim)clearTimeout(anim);anim=0;
@@ -633,7 +658,10 @@ function start(){
  $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSyncToggle")?.addEventListener("click",toggleSyncControls);
  $("imVideoToggle")?.addEventListener("click",toggleCanvas);
- $("imVideoImport")?.addEventListener("click",()=>$("imVideoFile")?.click());
+ $("imVideoImport")?.addEventListener("click",()=>{
+  canvasImportKey=currentPersonalCanvasKey();
+  if(canvasImportKey)$("imVideoFile")?.click();
+ });
  $("imVideoFile")?.addEventListener("change",importLocalCanvas);
  $("imVideo")?.addEventListener("ended",()=>updateCanvas(api()?.audio?.()));
  document.addEventListener("visibilitychange",()=>{
