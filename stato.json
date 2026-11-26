@@ -1518,13 +1518,13 @@
    },
    "[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 3,
-    "s": 719,
+    "s": 724,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 3,
-    "s": 719,
+    "s": 724,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
    },
@@ -1986,13 +1986,13 @@
    },
    "[\"cigno nero\",\"fedez, francesca michelini\"]": {
     "v": 4,
-    "s": 432,
+    "s": 472,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
    "m:2026-11|[\"cigno nero\",\"fedez, francesca michelini\"]": {
     "v": 4,
-    "s": 432,
+    "s": 472,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
@@ -4644,13 +4644,13 @@
    },
    "[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 724,
+    "s": 754,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 3,
-    "s": 724,
+    "s": 754,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ sempre bello",
     "a": "Coez"
    },
@@ -9472,16 +9472,70 @@
     "t": "Quello che non ti ho detto",
     "a": "ModÃÂÃÂ "
    },
-   "[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 4,
-    "s": 653,
-    "t": "VENTANNI",
-    "a": "MÃ¥neskin"
+   "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+    "v": 3,
+    "s": 425,
+    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+    "v": 3,
+    "s": 425,
+    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃ "
+   },
+   "[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 2,
+    "s": 434,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 2,
     "s": 407,
     "t": "MorirÃ² da Re",
+    "a": "MÃ¥neskin"
+   },
+   "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 402,
+    "t": "MorirÃ² da Re",
+    "a": "MÃ¥neskin"
+   },
+   "[\"ti amo\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 569,
+    "t": "Ti Amo",
+    "a": "LuchÃ¨"
+   },
+   "m:2026-11|[\"ti amo\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 569,
+    "t": "Ti Amo",
+    "a": "LuchÃ¨"
+   },
+   "[\"torna da me\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 507,
+    "t": "Torna Da Me",
+    "a": "LuchÃ¨"
+   },
+   "m:2026-11|[\"torna da me\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 507,
+    "t": "Torna Da Me",
+    "a": "LuchÃ¨"
+   },
+   "[\"ventanni\",\"mÃ¥neskin\"]": {
+    "v": 4,
+    "s": 653,
+    "t": "VENTANNI",
     "a": "MÃ¥neskin"
    },
    "[\"la cittÃ \",\"mostro\"]": {
@@ -9712,12 +9766,6 @@
     "t": "Il Regalo PiÃ¹ Grande",
     "a": "Tiziano Ferro"
    },
-   "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 402,
-    "t": "MorirÃ² da Re",
-    "a": "MÃ¥neskin"
-   },
    "[\"tutto fuori controllo â (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 5,
     "s": 792,
@@ -9729,18 +9777,6 @@
     "s": 792,
     "t": "TUTTO FUORI CONTROLLO â (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
-   "[\"ti amo\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 569,
-    "t": "Ti Amo",
-    "a": "LuchÃ¨"
-   },
-   "m:2026-11|[\"ti amo\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 569,
-    "t": "Ti Amo",
-    "a": "LuchÃ¨"
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃ©\"]": {
     "v": 2,
@@ -9873,18 +9909,6 @@
     "s": 693,
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
-   },
-   "[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 507,
-    "t": "Torna Da Me",
-    "a": "LuchÃ¨"
-   },
-   "m:2026-11|[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 507,
-    "t": "Torna Da Me",
-    "a": "LuchÃ¨"
    },
    "[\"non abbiamo etÃ \",\"luchÃ¨\"]": {
     "v": 2,
@@ -10192,18 +10216,6 @@
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 2,
-    "s": 434,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
    "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 3,
     "s": 650,
@@ -10258,18 +10270,6 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
-    "v": 3,
-    "s": 425,
-    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
-    "v": 3,
-    "s": 425,
-    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃ "
-   },
    "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
     "v": 3,
     "s": 624,
@@ -10281,18 +10281,6 @@
     "s": 624,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
-   },
-   "[\"quello che non ti ho detto\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂ "
    },
    "[\"non è mai abbastanza - videoclip ufficiale\",\"modà\"]": {
     "v": 1,
@@ -10353,6 +10341,18 @@
     "s": 1,
     "t": "Torna Da Me",
     "a": "Luchè"
+   },
+   "[\"quello che non ti ho detto\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂ "
    }
   },
   "Diego": {
