@@ -509,6 +509,13 @@ async function run(){
     assert.equal(await page.locator("#imAnimationLabel").innerText(),"Canvas personale");
     assert.equal(await importer.innerText(),"Cambia Canvas");
     await page.evaluate(()=>{fakeLibraryTracks=[{id:"allowed-a"},{id:"allowed-b"},{id:"gym-only"}]});
+    await page.evaluate(()=>{
+     const put=IDBObjectStore.prototype.put;
+     IDBObjectStore.prototype.put=function(value,...args){
+      if(value instanceof File)throw new DOMException("Picker-backed file unavailable","DataCloneError");
+      return put.call(this,value,...args);
+     };
+    });
     await choose(["allowed-a","gym-only","allowed-b"].map(id=>({
      name:"Track ["+id+"].mp4",mimeType:"video/mp4",buffer:originalClips["/immersive-loops/eva.mp4"]
     })));

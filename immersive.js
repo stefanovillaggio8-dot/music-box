@@ -53,7 +53,10 @@ function atmosphereForTrack(id,title,artist){
   const b=api(),id=b?.currentId?.();
   return opened?personalCanvasKey(b?.allTracks?.().find(track=>track.id===id)):null;
  }
- function localCanvasFile(key,file){
+ async function localCanvasFile(key,file){
+  // Read the file while the picker grant is active. WebKit may refuse to
+  // copy a picker-backed File into IndexedDB even after metadata decoding.
+  const bytes=file?await file.arrayBuffer():null;
   return new Promise((resolve,reject)=>{
    const open=indexedDB.open("musicbox-local-canvases",1);
    open.onupgradeneeded=()=>open.result.createObjectStore("clips");
@@ -61,8 +64,12 @@ function atmosphereForTrack(id,title,artist){
    open.onsuccess=()=>{
     const db=open.result;
     const tx=db.transaction("clips",file?"readwrite":"readonly"),store=tx.objectStore("clips");
-    const req=file?store.put(file,key):store.get(key);
-    tx.oncomplete=()=>{db.close();resolve(req.result)};
+    const req=file?store.put(bytes,key):store.get(key);
+    tx.oncomplete=()=>{
+     db.close();
+     const value=req.result;
+     resolve(value instanceof ArrayBuffer?new Blob([value],{type:"video/mp4"}):value);
+    };
     tx.onabort=()=>{db.close();reject(tx.error)};
    };
   });
