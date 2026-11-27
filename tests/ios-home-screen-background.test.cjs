@@ -29,3 +29,29 @@ test("hidden installed app preserves its media element across next song",()=>{
  const start=app.indexOf("async function playById("),end=app.indexOf("function idBranoA(",start);
  assert.match(app.slice(start,end),/audio = keepNativeSession \? previous : createAudio\(\)/);
 });
+
+
+test("explicit background remote Play retries on the same player and cancels on pause or track change",async()=>{
+ const start=app.indexOf("  let _remoteIosPlayGeneration=0;");
+ const end=app.indexOf("  function _riproduciVolontaria(",start);
+ assert.ok(start>=0&&end>start);
+ const fake={paused:true,ended:false};
+ const timers=[],calls=[];
+ const build=new Function("fake","timers","calls",
+  "let audio=fake,currentId='track',_vuoleSuonare=true,_pausaEsplicita=false;"+
+  "const window={};const setTimeout=(fn,ms)=>timers.push({fn,ms});"+
+  "const doPlay=async keep=>{calls.push(keep);return calls.length===2};"+
+  app.slice(start,end)+
+  "return {start:()=>_riprovaPlayEsternoIos(fake,'track',++_remoteIosPlayGeneration,Promise.resolve(false)),pause:()=>{_pausaEsplicita=true;_vuoleSuonare=false;++_remoteIosPlayGeneration},resume:()=>{_pausaEsplicita=false;_vuoleSuonare=true},switchTrack:()=>{currentId='other'}};"
+ )(fake,timers,calls);
+ build.start();await Promise.resolve();
+ assert.equal(timers[0].ms,250);
+ await timers.shift().fn();
+ assert.deepEqual(calls,[true]);assert.equal(timers[0].ms,750);
+ await timers.shift().fn();
+ assert.deepEqual(calls,[true,true]);assert.equal(timers.length,0);
+ build.start();await Promise.resolve();build.pause();build.resume();
+ await timers.shift().fn();assert.equal(calls.length,2);
+ build.start();await Promise.resolve();build.switchTrack();
+ await timers.shift().fn();assert.equal(calls.length,2);
+});
