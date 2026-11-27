@@ -1,0 +1,45 @@
+name: Recover exact historical DJ certificate (one-off)
+on:
+  push:
+    branches: ['fix/6756-ci-and-index-recovery']
+permissions:
+  contents: write
+jobs:
+  restore:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Recover only the lost certificate from a known published revision
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess, hashlib
+          p=pathlib.Path('dj-deep-analysis.json')
+          data=json.loads(p.read_text())
+          old=json.loads(subprocess.check_output(['git','show','97a6d4a8834b2f2d2e94f5ab78bae899c03437f2:dj-deep-analysis.json']))
+          f='audio/songs/bassi/track-53.mp3'; t='audio/songs/bassi/track-51.mp3'
+          a,b=data['entries'][f],data['entries'][t]
+          x,y=old['entries'][f],old['entries'][t]
+          assert a['sha']==x['sha'] and b['sha']==y['sha']
+          record=x['structuralBeatPlans'][b['sha']]
+          assert record['fromSha']==a['sha'] and record['toSha']==b['sha']
+          for cue in record.get('cues',[record['cue']]):
+              c=cue['composite']
+              assert c['sourceSha']==a['sha'] and c['targetSha']==b['sha']
+              assert hashlib.sha256(pathlib.Path(c['path']).read_bytes()).hexdigest()==c['sha256']
+          plans=a.setdefault('structuralBeatPlans',{})
+          assert b['sha'] not in plans or plans[b['sha']]==record
+          plans[b['sha']]=record
+          p.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n')
+          PY
+          node --test tests/dj-rhythmic-tail.test.cjs tests/dj-lyrics-regression.test.cjs tests/ios-home-screen-background.test.cjs
+      - name: Save verified recovery on the isolated branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dj-deep-analysis.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Restore exact historical boosted rhythmic-tail proof'
+          git push origin HEAD:fix/6756-ci-and-index-recovery

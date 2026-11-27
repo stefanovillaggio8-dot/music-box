@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6755";
+const CACHE = "spotifynonavraiimieisoldi-v6756";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -45,7 +45,7 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6755&lyrics=22",
+  "./style.css?v=6756&lyrics=22",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -54,7 +54,7 @@ const CORE = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6755&words=22",
+  "./app.js?v=6756&words=22",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -65,7 +65,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6755&dj=63", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6756&dj=63", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -101,7 +101,7 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6755&lyrics=22",
+  "./style.css?v=6756&lyrics=22",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
   "./karaoke-acoustic-proof.js?v=6738&proof=2",
@@ -110,7 +110,7 @@ const OFFLINE_SHELL = [
   "./offline-storage-audit.js?v=3",
   "./native-mp3-metadata.js?v=1",
   "./native-mp3-metadata.json?v=1",
-  "./app.js?v=6755&words=22",
+  "./app.js?v=6756&words=22",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -121,7 +121,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6755&dj=63",
+  "./mix-intelligente.js?v=6756&dj=63",
   "./mix-monitor-bridge.js?v=4",
   "./immersive-scenes.js?v=2",
   "./immersive-animation.js?v=15",
@@ -1539,8 +1539,13 @@ self.addEventListener("fetch", (event) => {
     let persistence=Promise.resolve();
     const job=(async()=>{
       const cache=await caches.open(CACHE_DJ_INDEX);
-      const saved=await cache.match(event.request);
+      // A refresh header is a request policy, not a different index revision.
+      // Use the canonical exact URL for storage and await the write before
+      // returning a refreshed response, so immediate offline use is safe.
+      const key=new Request(event.request.url,{credentials:"same-origin"});
+      const saved=await cache.match(key);
       const request=new Request(event.request.url,{cache:"no-cache",credentials:"same-origin"});
+      if(saved?.status===200&&self.navigator?.onLine===false)return saved;
       const revalidate=event.request.headers.get("X-MusicBox-DJ-Revalidate")==="1"||url.searchParams.get("mb-dj-refresh")==="1";
       if(saved?.status===200&&!revalidate){
         persistence=(async()=>{
@@ -1552,7 +1557,7 @@ self.addEventListener("fetch", (event) => {
           await info.put(marker,new Response(String(Date.now())));
           try {
             const response=await fetch(request);
-            if(response?.status===200)await cache.put(event.request,response.clone());
+            if(response?.status===200)await cache.put(key,response.clone());
           }catch(_){ /* keep the saved index on a slow/offline network */ }
         })().catch(()=>{});
         return saved;
@@ -1560,7 +1565,7 @@ self.addEventListener("fetch", (event) => {
       try {
         const response=await fetch(request);
         if(response?.status===200){
-          persistence=cache.put(event.request,response.clone()).catch(()=>{});
+          await cache.put(key,response.clone()).catch(()=>{});
           return response;
         }
         // A failed refresh must not hide the exact verified cached revision.
@@ -1569,7 +1574,7 @@ self.addEventListener("fetch", (event) => {
         return response;
       }catch(_){
         if(saved?.status===200)return saved;
-        const previous=await cache.match(event.request,{ignoreSearch:true}).catch(()=>null);
+        const previous=await cache.match(key,{ignoreSearch:true}).catch(()=>null);
         return previous||new Response("",{status:504});
       }
     })();
