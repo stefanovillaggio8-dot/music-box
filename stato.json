@@ -1211,8 +1211,8 @@
     "a": "Elley Duhe"
    },
    "[\"bring me to life\",\"evanescence\"]": {
-    "v": 8,
-    "s": 482,
+    "v": 9,
+    "s": 488,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -2358,13 +2358,13 @@
    },
    "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 10,
-    "s": 993,
+    "s": 998,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 10,
-    "s": 993,
+    "s": 998,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
@@ -3743,8 +3743,8 @@
     "a": "Tommaso Paradiso"
    },
    "m:2026-11|[\"bring me to life\",\"evanescence\"]": {
-    "v": 8,
-    "s": 466,
+    "v": 9,
+    "s": 472,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
