@@ -8803,6 +8803,7 @@ function playNext() {
     if (_pausaEsplicita && !_vuoleSuonare && audio?.paused) return;
     _vuoleSuonare = false;
     _pausaEsplicita = true;
+    if(typeof _remoteIosPlayGeneration!=="undefined")++_remoteIosPlayGeneration;
     _silenziDiFila = 0;
     // Pause the native decoder first, before stats or local storage.
     // There is no second silent player: Safari owns this one media source.
@@ -8888,6 +8889,27 @@ function playNext() {
     // button or headphone command has its own user-activated path.
   }
 
+  // A remote Play is a new, explicit user request, unlike automatic
+  // background recovery. Retry only that request on the same native element.
+  // Never create another audio element while the installed iOS app is hidden.
+  let _remoteIosPlayGeneration=0;
+  function _riprovaPlayEsternoIos(player,id,generation,started) {
+    const valid=()=>generation===_remoteIosPlayGeneration&&audio===player&&
+      currentId===id&&_vuoleSuonare&&!_pausaEsplicita&&
+      !player.ended&&!window.MusicBoxRoom?.isActive?.();
+    const delays=[250,750,1500];
+    const retry=async(index)=>{
+      if(!valid()||!player.paused||index>=delays.length)return;
+      setTimeout(async()=>{
+        if(!valid()||!player.paused)return;
+        // An AbortError can follow the other app releasing the audio session.
+        // Keep the existing decoder and the exact playhead.
+        const ok=await doPlay(true);
+        if(!ok)retry(index+1);
+      },delays[index]);
+    };
+    Promise.resolve(started).then(ok=>{if(!ok)retry(0)},()=>retry(0));
+  }
   function _riproduciVolontaria(daControlloEsterno=false) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("play");return;
@@ -8910,7 +8932,12 @@ function playNext() {
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
     // doPlay invokes the EXISTING HTMLAudioElement.play() synchronously
     // before its first await, retaining the native iOS media session.
-    const started=doPlay();
+    const generation=++_remoteIosPlayGeneration;
+    const remoteIos=daControlloEsterno&&_iosInstallataComeApp()&&
+      document.hidden&&audio&&currentId;
+    const player=audio,id=currentId;
+    const started=remoteIos?doPlay(true):doPlay();
+    if(remoteIos)_riprovaPlayEsternoIos(player,id,generation,started);
     _segnaIntenzioneSono(true);
     return started;
   }
