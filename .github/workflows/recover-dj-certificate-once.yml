@@ -29,6 +29,15 @@ jobs:
               c=cue['composite']
               assert c['sourceSha']==a['sha'] and c['targetSha']==b['sha']
               assert hashlib.sha256(pathlib.Path(c['path']).read_bytes()).hexdigest()==c['sha256']
+          # Basic scans removed the recording-bound content measurements too.
+          # Restore only SHA- and duration-matched data from the same revision.
+          for k in (f,t,'audio/songs/bassi/track-259.mp3'):
+              current,prior=data['entries'][k],old['entries'][k]
+              content=prior['musicalContent']
+              assert current['sha']==prior['sha']==content['sourceSha']
+              assert abs(current['duration']-content['sourceDuration'])<=0.1
+              assert 'musicalContent' not in current or current['musicalContent']==content
+              current['musicalContent']=content
           plans=a.setdefault('structuralBeatPlans',{})
           assert b['sha'] not in plans or plans[b['sha']]==record
           plans[b['sha']]=record
