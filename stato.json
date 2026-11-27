@@ -2874,13 +2874,13 @@
    },
    "[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 3,
-    "s": 686,
+    "s": 704,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
    "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 3,
-    "s": 686,
+    "s": 704,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
@@ -10523,14 +10523,14 @@
     "a": "Måneskin"
    },
    "[\"labirinto\",\"luchè\"]": {
-    "v": 0,
-    "s": 171,
+    "v": 1,
+    "s": 184,
     "t": "Labirinto",
     "a": "Luchè"
    },
    "m:2026-11|[\"labirinto\",\"luchè\"]": {
-    "v": 0,
-    "s": 171,
+    "v": 1,
+    "s": 184,
     "t": "Labirinto",
     "a": "Luchè"
    },
