@@ -1212,7 +1212,7 @@
    },
    "[\"bring me to life\",\"evanescence\"]": {
     "v": 13,
-    "s": 570,
+    "s": 583,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -3744,7 +3744,7 @@
    },
    "m:2026-11|[\"bring me to life\",\"evanescence\"]": {
     "v": 13,
-    "s": 554,
+    "s": 567,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -8650,6 +8650,18 @@
     "t": "Quello che non ti ho detto",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
+   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
+    "v": 9,
+    "s": 576,
+    "t": "Con Te PartirÃÂ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
+    "v": 8,
+    "s": 574,
+    "t": "Con Te PartirÃÂ²",
+    "a": "Andrea Bocelli"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 4,
     "s": 653,
@@ -8674,12 +8686,6 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
-   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
-    "v": 9,
-    "s": 576,
-    "t": "Con Te PartirÃÂ²",
-    "a": "Andrea Bocelli"
-   },
    "m:2026-10|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 2,
@@ -8689,13 +8695,25 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 3,
+    "s": 289,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 3,
+    "s": 289,
+    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -8811,12 +8829,6 @@
     "s": 841,
     "t": "La musica non c'ÃÂ¨",
     "a": "Coez"
-   },
-   "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
-    "v": 8,
-    "s": 574,
-    "t": "Con Te PartirÃÂ²",
-    "a": "Andrea Bocelli"
    },
    "[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 3,
@@ -8956,18 +8968,6 @@
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 3,
-    "s": 289,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 3,
-    "s": 289,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 2,
     "s": 735,
@@ -9052,6 +9052,18 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 6,
+    "s": 1177,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 6,
+    "s": 1177,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 2,
     "s": 507,
@@ -9086,18 +9098,6 @@
     "v": 2,
     "s": 528,
     "t": "ArriverÃÂ ",
-    "a": "ModÃÂ "
-   },
-   "[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 6,
-    "s": 1177,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 6,
-    "s": 1177,
-    "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
@@ -9283,7 +9283,7 @@
    "[\"fragile\",\"modÃÂ \"]": {
     "v": 1,
     "s": 316,
-    "t": "fragile",
+    "t": "Quello che non ti ho detto",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"fragile\",\"modÃÂ \"]": {
@@ -9358,6 +9358,30 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
+   "[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 3,
+    "s": 403,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 3,
+    "s": 403,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
+    "v": 3,
+    "s": 425,
+    "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
+    "v": 3,
+    "s": 425,
+    "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃÂ "
+   },
    "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
     "v": 2,
     "s": 366,
@@ -9369,6 +9393,54 @@
     "s": 366,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"quello che non ti ho detto\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂ "
+   },
+   "[\"quello che non ti ho detto\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 3,
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 3,
+    "s": 241,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 9,
+    "s": 576,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 8,
+    "s": 574,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
    },
    "[\"non ti dimentico\",\"modÃÂ \"]": {
     "v": 2,
@@ -9400,18 +9472,6 @@
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
-   "[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 3,
-    "s": 403,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 3,
-    "s": 403,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
    "[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 2,
     "s": 453,
@@ -9423,66 +9483,6 @@
     "s": 453,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 3,
-    "s": 241,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
-    "v": 3,
-    "s": 425,
-    "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
-    "v": 3,
-    "s": 425,
-    "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
-    "a": "ModÃÂ "
-   },
-   "[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 3,
-    "s": 624,
-    "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "[\"quello che non ti ho detto\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 9,
-    "s": 576,
-    "t": "Con Te PartirÃ²",
-    "a": "Andrea Bocelli"
-   },
-   "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 8,
-    "s": 574,
-    "t": "Con Te PartirÃ²",
-    "a": "Andrea Bocelli"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 4,
@@ -10192,6 +10192,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
+   "[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 3,
+    "s": 624,
+    "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
+    "a": "thasup"
+   },
    "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
     "v": 3,
     "s": 425,
@@ -10227,18 +10239,6 @@
     "s": 0,
     "t": "Quello che non ti ho detto",
     "a": "ModÃ "
-   },
-   "[\"quello che non ti ho detto\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"quello che non ti ho detto\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂ "
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
     "v": 3,
@@ -13334,13 +13334,13 @@
    },
    "[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 46,
+    "s": 77,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 46,
+    "s": 77,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "Coez"
    },
@@ -13848,18 +13848,6 @@
     "t": "fuck 3x",
     "a": "thasup"
    },
-   "[\"non mi riconosco ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 0,
-    "s": 66,
-    "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-    "a": "MACE, centomilaicarie, Salmo"
-   },
-   "m:2026-11|[\"non mi riconosco ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 0,
-    "s": 66,
-    "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-    "a": "MACE, centomilaicarie, Salmo"
-   },
    "[\"tokyo drift (feat. low-red)\",\"diss gacha, sala, low-red\"]": {
     "v": 1,
     "s": 26,
@@ -13871,6 +13859,18 @@
     "s": 26,
     "t": "TOKYO DRIFT (feat. Low-Red)",
     "a": "Diss Gacha, Sala, Low-Red"
+   },
+   "[\"non mi riconosco ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 0,
+    "s": 66,
+    "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "MACE, centomilaicarie, Salmo"
+   },
+   "m:2026-11|[\"non mi riconosco ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 0,
+    "s": 66,
+    "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "MACE, centomilaicarie, Salmo"
    },
    "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -13934,13 +13934,13 @@
    },
    "[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 77,
+    "s": 81,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 77,
+    "s": 81,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
@@ -13967,6 +13967,18 @@
     "s": 66,
     "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MACE, centomilaicarie, Salmo"
+   },
+   "[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 9,
+    "t": "PUGNO DI FERRO (Red Bull 64 Bars)",
+    "a": "Artie 5ive"
+   },
+   "m:2026-11|[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 9,
+    "t": "PUGNO DI FERRO (Red Bull 64 Bars)",
+    "a": "Artie 5ive"
    },
    "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -14064,17 +14076,17 @@
     "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  (con centomilaicarie & Salmo)",
     "a": "MACE, centomilaicarie, Salmo"
    },
-   "[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "PUGNO DI FERRO (Red Bull 64 Bars)",
-    "a": "Artie 5ive"
+   "[\"testimonial\",\"gora\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Testimonial",
+    "a": "Gora"
    },
-   "m:2026-11|[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "PUGNO DI FERRO (Red Bull 64 Bars)",
-    "a": "Artie 5ive"
+   "m:2026-11|[\"testimonial\",\"gora\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Testimonial",
+    "a": "Gora"
    },
    "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -14172,18 +14184,6 @@
     "t": "NON MI RICONOSCO ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  (con centomilaicarie & Salmo)",
     "a": "MACE, centomilaicarie, Salmo"
    },
-   "[\"testimonial\",\"gora\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Testimonial",
-    "a": "Gora"
-   },
-   "m:2026-11|[\"testimonial\",\"gora\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Testimonial",
-    "a": "Gora"
-   },
    "[\"voglio di piÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
     "s": 67,
@@ -14279,6 +14279,18 @@
     "s": 66,
     "t": "NON MI RICONOSCO ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ  (con centomilaicarie & Salmo)",
     "a": "MACE, centomilaicarie, Salmo"
+   },
+   "[\"ansia no\",\"fsk satellite\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "ANSIA NO",
+    "a": "FSK SATELLITE"
+   },
+   "m:2026-11|[\"ansia no\",\"fsk satellite\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "ANSIA NO",
+    "a": "FSK SATELLITE"
    },
    "[\"voglio di piÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -14376,17 +14388,17 @@
     "t": "NON MI RICONOSCO ÃÂ¢ÃÂÃÂ  (con centomilaicarie & Salmo)",
     "a": "MACE, centomilaicarie, Salmo"
    },
-   "[\"ansia no\",\"fsk satellite\"]": {
+   "[\"ronaldinho\",\"astro, tony boy\"]": {
     "v": 0,
-    "s": 65,
-    "t": "ANSIA NO",
-    "a": "FSK SATELLITE"
+    "s": 43,
+    "t": "RONALDINHO",
+    "a": "Astro, Tony Boy"
    },
-   "m:2026-11|[\"ansia no\",\"fsk satellite\"]": {
+   "m:2026-11|[\"ronaldinho\",\"astro, tony boy\"]": {
     "v": 0,
-    "s": 65,
-    "t": "ANSIA NO",
-    "a": "FSK SATELLITE"
+    "s": 43,
+    "t": "RONALDINHO",
+    "a": "Astro, Tony Boy"
    },
    "[\"voglio di piÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -14398,6 +14410,18 @@
     "v": 1,
     "s": 67,
     "t": "Voglio di piÃÂ¹",
+    "a": "nayt, 3D"
+   },
+   "[\"voglio di piÃ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "Voglio di piÃ¹",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"voglio di piÃ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
    "[\"voglio di piÃÂ¹\",\"silent bob, sick budd\"]": {
@@ -14483,30 +14507,6 @@
     "s": 66,
     "t": "NON MI RICONOSCO Ã¢ÂÂ  (con centomilaicarie & Salmo)",
     "a": "MACE, centomilaicarie, Salmo"
-   },
-   "[\"ronaldinho\",\"astro, tony boy\"]": {
-    "v": 0,
-    "s": 43,
-    "t": "RONALDINHO",
-    "a": "Astro, Tony Boy"
-   },
-   "m:2026-11|[\"ronaldinho\",\"astro, tony boy\"]": {
-    "v": 0,
-    "s": 43,
-    "t": "RONALDINHO",
-    "a": "Astro, Tony Boy"
-   },
-   "[\"voglio di piÃ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "Voglio di piÃ¹",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di piÃ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "Voglio di piÃ¹",
-    "a": "nayt, 3D"
    },
    "[\"voglio di più\",\"nayt, 3d\"]": {
     "v": 1,
