@@ -215,7 +215,7 @@ test("headphone Play starts native media before seek and storage",()=>{
  const code=section(app,"function _riproduciVolontaria(","async function togglePlay()");
  const trace=[];
  const make=()=>new Function("env",
-  'const {window,audio,trace}=env;const _ripresaAvvio=null;'+
+  'const {window,audio,trace}=env;const _ripresaAvvio=null;let _remoteIosPlayGeneration=0;const _iosInstallataComeApp=()=>false,currentId="track";'+
   'let _pausaEsplicita=true,_vuoleSuonare=false,_ultimoScorrimento=0,'+
   '_silenziDiFila=0,_timerRiprove=null,_timerAiuto=null;'+
   'const _segna=()=>trace.push("log"),'+
