@@ -31,27 +31,56 @@ test("hidden installed app preserves its media element across next song",()=>{
 });
 
 
-test("explicit background remote Play retries on the same player and cancels on pause or track change",async()=>{
+function remoteHarness({volume=60,muted=false,compositeActive=false}={}){
  const start=app.indexOf("  let _remoteIosPlayGeneration=0;");
  const end=app.indexOf("  function _riproduciVolontaria(",start);
  assert.ok(start>=0&&end>start);
- const fake={paused:true,ended:false};
- const timers=[],calls=[];
- const build=new Function("fake","timers","calls",
+ const fake={paused:true,ended:false,currentTime:12,muted,_mbCommonMixMuted:compositeActive};
+ const timers=[],calls=[],session={state:"active"};
+ const build=new Function("fake","timers","calls","session","volume","compositeActive",
   "let audio=fake,currentId='track',_vuoleSuonare=true,_pausaEsplicita=false;"+
-  "const window={};const setTimeout=(fn,ms)=>timers.push({fn,ms});"+
-  "const doPlay=async keep=>{calls.push(keep);return calls.length===2};"+
+  "const navigator={audioSession:session},document={hidden:true};"+
+  "const window={MusicBoxCompositeMix:{active:()=>compositeActive,stop:()=>{compositeActive=false;}}};"+
+  "const setTimeout=(fn,ms)=>timers.push({fn,ms});"+
+  "const _applicaAudio=()=>{fake.muted=volume===0||fake._mbCommonMixMuted};const _configuraSessioneAudio=()=>{};"+
+  "const doPlay=async keep=>{calls.push(keep);return calls.length>=2};"+
   app.slice(start,end)+
-  "return {start:()=>_riprovaPlayEsternoIos(fake,'track',++_remoteIosPlayGeneration,Promise.resolve(false)),pause:()=>{_pausaEsplicita=true;_vuoleSuonare=false;++_remoteIosPlayGeneration},resume:()=>{_pausaEsplicita=false;_vuoleSuonare=true},switchTrack:()=>{currentId='other'}};"
- )(fake,timers,calls);
- build.start();await Promise.resolve();
+  "return {start:(ok)=>_riprovaPlayEsternoIos(fake,'track',++_remoteIosPlayGeneration,Promise.resolve(ok),fake.currentTime),restore:()=>_ripristinaUscitaPlayEsternoIos(fake),pause:()=>{_pausaEsplicita=true;_vuoleSuonare=false;++_remoteIosPlayGeneration},resume:()=>{_pausaEsplicita=false;_vuoleSuonare=true},switchTrack:()=>{currentId='other'}};"
+ )(fake,timers,calls,session,volume,compositeActive);
+ return {fake,timers,calls,session,build};
+}
+test("remote iOS Play retries failed requests but cancels after explicit pause or track change",async()=>{
+ const {fake,timers,calls,build}=remoteHarness();
+ build.start(false);await Promise.resolve();
  assert.equal(timers[0].ms,250);
  await timers.shift().fn();
  assert.deepEqual(calls,[true]);assert.equal(timers[0].ms,750);
  await timers.shift().fn();
- assert.deepEqual(calls,[true,true]);assert.equal(timers.length,0);
- build.start();await Promise.resolve();build.pause();build.resume();
+ assert.deepEqual(calls,[true,true]);
+ fake.paused=false;fake.currentTime+=1;
+ await timers.shift().fn();assert.equal(timers.length,0);
+ build.start(false);await Promise.resolve();build.pause();build.resume();
  await timers.shift().fn();assert.equal(calls.length,2);
- build.start();await Promise.resolve();build.switchTrack();
+ build.start(false);await Promise.resolve();build.switchTrack();
  await timers.shift().fn();assert.equal(calls.length,2);
+});
+test("fulfilled play without native progress is retried; progressing playback is not disturbed",async()=>{
+ const {fake,timers,calls,build}=remoteHarness();
+ fake.paused=false;build.start(true);await Promise.resolve();
+ assert.equal(timers[0].ms,1250);
+ await timers.shift().fn();assert.deepEqual(calls,[true]);
+ fake.currentTime+=1;
+ await timers.shift().fn();assert.equal(timers.length,0);
+});
+test("interrupted native audio session is retried even when the playhead advances",async()=>{
+ const {fake,timers,calls,session,build}=remoteHarness();
+ fake.paused=false;session.state="interrupted";build.start(true);await Promise.resolve();
+ fake.currentTime+=1;await timers.shift().fn();assert.deepEqual(calls,[true]);
+ session.state="active";fake.currentTime+=1;await timers.shift().fn();assert.equal(timers.length,0);
+});
+test("remote Play restores stale composite mute but respects zero user volume",()=>{
+ for(const volume of [0,60]){
+  const {fake,build}=remoteHarness({volume,muted:true,compositeActive:true});
+  build.restore();assert.equal(fake._mbCommonMixMuted,false);assert.equal(fake.muted,volume===0);
+ }
 });

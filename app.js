@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.756";
+  const APP_VERSION = "6.757";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6183,13 +6183,13 @@ const playFromRow = () => {
     }
     _bloccoRipresaAudio=null;
     _ripristinoPausaAtteso=null;
-    try{audio.muted=gate.wasMuted}catch(_){}
+    try{_applicaAudio()}catch(_){}
     return true;
   }
   function _annullaBloccoRipresaAudio() {
     const gate=_bloccoRipresaAudio;
     _bloccoRipresaAudio=null;
-    if(gate?.player){try{gate.player.muted=gate.wasMuted}catch(_){}}
+    if(gate?.player){try{if(gate.player===audio)_applicaAudio();else gate.player.muted=gate.wasMuted}catch(_){}}
   }
   let _ripristinoPausaAtteso=null;
   function _riallineaPausaReale() {
@@ -8893,22 +8893,40 @@ function playNext() {
   // background recovery. Retry only that request on the same native element.
   // Never create another audio element while the installed iOS app is hidden.
   let _remoteIosPlayGeneration=0;
-  function _riprovaPlayEsternoIos(player,id,generation,started) {
+  // A background composite cannot keep its WebAudio clock alive. Restore
+  // native output without overriding intentional user mute or startup seek.
+  function _ripristinaUscitaPlayEsternoIos(player) {
+    if(player!==audio)return;
+    try{
+      const composite=window.MusicBoxCompositeMix;
+      if(document.hidden&&composite?.active?.())composite.stop("ios-remote-play");
+      if(document.hidden&&player._mbCommonMixMuted===true&&!composite?.active?.())
+        player._mbCommonMixMuted=false;
+      _applicaAudio();
+      _configuraSessioneAudio();
+    }catch(_){}
+  }
+  function _riprovaPlayEsternoIos(player,id,generation,started,initialTime) {
     const valid=()=>generation===_remoteIosPlayGeneration&&audio===player&&
       currentId===id&&_vuoleSuonare&&!_pausaEsplicita&&
       !player.ended&&!window.MusicBoxRoom?.isActive?.();
     const delays=[250,750,1500];
-    const retry=async(index)=>{
-      if(!valid()||!player.paused||index>=delays.length)return;
+    const verify=(index,ok,previousTime)=>{
+      if(!valid()||index>=delays.length)return;
       setTimeout(async()=>{
-        if(!valid()||!player.paused)return;
-        // An AbortError can follow the other app releasing the audio session.
-        // Keep the existing decoder and the exact playhead.
-        const ok=await doPlay(true);
-        if(!ok)retry(index+1);
-      },delays[index]);
+        if(!valid())return;
+        _ripristinaUscitaPlayEsternoIos(player);
+        const now=Number(player.currentTime);
+        const advanced=Number.isFinite(now)&&Number.isFinite(previousTime)&&now>previousTime+.05;
+        const interrupted=navigator.audioSession?.state==="interrupted";
+        // A fulfilled play() promise is not proof of a functioning decoder.
+        // Never mistake intentionally muted playback for a failure.
+        if(!player.paused&&advanced&&!interrupted)return;
+        const next=await doPlay(true);
+        verify(index+1,next,now);
+      },ok?Math.max(1250,delays[index]):delays[index]);
     };
-    Promise.resolve(started).then(ok=>{if(!ok)retry(0)},()=>retry(0));
+    Promise.resolve(started).then(ok=>verify(0,ok,initialTime),()=>verify(0,false,initialTime));
   }
   function _riproduciVolontaria(daControlloEsterno=false) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
@@ -8936,8 +8954,10 @@ function playNext() {
     const remoteIos=daControlloEsterno&&_iosInstallataComeApp()&&
       document.hidden&&audio&&currentId;
     const player=audio,id=currentId;
+    const initialTime=remoteIos?Number(player.currentTime):0;
+    if(remoteIos)_ripristinaUscitaPlayEsternoIos(player);
     const started=remoteIos?doPlay(true):doPlay();
-    if(remoteIos)_riprovaPlayEsternoIos(player,id,generation,started);
+    if(remoteIos)_riprovaPlayEsternoIos(player,id,generation,started,initialTime);
     _segnaIntenzioneSono(true);
     return started;
   }
